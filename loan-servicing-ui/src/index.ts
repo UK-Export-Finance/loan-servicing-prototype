@@ -16,13 +16,17 @@ nunjucks.configure("src/templates", {
 });
 
 const getApiData = async () => {
-    const response = await axios.get(process.env.API_URL!);
-    return response.data;
+    try {
+        const response = await axios.get(process.env.API_URL!);
+        return response.data;
+    } catch {
+        return null;
+    }
 };
 
 app.get("/", async (req, res) => {
-    const data = await getApiData()
-    res.render("initial.njk", { apiData: data || 'Request failed' });
+    const data = await getApiData();
+    res.render("initial.njk", { apiData: data || "Request failed" });
 });
 
 app.listen(port, () => {
