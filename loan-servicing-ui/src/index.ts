@@ -1,3 +1,4 @@
+import axios from "axios";
 import dotenv from "dotenv";
 import express from "express";
 import nunjucks from "nunjucks";
@@ -14,8 +15,14 @@ nunjucks.configure("src/templates", {
     noCache: true,
 });
 
-app.get("/", (req, res) => {
-    res.render("initial.njk");
+const getApiData = async () => {
+    const response = await axios.get(process.env.API_URL!);
+    return response.data;
+};
+
+app.get("/", async (req, res) => {
+    const data = await getApiData()
+    res.render("initial.njk", { apiData: data || 'Request failed' });
 });
 
 app.listen(port, () => {
