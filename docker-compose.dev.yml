@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  loan-servicing-ui:
+    build: 
+      context: ./loan-servicing-ui
+      dockerfile: dev.Dockerfile
+    image: loan-servicing/ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./loan-servicing-ui/src:/opt/app/src"
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - API_URL=http://localhost:3001
