@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "loan-servicing-api": true,
+        "loan-servicing-ui": true
+    }
+}
