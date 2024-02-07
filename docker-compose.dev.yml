@@ -12,4 +12,16 @@ services:
     environment:
       - PORT=3000
       - NODE_ENV=development
-      - API_URL=http://localhost:3001
+      - API_URL=http://loan-servicing-api:3001
+  loan-servicing-api:
+    build: 
+      context: ./loan-servicing-api
+      dockerfile: dev.Dockerfile
+    image: loan-servicing/api
+    ports:
+      - "3001:3001"
+    volumes:
+      - "./loan-servicing-api/src:/opt/app/src"
+    environment:
+      - PORT=3001
+      - NODE_ENV=development
