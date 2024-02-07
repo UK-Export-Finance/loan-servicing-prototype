@@ -1,3 +1,5 @@
 # Loan Servicing Prototype
 
-Use in VS Code and open as workspace.
+## Running
+
+Run the applications with `docker-compose -f docker-compose.dev.yml up`
