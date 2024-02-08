@@ -20,6 +20,7 @@ services:
     image: loan-servicing/api
     ports:
       - "3001:3001"
+      - "3009:3009"
     volumes:
       - "./loan-servicing-api/src:/opt/app/src"
     environment:
