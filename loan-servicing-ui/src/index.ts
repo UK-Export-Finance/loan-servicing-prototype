@@ -7,17 +7,19 @@ import connectLiveReload from "connect-livereload";
 
 dotenv.config();
 
-const liveReloadServer = livereload.createServer({ port: 3099 });
+const liveReloadServer = livereload.createServer({
+    port: 35729,
+    extraExts: ["njk"],
+});
+liveReloadServer.watch(`${__dirname}/templates`)
 liveReloadServer.server.once("connection", () => {
     setTimeout(() => {
-        console.log('checking')
         liveReloadServer.refresh("/");
     }, 100);
 });
 
 const app = express();
 const port = process.env.PORT;
-
 
 nunjucks.configure("src/templates", {
     express: app,
@@ -39,11 +41,10 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     const data = await getApiData();
-    res.render("initial.njk", { apiData: "ddf" || data || "Request failed" });
+    res.render("initial.njk", { apiData: data || "Request failed :(" });
 });
 
 app.use(router);
-app.use(connectLiveReload());
 
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);

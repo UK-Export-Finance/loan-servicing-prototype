@@ -1,8 +1,12 @@
+{% extends "index.njk" %}
+
+{% block pageTitle -%}
+  Initial Page
+{%- endblock %}
+
 {% block content %}
+  <h1 class="govuk-heading-l">Has Data come from the API?</h1>
 
-  <h1 class="govuk-heading-l">Has Data come from the API???</h1>
-
-  <p class="govuk-body govuk-!-margin-bottom-6">datas: {{ apiData }}</p>
-
-
+  <p class="govuk-body govuk-!-margin-bottom-6">data: {{ apiData }}</p>
+  
 {% endblock %}
