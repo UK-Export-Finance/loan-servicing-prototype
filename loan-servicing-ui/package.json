@@ -2,7 +2,7 @@
     "scripts": {
         "build": "npx tsc",
         "start": "node dist/index.js",
-        "dev": "nodemon --legacy-watch src/index.ts"
+        "dev": "nodemon --legacy-watch --ext njk,ts src/index.ts"
     },
     "dependencies": {
         "axios": "^1.6.7",

@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import express from "express";
 import nunjucks from "nunjucks";
 import livereload from "livereload";
-import connectLiveReload from "connect-livereload";
 
 dotenv.config();
 
@@ -11,7 +10,7 @@ const liveReloadServer = livereload.createServer({
     port: 35729,
     extraExts: ["njk"],
 });
-liveReloadServer.watch(`${__dirname}/templates`)
+
 liveReloadServer.server.once("connection", () => {
     setTimeout(() => {
         liveReloadServer.refresh("/");
@@ -41,7 +40,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     const data = await getApiData();
-    res.render("initial.njk", { apiData: data || "Request failed :(" });
+    res.render("initial.njk", { apiData: "k" || data || "Request failed :(" });
 });
 
 app.use(router);

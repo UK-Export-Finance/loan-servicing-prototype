@@ -7,6 +7,7 @@ services:
     image: loan-servicing/ui
     ports:
       - "3000:3000"
+      - "35729:35729"
     volumes:
       - "./loan-servicing-ui/src:/opt/app/src"
     environment:
@@ -20,7 +21,6 @@ services:
     image: loan-servicing/api
     ports:
       - "3001:3001"
-      - "35729:35729"
     volumes:
       - "./loan-servicing-api/src:/opt/app/src"
     environment:
