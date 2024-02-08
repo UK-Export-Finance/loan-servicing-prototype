@@ -1,5 +1,13 @@
 version: "3.8"
 services:
+  loan-servicing-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Password123!
+    ports:
+      - "1433:1433"
+    attach: false
   loan-servicing-ui:
     build: 
       context: ./loan-servicing-ui

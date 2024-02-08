@@ -1,6 +1,7 @@
 # Variables
 .env
 .env.prod
+**/**/.env
 
 # Configurations
 .config
@@ -8,6 +9,7 @@
 # NPM
 .npm
 dist
+node_modules
 **/node_modules/*
 
 # Logs
