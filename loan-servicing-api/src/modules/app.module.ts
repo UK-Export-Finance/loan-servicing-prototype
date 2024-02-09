@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
-import { InitialModule } from './initial.module'
+import { UserModule } from './user.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import User from '../entity/User'
 
 @Module({
   imports: [
-    InitialModule,
+    UserModule,
     TypeOrmModule.forRoot({
       type: 'mssql',
       host: process.env.SQL_DB_HOST,

@@ -3,7 +3,7 @@ import { tryGetApiData } from '../api/base-client'
 import { UserResponseDto } from 'loan-servicing-common'
 
 @Injectable()
-export class InitialService {
+export class UserService {
   async getUser() {
     const data = await tryGetApiData<UserResponseDto>('')
     return JSON.stringify(data) || 'Request failed :('

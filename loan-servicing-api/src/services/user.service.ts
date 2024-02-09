@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
-export class InitialService {
+export class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
   async getUser() {

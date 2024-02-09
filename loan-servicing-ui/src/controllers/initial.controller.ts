@@ -1,9 +1,9 @@
 import { Controller, Get, Render } from '@nestjs/common'
-import { InitialService } from '../services/initial.service'
+import { UserService } from '../services/initial.service'
 
 @Controller('')
-export class InitialController {
-  constructor(private initialService: InitialService) {}
+export class UserController {
+  constructor(private initialService: UserService) {}
 
   @Get()
   @Render('initial')
