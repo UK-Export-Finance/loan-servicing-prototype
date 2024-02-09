@@ -1,8 +1,8 @@
 {
     "name": "loan-services",
     "workspaces": [
-        "loan-services-api",
-        "loan-services-ui"
+        "loan-servicing-ui",
+        "loan-servicing-api"
     ],
     "scripts": {
         "start": "docker-compose -f docker-compose.dev.yml up",

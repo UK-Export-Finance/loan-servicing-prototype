@@ -1,5 +1,5 @@
 {
-    "name": "loan-services-api",
+    "name": "loan-servicing-api",
     "scripts": {
         "build": "npx tsc",
         "start": "node dist/index.js",
