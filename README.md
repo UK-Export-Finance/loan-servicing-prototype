@@ -2,7 +2,7 @@
 
 ## Running
 
-Run the applications with `docker-compose -f docker-compose.dev.yml up`
+Run the applications by running `npm start` in the repo root
 
 If the `package.json` of any application is updated the rebuild the dev container with
-`docker-compose -f docker-compose.dev.yml up --build`
+`npm run start:rebuild`

@@ -1,4 +1,5 @@
 {
+    "name": "loan-services-ui",
     "scripts": {
         "build": "npx tsc",
         "start": "node dist/app.js",
