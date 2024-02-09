@@ -37,13 +37,14 @@ services:
       loan-servicing-db:
         condition: service_healthy
     build:
-      context: ./loan-servicing-api
-      dockerfile: dev.Dockerfile
+      context: .
+      dockerfile: ./loan-servicing-api/dev.Dockerfile
     image: loan-servicing/api
     ports:
       - '3001:3001'
     volumes:
-      - './loan-servicing-api/src:/opt/app/src'
+      - ./loan-servicing-api/src:/opt/app/loan-servicing-api/src:ro
+      - ./loan-servicing-common:/opt/app/loan-servicing-common:ro
     environment:
       - PORT=3001
       - NODE_ENV=development
