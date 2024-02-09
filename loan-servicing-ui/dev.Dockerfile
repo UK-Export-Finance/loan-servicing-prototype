@@ -8,5 +8,7 @@ COPY package-lock.json .
 
 RUN npm i
 
+COPY tsconfig.json .
+
 EXPOSE 3000
 CMD ["npm","run","dev"]

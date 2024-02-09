@@ -1,12 +1,16 @@
 version: "3.8"
 services:
   loan-servicing-db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    build: ./sql-db
+    restart: always
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Password123!
+      - MSSQL_SA_PASSWORD=AbC!2345
+      - DB_NAME=DTFSSubmissions
     ports:
-      - "1433:1433"
+      - '1433:1433'
+    volumes:
+      - ./sql-db/data:/data/db
     attach: false
   loan-servicing-ui:
     build: 
@@ -23,6 +27,9 @@ services:
       - NODE_ENV=development
       - API_URL=http://loan-servicing-api:3001
   loan-servicing-api:
+    depends_on:
+      loan-servicing-db:
+        condition: service_healthy
     build: 
       context: ./loan-servicing-api
       dockerfile: dev.Dockerfile
@@ -34,3 +41,5 @@ services:
     environment:
       - PORT=3001
       - NODE_ENV=development
+      - SQL_DB_HOST=loan-servicing-db
+      - SQL_DB_PORT=1433

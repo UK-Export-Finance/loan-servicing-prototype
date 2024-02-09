@@ -40,7 +40,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     const data = await getApiData();
-    res.render("initial.njk", { apiData: "k" || data || "Request failed :(" });
+    res.render("initial.njk", { apiData: JSON.stringify(data) || "Request failed :(" });
 });
 
 app.use(router);
