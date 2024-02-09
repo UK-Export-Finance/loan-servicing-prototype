@@ -1,22 +1,23 @@
 import dotenv from "dotenv";
-import express from "express";
 import setupLiveReload from "./server/livereload";
 import configureNunjucks from "./server/configure-nunjucks";
-import setupRoutes from "./server/routes";
+import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppModule } from "./modules/app.module";
 
 dotenv.config();
+
+const port = process.env.PORT;
 
 if (process.env.NODE_ENV === "development") {
     setupLiveReload();
 }
 
-const app = express();
-const port = process.env.PORT;
+const bootstrap = async () => {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule)
+    configureNunjucks(app)
+    await app.listen(port ?? 3000)
+}
 
-configureNunjucks(app)
+bootstrap()
 
-setupRoutes(app)
-
-app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
-});
