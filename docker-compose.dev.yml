@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 services:
   loan-servicing-db:
     build: ./sql-db
@@ -11,23 +11,23 @@ services:
       - '1433:1433'
     healthcheck: # Ensures the DB is active before starting the API
       test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'AbC!2345' -Q 'select 1;'
-      start_period: "30s"
-      start_interval: "1s"
+      start_period: '30s'
+      start_interval: '1s'
     attach: false
     volumes:
       - ./sql-db/data:/var/opt/mssql/data
   loan-servicing-ui:
     depends_on:
       - loan-servicing-api
-    build: 
+    build:
       context: ./loan-servicing-ui
       dockerfile: dev.Dockerfile
     image: loan-servicing/ui
     ports:
-      - "3000:3000"
-      - "35729:35729" # Live reload server port
+      - '3000:3000'
+      - '35729:35729' # Live reload server port
     volumes:
-      - "./loan-servicing-ui/src:/opt/app/src"
+      - './loan-servicing-ui/src:/opt/app/src'
     environment:
       - PORT=3000
       - NODE_ENV=development
@@ -36,14 +36,14 @@ services:
     depends_on:
       loan-servicing-db:
         condition: service_healthy
-    build: 
+    build:
       context: ./loan-servicing-api
       dockerfile: dev.Dockerfile
     image: loan-servicing/api
     ports:
-      - "3001:3001"
+      - '3001:3001'
     volumes:
-      - "./loan-servicing-api/src:/opt/app/src"
+      - './loan-servicing-api/src:/opt/app/src'
     environment:
       - PORT=3001
       - NODE_ENV=development

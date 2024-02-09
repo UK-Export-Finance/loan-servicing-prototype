@@ -1,6 +1,12 @@
 {
-    "name": "loan-servicing-common",
-    "version": "1.0.0",
-    "main": "index.ts",
-    "exports": ["./index.ts"]
+  "name": "loan-servicing-common",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "exports": [
+    "./index.ts"
+  ],
+  "scripts": {
+    "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check"
+  }
 }

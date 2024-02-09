@@ -1,17 +1,16 @@
-import { Controller, Get, Render } from "@nestjs/common";
-import { tryGetApiData } from "../api/base-client";
-import { InitialService } from "../services/initial.service";
+import { Controller, Get, Render } from '@nestjs/common'
+import { InitialService } from '../services/initial.service'
 
-@Controller("")
+@Controller('')
 export class InitialController {
-    constructor(private initialService: InitialService) {}
+  constructor(private initialService: InitialService) {}
 
-    @Get()
-    @Render("initial")
-    async findAll() {
-        const apiData = await this.initialService.getUser()
-        return {
-            apiData,
-        };
+  @Get()
+  @Render('initial')
+  async findAll() {
+    const apiData = await this.initialService.getUser()
+    return {
+      apiData,
     }
+  }
 }
