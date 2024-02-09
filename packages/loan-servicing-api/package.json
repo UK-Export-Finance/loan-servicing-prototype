@@ -3,7 +3,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/app.js",
-    "dev": "nodemon --legacy-watch --watch ../loan-servicing-common --watch src src/app.ts",
+    "dev": "nodemon --legacy-watch --watch ../../libs --watch src src/app.ts",
     "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check"
   },
@@ -28,6 +28,9 @@
     "typescript": "^5.3.3"
   },
   "nodemonConfig": {
-    "watch": ["src", "../loan-servicing-common"]
+    "watch": [
+      "src",
+      "../loan-servicing-common"
+    ]
   }
 }

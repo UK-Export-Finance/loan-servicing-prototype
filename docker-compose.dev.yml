@@ -27,7 +27,8 @@ services:
       - '3000:3000'
       - '35729:35729' # Live reload server port
     volumes:
-      - './packages/loan-servicing-ui/src:/opt/app/src'
+      - './packages/loan-servicing-ui/src:/opt/app/packages/loan-servicing-ui/src:ro'
+      - ./libs:/opt/app/libs:ro
     environment:
       - PORT=3000
       - NODE_ENV=development
