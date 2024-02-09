@@ -1,16 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import User from '../entity/User'
-import { DataSource } from 'typeorm'
+import { Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class InitialService {
-  constructor(@Inject('DatabaseConnection') private database: DataSource) {}
+  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
   async getUser() {
     const user = new User()
     user.name = 'user-name'
-    const userRepo = this.database.getRepository(User)
-    const result = await userRepo.save(user)
+    const result = await this.userRepo.save(user)
     return result
   }
 }
