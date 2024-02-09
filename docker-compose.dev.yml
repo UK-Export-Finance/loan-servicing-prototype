@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   loan-servicing-db:
-    build: ./sql-db
+    build: ./libs/sql-db
     restart: always
     environment:
       - ACCEPT_EULA=Y
@@ -15,19 +15,19 @@ services:
       start_interval: '1s'
     attach: false
     volumes:
-      - ./sql-db/data:/var/opt/mssql/data
+      - ./libs/sql-db/data:/var/opt/mssql/data
   loan-servicing-ui:
     depends_on:
       - loan-servicing-api
     build:
-      context: ./loan-servicing-ui
-      dockerfile: dev.Dockerfile
+      context: .
+      dockerfile: ./packages/loan-servicing-ui/dev.Dockerfile
     image: loan-servicing/ui
     ports:
       - '3000:3000'
       - '35729:35729' # Live reload server port
     volumes:
-      - './loan-servicing-ui/src:/opt/app/src'
+      - './packages/loan-servicing-ui/src:/opt/app/src'
     environment:
       - PORT=3000
       - NODE_ENV=development
@@ -38,13 +38,13 @@ services:
         condition: service_healthy
     build:
       context: .
-      dockerfile: ./loan-servicing-api/dev.Dockerfile
+      dockerfile: ./packages/loan-servicing-api/dev.Dockerfile
     image: loan-servicing/api
     ports:
       - '3001:3001'
     volumes:
-      - ./loan-servicing-api/src:/opt/app/loan-servicing-api/src:ro
-      - ./loan-servicing-common:/opt/app/loan-servicing-common:ro
+      - ./packages/loan-servicing-api/src:/opt/app/packages/loan-servicing-api/src:ro
+      - ./libs:/opt/app/libs:ro
     environment:
       - PORT=3001
       - NODE_ENV=development

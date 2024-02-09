@@ -14,7 +14,7 @@
     "axios": "^1.6.7",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
-    "loan-servicing-common": "file:../loan-servicing-common",
+    "loan-servicing-common": "file:../../libs/loan-servicing-common",
     "nunjucks": "^3.2.4",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.1"
