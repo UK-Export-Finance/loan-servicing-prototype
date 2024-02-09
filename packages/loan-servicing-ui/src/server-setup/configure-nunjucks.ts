@@ -1,13 +1,14 @@
 import nunjucks from 'nunjucks'
 import { NestExpressApplication } from '@nestjs/platform-express'
 
+const TEMPLATES_DIR = 'src/templates'
+
 const configureNunjucks = (app: NestExpressApplication) => {
-  const templatesDir = 'src/templates'
   const express = app.getHttpAdapter().getInstance()
-  app.setBaseViewsDir(templatesDir)
+  app.setBaseViewsDir(TEMPLATES_DIR)
   app.setViewEngine('njk')
 
-  const nunjucksEnv = nunjucks.configure(templatesDir, {
+  const nunjucksEnv = nunjucks.configure(TEMPLATES_DIR, {
     express: express,
     autoescape: true,
     noCache: true,
