@@ -10,7 +10,6 @@ const configureNunjucks = (app: NestExpressApplication) => {
     const nunjucksEnv = nunjucks.configure(templatesDir, {
         express: express,
         autoescape: true,
-        watch: true,
         noCache: true,
     });
     
