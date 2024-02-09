@@ -9,7 +9,7 @@ export const SqlDbDataSource = new DataSource({
     port: Number(process.env.SQL_DB_PORT),
     username: "sa",
     password: "AbC!2345",
-    database: "DTFSSubmissions",
+    database: "LoanServicing",
     synchronize: true,
     entities: [User],
     options: {
