@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common'
-import { UserService as UserService } from '../services/user.service'
 import { UserResponseDto } from 'loan-servicing-common'
+import UserService from '../services/user.service'
 
 @Controller('')
-export class UserController {
+class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
@@ -15,3 +15,5 @@ export class UserController {
     }
   }
 }
+
+export default UserController

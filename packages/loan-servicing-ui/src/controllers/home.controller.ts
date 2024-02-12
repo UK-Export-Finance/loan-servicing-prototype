@@ -1,8 +1,8 @@
 import { Controller, Get, Render } from '@nestjs/common'
-import { UserService } from '../services/user.service'
+import UserService from '../services/user.service'
 
 @Controller('')
-export class HomeController {
+class HomeController {
   constructor(private userService: UserService) {}
 
   @Get()
@@ -14,3 +14,5 @@ export class HomeController {
     }
   }
 }
+
+export default HomeController

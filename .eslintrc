@@ -1,9 +1,17 @@
 //.eslintrc
 {
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
-    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-    "parserOptions": { "ecmaVersion": 2022, "sourceType": "module" },
-    "rules": {
-    }
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "project": [
+      "./packages/loan-servicing-ui/tsconfig.json",
+      "./packages/loan-servicing-api/tsconfig.json"
+    ]
+  },
+  "rules": {
+    "class-methods-use-this": "off"
   }
+}

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import User from '../entity/User'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
+import User from '../entity/User'
 
 @Injectable()
-export class UserService {
+class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
   async getUser() {
@@ -14,3 +14,5 @@ export class UserService {
     return result
   }
 }
+
+export default UserService

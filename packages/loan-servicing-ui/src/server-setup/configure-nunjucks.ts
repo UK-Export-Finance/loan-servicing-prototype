@@ -9,7 +9,7 @@ const configureNunjucks = (app: NestExpressApplication) => {
   app.setViewEngine('njk')
 
   const nunjucksEnv = nunjucks.configure(TEMPLATES_DIR, {
-    express: express,
+    express,
     autoescape: true,
     noCache: true,
   })

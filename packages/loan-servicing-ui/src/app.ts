@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
-import setupLiveReload from './server-setup/livereload'
-import configureNunjucks from './server-setup/configure-nunjucks'
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { AppModule } from './modules/app.module'
+import setupLiveReload from './server-setup/livereload'
+import configureNunjucks from './server-setup/configure-nunjucks'
+import AppModule from './modules/app.module'
 
 dotenv.config()
 
