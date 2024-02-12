@@ -22,15 +22,11 @@ yarn-error.log*
 lerna-debug.log*
 
 # IDE - VSCode
-.vscode/*
-.vscode/settings.json
 .vscode/tasks.json
 .vscode/launch.json
-.vscode/extensions.json
 
 # IDE - JetBrains
 .idea
 
 # Azurite
-__azurite*
-__*
+.azurite
