@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { TypeOrmModuleOptions } from '@nestjs/typeorm'
-import User from '../entity/User'
+import User from 'entity/User'
 
 const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   type: 'mssql',

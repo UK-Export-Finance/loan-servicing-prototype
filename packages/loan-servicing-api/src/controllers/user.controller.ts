@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common'
 import { UserResponseDto } from 'loan-servicing-common'
-import UserService from '../services/user.service'
+import UserService from 'services/user.service'
 
 @Controller('')
 class UserController {

@@ -32,6 +32,7 @@ services:
     environment:
       - PORT=3000
       - NODE_ENV=development
+      - NODE_PATH=src
       - API_URL=http://loan-servicing-api:3001
   loan-servicing-api:
     depends_on:
@@ -49,5 +50,6 @@ services:
     environment:
       - PORT=3001
       - NODE_ENV=development
+      - NODE_PATH=src
       - SQL_DB_HOST=loan-servicing-db
       - SQL_DB_PORT=1433

@@ -1,7 +1,7 @@
 //.eslintrc
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "no-relative-import-paths"],
   "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
   "parserOptions": {
     "ecmaVersion": 2022,
@@ -12,6 +12,17 @@
     ]
   },
   "rules": {
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "no-relative-import-paths/no-relative-import-paths": [
+      "warn",
+      { "allowSameFolder": true }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    }
   }
 }

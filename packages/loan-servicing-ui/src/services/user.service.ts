@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
+import { tryGetApiData } from 'api/base-client'
 import { UserResponseDto } from 'loan-servicing-common'
-import { tryGetApiData } from '../api/base-client'
 
 @Injectable()
 class UserService {
