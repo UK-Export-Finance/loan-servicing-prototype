@@ -30,3 +30,7 @@ lerna-debug.log*
 
 # IDE - JetBrains
 .idea
+
+# Azurite
+__azurite*
+__*
