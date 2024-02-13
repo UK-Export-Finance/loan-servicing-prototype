@@ -1,10 +1,10 @@
 import Facility from 'models/interfaces/facility'
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
 class FacilityEntity implements Facility {
-  @PrimaryGeneratedColumn()
-  id!: number
+  @PrimaryColumn()
+  streamId!: number
 
   @Column()
   obligor!: string

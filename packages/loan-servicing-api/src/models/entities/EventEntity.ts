@@ -12,10 +12,10 @@ class EventEntity<T extends Event> {
   @Column()
   streamVersion!: number
 
-  @Column()
+  @Column({ type: 'nvarchar' })
   type!: T['type']
 
-  @Column()
+  @Column({ type: 'int' })
   typeVersion!: T['typeVersion']
 
   @Column({ type: 'simple-json' })

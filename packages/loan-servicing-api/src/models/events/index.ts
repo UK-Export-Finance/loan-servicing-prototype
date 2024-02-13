@@ -2,7 +2,7 @@ import FacilityEvent from "./facilityEvents";
 
 type Event = FacilityEvent
 
-export type EventRequest<
+export type NewEvent<
   E extends Event,
 > = Omit<E, 'streamVersion'>
 
