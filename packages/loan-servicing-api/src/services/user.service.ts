@@ -7,7 +7,7 @@ import User from 'models/entities/User'
 class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
-  async getUser() {
+  async getUser(): Promise<User> {
     const user = new User()
     user.name = 'user-name'
     const result = await this.userRepo.save(user)

@@ -1,6 +1,3 @@
 {
-  "recommendations": [
-    "ms-azuretools.vscode-azurefunctions",
-    "azurite.azurite"
-  ]
+  "recommendations": ["ms-azuretools.vscode-azurefunctions", "azurite.azurite"]
 }

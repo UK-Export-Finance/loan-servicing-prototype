@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InjectDataSource,  } from '@nestjs/typeorm'
+import { InjectDataSource } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
 import Event, { NewEvent } from 'models/events'
 import { DataSource } from 'typeorm'
@@ -11,12 +11,14 @@ class EventService {
     private dataSource: DataSource,
   ) {}
 
-  async saveEvent<T extends Event>(newEvent: NewEvent<T>): Promise<EventEntity<T>> {
+  async saveEvent<T extends Event>(
+    newEvent: NewEvent<T>,
+  ): Promise<EventEntity<T>> {
     const repo = this.dataSource.getRepository(EventEntity<T>)
     const event = await repo.create(newEvent)
     event.streamVersion = 1
     const result = await repo.save(event)
-    return result 
+    return result
   }
 
   getEvents(streamId: string): Promise<EventEntity<Event>[]> {

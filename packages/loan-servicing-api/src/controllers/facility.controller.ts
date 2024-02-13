@@ -8,13 +8,15 @@ class FacilityController {
   constructor(private facilityService: FacilityService) {}
 
   @Get()
-  async getFacility(@Query('id') streamId: string): Promise<CreateNewFacilityEvent[]> {
+  async getFacility(
+    @Query('id') streamId: string,
+  ): Promise<CreateNewFacilityEvent[]> {
     const allEvents = await this.facilityService.getFacilityEvents(streamId)
     return allEvents
   }
 
   @Post()
-  async newFacility(@Body() body: NewFacilityRequestDto): Promise<Facility>{
+  async newFacility(@Body() body: NewFacilityRequestDto): Promise<Facility> {
     const newFacility = await this.facilityService.createNewFacility(body)
     return newFacility
   }
