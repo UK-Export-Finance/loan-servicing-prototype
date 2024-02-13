@@ -58,7 +58,10 @@ class FacilityService {
       throw new Error('facility not found')
     }
 
-    const updatedFacility = await this.facilityRepo.save({ ...existingFacility, ...update })
+    const updatedFacility = await this.facilityRepo.save({
+      ...existingFacility,
+      ...update,
+    })
     return updatedFacility
   }
 

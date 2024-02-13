@@ -7,10 +7,17 @@ export type CreateNewFacilityEvent = EventBase<
   FacilityUpdateRequestDto
 >
 
-export type DeleteFacilityEvent = EventBase<'DeleteFacility', 1, { id: number }>
+export type DeleteFacilityEvent = EventBase<'DeleteFacility', 1, null>
 
-export type UpdateFacilityEvent = EventBase<'UpdateFacility', 1, Partial<FacilityUpdateRequestDto>>
+export type UpdateFacilityEvent = EventBase<
+  'UpdateFacility',
+  1,
+  Partial<FacilityUpdateRequestDto>
+>
 
-type FacilityEvent = CreateNewFacilityEvent | DeleteFacilityEvent | UpdateFacilityEvent
+type FacilityEvent =
+  | CreateNewFacilityEvent
+  | DeleteFacilityEvent
+  | UpdateFacilityEvent
 
 export default FacilityEvent

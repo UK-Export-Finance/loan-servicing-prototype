@@ -1,7 +1,7 @@
 type EventBase<
   Type extends string,
   Version extends number,
-  Data extends object,
+  Data extends object | null,
 > = {
   streamId: string
   streamVersion: number

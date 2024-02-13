@@ -22,7 +22,10 @@ class FacilityController {
   }
 
   @Put()
-  async updateFacility(@Query('id') id: string, @Body() body: Partial<FacilityUpdateRequestDto>): Promise<Facility> {
+  async updateFacility(
+    @Query('id') id: string,
+    @Body() body: Partial<FacilityUpdateRequestDto>,
+  ): Promise<Facility> {
     const updatedFacility = await this.facilityService.updateFacility(id, body)
     return updatedFacility
   }
