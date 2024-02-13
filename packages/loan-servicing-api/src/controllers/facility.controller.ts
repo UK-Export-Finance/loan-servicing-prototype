@@ -1,5 +1,5 @@
 import { Controller, Get, Post } from '@nestjs/common'
-import BaseEvent from 'models/events/BaseEvent'
+import Facility from 'models/interfaces/facility'
 import FacilityService from 'services/facility.service'
 
 @Controller('/facility')
@@ -7,13 +7,13 @@ class FacilityController {
   constructor(private facilityService: FacilityService) {}
 
   @Get()
-  async getFacility(): Promise<BaseEvent[]> {
+  async getFacility(): Promise<Facility[]> {
     const allEvents = await this.facilityService.getFacility()
     return allEvents.map(x => x.eventData)
   }
 
   @Post()
-  async newFacility(): Promise<BaseEvent> {
+  async newFacility(): Promise<Facility> {
     const newFacility = await this.facilityService.createNewFacility()
     return newFacility
   }

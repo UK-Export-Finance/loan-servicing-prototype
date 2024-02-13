@@ -15,11 +15,14 @@ class FacilityService {
       eventData: { obligor: 'test' },
     }
     const result = await this.eventService.saveEvent(createFacilityEvent)
-    return result.eventData
+    return result
   }
 
-  getFacility() {
-    return this.eventService.getEvents(1)
+  async getFacility() {
+    const events = await this.eventService.getEvents(1)
+    return events.filter(
+      (e) => e.type === 'CreateNewFacility',
+    ) as CreateNewFacilityEvent[]
   }
 }
 

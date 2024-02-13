@@ -2,21 +2,20 @@ import { Injectable } from '@nestjs/common'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
-import { UntypedEvent } from 'models/interfaces/event'
 import Event, { EventRequest } from 'models/events'
 
 @Injectable()
 class EventService {
   constructor(
-    @InjectRepository(EventEntity<UntypedEvent>)
-    private eventRepo: Repository<EventEntity<UntypedEvent>>,
+    @InjectRepository(EventEntity<Event>)
+    private eventRepo: Repository<EventEntity<Event>>,
   ) {}
 
-  async saveEvent({
+  async saveEvent<T extends Event>({
     type,
     typeVersion,
     eventData,
-  }: EventRequest<Event>) {
+  }: EventRequest<T>): Promise<T['eventData']> {
     const event = new EventEntity()
     event.streamId = 1 // get valid stream id and version
     event.streamVersion = 1
@@ -24,7 +23,7 @@ class EventService {
     event.typeVersion = typeVersion
     event.eventData = eventData
     const result = await this.eventRepo.save(event)
-    return result
+    return result.eventData
   }
 
   getEvents(streamId: number) {

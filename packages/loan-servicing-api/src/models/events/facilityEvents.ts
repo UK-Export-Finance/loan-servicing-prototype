@@ -3,6 +3,8 @@ import Facility from 'models/interfaces/facility'
 
 export type CreateNewFacilityEvent = EventBase<'CreateNewFacility', 1, Facility>
 
-type FacilityEvent = CreateNewFacilityEvent
+export type DeleteFacilityEvent = EventBase<'DeleteFacility', 1, { id: number }>
+
+type FacilityEvent = CreateNewFacilityEvent | DeleteFacilityEvent
 
 export default FacilityEvent
