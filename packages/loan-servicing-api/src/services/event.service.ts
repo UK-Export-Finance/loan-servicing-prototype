@@ -15,8 +15,15 @@ class EventService {
     newEvent: NewEvent<T>,
   ): Promise<EventEntity<T>> {
     const repo = this.dataSource.getRepository(EventEntity<T>)
+
+    const { max } = await repo
+      .createQueryBuilder('e')
+      .where({ streamId: newEvent.streamId })
+      .select('MAX(e.streamVersion)', 'max')
+      .getRawOne()
+
     const event = await repo.create(newEvent)
-    event.streamVersion = 1
+    event.streamVersion = max + 1
     const result = await repo.save(event)
     return result
   }

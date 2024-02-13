@@ -1,10 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { CreateNewFacilityEvent } from 'models/events/facilityEvents'
+import {
+  CreateNewFacilityEvent,
+  UpdateFacilityEvent,
+} from 'models/events/facilityEvents'
 import { NewEvent } from 'models/events'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
-import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
+import { Facility, FacilityUpdateRequestDto } from 'loan-servicing-common'
 import EventService from './event.service'
 
 @Injectable()
@@ -15,7 +18,9 @@ class FacilityService {
     private facilityRepo: Repository<FacilityEntity>,
   ) {}
 
-  async createNewFacility(facility: NewFacilityRequestDto): Promise<Facility> {
+  async createNewFacility(
+    facility: FacilityUpdateRequestDto,
+  ): Promise<Facility> {
     const createFacilityEvent: NewEvent<CreateNewFacilityEvent> = {
       streamId: crypto.randomUUID(),
       type: 'CreateNewFacility',
@@ -31,6 +36,30 @@ class FacilityService {
     await this.facilityRepo.save(updatedProjection)
 
     return updatedProjection
+  }
+
+  async updateFacility(
+    streamId: string,
+    update: Partial<FacilityUpdateRequestDto>,
+  ): Promise<Facility> {
+    const updateEvent: NewEvent<UpdateFacilityEvent> = {
+      streamId,
+      type: 'UpdateFacility',
+      typeVersion: 1,
+      eventData: update,
+    }
+    await this.eventService.saveEvent(updateEvent)
+
+    const existingFacility = await this.facilityRepo.findOne({
+      where: { streamId },
+    })
+
+    if (existingFacility === null) {
+      throw new Error('facility not found')
+    }
+
+    const updatedFacility = await this.facilityRepo.save({ ...existingFacility, ...update })
+    return updatedFacility
   }
 
   async getFacilityEvents(streamId: string): Promise<CreateNewFacilityEvent[]> {
