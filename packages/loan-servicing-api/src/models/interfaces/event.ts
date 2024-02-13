@@ -1,5 +1,5 @@
 type EventBase<Type extends string, Version extends number, Data extends object> = {
-  streamId: number
+  streamId: string
   streamVersion: number
   type: Type
   typeVersion: Version

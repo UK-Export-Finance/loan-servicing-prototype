@@ -1,6 +1,8 @@
 {
   "ts-node": {
-    "transpileOnly": true /* We disable type checking for faster reload in development */
+    "compilerOptions": {
+      "strict": false
+    }
   },
   "compilerOptions": {
     "baseUrl": "src",

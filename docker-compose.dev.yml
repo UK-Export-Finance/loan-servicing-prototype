@@ -11,11 +11,11 @@ services:
       - '1433:1433'
     healthcheck: # Ensures the DB is active before starting the API
       test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'AbC!2345' -Q 'select 1;'
-      start_period: '30s'
+      start_period: '60s'
       start_interval: '1s'
     attach: false
-    volumes:
-      - ./libs/sql-db/data:/var/opt/mssql/data
+    # volumes:
+    #   - ./libs/sql-db/data:/var/opt/mssql/data
   loan-servicing-ui:
     depends_on:
       - loan-servicing-api

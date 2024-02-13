@@ -4,6 +4,7 @@
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       { "allowSameFolder": true, "rootDir": "packages/loan-servicing-api/src" }
-    ]
+    ],
+    "@typescript-eslint/explicit-function-return-type": "error"
   }
 }

@@ -9,22 +9,22 @@
     "project": [
       "./packages/loan-servicing-ui/tsconfig.json",
       "./packages/loan-servicing-functions/tsconfig.json",
-      "./packages/loan-servicing-api/tsconfig.json"
-    ]
+      "./packages/loan-servicing-api/tsconfig.json",
+    ],
   },
   "root": true,
   "rules": {
     "class-methods-use-this": "off",
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
-      { "allowSameFolder": true }
+      { "allowSameFolder": true },
     ]
   },
   "settings": {
     "import/resolver": {
       "node": {
-        "paths": ["src"]
-      }
-    }
-  }
+        "paths": ["src"],
+      },
+    },
+  },
 }

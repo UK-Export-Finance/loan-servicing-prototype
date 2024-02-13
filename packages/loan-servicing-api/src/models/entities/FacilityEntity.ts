@@ -1,10 +1,10 @@
-import Facility from 'models/interfaces/facility'
+import { Facility } from 'loan-servicing-common'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
 class FacilityEntity implements Facility {
   @PrimaryColumn()
-  streamId!: number
+  streamId!: string
 
   @Column()
   obligor!: string

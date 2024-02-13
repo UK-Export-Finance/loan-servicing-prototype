@@ -1,33 +1,27 @@
 import { Injectable } from '@nestjs/common'
-import { Repository } from 'typeorm'
-import { InjectRepository } from '@nestjs/typeorm'
+import { InjectDataSource,  } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
 import Event, { NewEvent } from 'models/events'
+import { DataSource } from 'typeorm'
 
 @Injectable()
 class EventService {
   constructor(
-    @InjectRepository(EventEntity<Event>)
-    private eventRepo: Repository<EventEntity<Event>>,
+    @InjectDataSource()
+    private dataSource: DataSource,
   ) {}
 
-  async saveEvent<T extends Event>({
-    type,
-    typeVersion,
-    eventData,
-  }: NewEvent<T>): Promise<EventEntity<T>> {
-    const event = new EventEntity<T>()
-    event.streamId = 1 // get valid stream id and version
+  async saveEvent<T extends Event>(newEvent: NewEvent<T>): Promise<EventEntity<T>> {
+    const repo = this.dataSource.getRepository(EventEntity<T>)
+    const event = await repo.create(newEvent)
     event.streamVersion = 1
-    event.type = type
-    event.typeVersion = typeVersion
-    event.eventData = eventData
-    const result = await this.eventRepo.save(event)
+    const result = await repo.save(event)
     return result 
   }
 
-  getEvents(streamId: number) {
-    return this.eventRepo.find({ where: { streamId } })
+  getEvents(streamId: string): Promise<EventEntity<Event>[]> {
+    const repo = this.dataSource.getRepository(EventEntity<Event>)
+    return repo.find({ where: { streamId } })
   }
 }
 

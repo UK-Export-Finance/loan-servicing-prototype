@@ -1,13 +1,14 @@
 import Event from 'models/events'
+import { UntypedEvent } from 'models/interfaces/event'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
-class EventEntity<T extends Event> {
+class EventEntity<T extends Event> implements UntypedEvent {
   @PrimaryGeneratedColumn()
   id!: number
 
   @Column()
-  streamId!: number
+  streamId!: string
 
   @Column()
   streamVersion!: number
