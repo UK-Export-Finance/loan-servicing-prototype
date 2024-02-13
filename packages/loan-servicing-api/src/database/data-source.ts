@@ -1,6 +1,5 @@
 import 'reflect-metadata'
 import { TypeOrmModuleOptions } from '@nestjs/typeorm'
-import User from 'models/entities/User'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 
@@ -12,7 +11,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   password: 'AbC!2345',
   database: 'LoanServicing',
   synchronize: true,
-  entities: [User, EventEntity, FacilityEntity],
+  entities: [EventEntity, FacilityEntity],
   options: {
     encrypt: true,
     trustServerCertificate: true,
