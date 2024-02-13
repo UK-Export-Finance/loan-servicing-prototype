@@ -1,2 +1,2 @@
-export * from './dtos/user'
 export * from './dtos/facility'
+export * from './interfaces/facility'

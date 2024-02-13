@@ -1,5 +1,5 @@
 import Event from 'models/events'
-import { UntypedEvent } from 'models/interfaces/event'
+import { UntypedEvent } from 'models/events/eventBase'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()

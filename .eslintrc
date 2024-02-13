@@ -10,6 +10,7 @@
       "./packages/loan-servicing-ui/tsconfig.json",
       "./packages/loan-servicing-functions/tsconfig.json",
       "./packages/loan-servicing-api/tsconfig.json",
+      "./libs/loan-servicing-common/tsconfig.json",
     ],
   },
   "root": true,

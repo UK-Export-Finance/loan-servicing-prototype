@@ -1,5 +1,5 @@
 import { NewFacilityRequestDto } from 'loan-servicing-common'
-import EventBase from 'models/interfaces/event'
+import EventBase from 'models/events/eventBase'
 
 export type CreateNewFacilityEvent = EventBase<
   'CreateNewFacility',

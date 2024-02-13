@@ -14,8 +14,6 @@ services:
       start_period: '60s'
       start_interval: '1s'
     attach: false
-    # volumes:
-    #   - ./libs/sql-db/data:/var/opt/mssql/data
   loan-servicing-ui:
     depends_on:
       - loan-servicing-api
