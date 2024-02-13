@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { FacilityCreatedEvent } from 'models/events/BaseEvent'
+import { CreateNewFacilityEvent } from 'models/events/facilityEvents'
+import { EventRequest } from 'models/events'
 import EventService from './event.service'
 
 @Injectable()
@@ -7,10 +8,11 @@ class FacilityService {
   constructor(@Inject(EventService) private eventService: EventService) {}
 
   async createNewFacility() {
-    const createFacilityEvent: FacilityCreatedEvent = {
-      type: 'FacilityCreated',
+    const createFacilityEvent: EventRequest<CreateNewFacilityEvent> = {
+      streamId: 1,
+      type: 'CreateNewFacility',
       typeVersion: 1,
-      obligor: 'test',
+      eventData: { obligor: 'test' },
     }
     const result = await this.eventService.saveEvent(createFacilityEvent)
     return result.eventData

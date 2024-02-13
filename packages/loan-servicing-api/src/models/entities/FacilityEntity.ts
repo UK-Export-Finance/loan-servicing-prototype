@@ -1,7 +1,8 @@
+import Facility from 'models/interfaces/facility'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
-class Facility {
+class FacilityEntity implements Facility {
   @PrimaryGeneratedColumn()
   id!: number
 
@@ -42,4 +43,4 @@ class Facility {
   // availableAmount!: number
 }
 
-export default Facility
+export default FacilityEntity

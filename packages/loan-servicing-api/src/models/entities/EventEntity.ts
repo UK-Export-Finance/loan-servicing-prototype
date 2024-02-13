@@ -1,8 +1,8 @@
-import BaseEvent from 'models/events/BaseEvent'
+import { UntypedEvent } from 'models/interfaces/event'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
-class Event<T extends BaseEvent> {
+class EventEntity<T extends object> implements UntypedEvent {
   @PrimaryGeneratedColumn()
   id!: number
 
@@ -12,14 +12,14 @@ class Event<T extends BaseEvent> {
   @Column()
   streamVersion!: number
 
-  // @Column()
-  // type!: string
+  @Column()
+  type!: string
 
-  // @Column()
-  // typeVersion!: number
+  @Column()
+  typeVersion!: number
 
   @Column({ type: 'simple-json' })
   eventData!: T
 }
 
-export default Event
+export default EventEntity
