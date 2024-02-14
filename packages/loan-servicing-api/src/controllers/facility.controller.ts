@@ -7,10 +7,14 @@ class FacilityController {
   constructor(private facilityService: FacilityService) {}
 
   @Get()
-  async getFacility(
-    @Query('id') streamId: string,
-  ): Promise<Facility | null> {
+  async getFacility(@Query('id') streamId: string): Promise<Facility | null> {
     const allEvents = await this.facilityService.getFacility(streamId)
+    return allEvents
+  }
+
+  @Get('all')
+  async getAllFacility(): Promise<Facility[] | null> {
+    const allEvents = await this.facilityService.getAllFacilities()
     return allEvents
   }
 

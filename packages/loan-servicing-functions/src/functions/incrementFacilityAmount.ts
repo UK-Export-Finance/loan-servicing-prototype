@@ -1,19 +1,13 @@
-import {
-  app,
-  HttpRequest,
-  HttpResponseInit,
-  InvocationContext,
-} from '@azure/functions'
+import { app, HttpResponseInit, InvocationContext } from '@azure/functions'
 import axios from 'axios'
 import { Facility } from 'loan-servicing-common'
 
 async function incrementFacilityAmount(
-  request: HttpRequest,
+  request: string,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
-  context.log(`Http function processed request for url "${request.url}"`)
-  const url =
-    'http://localhost:3001/facility?id=d842526c-5af9-44bb-98af-fd43bee12446'
+  context.log(`Updating facility with ID "${request}"`)
+  const url = `http://localhost:3001/facility?id=${request}`
 
   const { data: currentFacility } = await axios.get<Facility>(url)
 
@@ -24,9 +18,9 @@ async function incrementFacilityAmount(
   return { body: JSON.stringify(newFacility) }
 }
 
-app.http('incrementFacilityAmount', {
-  methods: ['POST'],
-  authLevel: 'anonymous',
+app.storageQueue('incrementFacilityAmount', {
+  queueName: 'facilityupdate',
+  connection: 'StorageConnectionString',
   handler: incrementFacilityAmount,
 })
 

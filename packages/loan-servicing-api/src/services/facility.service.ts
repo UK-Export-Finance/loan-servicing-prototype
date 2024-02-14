@@ -74,6 +74,10 @@ class FacilityService {
   async getFacility(streamId: string): Promise<Facility | null> {
     return this.facilityRepo.findOne({ where: { streamId } })
   }
+
+  async getAllFacilities(): Promise<Facility[] | null> {
+    return this.facilityRepo.find()
+  }
 }
 
 export default FacilityService
