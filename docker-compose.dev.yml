@@ -75,5 +75,6 @@ services:
     depends_on:
         - dev-azurite
     volumes:
-      - ./packages/loan-servicing-functions:/home/site/wwwroot/packages/loan-servicing-functions:ro
+      - ./packages/loan-servicing-functions:/home/site/wwwroot/packages/loan-servicing-functions
+      - ./libs:/home/site/wwwroot/libs:ro
 

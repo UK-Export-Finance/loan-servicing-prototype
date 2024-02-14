@@ -8,13 +8,17 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot/packages/loan-servicing-functions 
     AzureWebJobsStorage=$AzureWebJobsStorage \
     StorageConnectionString=$StorageConnectionString \
     AzureWebJobsStorageConnectionString=$AzureWebJobsStorageConnectionString
-    
+
 WORKDIR /home/site/wwwroot
 
 COPY package*.json .
 
-COPY libs libs
+COPY libs/loan-servicing-common/package*.json libs/loan-servicing-common/
 
-COPY packages/loan-servicing-functions packages/loan-servicing-functions
+COPY packages/loan-servicing-functions/package*.json packages/loan-servicing-functions/
 
 RUN cd packages/loan-servicing-functions && npm install
+
+WORKDIR /home/site/wwwroot/packages/loan-servicing-functions
+
+ENTRYPOINT [ "npm", "run", "watch:docker" ]

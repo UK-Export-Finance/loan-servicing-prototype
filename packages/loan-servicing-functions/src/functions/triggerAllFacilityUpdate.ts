@@ -26,7 +26,7 @@ async function triggerAllFacilityUpdate(
 
   context.extraOutputs.set(queueOutput, messages)
 
-  return { body: 'Successfully queued all updates!!' }
+  return { body: 'Successfully queued all updates' }
 }
 
 app.http('triggerAllFacilityUpdate', {
