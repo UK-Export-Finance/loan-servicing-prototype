@@ -6,6 +6,7 @@
     "./index.ts"
   ],
   "scripts": {
+    "build": "npx tsc",
     "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check"
   }

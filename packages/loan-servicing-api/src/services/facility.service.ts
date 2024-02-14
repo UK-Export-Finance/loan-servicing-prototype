@@ -3,11 +3,12 @@ import {
   CreateNewFacilityEvent,
   UpdateFacilityEvent,
 } from 'models/events/facilityEvents'
-import { NewEvent } from 'models/events'
+import Event, { NewEvent } from 'models/events'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
 import { Facility, FacilityUpdateRequestDto } from 'loan-servicing-common'
+import EventEntity from 'models/entities/EventEntity'
 import EventService from './event.service'
 
 @Injectable()
@@ -65,11 +66,9 @@ class FacilityService {
     return updatedFacility
   }
 
-  async getFacilityEvents(streamId: string): Promise<CreateNewFacilityEvent[]> {
+  async getFacilityEvents(streamId: string): Promise<EventEntity<Event>[]> {
     const events = await this.eventService.getEvents(streamId)
-    return events.filter(
-      (e) => e.type === 'CreateNewFacility',
-    ) as CreateNewFacilityEvent[]
+    return events
   }
 }
 

@@ -10,6 +10,6 @@ type EventBase<
   eventData: Data
 }
 
-export type UntypedEvent = EventBase<string, number, object>
+export type UntypedEvent = EventBase<string, number, object | null>
 
 export default EventBase
