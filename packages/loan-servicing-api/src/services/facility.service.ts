@@ -70,6 +70,10 @@ class FacilityService {
     const events = await this.eventService.getEvents(streamId)
     return events
   }
+
+  async getFacility(streamId: string): Promise<Facility | null> {
+    return this.facilityRepo.findOne({ where: { streamId } })
+  }
 }
 
 export default FacilityService

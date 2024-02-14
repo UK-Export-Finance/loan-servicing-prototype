@@ -18,8 +18,8 @@ class FacilityEntity implements Facility {
   // @Column()
   // currency!: string
 
-  // @Column()
-  // facilityAmount!: number
+  @Column({ default: 1 })
+  facilityAmount!: number
 
   // @Column()
   // commitmentDate!: Date

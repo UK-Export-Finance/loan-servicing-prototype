@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
-import { UserResponseDto } from 'loan-servicing-common'
 
 @Injectable()
 class UserService {
   async getUser() {
-    const data = await tryGetApiData<UserResponseDto>('')
+    const data = await tryGetApiData('')
     return JSON.stringify(data) || 'Request failed :('
   }
 }

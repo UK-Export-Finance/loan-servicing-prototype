@@ -3,11 +3,12 @@
   "workspaces": [
     "packages/loan-servicing-ui",
     "packages/loan-servicing-api",
+    "packages/loan-servicing-functions",
     "libs/loan-servicing-common"
   ],
   "scripts": {
     "dev": "docker-compose -f docker-compose.dev.yml up",
-    "dev:rebuild": "docker-compose -f docker-compose.dev.yml up --build",
+    "dev:build": "docker-compose -f docker-compose.dev.yml up --build",
     "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check"
   },

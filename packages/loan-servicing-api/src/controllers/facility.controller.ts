@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
 import { Facility, FacilityUpdateRequestDto } from 'loan-servicing-common'
-import Event from 'models/events'
 import FacilityService from 'services/facility.service'
 
 @Controller('/facility')
@@ -10,9 +9,9 @@ class FacilityController {
   @Get()
   async getFacility(
     @Query('id') streamId: string,
-  ): Promise<Event[]> {
-    const allEvents = await this.facilityService.getFacilityEvents(streamId)
-    return allEvents as Event[]
+  ): Promise<Facility | null> {
+    const allEvents = await this.facilityService.getFacility(streamId)
+    return allEvents
   }
 
   @Post()
