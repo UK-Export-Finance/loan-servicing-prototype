@@ -59,20 +59,21 @@ services:
         - 10001:10001
         - 10002:10002
 
-  # loan-servicing-functions:
-  #   build:
-  #       context: .
-  #       dockerfile: ./packages/loan-servicing-functions/Dockerfile
-  #   ports:
-  #       - 3002:80
-  #   # environment:
-  #   #     # Copy .env variables through to container
-  #   #     - AzureWebJobsStorage
-  #   #     - BlobContainerName
-  #   #     - BlobOutputContainerName
-  #   #     - QueueName
-  #   depends_on:
-  #       - dev-azurite
-  #   volumes:
-  #     - ./packages/loan-servicing-functions:/opt/app/packages/loan-servicing-functions:ro
+  loan-servicing-functions:
+    build:
+        context: .
+        dockerfile: ./packages/loan-servicing-functions/Dockerfile
+    ports:
+        - 3002:80
+    environment:
+        # Copy .env variables through to container
+        - AzureWebJobsStorage="UseDevelopmentStorage=true"
+        # - QueueName
+        - StorageConnectionString=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://dev-azurite:10000/devstoreaccount1;QueueEndpoint=http://dev-azurite:10001/devstoreaccount1;TableEndpoint=http://dev-azurite:10002/devstoreaccount1;
+        - AzureWebJobsStorageConnectionString=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://dev-azurite:10000/devstoreaccount1;QueueEndpoint=http://dev-azurite:10001/devstoreaccount1;TableEndpoint=http://dev-azurite:10002/devstoreaccount1;
+  
+    depends_on:
+        - dev-azurite
+    volumes:
+      - ./packages/loan-servicing-functions:/home/site/wwwroot/packages/loan-servicing-functions:ro
 

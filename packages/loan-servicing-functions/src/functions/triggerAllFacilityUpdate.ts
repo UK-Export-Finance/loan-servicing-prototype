@@ -18,7 +18,7 @@ async function triggerAllFacilityUpdate(
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
   context.log(`Http function processed request for url "${request.url}"`)
-  const url = 'http://localhost:3001/facility/all'
+  const url = 'http://loan-servicing-api:3001/facility/all'
 
   const { data: allFacilities } = await axios.get<Facility[]>(url)
 
@@ -26,7 +26,7 @@ async function triggerAllFacilityUpdate(
 
   context.extraOutputs.set(queueOutput, messages)
 
-  return { body: 'Successfully queued all updates' }
+  return { body: 'Successfully queued all updates!!' }
 }
 
 app.http('triggerAllFacilityUpdate', {

@@ -1,0 +1,20 @@
+# To enable ssh & remote debugging on app service change the base image to the one below
+# FROM mcr.microsoft.com/azure-functions/node:4-node18-appservice
+FROM mcr.microsoft.com/azure-functions/node:4-node18
+
+ENV AzureWebJobsScriptRoot=/home/site/wwwroot/packages/loan-servicing-functions \
+    FUNCTIONS_WORKER_RUNTIME=node \
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
+    AzureWebJobsStorage=$AzureWebJobsStorage \
+    StorageConnectionString=$StorageConnectionString \
+    AzureWebJobsStorageConnectionString=$AzureWebJobsStorageConnectionString
+    
+WORKDIR /home/site/wwwroot
+
+COPY package*.json .
+
+COPY libs libs
+
+COPY packages/loan-servicing-functions packages/loan-servicing-functions
+
+RUN cd packages/loan-servicing-functions && npm install

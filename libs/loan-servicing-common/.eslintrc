@@ -2,8 +2,7 @@
 {
   "rules": {
     "no-relative-import-paths/no-relative-import-paths": [
-      "warn",
-      { "allowSameFolder": true, "rootDir": "libs/loan-servicing-common" }
+      "off"
     ]
   }
 }

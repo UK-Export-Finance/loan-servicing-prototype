@@ -7,7 +7,7 @@ async function incrementFacilityAmount(
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
   context.log(`Updating facility with ID "${request}"`)
-  const url = `http://localhost:3001/facility?id=${request}`
+  const url = `http://loan-servicing-api:3001/facility?id=${request}`
 
   const { data: currentFacility } = await axios.get<Facility>(url)
 
