@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import {
   CreateNewFacilityEvent,
   UpdateFacilityEvent,
@@ -49,16 +49,16 @@ class FacilityService {
       typeVersion: 1,
       eventData: update,
     }
-    await this.eventService.saveEvent(updateEvent)
-
     const existingFacility = await this.facilityRepo.findOne({
       where: { streamId },
     })
-
+    
     if (existingFacility === null) {
-      throw new Error('facility not found')
+      throw new NotFoundException()
     }
-
+    
+    await this.eventService.saveEvent(updateEvent)
+    
     const updatedFacility = await this.facilityRepo.save({
       ...existingFacility,
       ...update,

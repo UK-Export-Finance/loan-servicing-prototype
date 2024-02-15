@@ -1,40 +1,54 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
-import { Facility } from 'loan-servicing-common'
+import { Body, Controller, Get, NotFoundException, Post, Put, Query } from '@nestjs/common'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import {
+  FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
   UpdateFacilityRequestDtoClass,
-} from 'models/requests/facility'
+} from 'models/dtos/facility'
 import FacilityService from 'services/facility.service'
 
+@ApiTags('Facility')
 @Controller('/facility')
 class FacilityController {
   constructor(private facilityService: FacilityService) {}
 
   @Get()
-  async getFacility(@Query('id') streamId: string): Promise<Facility | null> {
-    const allEvents = await this.facilityService.getFacility(streamId)
-    return allEvents
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
+  async getFacility(
+    @Query('id') streamId: string,
+  ): Promise<FacilityResponseDtoClass> {
+    const facility = await this.facilityService.getFacility(streamId)
+    if(facility === null){
+      throw new NotFoundException()
+    }
+    return facility
   }
 
   @Get('all')
-  async getAllFacility(): Promise<Facility[] | null> {
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
+  async getAllFacility(): Promise<FacilityResponseDtoClass[] | null> {
     const allEvents = await this.facilityService.getAllFacilities()
+    if(allEvents === null){
+      throw new NotFoundException()
+    }
     return allEvents
   }
 
   @Post()
+  @ApiCreatedResponse({ type: FacilityResponseDtoClass })
   async newFacility(
     @Body() body: NewFacilityRequestDtoClass,
-  ): Promise<Facility> {
+  ): Promise<FacilityResponseDtoClass> {
     const newFacility = await this.facilityService.createNewFacility(body)
     return newFacility
   }
 
   @Put()
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
   async updateFacility(
     @Query('id') id: string,
     @Body() body: UpdateFacilityRequestDtoClass,
-  ): Promise<Facility> {
+  ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.updateFacility(id, body)
     return updatedFacility
   }
