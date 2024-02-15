@@ -7,7 +7,7 @@ import Event, { NewEvent } from 'models/events'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
-import { Facility, FacilityUpdateRequestDto } from 'loan-servicing-common'
+import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import EventService from './event.service'
 
@@ -20,7 +20,7 @@ class FacilityService {
   ) {}
 
   async createNewFacility(
-    facility: FacilityUpdateRequestDto,
+    facility: NewFacilityRequestDto,
   ): Promise<Facility> {
     const createFacilityEvent: NewEvent<CreateNewFacilityEvent> = {
       streamId: crypto.randomUUID(),
@@ -41,7 +41,7 @@ class FacilityService {
 
   async updateFacility(
     streamId: string,
-    update: Partial<FacilityUpdateRequestDto>,
+    update: Partial<NewFacilityRequestDto>,
   ): Promise<Facility> {
     const updateEvent: NewEvent<UpdateFacilityEvent> = {
       streamId,

@@ -1,5 +1,9 @@
 import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
-import { Facility, FacilityUpdateRequestDto } from 'loan-servicing-common'
+import { Facility } from 'loan-servicing-common'
+import {
+  NewFacilityRequestDtoClass,
+  UpdateFacilityRequestDtoClass,
+} from 'models/requests/facility'
 import FacilityService from 'services/facility.service'
 
 @Controller('/facility')
@@ -19,7 +23,9 @@ class FacilityController {
   }
 
   @Post()
-  async newFacility(@Body() body: FacilityUpdateRequestDto): Promise<Facility> {
+  async newFacility(
+    @Body() body: NewFacilityRequestDtoClass,
+  ): Promise<Facility> {
     const newFacility = await this.facilityService.createNewFacility(body)
     return newFacility
   }
@@ -27,7 +33,7 @@ class FacilityController {
   @Put()
   async updateFacility(
     @Query('id') id: string,
-    @Body() body: Partial<FacilityUpdateRequestDto>,
+    @Body() body: UpdateFacilityRequestDtoClass,
   ): Promise<Facility> {
     const updatedFacility = await this.facilityService.updateFacility(id, body)
     return updatedFacility
