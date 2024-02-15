@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
 import Event, { NewEvent } from 'models/events'
 import { DataSource } from 'typeorm'
+import { Transactional } from 'typeorm-transactional'
 
 @Injectable()
 class EventService {
@@ -11,6 +12,26 @@ class EventService {
     private dataSource: DataSource,
   ) {}
 
+  @Transactional()
+  async initialiseEvent<T extends Event>(
+    newEvent: NewEvent<T>,
+  ): Promise<EventEntity<T>> {
+    const repo = this.dataSource.getRepository(EventEntity<T>)
+
+    const { max } = await repo
+      .createQueryBuilder('e')
+      .where({ streamId: newEvent.streamId })
+      // Prevents another event being written to this stream until transaction is complete
+      .setLock('pessimistic_write')
+      .select('MAX(e.streamVersion)', 'max')
+      .getRawOne()
+
+    const event = await repo.create(newEvent)
+    event.streamVersion = max + 1
+    return event
+  }
+
+  @Transactional()
   async saveEvent<T extends Event>(
     newEvent: NewEvent<T>,
   ): Promise<EventEntity<T>> {
@@ -28,9 +49,14 @@ class EventService {
     return result
   }
 
-  getEvents(streamId: string): Promise<EventEntity<Event>[]> {
+  @Transactional()
+  getEventsInOrder(streamId: string): Promise<EventEntity<Event>[]> {
     const repo = this.dataSource.getRepository(EventEntity<Event>)
-    return repo.find({ where: { streamId } })
+    return repo
+      .createQueryBuilder('e')
+      .where({ streamId })
+      .orderBy({ 'e.streamVersion': 'ASC' })
+      .getMany()
   }
 }
 

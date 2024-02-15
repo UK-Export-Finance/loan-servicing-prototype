@@ -49,7 +49,7 @@ class FacilityController {
     @Query('id') id: string,
     @Body() body: UpdateFacilityRequestDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.updateFacility(id, body)
+    const updatedFacility = await this.facilityService.incrementFacilityValue(id)
     return updatedFacility
   }
 }

@@ -15,6 +15,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   options: {
     encrypt: true,
     trustServerCertificate: true,
+    isolation: 'SERIALIZABLE'
   },
 }
 
