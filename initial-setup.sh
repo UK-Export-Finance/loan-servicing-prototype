@@ -1,0 +1,1 @@
+sh ./packages/loan-servicing-functions/seed-azurite.sh
