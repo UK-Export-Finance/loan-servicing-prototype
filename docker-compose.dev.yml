@@ -68,9 +68,8 @@ services:
     environment:
         # Copy .env variables through to container
         - AzureWebJobsStorage="UseDevelopmentStorage=true"
-        # - QueueName
-        - StorageConnectionString=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://dev-azurite:10000/devstoreaccount1;QueueEndpoint=http://dev-azurite:10001/devstoreaccount1;TableEndpoint=http://dev-azurite:10002/devstoreaccount1;
-        - AzureWebJobsStorageConnectionString=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://dev-azurite:10000/devstoreaccount1;QueueEndpoint=http://dev-azurite:10001/devstoreaccount1;TableEndpoint=http://dev-azurite:10002/devstoreaccount1;
+        - StorageConnectionString
+        - AzureWebJobsStorageConnectionString
   
     depends_on:
         - dev-azurite
