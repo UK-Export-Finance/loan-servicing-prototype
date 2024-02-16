@@ -6,6 +6,9 @@
             {% block pageTitle %}{% endblock %}
             - UK Export Finance</title>
         {% block head %}{% endblock %}
+        {% block css %}
+            <link rel="stylesheet" href="/assets/css/govuk-frontend.min.css">
+        {% endblock %}
     </head>
     <body class="govuk-template__body ">
         {% if env === "development" %}

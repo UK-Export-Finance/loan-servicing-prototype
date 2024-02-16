@@ -11,13 +11,16 @@
     "@nestjs/common": "^10.3.2",
     "@nestjs/core": "^10.3.2",
     "@nestjs/platform-express": "^10.3.2",
+    "@nestjs/serve-static": "^4.0.1",
     "axios": "^1.6.7",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
+    "govuk-frontend": "^5.1.0",
     "loan-servicing-common": "*",
     "nunjucks": "^3.2.4",
     "reflect-metadata": "^0.2.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "sass": "^1.71.0"
   },
   "devDependencies": {
     "@types/connect-livereload": "^0.6.3",
