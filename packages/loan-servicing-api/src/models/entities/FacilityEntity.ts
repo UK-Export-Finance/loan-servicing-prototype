@@ -7,6 +7,9 @@ class FacilityEntity implements Facility {
   streamId!: string
 
   @Column()
+  streamVersion!: number;
+
+  @Column()
   obligor!: string
 
   // @Column()

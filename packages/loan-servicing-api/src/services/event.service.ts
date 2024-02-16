@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
 import Event, { NewEvent } from 'models/events'
 import { DataSource } from 'typeorm'
-import { Transactional } from 'typeorm-transactional'
+import { Propagation, Transactional } from 'typeorm-transactional'
 
 @Injectable()
 class EventService {
@@ -18,7 +18,7 @@ class EventService {
     streamId: string,
     // A little awkward but we need access to this at compile time
     type: T['type'],
-    typeVersion: T['typeVersion']
+    typeVersion: T['typeVersion'],
   ): Promise<EventEntity<T>> {
     const repo = this.dataSource.getRepository(EventEntity<T>)
 
@@ -30,7 +30,12 @@ class EventService {
       .select('MAX(e.streamVersion)', 'max')
       .getRawOne()
 
-    const event = await repo.create({ streamId, type, typeVersion, streamVersion: max + 1 })
+    const event = await repo.create({
+      streamId,
+      type,
+      typeVersion,
+      streamVersion: max + 1,
+    })
     event.streamVersion = max + 1
     return event
   }
@@ -48,12 +53,12 @@ class EventService {
       .getRawOne()
 
     const event = await repo.create(newEvent)
-    event.streamVersion = max + 1
+    event.streamVersion = (max || 0) + 1
     const result = await repo.save(event)
     return result
   }
 
-  @Transactional()
+  @Transactional({ propagation: Propagation.SUPPORTS })
   getEventsInOrder(streamId: string): Promise<EventEntity<Event>[]> {
     const repo = this.dataSource.getRepository(EventEntity<Event>)
     return repo

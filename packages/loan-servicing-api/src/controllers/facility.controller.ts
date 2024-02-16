@@ -47,7 +47,17 @@ class FacilityController {
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async updateFacility(
     @Query('id') id: string,
+    @Query('version') version: string,
     @Body() body: UpdateFacilityRequestDtoClass,
+  ): Promise<FacilityResponseDtoClass> {
+    const updatedFacility = await this.facilityService.updateFacility(id, Number(version), body)
+    return updatedFacility
+  }
+
+  @Post('incrementFacilityAmount')
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
+  async incrementFacilityValue(
+    @Query('id') id: string,
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.incrementFacilityValue(id)
     return updatedFacility

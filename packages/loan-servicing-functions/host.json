@@ -10,7 +10,7 @@
   },
   "extensions": {
     "queues": {
-      "batchSize": 32,
+      "batchSize": 5,
       "maxPollingInterval": "00:00:02"
     }
   },

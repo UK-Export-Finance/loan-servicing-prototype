@@ -1,15 +1,20 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import {
   CreateNewFacilityEvent,
   UpdateFacilityEvent,
 } from 'models/events/facilityEvents'
-import Event, { NewEvent } from 'models/events'
+import Event from 'models/events'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
 import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
-import { Transactional } from 'typeorm-transactional'
+import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from './event.service'
 
 @Injectable()
@@ -22,52 +27,53 @@ class FacilityService {
 
   @Transactional()
   async createNewFacility(facility: NewFacilityRequestDto): Promise<Facility> {
-    let updatedProjection
-    for (let i = 0; i < 10; i++) {
-      const createFacilityEvent: NewEvent<CreateNewFacilityEvent> = {
-        streamId: crypto.randomUUID(),
-        type: 'CreateNewFacility',
-        typeVersion: 1,
-        eventData: facility,
-      }
-      const savedEvent = await this.eventService.saveEvent(createFacilityEvent)
-
-      updatedProjection = await this.facilityRepo.create({
-        ...savedEvent.eventData,
-        streamId: savedEvent.streamId,
-      })
-      await this.facilityRepo.save(updatedProjection)
+    const createFacilityEvent: CreateNewFacilityEvent = {
+      streamId: crypto.randomUUID(),
+      streamVersion: 1,
+      type: 'CreateNewFacility',
+      typeVersion: 1,
+      eventData: facility,
     }
+    const savedEvent = await this.eventService.saveEvent(createFacilityEvent)
+    const projection = await this.facilityRepo.create({
+      ...savedEvent.eventData,
+      streamId: savedEvent.streamId,
+      streamVersion: 1,
+    })
+    await this.facilityRepo.save(projection)
 
-    return updatedProjection
+    return projection
   }
 
   @Transactional()
   async updateFacility(
     streamId: string,
+    streamVersion: number,
     update: Partial<NewFacilityRequestDto>,
   ): Promise<Facility> {
-    const updateEvent: NewEvent<UpdateFacilityEvent> =
+    const updateEvent =
       await this.eventService.initialiseEvent<UpdateFacilityEvent>(
         streamId,
         'UpdateFacility',
-        1
+        1,
       )
 
-    const existingFacilityEvents =
-      await this.eventService.getEventsInOrder(streamId)
+    updateEvent.eventData = update
 
-    if (existingFacilityEvents.length === 0) {
-      throw new NotFoundException()
+    if (updateEvent.streamVersion !== streamVersion + 1) {
+      throw new BadRequestException(
+        `Stream ${streamId} has an updated version, please refresh your data`,
+      )
     }
 
-    const existingFacility = this.getFacilityFromEvents(existingFacilityEvents)
+    const existingFacility = await this.getFacility(streamId)
 
     await this.eventService.saveEvent(updateEvent)
 
     const updatedFacility = await this.facilityRepo.save({
       ...existingFacility,
       ...update,
+      streamVersion: updateEvent.streamVersion,
     })
     return updatedFacility
   }
@@ -78,14 +84,10 @@ class FacilityService {
       await this.eventService.initialiseEvent<UpdateFacilityEvent>(
         streamId,
         'UpdateFacility',
-        1
+        1,
       )
 
     const currentFacility = await this.getFacility(streamId)
-
-    if (!currentFacility) {
-      throw new NotFoundException()
-    }
 
     updateEvent.eventData = {
       facilityAmount: currentFacility.facilityAmount + 1,
@@ -100,15 +102,19 @@ class FacilityService {
     return updatedFacility
   }
 
-  @Transactional()
+  @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacilityEvents(streamId: string): Promise<EventEntity<Event>[]> {
     const events = await this.eventService.getEventsInOrder(streamId)
     return events
   }
 
-  @Transactional()
-  async getFacility(streamId: string): Promise<Facility | null> {
+  @Transactional({ propagation: Propagation.SUPPORTS })
+  async getFacility(streamId: string): Promise<Facility> {
     const events = await this.getFacilityEvents(streamId)
+    if(events.length === 0){
+      throw new NotFoundException(`No facility found for id ${streamId}`)
+
+    }
     return this.getFacilityFromEvents(events)
   }
 
@@ -120,9 +126,14 @@ class FacilityService {
     const create = events[0] as CreateNewFacilityEvent
     const updates = events.slice(1) as UpdateFacilityEvent[]
     const result: Facility = updates.reduce(
-      (facility, update) => ({ ...facility, ...update.eventData }),
+      (facility, update) => ({
+        ...facility,
+        ...update.eventData,
+        streamVersion: update.streamVersion,
+      }),
       {
         streamId: create.streamId,
+        streamVersion: create.streamVersion,
         ...create.eventData,
       },
     )

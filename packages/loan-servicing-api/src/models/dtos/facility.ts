@@ -11,6 +11,9 @@ export class FacilityResponseDtoClass implements Facility {
   streamId!: string
 
   @ApiProperty()
+  streamVersion!: number
+
+  @ApiProperty()
   @IsNotEmpty()
   obligor!: string
 
@@ -20,7 +23,7 @@ export class FacilityResponseDtoClass implements Facility {
 }
 
 export class NewFacilityRequestDtoClass
-  extends OmitType(FacilityResponseDtoClass, ['streamId'])
+  extends OmitType(FacilityResponseDtoClass, ['streamId', 'streamVersion'])
   implements NewFacilityRequestDto {}
 
 export class UpdateFacilityRequestDtoClass

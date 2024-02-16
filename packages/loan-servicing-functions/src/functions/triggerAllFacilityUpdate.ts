@@ -24,7 +24,7 @@ async function triggerAllFacilityUpdate(
 
   const messages = allFacilities?.map((i) => i.streamId)
 
-  context.extraOutputs.set(queueOutput, messages.concat(messages).concat(messages).concat(messages).concat(messages).concat(messages).concat(messages).concat(messages))
+  context.extraOutputs.set(queueOutput, messages)
 
   return { body: 'Successfully queued all updates' }
 }
