@@ -2,13 +2,16 @@ import dotenv from 'dotenv'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
+import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional'
 import AppModule from './modules/app.module'
 
 dotenv.config()
 
 const port = process.env.PORT
 
+
 const bootstrap = async (): Promise<void> => {
+  initializeTransactionalContext({ storageDriver: StorageDriver.AUTO });
   const app = await NestFactory.create(AppModule)
 
   const config = new DocumentBuilder()
