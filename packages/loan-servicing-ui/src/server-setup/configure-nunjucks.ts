@@ -1,14 +1,21 @@
 import nunjucks from 'nunjucks'
 import { NestExpressApplication } from '@nestjs/platform-express'
+import { dirname } from 'path'
 
 const TEMPLATES_DIR = 'src/templates'
 
 const configureNunjucks = (app: NestExpressApplication) => {
   const express = app.getHttpAdapter().getInstance()
-  app.setBaseViewsDir(TEMPLATES_DIR)
+  const govUkFrontendDir = dirname(
+    require.resolve('govuk-frontend/package.json'),
+  )
+  
   app.setViewEngine('njk')
 
-  const nunjucksEnv = nunjucks.configure(TEMPLATES_DIR, {
+  const nunjucksEnv = nunjucks.configure([
+    `${govUkFrontendDir}/dist`,
+    TEMPLATES_DIR,
+  ], {
     express,
     autoescape: true,
     noCache: true,
