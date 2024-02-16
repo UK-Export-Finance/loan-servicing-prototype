@@ -14,8 +14,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   entities: [EventEntity, FacilityEntity],
   options: {
     encrypt: true,
-    trustServerCertificate: true,
-    isolation: 'SERIALIZABLE'
+    trustServerCertificate: true
   },
 }
 

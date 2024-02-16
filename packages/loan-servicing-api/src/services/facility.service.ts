@@ -47,12 +47,12 @@ class FacilityService {
     streamId: string,
     update: Partial<NewFacilityRequestDto>,
   ): Promise<Facility> {
-    const updateEvent: NewEvent<UpdateFacilityEvent> = await this.eventService.initialiseEvent<UpdateFacilityEvent>({
-      streamId,
-      type: 'UpdateFacility',
-      typeVersion: 1,
-      eventData: {}
-    })
+    const updateEvent: NewEvent<UpdateFacilityEvent> =
+      await this.eventService.initialiseEvent<UpdateFacilityEvent>(
+        streamId,
+        'UpdateFacility',
+        1
+      )
 
     const existingFacilityEvents =
       await this.eventService.getEventsInOrder(streamId)
@@ -74,24 +74,29 @@ class FacilityService {
 
   @Transactional()
   async incrementFacilityValue(streamId: string): Promise<Facility> {
-    const updateEvent: NewEvent<UpdateFacilityEvent> = await this.eventService.initialiseEvent<UpdateFacilityEvent>({
-      streamId,
-      type: 'UpdateFacility',
-      typeVersion: 1,
-      eventData: {}
-    })
+    const updateEvent =
+      await this.eventService.initialiseEvent<UpdateFacilityEvent>(
+        streamId,
+        'UpdateFacility',
+        1
+      )
+
     const currentFacility = await this.getFacility(streamId)
+
     if (!currentFacility) {
       throw new NotFoundException()
     }
+
     updateEvent.eventData = {
       facilityAmount: currentFacility.facilityAmount + 1,
     }
-    await this.eventService.saveEvent(updateEvent)
+
     const updatedFacility = await this.facilityRepo.save({
       ...currentFacility,
       ...updateEvent.eventData,
     })
+
+    await this.eventService.saveEvent(updateEvent)
     return updatedFacility
   }
 
@@ -114,10 +119,13 @@ class FacilityService {
   getFacilityFromEvents(events: EventEntity<Event>[]): Facility {
     const create = events[0] as CreateNewFacilityEvent
     const updates = events.slice(1) as UpdateFacilityEvent[]
-    const result: Facility =  updates.reduce((facility, update) => ({ ...facility, ...update.eventData }), {
-      streamId: create.streamId,
-      ...create.eventData,
-    })
+    const result: Facility = updates.reduce(
+      (facility, update) => ({ ...facility, ...update.eventData }),
+      {
+        streamId: create.streamId,
+        ...create.eventData,
+      },
+    )
     return result
   }
 }

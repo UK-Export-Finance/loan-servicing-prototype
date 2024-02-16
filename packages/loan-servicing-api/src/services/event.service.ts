@@ -13,20 +13,24 @@ class EventService {
   ) {}
 
   @Transactional()
-  async initialiseEvent<T extends Event>(
-    newEvent: NewEvent<T>,
+  // Default to never to enforce passing a type to T in all cases
+  async initialiseEvent<T extends Event = never>(
+    streamId: string,
+    // A little awkward but we need access to this at compile time
+    type: T['type'],
+    typeVersion: T['typeVersion']
   ): Promise<EventEntity<T>> {
     const repo = this.dataSource.getRepository(EventEntity<T>)
 
     const { max } = await repo
       .createQueryBuilder('e')
-      .where({ streamId: newEvent.streamId })
+      .where({ streamId })
       // Prevents another event being written to this stream until transaction is complete
       .setLock('pessimistic_write')
       .select('MAX(e.streamVersion)', 'max')
       .getRawOne()
 
-    const event = await repo.create(newEvent)
+    const event = await repo.create({ streamId, type, typeVersion, streamVersion: max + 1 })
     event.streamVersion = max + 1
     return event
   }
