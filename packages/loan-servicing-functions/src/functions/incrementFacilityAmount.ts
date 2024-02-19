@@ -1,5 +1,5 @@
 import { app, HttpResponseInit, InvocationContext } from '@azure/functions'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { Facility } from 'loan-servicing-common'
 
 async function incrementFacilityAmount(
@@ -12,11 +12,18 @@ async function incrementFacilityAmount(
   const { data: currentFacility } = await axios.get<Facility>(getUrl)
 
   const updateUrl = `http://loan-servicing-api:3001/facility?id=${request}&version=${currentFacility.streamVersion}`
-  const { data: newFacility } = await axios.put(updateUrl, {
-    facilityAmount: currentFacility.facilityAmount + 1,
-  })
+  try {
 
-  return { body: JSON.stringify(newFacility) }
+    const { data: newFacility } = await axios.put(updateUrl, {
+      facilityAmount: currentFacility.facilityAmount + 1,
+    })
+    
+    return { body: JSON.stringify(newFacility) }
+  } catch (e) {
+    const axErr = e as AxiosError
+    context.error(axErr.response.data)
+    throw axErr
+  }
 }
 
 app.storageQueue('incrementFacilityAmount', {

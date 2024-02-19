@@ -19,7 +19,8 @@
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       { "allowSameFolder": true }
-    ]
+    ],
+    "no-case-declarations": "off"
   },
   "settings": {
     "import/resolver": {

@@ -138,6 +138,7 @@ class FacilityService {
           const { eventData } = update as IncrementFacilityValueEvent
           return {
             ...facility,
+            streamVersion: update.streamVersion,
             [eventData.value]: facility[eventData.value] + eventData.increment,
           }
         }

@@ -19,7 +19,12 @@ const bootstrap = async (): Promise<void> => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
   configureNunjucks(app)
   app.useStaticAssets(join(__dirname, '..', 'public'), { prefix: '/assets/' })
-  app.useGlobalPipes(new ValidationPipe({ transform: true }))
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  )
   await app.listen(port ?? 3000)
 }
 
