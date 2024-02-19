@@ -1,11 +1,5 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Render,
-} from '@nestjs/common'
-import { Facility } from 'loan-servicing-common'
+import { Body, Controller, Get, Param, Post, Render } from '@nestjs/common'
+import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
 import FacilityService from 'services/user.service'
 
 @Controller('')
@@ -27,11 +21,10 @@ class FacilityController {
 
   @Post('facility')
   @Render('facility-created')
-  async createFacility(): Promise<{ facility: Facility | null }> {
-    const newFacility = await this.facilityService.createFacility({
-      obligor: 'asdf',
-      facilityAmount: 5,
-    })
+  async createFacility(
+    @Body() requestDto: NewFacilityRequestDto,
+  ): Promise<{ facility: Facility | null }> {
+    const newFacility = await this.facilityService.createFacility(requestDto)
     return { facility: newFacility }
   }
 }
