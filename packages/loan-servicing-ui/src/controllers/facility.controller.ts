@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
-import { Event, Facility, NewFacilityRequestDto } from 'loan-servicing-common'
+import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
 import FacilityService from 'services/facility.service'
 
 @Controller('')
@@ -37,15 +37,15 @@ class FacilityController {
   ): Promise<{
     facility: Facility
     facilityCreated?: boolean
-    events: Event[]
+    eventRows: object
   }> {
     const facility = await this.facilityService.getFacility(id)
     if (!facility) {
       throw new NotFoundException()
     }
-    const events = await this.facilityService.getFacilityEvents(id)
+    const events = await this.facilityService.getFacilityEventTableRows(id)
 
-    return { facility, events: events!, facilityCreated }
+    return { facility, eventRows: events!, facilityCreated }
   }
 
   @Post('facility')

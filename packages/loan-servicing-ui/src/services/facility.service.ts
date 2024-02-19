@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { postApiData, tryGetApiData } from 'api/base-client'
-import { Event, Facility, NewFacilityRequestDto } from 'loan-servicing-common'
+import { LoanServicingEvent, Facility, NewFacilityRequestDto } from 'loan-servicing-common'
 
 @Injectable()
 class FacilityService {
-  async createFacility(facility: NewFacilityRequestDto): Promise<Facility | null> {
+  async createFacility(
+    facility: NewFacilityRequestDto,
+  ): Promise<Facility | null> {
     const newFacility = await postApiData<Facility>('facility', facility)
     return newFacility
   }
@@ -14,9 +16,17 @@ class FacilityService {
     return facility
   }
 
-  async getFacilityEvents(streamId:string): Promise<Event[] | null> {
-    const events = await tryGetApiData<Event[]>(`facility/events?id=${streamId}`)
-    return events
+  async getFacilityEventTableRows(
+    streamId: string,
+  ): Promise<{ text: string }[][] | null> {
+    const events = await tryGetApiData<LoanServicingEvent[]>(
+      `facility/events?id=${streamId}`,
+    )
+    return (
+      events?.map((e) =>
+        [e.type, JSON.stringify(e.eventData)].map((c) => ({ text: c })),
+      ) || null
+    )
   }
 }
 

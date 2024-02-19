@@ -1,4 +1,3 @@
-export * from './dtos/facility'
 export * from './interfaces/facility'
 export * from './interfaces/events'
 export * from './interfaces/events/eventBase'

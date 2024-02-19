@@ -1,4 +1,4 @@
-import { NewFacilityRequestDto } from '../../dtos/facility'
+import { NewFacilityRequestDto } from '../facility'
 import { EventBase } from './eventBase'
 
 export type CreateNewFacilityEvent = EventBase<

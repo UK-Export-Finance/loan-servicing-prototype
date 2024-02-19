@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
-import { CreateNewFacilityEvent, Event, Facility, NewFacilityRequestDto, UpdateFacilityEvent } from 'loan-servicing-common'
+import { CreateNewFacilityEvent, LoanServicingEvent, Facility, NewFacilityRequestDto, UpdateFacilityEvent } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from './event.service'
@@ -25,6 +25,7 @@ class FacilityService {
     const createFacilityEvent: CreateNewFacilityEvent = {
       streamId: crypto.randomUUID(),
       streamVersion: 1,
+      datetime: new Date(),
       type: 'CreateNewFacility',
       typeVersion: 1,
       eventData: facility,
@@ -98,7 +99,7 @@ class FacilityService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getFacilityEvents(streamId: string): Promise<EventEntity<Event>[]> {
+  async getFacilityEvents(streamId: string): Promise<EventEntity<LoanServicingEvent>[]> {
     const events = await this.eventService.getEventsInOrder(streamId)
     return events
   }
@@ -117,7 +118,7 @@ class FacilityService {
     return this.facilityRepo.find()
   }
 
-  getFacilityFromEvents(events: EventEntity<Event>[]): Facility {
+  getFacilityFromEvents(events: EventEntity<LoanServicingEvent>[]): Facility {
     const create = events[0] as CreateNewFacilityEvent
     const updates = events.slice(1) as UpdateFacilityEvent[]
     const result: Facility = updates.reduce(

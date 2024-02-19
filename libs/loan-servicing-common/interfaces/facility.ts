@@ -14,3 +14,7 @@ export type Facility = {
   //   usedAmount: number
   //   availableAmount: number
 }
+
+export type NewFacilityRequestDto = Omit<Facility, 'streamId' | 'streamVersion'>
+
+export type UpdateFacilityRequestDto = Partial<NewFacilityRequestDto>

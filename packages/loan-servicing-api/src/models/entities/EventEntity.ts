@@ -1,15 +1,18 @@
-import { Event } from 'loan-servicing-common'
+import { LoanServicingEvent } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
 @Entity()
 @Unique('versionOfStream' , ['streamId', 'streamVersion'])
-class EventEntity<T extends Event> implements UntypedEvent  {
+class EventEntity<T extends LoanServicingEvent> implements UntypedEvent  {
   @PrimaryGeneratedColumn()
   id!: number
 
   @Column()
   streamId!: string
+
+  @Column()
+  datetime!: Date
 
   @Column()
   streamVersion!: number

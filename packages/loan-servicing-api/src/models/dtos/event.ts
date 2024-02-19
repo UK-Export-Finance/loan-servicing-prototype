@@ -5,6 +5,8 @@ export class UntypedEvent implements EventBase<string, number, object> {
     streamId!: string
   
     streamVersion!: number
+
+    datetime!: Date
   
     type!: string
   

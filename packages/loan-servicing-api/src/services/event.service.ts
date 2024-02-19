@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'
-import { Event } from 'loan-servicing-common'
+import { LoanServicingEvent } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { DataSource } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
@@ -14,7 +14,7 @@ class EventService {
 
   @Transactional()
   // Default to never to enforce passing a type to T in all cases
-  async initialiseEvent<T extends Event = never>(
+  async initialiseEvent<T extends LoanServicingEvent = never>(
     streamId: string,
     // A little awkward but we need access to this at compile time
     type: T['type'],
@@ -41,7 +41,7 @@ class EventService {
   }
 
   @Transactional()
-  async saveEvent<T extends Event>(
+  async saveEvent<T extends LoanServicingEvent>(
     newEvent: T,
   ): Promise<EventEntity<T>> {
     const repo = this.dataSource.getRepository(EventEntity<T>)
@@ -54,13 +54,14 @@ class EventService {
 
     const event = await repo.create(newEvent)
     event.streamVersion = (max || 0) + 1
+    event.datetime = new Date()
     const result = await repo.save(event)
     return result
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  getEventsInOrder(streamId: string): Promise<EventEntity<Event>[]> {
-    const repo = this.dataSource.getRepository(EventEntity<Event>)
+  getEventsInOrder(streamId: string): Promise<EventEntity<LoanServicingEvent>[]> {
+    const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
     return repo
       .createQueryBuilder('e')
       .where({ streamId })
