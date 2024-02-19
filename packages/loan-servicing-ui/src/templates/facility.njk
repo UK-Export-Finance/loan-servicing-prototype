@@ -1,6 +1,7 @@
 {% extends "index.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% block pageTitle -%}
   Facility
@@ -8,6 +9,18 @@
 {%- endblock %}
 
 {% block content %}
+  {% if facilityCreated %}
+    {% set html %}
+    <p class="govuk-notification-banner__heading">
+      Facility created successfully
+    </p>
+    {% endset %}
+
+    {{ govukNotificationBanner({
+      html: html,
+      type: 'success'
+    }) }}
+  {% endif %}
   <h1 class="govuk-heading-l">Facility
     {{ facility.streamId }}</h1>
   <p class="govuk-body govuk-!-margin-bottom-6">Obligor:

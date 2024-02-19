@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Render } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Render,
+  Res,
+} from '@nestjs/common'
+import { Response } from 'express'
 import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
 import FacilityService from 'services/user.service'
 
@@ -14,18 +24,19 @@ class FacilityController {
   @Render('facility')
   async renderFacilityPage(
     @Param('id') id: string,
-  ): Promise<{ facility: Facility | null }> {
+    @Query('facilityCreated') facilityCreated?: boolean,
+  ): Promise<{ facility: Facility | null; facilityCreated?: boolean }> {
     const facility = await this.facilityService.getFacility(id)
-    return { facility }
+    return { facility, facilityCreated }
   }
 
   @Post('facility')
-  @Render('facility-created')
   async createFacility(
     @Body() requestDto: NewFacilityRequestDto,
-  ): Promise<{ facility: Facility | null }> {
+    @Res() response: Response,
+  ): Promise<void> {
     const newFacility = await this.facilityService.createFacility(requestDto)
-    return { facility: newFacility }
+    response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
 }
 
