@@ -1,6 +1,17 @@
-import { Body, Controller, Get, NotFoundException, Post, Put, Query } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { LoanServicingEvent } from 'loan-servicing-common'
+import {
+  FacilityIncrementableProperties,
+  LoanServicingEvent,
+} from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
   FacilityResponseDtoClass,
@@ -21,7 +32,7 @@ class FacilityController {
     @Query('id') streamId: string,
   ): Promise<FacilityResponseDtoClass> {
     const facility = await this.facilityService.getFacility(streamId)
-    if(facility === null){
+    if (facility === null) {
       throw new NotFoundException()
     }
     return facility
@@ -32,8 +43,9 @@ class FacilityController {
   async getFacilityEvents(
     @Query('id') streamId: string,
   ): Promise<EventEntity<LoanServicingEvent>[]> {
-    const facilityEvents = await this.facilityService.getFacilityEvents(streamId)
-    if(facilityEvents === null){
+    const facilityEvents =
+      await this.facilityService.getFacilityEvents(streamId)
+    if (facilityEvents === null) {
       throw new NotFoundException()
     }
     return facilityEvents
@@ -43,7 +55,7 @@ class FacilityController {
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async getAllFacility(): Promise<FacilityResponseDtoClass[] | null> {
     const allEvents = await this.facilityService.getAllFacilities()
-    if(allEvents === null){
+    if (allEvents === null) {
       throw new NotFoundException()
     }
     return allEvents
@@ -62,19 +74,31 @@ class FacilityController {
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async updateFacility(
     @Query('id') id: string,
-    @Query('version') version: number,
+    @Query('version') version: string,
     @Body() body: UpdateFacilityRequestDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.updateFacility(id, version, body)
+    const updatedFacility = await this.facilityService.updateFacility(
+      id,
+      Number(version),
+      body,
+    )
     return updatedFacility
   }
 
-  @Post('incrementFacilityAmount')
+  @Post('increment')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
-  async incrementFacilityValue(
+  async incrementValue(
     @Query('id') id: string,
+    @Query('version') version: string,
+    @Query('property') property: FacilityIncrementableProperties,
+    @Query('increment') increment: string,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.incrementFacilityValue(id)
+    const updatedFacility = await this.facilityService.incrementFacilityValue(
+      id,
+      Number(version),
+      property,
+      parseFloat(increment),
+    )
     return updatedFacility
   }
 }

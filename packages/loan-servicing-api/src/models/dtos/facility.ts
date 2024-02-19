@@ -20,6 +20,10 @@ export class FacilityResponseDtoClass implements Facility {
   @ApiProperty()
   @IsNotEmpty()
   facilityAmount!: number
+
+  @ApiProperty()
+  @IsNotEmpty()
+  interestRate!: number
 }
 
 export class NewFacilityRequestDtoClass

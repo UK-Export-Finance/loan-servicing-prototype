@@ -1,13 +1,16 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Inject, Injectable, NotFoundException, NotImplementedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
-import { CreateNewFacilityEvent, LoanServicingEvent, Facility, NewFacilityRequestDto, UpdateFacilityEvent } from 'loan-servicing-common'
+import {
+  CreateNewFacilityEvent,
+  LoanServicingEvent,
+  Facility,
+  NewFacilityRequestDto,
+  UpdateFacilityEvent,
+  IncrementFacilityValueEvent,
+  FacilityIncrementableProperties,
+} from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from './event.service'
@@ -50,17 +53,12 @@ class FacilityService {
     const updateEvent =
       await this.eventService.initialiseEvent<UpdateFacilityEvent>(
         streamId,
+        streamVersion,
         'UpdateFacility',
         1,
       )
 
     updateEvent.eventData = update
-
-    if (updateEvent.streamVersion !== streamVersion + 1) {
-      throw new BadRequestException(
-        `Stream ${streamId} has an updated version, please refresh your data`,
-      )
-    }
 
     const existingFacility = await this.getFacility(streamId)
 
@@ -75,31 +73,38 @@ class FacilityService {
   }
 
   @Transactional()
-  async incrementFacilityValue(streamId: string): Promise<Facility> {
+  async incrementFacilityValue(
+    streamId: string,
+    streamVersion: number,
+    valueToIncrement: FacilityIncrementableProperties,
+    increment: number,
+  ): Promise<Facility> {
     const updateEvent =
-      await this.eventService.initialiseEvent<UpdateFacilityEvent>(
+      await this.eventService.initialiseEvent<IncrementFacilityValueEvent>(
         streamId,
-        'UpdateFacility',
+        Number(streamVersion),
+        'IncrementFacilityValue',
         1,
       )
 
     const currentFacility = await this.getFacility(streamId)
 
     updateEvent.eventData = {
-      facilityAmount: currentFacility.facilityAmount + 1,
+      value: valueToIncrement,
+      increment: Number(increment),
     }
+    currentFacility[valueToIncrement] += increment
+    currentFacility.streamVersion = updateEvent.streamVersion
 
-    const updatedFacility = await this.facilityRepo.save({
-      ...currentFacility,
-      ...updateEvent.eventData,
-    })
-
+    const updatedFacility = await this.facilityRepo.save(currentFacility)
     await this.eventService.saveEvent(updateEvent)
     return updatedFacility
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getFacilityEvents(streamId: string): Promise<EventEntity<LoanServicingEvent>[]> {
+  async getFacilityEvents(
+    streamId: string,
+  ): Promise<EventEntity<LoanServicingEvent>[]> {
     const events = await this.eventService.getEventsInOrder(streamId)
     return events
   }
@@ -107,9 +112,8 @@ class FacilityService {
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacility(streamId: string): Promise<Facility> {
     const events = await this.getFacilityEvents(streamId)
-    if(events.length === 0){
+    if (events.length === 0) {
       throw new NotFoundException(`No facility found for id ${streamId}`)
-
     }
     return this.getFacilityFromEvents(events)
   }
@@ -120,13 +124,25 @@ class FacilityService {
 
   getFacilityFromEvents(events: EventEntity<LoanServicingEvent>[]): Facility {
     const create = events[0] as CreateNewFacilityEvent
-    const updates = events.slice(1) as UpdateFacilityEvent[]
+    const updates = events.slice(1)
     const result: Facility = updates.reduce(
-      (facility, update) => ({
-        ...facility,
-        ...update.eventData,
-        streamVersion: update.streamVersion,
-      }),
+      (facility, update) => {
+        if (update.type === 'UpdateFacility') {
+          return {
+            ...facility,
+            ...update.eventData,
+            streamVersion: update.streamVersion,
+          }
+        }
+        if (update.type === 'IncrementFacilityValue') {
+          const { eventData } = update as IncrementFacilityValueEvent
+          return {
+            ...facility,
+            [eventData.value]: facility[eventData.value] + eventData.increment,
+          }
+        }
+        throw new NotImplementedException()
+      },
       {
         streamId: create.streamId,
         streamVersion: create.streamVersion,

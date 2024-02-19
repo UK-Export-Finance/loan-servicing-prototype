@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'
 import { LoanServicingEvent } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
@@ -16,6 +16,7 @@ class EventService {
   // Default to never to enforce passing a type to T in all cases
   async initialiseEvent<T extends LoanServicingEvent = never>(
     streamId: string,
+    streamVersion: number,
     // A little awkward but we need access to this at compile time
     type: T['type'],
     typeVersion: T['typeVersion'],
@@ -37,6 +38,12 @@ class EventService {
       streamVersion: max + 1,
     })
     event.streamVersion = max + 1
+
+    if (event.streamVersion !== streamVersion + 1) {
+      throw new BadRequestException(
+        `Stream ${streamId} has an updated version, please refresh your data`,
+      )
+    }
     return event
   }
 
@@ -60,7 +67,9 @@ class EventService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  getEventsInOrder(streamId: string): Promise<EventEntity<LoanServicingEvent>[]> {
+  getEventsInOrder(
+    streamId: string,
+  ): Promise<EventEntity<LoanServicingEvent>[]> {
     const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
     return repo
       .createQueryBuilder('e')

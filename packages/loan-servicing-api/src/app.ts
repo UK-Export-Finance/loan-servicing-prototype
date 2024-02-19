@@ -2,16 +2,18 @@ import dotenv from 'dotenv'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
-import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional'
+import {
+  initializeTransactionalContext,
+  StorageDriver,
+} from 'typeorm-transactional'
 import AppModule from './modules/app.module'
 
 dotenv.config()
 
 const port = process.env.PORT
 
-
 const bootstrap = async (): Promise<void> => {
-  initializeTransactionalContext({ storageDriver: StorageDriver.AUTO });
+  initializeTransactionalContext({ storageDriver: StorageDriver.AUTO })
   const app = await NestFactory.create(AppModule)
 
   const config = new DocumentBuilder()
@@ -21,7 +23,12 @@ const bootstrap = async (): Promise<void> => {
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, document)
 
-  app.useGlobalPipes(new ValidationPipe({ transform: true}))
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  )
 
   await app.listen(port ?? 3000)
 }

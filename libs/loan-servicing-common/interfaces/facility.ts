@@ -5,7 +5,8 @@ export type Facility = {
   //   facilityType: string
   //   description: string
   //   currency: string
-    facilityAmount: number
+  facilityAmount: number
+  interestRate: number
   //   commitmentDate: Date
   //   issuedNotEffectiveDate: Date
   //   issuedEffectiveDate: Date

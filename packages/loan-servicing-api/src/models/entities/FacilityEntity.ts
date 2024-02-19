@@ -1,4 +1,4 @@
-import { Facility } from 'loan-servicing-common';
+import { Facility } from 'loan-servicing-common'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
@@ -7,7 +7,7 @@ class FacilityEntity implements Facility {
   streamId!: string
 
   @Column()
-  streamVersion!: number;
+  streamVersion!: number
 
   @Column()
   obligor!: string
@@ -23,6 +23,9 @@ class FacilityEntity implements Facility {
 
   @Column({ default: 1 })
   facilityAmount!: number
+
+  @Column('decimal', { default: 2.3, precision: 8, scale: 6 })
+  interestRate!: number
 
   // @Column()
   // commitmentDate!: Date
