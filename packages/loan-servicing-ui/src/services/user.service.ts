@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { tryGetApiData } from 'api/base-client'
+import { postApiData, tryGetApiData } from 'api/base-client'
+import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
 
 @Injectable()
-class UserService {
-  async getUser() {
-    const data = await tryGetApiData('')
-    return JSON.stringify(data) || 'Request failed :('
+class FacilityService {
+  async createFacility(facility: NewFacilityRequestDto): Promise<Facility | null> {
+    const newFacility = await postApiData<Facility>('facility', facility)
+    return newFacility
+  }
+
+  async getFacility(streamId: string): Promise<Facility | null> {
+    const facility = await tryGetApiData<Facility>(`facility?id=${streamId}`)
+    return facility
   }
 }
 
-export default UserService
+export default FacilityService

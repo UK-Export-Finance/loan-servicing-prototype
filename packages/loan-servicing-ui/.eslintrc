@@ -11,6 +11,7 @@
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       { "allowSameFolder": true, "rootDir": "packages/loan-servicing-ui/src" }
-    ]
+    ],
+    "@typescript-eslint/explicit-function-return-type": "error"
   }
 }

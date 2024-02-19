@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import HomeController from 'controllers/home.controller'
-import UserService from 'services/user.service'
+import FacilityController from 'controllers/facility.controller'
+import FacilityService from 'services/user.service'
 
-@Module({ controllers: [HomeController], providers: [UserService] })
+@Module({ controllers: [FacilityController], providers: [FacilityService] })
 class HomeModule {}
 
 export default HomeModule
