@@ -1,10 +1,13 @@
 import { Body, Controller, Get, NotFoundException, Post, Put, Query } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Event } from 'loan-servicing-common'
+import { UntypedEvent } from 'models/dtos/event'
 import {
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
   UpdateFacilityRequestDtoClass,
 } from 'models/dtos/facility'
+import EventEntity from 'models/entities/EventEntity'
 import FacilityService from 'services/facility.service'
 
 @ApiTags('Facility')
@@ -22,6 +25,18 @@ class FacilityController {
       throw new NotFoundException()
     }
     return facility
+  }
+
+  @Get('events')
+  @ApiOkResponse({ type: UntypedEvent })
+  async getFacilityEvents(
+    @Query('id') streamId: string,
+  ): Promise<EventEntity<Event>[]> {
+    const facilityEvents = await this.facilityService.getFacilityEvents(streamId)
+    if(facilityEvents === null){
+      throw new NotFoundException()
+    }
+    return facilityEvents
   }
 
   @Get('all')

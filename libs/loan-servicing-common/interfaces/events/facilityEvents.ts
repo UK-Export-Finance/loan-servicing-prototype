@@ -1,5 +1,5 @@
-import { NewFacilityRequestDto } from 'loan-servicing-common'
-import EventBase from 'models/events/eventBase'
+import { NewFacilityRequestDto } from '../../dtos/facility'
+import { EventBase } from './eventBase'
 
 export type CreateNewFacilityEvent = EventBase<
   'CreateNewFacility',
@@ -7,7 +7,7 @@ export type CreateNewFacilityEvent = EventBase<
   NewFacilityRequestDto
 >
 
-export type DeleteFacilityEvent = EventBase<'DeleteFacility', 1, null>
+export type DeleteFacilityEvent = EventBase<'DeleteFacility', 1, {}>
 
 export type UpdateFacilityEvent = EventBase<
   'UpdateFacility',

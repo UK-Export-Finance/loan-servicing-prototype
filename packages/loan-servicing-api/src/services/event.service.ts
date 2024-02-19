@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'
+import { Event } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
-import Event from 'models/events'
 import { DataSource } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
 

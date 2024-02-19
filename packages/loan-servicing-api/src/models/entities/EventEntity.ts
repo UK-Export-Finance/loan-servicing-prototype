@@ -1,10 +1,10 @@
-import Event from 'models/events'
-import { UntypedEvent } from 'models/events/eventBase'
+import { Event } from 'loan-servicing-common'
+import { UntypedEvent } from 'models/dtos/event'
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
 @Entity()
 @Unique('versionOfStream' , ['streamId', 'streamVersion'])
-class EventEntity<T extends Event> implements UntypedEvent {
+class EventEntity<T extends Event> implements UntypedEvent  {
   @PrimaryGeneratedColumn()
   id!: number
 

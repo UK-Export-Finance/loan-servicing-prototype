@@ -1,7 +1,7 @@
-type EventBase<
+export type EventBase<
   Type extends string,
   Version extends number,
-  Data extends object | null,
+  Data extends object,
 > = {
   streamId: string
   streamVersion: number
@@ -9,7 +9,3 @@ type EventBase<
   typeVersion: Version
   eventData: Data
 }
-
-export type UntypedEvent = EventBase<string, number, object | null>
-
-export default EventBase

@@ -4,15 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import {
-  CreateNewFacilityEvent,
-  UpdateFacilityEvent,
-} from 'models/events/facilityEvents'
-import Event from 'models/events'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
-import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
+import { CreateNewFacilityEvent, Event, Facility, NewFacilityRequestDto, UpdateFacilityEvent } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from './event.service'

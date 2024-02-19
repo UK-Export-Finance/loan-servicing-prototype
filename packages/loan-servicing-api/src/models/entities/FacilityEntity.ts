@@ -1,4 +1,4 @@
-import { Facility } from 'loan-servicing-common'
+import { Facility } from 'loan-servicing-common';
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()

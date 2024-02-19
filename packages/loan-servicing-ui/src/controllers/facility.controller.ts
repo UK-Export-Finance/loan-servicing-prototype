@@ -2,15 +2,17 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
   Render,
   Res,
 } from '@nestjs/common'
+import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
-import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
-import FacilityService from 'services/user.service'
+import { Event, Facility, NewFacilityRequestDto } from 'loan-servicing-common'
+import FacilityService from 'services/facility.service'
 
 @Controller('')
 class FacilityController {
@@ -20,14 +22,30 @@ class FacilityController {
   @Render('create-facility')
   renderCreateFacilityPage(): void {}
 
+  @Get('facility/all')
+  @Render('facility-list')
+  async renderAllFacilities(): Promise<{ allFacilities: Facility[] | null }> {
+    const allFacilities = await tryGetApiData<Facility[]>('facility/all')
+    return { allFacilities }
+  }
+
   @Get('facility/:id')
   @Render('facility')
   async renderFacilityPage(
     @Param('id') id: string,
     @Query('facilityCreated') facilityCreated?: boolean,
-  ): Promise<{ facility: Facility | null; facilityCreated?: boolean }> {
+  ): Promise<{
+    facility: Facility
+    facilityCreated?: boolean
+    events: Event[]
+  }> {
     const facility = await this.facilityService.getFacility(id)
-    return { facility, facilityCreated }
+    if (!facility) {
+      throw new NotFoundException()
+    }
+    const events = await this.facilityService.getFacilityEvents(id)
+
+    return { facility, events: events!, facilityCreated }
   }
 
   @Post('facility')
