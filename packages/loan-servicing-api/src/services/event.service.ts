@@ -77,6 +77,18 @@ class EventService {
       .orderBy({ 'e.streamVersion': 'ASC' })
       .getMany()
   }
+
+  @Transactional({ propagation: Propagation.SUPPORTS })
+  getEventsInEffectiveOrder(
+    streamId: string,
+  ): Promise<EventEntity<LoanServicingEvent>[]> {
+    const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
+    return repo
+      .createQueryBuilder('e')
+      .where({ streamId })
+      .orderBy({ 'e.effectiveDate': 'ASC' })
+      .getMany()
+  }
 }
 
 export default EventService

@@ -25,11 +25,15 @@ import {
 } from 'models/dtos/facility'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityService from 'services/facility.service'
+import FacilityTransactionService from 'services/facilityTransaction.service'
 
 @ApiTags('Facility')
 @Controller('/facility')
 class FacilityController {
-  constructor(private facilityService: FacilityService) {}
+  constructor(
+    private facilityService: FacilityService,
+    private transactionService: FacilityTransactionService,
+  ) {}
 
   @Get()
   @ApiOkResponse({ type: FacilityResponseDtoClass })
@@ -96,6 +100,11 @@ class FacilityController {
       eventEffectiveDate,
     )
     return updatedFacility
+  }
+
+  @Get('build')
+  async buildTransactions(@Query('id') id: string): Promise<void> {
+    return this.transactionService.buildTransactions(id)
   }
 
   @Post('increment')

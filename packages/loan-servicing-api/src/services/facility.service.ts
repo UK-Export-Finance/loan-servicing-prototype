@@ -14,6 +14,7 @@ import {
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from './event.service'
+import FacilityTransactionService from './facilityTransaction.service'
 
 @Injectable()
 class FacilityService {
@@ -21,6 +22,7 @@ class FacilityService {
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(FacilityEntity)
     private facilityRepo: Repository<FacilityEntity>,
+    @Inject(FacilityTransactionService) private transactionService: FacilityTransactionService
   ) {}
 
   @Transactional()
@@ -41,6 +43,7 @@ class FacilityService {
       streamVersion: 1,
     })
     await this.facilityRepo.save(projection)
+    await this.transactionService.buildTransactions(createFacilityEvent.streamId)
 
     return projection
   }
@@ -72,6 +75,7 @@ class FacilityService {
       ...update,
       streamVersion: updateEvent.streamVersion,
     })
+    await this.transactionService.buildTransactions(streamId)
     return updatedFacility
   }
 
@@ -104,6 +108,7 @@ class FacilityService {
 
     const updatedFacility = await this.facilityRepo.save(currentFacility)
     await this.eventService.saveEvent(updateEvent)
+    await this.transactionService.buildTransactions(streamId)
     return updatedFacility
   }
 
