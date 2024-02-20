@@ -5,7 +5,8 @@ export type EventBase<
 > = {
   streamId: string
   streamVersion: number
-  datetime: Date
+  eventDate: Date
+  effectiveDate: Date
   type: Type
   typeVersion: Version
   eventData: Data

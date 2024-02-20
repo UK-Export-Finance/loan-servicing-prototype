@@ -22,13 +22,20 @@ export class FacilityResponseDtoClass implements Facility {
   facilityAmount!: number
 
   @ApiProperty()
+  issuedEffectiveDate!: Date
+
+  @ApiProperty()
+  expiryDate!: Date
+
+  @ApiProperty()
   @IsNotEmpty()
   interestRate!: number
 }
 
 export class NewFacilityRequestDtoClass
   extends OmitType(FacilityResponseDtoClass, ['streamId', 'streamVersion'])
-  implements NewFacilityRequestDto {}
+  implements NewFacilityRequestDto {
+  }
 
 export class UpdateFacilityRequestDtoClass
   extends PartialType(NewFacilityRequestDtoClass)

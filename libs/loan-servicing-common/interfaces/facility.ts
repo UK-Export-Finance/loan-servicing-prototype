@@ -9,13 +9,16 @@ export type Facility = {
   interestRate: number
   //   commitmentDate: Date
   //   issuedNotEffectiveDate: Date
-  //   issuedEffectiveDate: Date
+  issuedEffectiveDate: Date
   //   availabilityDate: Date
-  //   expiryDate: Date
+  expiryDate: Date
   //   usedAmount: number
   //   availableAmount: number
 }
 
-export type NewFacilityRequestDto = Omit<Facility, 'streamId' | 'streamVersion'>
+export type NewFacilityRequestDto = Omit<
+  Facility,
+  'streamId' | 'streamVersion'
+>
 
 export type UpdateFacilityRequestDto = Partial<NewFacilityRequestDto>

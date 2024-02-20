@@ -7,7 +7,12 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   FacilityIncrementableProperties,
   LoanServicingEvent,
@@ -63,41 +68,52 @@ class FacilityController {
 
   @Post()
   @ApiCreatedResponse({ type: FacilityResponseDtoClass })
+  @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async newFacility(
     @Body() body: NewFacilityRequestDtoClass,
+    @Query('eventEffectiveDate') eventEffectiveDate: Date = new Date(),
   ): Promise<FacilityResponseDtoClass> {
-    const newFacility = await this.facilityService.createNewFacility(body)
+    const newFacility = await this.facilityService.createNewFacility(
+      body,
+      eventEffectiveDate,
+    )
     return newFacility
   }
 
   @Put()
   @ApiOkResponse({ type: FacilityResponseDtoClass })
+  @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async updateFacility(
     @Query('id') id: string,
     @Query('version') version: number,
     @Body() body: UpdateFacilityRequestDtoClass,
+    @Query('eventEffectiveDate') eventEffectiveDate: Date = new Date(),
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.updateFacility(
       id,
       Number(version),
       body,
+      eventEffectiveDate,
     )
     return updatedFacility
   }
 
   @Post('increment')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
+  @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async incrementValue(
     @Query('id') id: string,
     @Query('version') version: string,
     @Query('property') property: FacilityIncrementableProperties,
     @Query('increment') increment: string,
+    @Query('eventEffectiveDate') eventEffectiveDate: Date = new Date(),
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.incrementFacilityValue(
       id,
       Number(version),
       property,
       parseFloat(increment),
+      eventEffectiveDate,
     )
     return updatedFacility
   }

@@ -6,7 +6,9 @@ export class UntypedEvent implements EventBase<string, number, object> {
   
     streamVersion!: number
 
-    datetime!: Date
+    eventDate!: Date
+
+    effectiveDate!: Date
   
     type!: string
   

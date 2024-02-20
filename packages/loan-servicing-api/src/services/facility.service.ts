@@ -24,11 +24,12 @@ class FacilityService {
   ) {}
 
   @Transactional()
-  async createNewFacility(facility: NewFacilityRequestDto): Promise<Facility> {
+  async createNewFacility(facility: NewFacilityRequestDto, eventEffectiveDate: Date): Promise<Facility> {
     const createFacilityEvent: CreateNewFacilityEvent = {
       streamId: crypto.randomUUID(),
       streamVersion: 1,
-      datetime: new Date(),
+      eventDate: new Date(),
+      effectiveDate: eventEffectiveDate,
       type: 'CreateNewFacility',
       typeVersion: 1,
       eventData: facility,
@@ -49,6 +50,7 @@ class FacilityService {
     streamId: string,
     streamVersion: number,
     update: Partial<NewFacilityRequestDto>,
+    eventEffectiveDate: Date
   ): Promise<Facility> {
     const updateEvent =
       await this.eventService.initialiseEvent<UpdateFacilityEvent>(
@@ -59,6 +61,7 @@ class FacilityService {
       )
 
     updateEvent.eventData = update
+    updateEvent.effectiveDate = eventEffectiveDate
 
     const existingFacility = await this.getFacility(streamId)
 
@@ -78,6 +81,7 @@ class FacilityService {
     streamVersion: number,
     valueToIncrement: FacilityIncrementableProperties,
     increment: number,
+    eventEffectiveDate: Date
   ): Promise<Facility> {
     const updateEvent =
       await this.eventService.initialiseEvent<IncrementFacilityValueEvent>(
@@ -93,6 +97,8 @@ class FacilityService {
       value: valueToIncrement,
       increment: Number(increment),
     }
+    updateEvent.effectiveDate = eventEffectiveDate
+
     currentFacility[valueToIncrement] += increment
     currentFacility.streamVersion = updateEvent.streamVersion
 

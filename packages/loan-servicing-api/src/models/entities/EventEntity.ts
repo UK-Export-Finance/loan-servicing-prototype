@@ -12,7 +12,10 @@ class EventEntity<T extends LoanServicingEvent> implements UntypedEvent  {
   streamId!: string
 
   @Column()
-  datetime!: Date
+  eventDate!: Date
+
+  @Column()
+  effectiveDate!: Date
 
   @Column()
   streamVersion!: number

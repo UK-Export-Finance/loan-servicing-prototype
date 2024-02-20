@@ -61,7 +61,7 @@ class EventService {
 
     const event = await repo.create(newEvent)
     event.streamVersion = (max || 0) + 1
-    event.datetime = new Date()
+    event.eventDate = new Date()
     const result = await repo.save(event)
     return result
   }

@@ -33,14 +33,14 @@ class FacilityEntity implements Facility {
   // @Column()
   // issuedNotEffectiveDate!: Date
 
-  // @Column()
-  // issuedEffectiveDate!: Date
+  @Column()
+  issuedEffectiveDate!: Date
 
   // @Column()
   // availabilityDate!: Date
 
-  // @Column()
-  // expiryDate!: Date
+  @Column()
+  expiryDate!: Date
 
   // @Column()
   // usedAmount!: number
