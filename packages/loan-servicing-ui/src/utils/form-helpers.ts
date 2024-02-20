@@ -24,8 +24,8 @@ export const getDateFromDateInput = <P extends string>(
     [`${dateInputName}-day`]: day,
     [`${dateInputName}-month`]: month,
     [`${dateInputName}-year`]: year,
-    // Use looser type as TS doesn't pick up the mapped type properly
-  } = formData as { [all: string]: string }
+    // Use looser type as TS doesn't pick up the mapped type
+  } = formData as { [t: string]: string }
 
   return new Date(Number(year), Number(month) - 1, Number(day))
 }

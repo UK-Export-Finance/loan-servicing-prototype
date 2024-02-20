@@ -7,3 +7,8 @@ export type MapAllTypeAtoTypeB<Subject, A, B> = {
 }
 
 export type ConvertToDtoType<T> = MapAllTypeAtoTypeB<T, Date, string>
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export type DEBUG_FlattenType<T> = T extends object
+  ? { [K in keyof T]: DEBUG_FlattenType<T[K]> }
+  : T
