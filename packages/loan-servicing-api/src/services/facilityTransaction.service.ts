@@ -55,7 +55,7 @@ class FacilityTransactionService {
 
   @Transactional()
   // Very dodgy, do not use outside of prototype
-  async buildTransactions(streamId: string): Promise<void> {
+  async buildTransactions(streamId: string): Promise<FacilityTransactionEntity[]> {
     await this.facilityTransactionRepo.delete({ streamId })
 
     const facilityEvents =
@@ -122,6 +122,7 @@ class FacilityTransactionService {
     const transactionEntities =
       await this.facilityTransactionRepo.create(transactions)
     await this.facilityTransactionRepo.save(transactionEntities)
+    return transactionEntities
   }
 }
 

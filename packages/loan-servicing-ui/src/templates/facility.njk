@@ -32,43 +32,43 @@
     {{facility.interestRate}}</p>
 
   {{ govukTable({
-  caption: "Facility Transactions",
-  captionClasses: "govuk-table__caption--m",
-  head: [
-    {
-      text: "Date"
-    },
-    {
-      text: "Reference"
-    },
-    {
-      text: "Transaction Amount"
-    },
-    {
-      text: "Balance"
-    }
-  ],
-  rows: transactionRows
-}) }}
+    caption: "Facility Transactions",
+    captionClasses: "govuk-table__caption--m",
+    head: [
+      {
+        text: "Date"
+      },
+      {
+        text: "Reference"
+      },
+      {
+        text: "Transaction Amount"
+      },
+      {
+        text: "Balance"
+      }
+    ],
+    rows: transactionRows
+  }) }}
 
   {{ govukTable({
-  caption: "Event History",
-  captionClasses: "govuk-table__caption--m",
-  head: [
-    {
-      text: "Event Date"
-    },
-    {
-      text: "Action"
-    },
-    {
-      text: "Changes"
-    },
-    {
-      text: "Effective Date"
-    }
-  ],
-  rows: eventRows
-}) }}
+    caption: "Event History",
+    captionClasses: "govuk-table__caption--m",
+    head: [
+      {
+        text: "Event Date"
+      },
+      {
+        text: "Action"
+      },
+      {
+        text: "Changes"
+      },
+      {
+        text: "Effective Date"
+      }
+    ],
+    rows: eventRows
+  }) }}
 
 {% endblock %}

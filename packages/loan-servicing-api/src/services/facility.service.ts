@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException, NotImplementedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
@@ -22,11 +27,15 @@ class FacilityService {
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(FacilityEntity)
     private facilityRepo: Repository<FacilityEntity>,
-    @Inject(FacilityTransactionService) private transactionService: FacilityTransactionService
+    @Inject(FacilityTransactionService)
+    private transactionService: FacilityTransactionService,
   ) {}
 
   @Transactional()
-  async createNewFacility(facility: NewFacilityRequestDto, eventEffectiveDate: Date): Promise<Facility> {
+  async createNewFacility(
+    facility: NewFacilityRequestDto,
+    eventEffectiveDate: Date,
+  ): Promise<Facility> {
     const createFacilityEvent: CreateNewFacilityEvent = {
       streamId: crypto.randomUUID(),
       streamVersion: 1,
@@ -37,13 +46,18 @@ class FacilityService {
       eventData: facility,
     }
     const savedEvent = await this.eventService.saveEvent(createFacilityEvent)
+    const transactions = await this.transactionService.buildTransactions(
+      createFacilityEvent.streamId,
+    )
+    const latestTransaction = transactions[transactions.length - 1]
+
     const projection = await this.facilityRepo.create({
       ...savedEvent.eventData,
+      facilityAmount: latestTransaction.balanceAfterTransaction,
       streamId: savedEvent.streamId,
       streamVersion: 1,
     })
     await this.facilityRepo.save(projection)
-    await this.transactionService.buildTransactions(createFacilityEvent.streamId)
 
     return projection
   }
@@ -53,7 +67,7 @@ class FacilityService {
     streamId: string,
     streamVersion: number,
     update: Partial<NewFacilityRequestDto>,
-    eventEffectiveDate: Date
+    eventEffectiveDate: Date,
   ): Promise<Facility> {
     const updateEvent =
       await this.eventService.initialiseEvent<UpdateFacilityEvent>(
@@ -66,16 +80,19 @@ class FacilityService {
     updateEvent.eventData = update
     updateEvent.effectiveDate = eventEffectiveDate
 
-    const existingFacility = await this.getFacility(streamId)
-
     await this.eventService.saveEvent(updateEvent)
+    const transactions =
+      await this.transactionService.buildTransactions(streamId)
+    const latestTransaction = transactions[transactions.length - 1]
+
+    const existingFacility = await this.getFacility(streamId)
 
     const updatedFacility = await this.facilityRepo.save({
       ...existingFacility,
+      facilityAmount: latestTransaction.balanceAfterTransaction,
       ...update,
       streamVersion: updateEvent.streamVersion,
     })
-    await this.transactionService.buildTransactions(streamId)
     return updatedFacility
   }
 
@@ -85,7 +102,7 @@ class FacilityService {
     streamVersion: number,
     valueToIncrement: FacilityIncrementableProperties,
     increment: number,
-    eventEffectiveDate: Date
+    eventEffectiveDate: Date,
   ): Promise<Facility> {
     const updateEvent =
       await this.eventService.initialiseEvent<IncrementFacilityValueEvent>(
@@ -95,7 +112,7 @@ class FacilityService {
         1,
       )
 
-    const currentFacility = await this.getFacility(streamId)
+    const facilityEntity = await this.getFacility(streamId)
 
     updateEvent.eventData = {
       value: valueToIncrement,
@@ -103,12 +120,15 @@ class FacilityService {
     }
     updateEvent.effectiveDate = eventEffectiveDate
 
-    currentFacility[valueToIncrement] += increment
-    currentFacility.streamVersion = updateEvent.streamVersion
-
-    const updatedFacility = await this.facilityRepo.save(currentFacility)
     await this.eventService.saveEvent(updateEvent)
-    await this.transactionService.buildTransactions(streamId)
+    const transactions =
+      await this.transactionService.buildTransactions(streamId)
+
+    facilityEntity.streamVersion = updateEvent.streamVersion
+    const latestTransaction = transactions[transactions.length - 1]
+    facilityEntity.facilityAmount = latestTransaction.balanceAfterTransaction
+
+    const updatedFacility = await this.facilityRepo.save(facilityEntity)
     return updatedFacility
   }
 
@@ -122,11 +142,11 @@ class FacilityService {
 
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacility(streamId: string): Promise<Facility> {
-    const events = await this.getFacilityEvents(streamId)
-    if (events.length === 0) {
+    const facility = await this.facilityRepo.findOne({ where: { streamId } })
+    if (!facility) {
       throw new NotFoundException(`No facility found for id ${streamId}`)
     }
-    return this.getFacilityFromEvents(events)
+    return facility
   }
 
   async getAllFacilities(): Promise<Facility[] | null> {

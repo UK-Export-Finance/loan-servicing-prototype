@@ -119,7 +119,7 @@ class FacilityController {
 
   @Get('build')
   async buildTransactions(@Query('id') id: string): Promise<void> {
-    return this.transactionService.buildTransactions(id)
+    await this.transactionService.buildTransactions(id)
   }
 
   @Post('increment')
