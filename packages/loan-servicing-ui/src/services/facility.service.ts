@@ -4,32 +4,38 @@ import {
   LoanServicingEvent,
   Facility,
   NewFacilityRequestDto,
+  FacilityTransaction,
 } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
+import { TransactionTableRow } from 'types/transactions'
 
 const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
-  const { datetime } = event
-  const date = new Date(datetime)
+  const { eventDate, effectiveDate } = event
+  const eventDateObj = new Date(eventDate)
+  const effectiveDateObj = new Date(effectiveDate)
   switch (event.type) {
     case 'CreateNewFacility':
       return {
         event: 'Facility created',
-        date: date.toLocaleString('en-GB'),
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: 'Facility created with intial values',
       }
     case 'IncrementFacilityValue':
       const { value, increment } = event.eventData
       return {
         event: 'Facility value incremented',
-        date: date.toLocaleString('en-GB'),
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Property '${value}' was ${increment > 0 ? 'increased' : 'decreased'} by ${Math.abs(increment)}.`,
       }
     case 'UpdateFacility':
       const updatedEntries = Object.entries(event.eventData)
       return {
         event: 'Facility property changed',
-        date: date.toLocaleString('en-GB'),
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: updatedEntries
           .map(
             ([property, newValue]) =>
@@ -42,9 +48,22 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
   }
 }
 
-const tableRowToNunjucksTableRow = (
-  r: EventTableRow,
-): NunjuckTableRow => [r.date, r.event, r.description].map((c) => ({ text: c }))
+const getTransactionTableRow = (
+  transaction: FacilityTransaction,
+): TransactionTableRow => ({
+  date: new Date(transaction.datetime).toLocaleString('en-GB'),
+  reference: transaction.reference,
+  transactionAmount: transaction.transactionAmount.toString(),
+  balance: transaction.balanceAfterTransaction.toString(),
+})
+
+const eventTableRowToNunjucksTableRow = (r: EventTableRow): NunjuckTableRow =>
+  [r.eventDate, r.event, r.description, r.effectiveDate].map((c) => ({ text: c }))
+
+const transactionRowToNunjucksRow = (r: TransactionTableRow): NunjuckTableRow =>
+  [r.date, r.reference, r.transactionAmount, r.balance].map((c) => ({
+    text: c,
+  }))
 
 @Injectable()
 class FacilityService {
@@ -66,7 +85,22 @@ class FacilityService {
     const events = await tryGetApiData<LoanServicingEvent[]>(
       `facility/events?id=${streamId}`,
     )
-    return events?.map(getEventTableRow).map(tableRowToNunjucksTableRow) || null
+    return (
+      events?.map(getEventTableRow).map(eventTableRowToNunjucksTableRow) || null
+    )
+  }
+
+  async getFacilityTransactionRows(
+    streamId: string,
+  ): Promise<NunjuckTableRow[] | null> {
+    const transactions = await tryGetApiData<FacilityTransaction[]>(
+      `facility/transactions?id=${streamId}`,
+    )
+    return (
+      transactions
+        ?.map(getTransactionTableRow)
+        .map(transactionRowToNunjucksRow) || null
+    )
   }
 }
 

@@ -38,14 +38,22 @@ class FacilityController {
     facility: Facility
     facilityCreated?: boolean
     eventRows: object
+    transactionRows: object
   }> {
     const facility = await this.facilityService.getFacility(id)
     if (!facility) {
       throw new NotFoundException()
     }
     const events = await this.facilityService.getFacilityEventTableRows(id)
+    const transactionRows =
+      await this.facilityService.getFacilityTransactionRows(id)
 
-    return { facility, eventRows: events!, facilityCreated }
+    return {
+      facility,
+      eventRows: events!,
+      facilityCreated,
+      transactionRows: transactionRows!,
+    }
   }
 
   @Post('facility')

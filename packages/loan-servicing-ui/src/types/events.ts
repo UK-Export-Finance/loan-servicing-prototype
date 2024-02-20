@@ -1,9 +1,6 @@
-import { LoanServicingEvent } from 'loan-servicing-common'
-
 export type EventTableRow = {
   event: string
-  date: string
+  eventDate: string
+  effectiveDate: string
   description: string
 }
-
-export type EventTableRowTemplate = (event: LoanServicingEvent) => EventTableRow
