@@ -30,6 +30,10 @@
     {{facility.facilityAmount}}</p>
   <p class="govuk-body govuk-!-margin-bottom-6">Interest Rate:
     {{facility.interestRate}}</p>
+  <p class="govuk-body govuk-!-margin-bottom-6">Start Date:
+    {{facility.issuedEffectiveDate|parseDate}}</p>
+  <p class="govuk-body govuk-!-margin-bottom-6">End Date:
+    {{facility.expiryDate|parseDate}}</p>
 
   {{ govukTable({
     caption: "Facility Transactions",

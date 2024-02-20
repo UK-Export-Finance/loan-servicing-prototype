@@ -2,9 +2,9 @@ import { Injectable, NotImplementedException } from '@nestjs/common'
 import { postApiData, tryGetApiData } from 'api/base-client'
 import {
   LoanServicingEvent,
-  Facility,
   NewFacilityRequestDto,
   FacilityTransaction,
+  FacilityDto,
 } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
@@ -69,13 +69,13 @@ const transactionRowToNunjucksRow = (r: TransactionTableRow): NunjuckTableRow =>
 class FacilityService {
   async createFacility(
     facility: NewFacilityRequestDto,
-  ): Promise<Facility | null> {
-    const newFacility = await postApiData<Facility>('facility', facility)
+  ): Promise<FacilityDto | null> {
+    const newFacility = await postApiData<FacilityDto>('facility', facility)
     return newFacility
   }
 
-  async getFacility(streamId: string): Promise<Facility | null> {
-    const facility = await tryGetApiData<Facility>(`facility?id=${streamId}`)
+  async getFacility(streamId: string): Promise<FacilityDto | null> {
+    const facility = await tryGetApiData<FacilityDto>(`facility?id=${streamId}`)
     return facility
   }
 

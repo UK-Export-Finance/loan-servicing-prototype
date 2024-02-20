@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
-import { Facility, NewFacilityRequestDto } from 'loan-servicing-common'
+import {  FacilityDto, NewFacilityRequestDto } from 'loan-servicing-common'
 import FacilityService from 'services/facility.service'
 
 @Controller('')
@@ -24,8 +24,8 @@ class FacilityController {
 
   @Get('facility/all')
   @Render('facility-list')
-  async renderAllFacilities(): Promise<{ allFacilities: Facility[] | null }> {
-    const allFacilities = await tryGetApiData<Facility[]>('facility/all')
+  async renderAllFacilities(): Promise<{ allFacilities: FacilityDto[] | null }> {
+    const allFacilities = await tryGetApiData<FacilityDto[]>('facility/all')
     return { allFacilities }
   }
 
@@ -35,7 +35,7 @@ class FacilityController {
     @Param('id') id: string,
     @Query('facilityCreated') facilityCreated?: boolean,
   ): Promise<{
-    facility: Facility
+    facility: FacilityDto
     facilityCreated?: boolean
     eventRows: object
     transactionRows: object

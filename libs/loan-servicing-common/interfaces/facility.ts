@@ -1,3 +1,5 @@
+import { ConvertToDtoType } from "../utils/type-utils"
+
 export type Facility = {
   streamId: string
   streamVersion: number
@@ -15,6 +17,8 @@ export type Facility = {
   //   usedAmount: number
   //   availableAmount: number
 }
+
+export type FacilityDto = ConvertToDtoType<Facility>
 
 export type NewFacilityRequestDto = Omit<
   Facility,
