@@ -16,6 +16,7 @@ import {
 import {
   FacilityIncrementableProperties,
   LoanServicingEvent,
+  FacilityTransaction
 } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
@@ -24,6 +25,7 @@ import {
   UpdateFacilityRequestDtoClass,
 } from 'models/dtos/facility'
 import EventEntity from 'models/entities/EventEntity'
+import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityService from 'services/facility.service'
 import FacilityTransactionService from 'services/facilityTransaction.service'
 
@@ -54,6 +56,19 @@ class FacilityController {
   ): Promise<EventEntity<LoanServicingEvent>[]> {
     const facilityEvents =
       await this.facilityService.getFacilityEvents(streamId)
+    if (facilityEvents === null) {
+      throw new NotFoundException()
+    }
+    return facilityEvents
+  }
+
+  @Get('transactions')
+  @ApiOkResponse({ type: FacilityTransactionEntity })
+  async getFacilityTransactions(
+    @Query('id') streamId: string,
+  ): Promise<FacilityTransaction[]> {
+    const facilityEvents =
+      await this.transactionService.getTransactions(streamId)
     if (facilityEvents === null) {
       throw new NotFoundException()
     }

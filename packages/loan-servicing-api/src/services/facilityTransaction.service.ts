@@ -1,7 +1,7 @@
 import { Injectable, Inject, NotImplementedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Transactional } from 'typeorm-transactional'
+import { Propagation, Transactional } from 'typeorm-transactional'
 import {
   CreateNewFacilityEvent,
   FacilityTransaction,
@@ -44,6 +44,15 @@ class FacilityTransactionService {
     private facilityTransactionRepo: Repository<FacilityTransactionEntity>,
   ) {}
 
+  @Transactional({propagation: Propagation.SUPPORTS})
+  async getTransactions(streamId: string): Promise<FacilityTransactionEntity[] | null> {
+    return this.facilityTransactionRepo
+    .createQueryBuilder('t')
+    .where({ streamId })
+    .orderBy({ 't.datetime': 'ASC' })
+    .getMany()
+  }
+
   @Transactional()
   // Very dodgy, do not use outside of prototype
   async buildTransactions(streamId: string): Promise<void> {
@@ -53,7 +62,9 @@ class FacilityTransactionService {
       await this.eventService.getEventsInEffectiveOrder(streamId)
     const createFacilityEvent =
       facilityEvents.shift() as EventEntity<CreateNewFacilityEvent>
+
     const transactions = [createFacilityTransaction(createFacilityEvent)]
+
     const expiryDate = new Date(createFacilityEvent.eventData.expiryDate)
     let dateToProcess = new Date(
       createFacilityEvent.eventData.issuedEffectiveDate,
