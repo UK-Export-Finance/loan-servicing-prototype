@@ -34,13 +34,12 @@ class FacilityService {
   @Transactional()
   async createNewFacility(
     facility: NewFacilityRequestDto,
-    eventEffectiveDate: Date,
   ): Promise<Facility> {
     const createFacilityEvent: CreateNewFacilityEvent = {
       streamId: crypto.randomUUID(),
       streamVersion: 1,
       eventDate: new Date(),
-      effectiveDate: eventEffectiveDate,
+      effectiveDate: facility.issuedEffectiveDate,
       type: 'CreateNewFacility',
       typeVersion: 1,
       eventData: facility,

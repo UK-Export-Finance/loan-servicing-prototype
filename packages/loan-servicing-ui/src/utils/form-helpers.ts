@@ -10,13 +10,12 @@ export type DateInputFormData<P extends string> = {
     : never]: string
 }
 
-export type MapDatesToDateFormInputs<Subject, P extends string> = Omit<
+// P should be a union of the keys with type Date
+export type MapDatesToDateFormInputs<
   Subject,
-  P
-> &
-  DateInputFormData<P>
+  P extends string & keyof Subject,
+> = Omit<Subject, P> & DateInputFormData<P>
 
-// eslint-disable-next-line import/prefer-default-export
 export const getDateFromDateInput = <P extends string>(
   formData: DateInputFormData<P>,
   dateInputName: P,
@@ -25,8 +24,8 @@ export const getDateFromDateInput = <P extends string>(
     [`${dateInputName}-day`]: day,
     [`${dateInputName}-month`]: month,
     [`${dateInputName}-year`]: year,
-    // Use any as TS doesn't pick up the mapped type
-  } = formData as { [t: string]: string }
+    // Use looser type as TS doesn't pick up the mapped type properly
+  } = formData as { [all: string]: string }
 
   return new Date(Number(year), Number(month) - 1, Number(day))
 }

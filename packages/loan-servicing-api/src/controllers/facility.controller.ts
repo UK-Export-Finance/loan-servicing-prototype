@@ -88,14 +88,11 @@ class FacilityController {
 
   @Post()
   @ApiCreatedResponse({ type: FacilityResponseDtoClass })
-  @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async newFacility(
     @Body() body: NewFacilityRequestDtoClass,
-    @Query('eventEffectiveDate') eventEffectiveDate: Date = new Date(),
   ): Promise<FacilityResponseDtoClass> {
     const newFacility = await this.facilityService.createNewFacility(
       body,
-      eventEffectiveDate,
     )
     return newFacility
   }

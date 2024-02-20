@@ -24,11 +24,11 @@ import { getDateFromDateInput } from 'utils/form-helpers'
 class FacilityController {
   constructor(private facilityService: FacilityService) {}
 
-  @Get()
+  @Get('facility/new')
   @Render('create-facility')
   renderCreateFacilityPage(): void {}
 
-  @Get('facility/all')
+  @Get()
   @Render('facility-list')
   async renderAllFacilities(): Promise<{
     allFacilities: FacilityDto[] | null

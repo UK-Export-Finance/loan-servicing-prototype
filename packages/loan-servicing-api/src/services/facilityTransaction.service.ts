@@ -63,10 +63,9 @@ class FacilityTransactionService {
     await this.facilityTransactionRepo.delete({ streamId })
 
     const facilityEvents =
-      await this.eventService.getEventsInEffectiveOrder(streamId)
+    await this.eventService.getEventsInEffectiveOrder(streamId)
     const createFacilityEvent =
       facilityEvents.shift() as EventEntity<CreateNewFacilityEvent>
-
     const transactions = [createFacilityTransaction(createFacilityEvent)]
 
     const expiryDate = new Date(createFacilityEvent.eventData.expiryDate)
@@ -121,7 +120,6 @@ class FacilityTransactionService {
       }
       dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
     }
-
     const transactionEntities =
       await this.facilityTransactionRepo.create(transactions)
     await this.facilityTransactionRepo.save(transactionEntities)
