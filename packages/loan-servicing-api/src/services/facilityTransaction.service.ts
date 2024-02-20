@@ -5,7 +5,7 @@ import { Propagation, Transactional } from 'typeorm-transactional'
 import {
   CreateNewFacilityEvent,
   FacilityTransaction,
-  IncrementFacilityValueEvent,
+  AdjustFacilityPrincipalEvent,
   UpdateFacilityEvent,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
@@ -44,18 +44,22 @@ class FacilityTransactionService {
     private facilityTransactionRepo: Repository<FacilityTransactionEntity>,
   ) {}
 
-  @Transactional({propagation: Propagation.SUPPORTS})
-  async getTransactions(streamId: string): Promise<FacilityTransactionEntity[] | null> {
+  @Transactional({ propagation: Propagation.SUPPORTS })
+  async getTransactions(
+    streamId: string,
+  ): Promise<FacilityTransactionEntity[] | null> {
     return this.facilityTransactionRepo
-    .createQueryBuilder('t')
-    .where({ streamId })
-    .orderBy({ 't.datetime': 'ASC' })
-    .getMany()
+      .createQueryBuilder('t')
+      .where({ streamId })
+      .orderBy({ 't.datetime': 'ASC' })
+      .getMany()
   }
 
   @Transactional()
   // Very dodgy, do not use outside of prototype
-  async buildTransactions(streamId: string): Promise<FacilityTransactionEntity[]> {
+  async buildTransactions(
+    streamId: string,
+  ): Promise<FacilityTransactionEntity[]> {
     await this.facilityTransactionRepo.delete({ streamId })
 
     const facilityEvents =
@@ -93,24 +97,23 @@ class FacilityTransactionService {
                 datetime: event.effectiveDate,
                 reference: `interest changed from ${facilityInterestRate} to ${updateEvent.interestRate}`,
                 transactionAmount: 0,
-                balanceAfterTransaction: facilityBalance
+                balanceAfterTransaction: facilityBalance,
               })
               facilityInterestRate = updateEvent.interestRate
             }
             break
-          case 'IncrementFacilityValue':
+          case 'AdjustFacilityPrincipal':
             const { eventData: incrementEvent } =
-              event as IncrementFacilityValueEvent
-            if (incrementEvent.value === 'facilityAmount') {
-              transactions.push({
-                streamId,
-                datetime: event.effectiveDate,
-                reference: `facility amount adjustment (withdrawal or repayment)`,
-                transactionAmount: incrementEvent.increment,
-                balanceAfterTransaction: facilityBalance + incrementEvent.increment
-              })
-              facilityBalance += incrementEvent.increment
-            }
+              event as AdjustFacilityPrincipalEvent
+            transactions.push({
+              streamId,
+              datetime: event.effectiveDate,
+              reference: `facility amount adjustment (withdrawal or repayment)`,
+              transactionAmount: incrementEvent.adjustment,
+              balanceAfterTransaction:
+                facilityBalance + incrementEvent.adjustment,
+            })
+            facilityBalance += incrementEvent.adjustment
             break
           default:
             throw new NotImplementedException()

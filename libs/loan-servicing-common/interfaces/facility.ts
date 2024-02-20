@@ -26,3 +26,8 @@ export type NewFacilityRequestDto = Omit<
 >
 
 export type UpdateFacilityRequestDto = Partial<NewFacilityRequestDto>
+
+export type AdjustFacilityPrincipalDto = {
+  effectiveDate: string
+  adjustment: number
+}

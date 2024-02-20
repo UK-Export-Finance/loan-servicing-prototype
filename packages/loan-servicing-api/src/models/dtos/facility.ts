@@ -1,6 +1,7 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 import {
+  AdjustFacilityPrincipalDto,
   Facility,
   NewFacilityRequestDto,
   UpdateFacilityRequestDto,
@@ -34,9 +35,18 @@ export class FacilityResponseDtoClass implements Facility {
 
 export class NewFacilityRequestDtoClass
   extends OmitType(FacilityResponseDtoClass, ['streamId', 'streamVersion'])
-  implements NewFacilityRequestDto {
-  }
+  implements NewFacilityRequestDto {}
 
 export class UpdateFacilityRequestDtoClass
   extends PartialType(NewFacilityRequestDtoClass)
   implements UpdateFacilityRequestDto {}
+
+export class AdjustFacilityPrincipalDtoClass
+  implements AdjustFacilityPrincipalDto
+{
+  @ApiProperty()
+  effectiveDate!: string
+
+  @ApiProperty()
+  adjustment!: number
+}

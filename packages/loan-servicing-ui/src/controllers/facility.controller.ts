@@ -11,8 +11,14 @@ import {
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
-import {  FacilityDto, NewFacilityRequestDto } from 'loan-servicing-common'
+import {
+  AdjustFacilityPrincipalDto,
+  FacilityDto,
+  NewFacilityRequestDto,
+} from 'loan-servicing-common'
 import FacilityService from 'services/facility.service'
+import { FacilityPrincipalAdjustmentFormDto, NewFacilityRequestFormDto } from 'types/dtos/facility.dto'
+import { getDateFromDateInput } from 'utils/form-helpers'
 
 @Controller('')
 class FacilityController {
@@ -24,7 +30,9 @@ class FacilityController {
 
   @Get('facility/all')
   @Render('facility-list')
-  async renderAllFacilities(): Promise<{ allFacilities: FacilityDto[] | null }> {
+  async renderAllFacilities(): Promise<{
+    allFacilities: FacilityDto[] | null
+  }> {
     const allFacilities = await tryGetApiData<FacilityDto[]>('facility/all')
     return { allFacilities }
   }
@@ -58,11 +66,35 @@ class FacilityController {
 
   @Post('facility')
   async createFacility(
-    @Body() requestDto: NewFacilityRequestDto,
+    @Body() requestDto: NewFacilityRequestFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const newFacility = await this.facilityService.createFacility(requestDto)
+    const request: NewFacilityRequestDto = {
+      ...requestDto,
+      expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
+      issuedEffectiveDate: getDateFromDateInput(requestDto, 'issuedEffectiveDate'),
+    }
+    const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
+  }
+
+  @Post('facility/:id/:version/adjustprincipal')
+  async addPrincipalAdjustment(
+    @Param('id') id: string,
+    @Param('version') version: string,
+    @Body()
+    requestDto: FacilityPrincipalAdjustmentFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const adjustmentDto: AdjustFacilityPrincipalDto = {
+      effectiveDate: getDateFromDateInput(
+        requestDto,
+        'effectiveDate',
+      ).toISOString(),
+      adjustment: requestDto.adjustment,
+    }
+    await this.facilityService.adjustPrincipal(id, version, adjustmentDto)
+    response.redirect(`/facility/${id}`)
   }
 }
 

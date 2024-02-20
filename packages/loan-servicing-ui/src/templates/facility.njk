@@ -1,6 +1,7 @@
 {% extends "index.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
@@ -34,6 +35,29 @@
     {{facility.issuedEffectiveDate|parseDate}}</p>
   <p class="govuk-body govuk-!-margin-bottom-6">End Date:
     {{facility.expiryDate|parseDate}}</p>
+
+  <h2 class="govuk-heading-m">Edit Facility</h2>
+  <h3 class="govuk-heading-s">Facility Amount</h3>
+    <form action="/facility/{{facility.streamId}}/{{facility.streamVersion}}/adjustPrincipal" method="post">
+    {{ govukInput({
+        label: {
+          text: "Adjust facility amount"
+        },
+        classes: "govuk-input--width-20",
+        id: "adjustment",
+        name: "adjustment"
+      }) }}
+    {{ govukDateInput({
+        id: "effectiveDate",
+        namePrefix: "effectiveDate",
+        fieldset: {
+          legend: {
+            text: "Effective date of adjustment"
+          }
+        }
+      }) }}
+    {{ govukButton({  text: "Add adjustment"}) }}
+  </form>
 
   {{ govukTable({
     caption: "Facility Transactions",

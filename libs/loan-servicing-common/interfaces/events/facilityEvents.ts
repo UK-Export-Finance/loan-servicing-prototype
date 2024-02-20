@@ -16,15 +16,18 @@ export type UpdateFacilityEvent = EventBase<
   Partial<NewFacilityRequestDto>
 >
 
-export type FacilityIncrementableProperties = PropertiesWithType<Facility, number>
-export type IncrementFacilityValueEvent = EventBase<
-  'IncrementFacilityValue',
+export type FacilityIncrementableProperties = PropertiesWithType<
+  Facility,
+  number
+>
+export type AdjustFacilityPrincipalEvent = EventBase<
+  'AdjustFacilityPrincipal',
   1,
-  { value: FacilityIncrementableProperties; increment: number }
+  { adjustment: number }
 >
 
 export type FacilityEvent =
   | CreateNewFacilityEvent
   | DeleteFacilityEvent
   | UpdateFacilityEvent
-  | IncrementFacilityValueEvent
+  | AdjustFacilityPrincipalEvent

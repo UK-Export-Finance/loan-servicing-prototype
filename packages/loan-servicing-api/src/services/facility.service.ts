@@ -13,8 +13,8 @@ import {
   Facility,
   NewFacilityRequestDto,
   UpdateFacilityEvent,
-  IncrementFacilityValueEvent,
-  FacilityIncrementableProperties,
+  AdjustFacilityPrincipalEvent,
+  AdjustFacilityPrincipalDto,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
@@ -97,29 +97,24 @@ class FacilityService {
   }
 
   @Transactional()
-  async incrementFacilityValue(
+  async adjustFacilityPrincipal(
     streamId: string,
     streamVersion: number,
-    valueToIncrement: FacilityIncrementableProperties,
-    increment: number,
-    eventEffectiveDate: Date,
+    { effectiveDate, adjustment }: AdjustFacilityPrincipalDto,
   ): Promise<Facility> {
     const updateEvent =
-      await this.eventService.initialiseEvent<IncrementFacilityValueEvent>(
+      await this.eventService.initialiseEvent<AdjustFacilityPrincipalEvent>(
         streamId,
         Number(streamVersion),
-        'IncrementFacilityValue',
+        'AdjustFacilityPrincipal',
         1,
       )
 
     const facilityEntity = await this.getFacility(streamId)
-
     updateEvent.eventData = {
-      value: valueToIncrement,
-      increment: Number(increment),
+      adjustment,
     }
-    updateEvent.effectiveDate = eventEffectiveDate
-
+    updateEvent.effectiveDate = new Date(effectiveDate)
     await this.eventService.saveEvent(updateEvent)
     const transactions =
       await this.transactionService.buildTransactions(streamId)
@@ -165,12 +160,12 @@ class FacilityService {
             streamVersion: update.streamVersion,
           }
         }
-        if (update.type === 'IncrementFacilityValue') {
-          const { eventData } = update as IncrementFacilityValueEvent
+        if (update.type === 'AdjustFacilityPrincipal') {
+          const { eventData } = update as AdjustFacilityPrincipalEvent
           return {
             ...facility,
             streamVersion: update.streamVersion,
-            [eventData.value]: facility[eventData.value] + eventData.increment,
+            facilityAmount: facility.facilityAmount + eventData.adjustment,
           }
         }
         throw new NotImplementedException()

@@ -1,6 +1,7 @@
 {% extends "index.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 
 {% block pageTitle -%}
   Create New Facility
@@ -16,6 +17,7 @@
       label: {
         text: "Obligor ID"
       },
+      classes: "govuk-input--width-20",
       id: "obligor",
       name: "obligor"
     }) }}
@@ -32,9 +34,30 @@
       label: {
         text: "Interest Rate"
       },
+      classes: "govuk-input--width-20",
       id: "interestRate",
       name: "interestRate"
     }) }}
+
+    {{ govukDateInput({
+        id: "issuedEffectiveDate",
+        namePrefix: "issuedEffectiveDate",
+        fieldset: {
+          legend: {
+            text: "Effective date of facility"
+          }
+        }
+      }) }}
+
+      {{ govukDateInput({
+        id: "expiryDate",
+        namePrefix: "expiryDate",
+        fieldset: {
+          legend: {
+            text: "Expirty date of facility"
+          }
+        }
+      }) }}
 
     {{ govukButton({  text: "Create Facility"}) }}
   </form>

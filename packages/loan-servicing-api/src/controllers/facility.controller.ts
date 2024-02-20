@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   NotFoundException,
+  Param,
   Post,
   Put,
   Query,
@@ -14,12 +15,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import {
-  FacilityIncrementableProperties,
   LoanServicingEvent,
-  FacilityTransaction
+  FacilityTransaction,
 } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
+  AdjustFacilityPrincipalDtoClass,
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
   UpdateFacilityRequestDtoClass,
@@ -122,22 +123,17 @@ class FacilityController {
     await this.transactionService.buildTransactions(id)
   }
 
-  @Post('increment')
+  @Post(':id/:version/adjustPrincipal')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
-  @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async incrementValue(
-    @Query('id') id: string,
-    @Query('version') version: string,
-    @Query('property') property: FacilityIncrementableProperties,
-    @Query('increment') increment: string,
-    @Query('eventEffectiveDate') eventEffectiveDate: Date = new Date(),
+    @Param('id') id: string,
+    @Param('version') version: string,
+    @Body() adjustment: AdjustFacilityPrincipalDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.incrementFacilityValue(
+    const updatedFacility = await this.facilityService.adjustFacilityPrincipal(
       id,
       Number(version),
-      property,
-      parseFloat(increment),
-      eventEffectiveDate,
+      adjustment,
     )
     return updatedFacility
   }

@@ -1,10 +1,12 @@
 import { Injectable, NotImplementedException } from '@nestjs/common'
-import { postApiData, tryGetApiData } from 'api/base-client'
+import { getApiUrl, postApiData, tryGetApiData } from 'api/base-client'
+import axios from 'axios'
 import {
   LoanServicingEvent,
   NewFacilityRequestDto,
   FacilityTransaction,
   FacilityDto,
+  AdjustFacilityPrincipalDto,
 } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
@@ -22,13 +24,13 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: 'Facility created with intial values',
       }
-    case 'IncrementFacilityValue':
-      const { value, increment } = event.eventData
+    case 'AdjustFacilityPrincipal':
+      const { adjustment } = event.eventData
       return {
-        event: 'Facility value incremented',
+        event: 'Facility value adjusted',
         eventDate: eventDateObj.toLocaleString('en-GB'),
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
-        description: `Property '${value}' was ${increment > 0 ? 'increased' : 'decreased'} by ${Math.abs(increment)}.`,
+        description: `Facility principal was ${adjustment > 0 ? 'increased' : 'decreased'} by ${Math.abs(adjustment)}.`,
       }
     case 'UpdateFacility':
       const updatedEntries = Object.entries(event.eventData)
@@ -58,7 +60,9 @@ const getTransactionTableRow = (
 })
 
 const eventTableRowToNunjucksTableRow = (r: EventTableRow): NunjuckTableRow =>
-  [r.eventDate, r.event, r.description, r.effectiveDate].map((c) => ({ text: c }))
+  [r.eventDate, r.event, r.description, r.effectiveDate].map((c) => ({
+    text: c,
+  }))
 
 const transactionRowToNunjucksRow = (r: TransactionTableRow): NunjuckTableRow =>
   [r.date, r.reference, r.transactionAmount, r.balance].map((c) => ({
@@ -72,6 +76,17 @@ class FacilityService {
   ): Promise<FacilityDto | null> {
     const newFacility = await postApiData<FacilityDto>('facility', facility)
     return newFacility
+  }
+
+  adjustPrincipal(
+    streamId: string,
+    streamVersion: string,
+    adjustment: AdjustFacilityPrincipalDto,
+  ): Promise<void> {
+    return axios.post(
+      getApiUrl(`facility/${streamId}/${streamVersion}/adjustPrincipal`),
+      adjustment,
+    )
   }
 
   async getFacility(streamId: string): Promise<FacilityDto | null> {
