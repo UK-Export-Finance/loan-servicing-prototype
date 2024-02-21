@@ -53,9 +53,8 @@ class FacilityService {
       streamId: savedEvent.streamId,
       streamVersion: 1,
     })
-    await this.facilityRepo.save(projection)
 
-    return projection
+    return this.facilityRepo.save(projection)
   }
 
   @Transactional()
@@ -80,15 +79,11 @@ class FacilityService {
       await this.transactionService.buildTransactions(streamId)
     const latestTransaction = transactions[transactions.length - 1]
 
-    const existingFacility = await this.getFacility(streamId)
-
-    const updatedFacility = await this.facilityRepo.save({
-      ...existingFacility,
-      facilityAmount: latestTransaction.balanceAfterTransaction,
+    return this.updateFacilityProjection(streamId, {
       ...update,
+      facilityAmount: latestTransaction.balanceAfterTransaction,
       streamVersion: updateEvent.streamVersion,
     })
-    return updatedFacility
   }
 
   @Transactional()
@@ -97,7 +92,6 @@ class FacilityService {
     streamVersion: number,
     { effectiveDate, adjustment }: AdjustFacilityPrincipalDto,
   ): Promise<Facility> {
-    // Add event
     const updateEvent =
       await this.eventService.addEvent<AdjustFacilityPrincipalEvent>(
         {
@@ -115,11 +109,10 @@ class FacilityService {
 
     const latestTransaction = transactions[transactions.length - 1]
 
-    const facilityEntity = await this.getFacility(streamId)
-    facilityEntity.streamVersion = updateEvent.streamVersion
-    facilityEntity.facilityAmount = latestTransaction.balanceAfterTransaction
-
-    return this.facilityRepo.save(facilityEntity)
+    return this.updateFacilityProjection(streamId, {
+      streamVersion: updateEvent.streamVersion,
+      facilityAmount: latestTransaction.balanceAfterTransaction,
+    })
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
@@ -137,6 +130,15 @@ class FacilityService {
       throw new NotFoundException(`No facility found for id ${streamId}`)
     }
     return facility
+  }
+
+  async updateFacilityProjection(
+    streamId: string,
+    update: Partial<Facility>,
+  ): Promise<Facility> {
+    const facilityEntity = await this.getFacility(streamId)
+    Object.assign(facilityEntity, update)
+    return this.facilityRepo.save(facilityEntity)
   }
 
   async getAllFacilities(): Promise<Facility[] | null> {
