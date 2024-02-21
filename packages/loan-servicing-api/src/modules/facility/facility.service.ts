@@ -19,7 +19,7 @@ import {
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
-import EventService from './event.service'
+import EventService from 'modules/event/event.service'
 import FacilityProjectionsService from './facilityProjections.service'
 
 @Injectable()
@@ -69,8 +69,9 @@ class FacilityService {
       },
       streamVersion,
     )
-    
-    const { facility } = await this.projectionsService.buildProjections(streamId)
+
+    const { facility } =
+      await this.projectionsService.buildProjections(streamId)
     return facility
   }
 
@@ -90,7 +91,8 @@ class FacilityService {
       },
       streamVersion,
     )
-    const { facility } = await this.projectionsService.buildProjections(streamId)
+    const { facility } =
+      await this.projectionsService.buildProjections(streamId)
     return facility
   }
 

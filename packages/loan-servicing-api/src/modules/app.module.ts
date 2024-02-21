@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import SQL_DB_CONFIG from 'database/data-source'
 import { DataSource } from 'typeorm'
 import { addTransactionalDataSource } from 'typeorm-transactional'
-import FacilityModule from './facility.module'
+import FacilityModule from './facility/facility.module'
 
 @Module({
   imports: [

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
-import EventService from 'services/event.service'
+import EventService from 'modules/event/event.service'
 
 @Module({
   imports: [TypeOrmModule.forFeature([EventEntity])],

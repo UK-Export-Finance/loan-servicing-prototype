@@ -23,8 +23,8 @@ import {
 } from 'models/dtos/facility'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
-import FacilityService from 'services/facility.service'
-import FacilityProjectionsService from 'services/facilityProjections.service'
+import FacilityService from 'modules/facility/facility.service'
+import FacilityProjectionsService from 'modules/facility/facilityProjections.service'
 
 @ApiTags('Facility')
 @Controller('/facility')
