@@ -21,7 +21,7 @@ class EventService {
   // Default to never to enforce passing a type to T in all cases
   async addEvent<T extends LoanServicingEvent = never>(
     event: NewEvent<T>,
-    lastSeenStreamVersion: number = 0 // Default to 0 when creating new streams
+    lastSeenStreamVersion: number = 0, // Default to 0 when creating new streams
   ): Promise<EventEntity<T>> {
     const repo = this.dataSource.getRepository(EventEntity<T>)
 

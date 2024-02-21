@@ -53,26 +53,25 @@ services:
       - SQL_DB_HOST=loan-servicing-db
       - SQL_DB_PORT=1433
   dev-azurite:
-    image: "mcr.microsoft.com/azure-storage/azurite:latest"
+    image: 'mcr.microsoft.com/azure-storage/azurite:latest'
     attach: false
     ports:
-        - 10000:10000
-        - 10001:10001
-        - 10002:10002
+      - 10000:10000
+      - 10001:10001
+      - 10002:10002
   loan-servicing-functions:
     build:
-        context: .
-        dockerfile: ./packages/loan-servicing-functions/Dockerfile
+      context: .
+      dockerfile: ./packages/loan-servicing-functions/Dockerfile
     ports:
-        - 3002:80
+      - 3002:80
     environment:
-        # Copy .env variables through to container
-        - AzureWebJobsStorage="UseDevelopmentStorage=true"
-        - StorageConnectionString
-        - AzureWebJobsStorageConnectionString
+      # Copy .env variables through to container
+      - AzureWebJobsStorage="UseDevelopmentStorage=true"
+      - StorageConnectionString
+      - AzureWebJobsStorageConnectionString
     depends_on:
-        - dev-azurite
+      - dev-azurite
     volumes:
       - ./packages/loan-servicing-functions:/home/site/wwwroot/packages/loan-servicing-functions
       - ./libs:/home/site/wwwroot/libs:ro
-

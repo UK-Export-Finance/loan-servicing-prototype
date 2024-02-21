@@ -3,8 +3,8 @@ import { UntypedEvent } from 'models/dtos/event'
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
 @Entity()
-@Unique('versionOfStream' , ['streamId', 'streamVersion'])
-class EventEntity<T extends LoanServicingEvent> implements UntypedEvent  {
+@Unique('versionOfStream', ['streamId', 'streamVersion'])
+class EventEntity<T extends LoanServicingEvent> implements UntypedEvent {
   @PrimaryGeneratedColumn()
   id!: number
 

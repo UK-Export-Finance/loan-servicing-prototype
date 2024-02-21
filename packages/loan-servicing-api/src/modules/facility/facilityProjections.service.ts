@@ -14,7 +14,7 @@ import {
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
-import EventService from '../event/event.service'
+import EventService from 'modules/event/event.service'
 
 type InterestEvent = EventBase<'CalculateInterest', 1, {}>
 

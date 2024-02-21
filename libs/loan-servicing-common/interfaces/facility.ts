@@ -1,4 +1,4 @@
-import { ConvertToDtoType } from "../utils/type-utils"
+import { ConvertToDtoType } from '../utils/type-utils'
 
 export type Facility = {
   streamId: string
@@ -20,10 +20,7 @@ export type Facility = {
 
 export type FacilityDto = ConvertToDtoType<Facility>
 
-export type NewFacilityRequestDto = Omit<
-  Facility,
-  'streamId' | 'streamVersion'
->
+export type NewFacilityRequestDto = Omit<Facility, 'streamId' | 'streamVersion'>
 
 export type UpdateInterestRequestDto = { newInterestRate: number }
 

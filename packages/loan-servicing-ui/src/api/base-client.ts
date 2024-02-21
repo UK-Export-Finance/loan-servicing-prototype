@@ -23,6 +23,7 @@ export const postApiData = async <T extends object>(
     return response.data
   } catch (e) {
     const axiosError = e as AxiosError
+    // eslint-disable-next-line no-console
     console.error(axiosError?.response?.data)
     throw e
   }

@@ -5,7 +5,7 @@ import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityController from 'modules/facility/facility.controller'
 import FacilityProjectionsService from 'modules/facility/facilityProjections.service'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
-import EventModule from '../event/event.module'
+import EventModule from 'modules/event/event.module'
 
 @Module({
   controllers: [FacilityController],

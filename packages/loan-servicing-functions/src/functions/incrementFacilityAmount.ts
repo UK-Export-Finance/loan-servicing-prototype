@@ -13,11 +13,10 @@ async function incrementFacilityAmount(
 
   const updateUrl = `http://loan-servicing-api:3001/facility?id=${request}&version=${currentFacility.streamVersion}`
   try {
-
     const { data: newFacility } = await axios.put(updateUrl, {
       facilityAmount: currentFacility.facilityAmount + 1,
     })
-    
+
     return { body: JSON.stringify(newFacility) }
   } catch (e) {
     const axErr = e as AxiosError

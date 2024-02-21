@@ -17,7 +17,10 @@ import {
   NewFacilityRequestDto,
 } from 'loan-servicing-common'
 import FacilityService from 'services/facility.service'
-import { FacilityPrincipalAdjustmentFormDto, NewFacilityRequestFormDto } from 'types/dtos/facility.dto'
+import {
+  FacilityPrincipalAdjustmentFormDto,
+  NewFacilityRequestFormDto,
+} from 'types/dtos/facility.dto'
 import { getDateFromDateInput } from 'utils/form-helpers'
 
 @Controller('')
@@ -72,7 +75,10 @@ class FacilityController {
     const request: NewFacilityRequestDto = {
       ...requestDto,
       expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
-      issuedEffectiveDate: getDateFromDateInput(requestDto, 'issuedEffectiveDate'),
+      issuedEffectiveDate: getDateFromDateInput(
+        requestDto,
+        'issuedEffectiveDate',
+      ),
     }
     const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
