@@ -67,8 +67,7 @@ const convertEventToTransaction = (
         datetime: event.effectiveDate,
         reference: `facility amount adjustment (withdrawal or repayment)`,
         transactionAmount: incrementEvent.adjustment,
-        balanceAfterTransaction:
-          facilityEntity.facilityAmount,
+        balanceAfterTransaction: facilityEntity.facilityAmount,
       }
     case 'CalculateInterest':
       return {
@@ -136,7 +135,6 @@ class FacilityProjectionsService {
   }
 
   @Transactional()
-  // Very dodgy, do not use outside of prototype
   async buildProjections(streamId: string): Promise<{
     facility: FacilityEntity
     transactions: FacilityTransactionEntity[]
@@ -146,6 +144,30 @@ class FacilityProjectionsService {
     const facilityEvents =
       await this.eventService.getEventsInEffectiveOrder(streamId)
 
+    const facility = this.getFacilityAtCreation(facilityEvents)
+
+    const interestEvents = this.generateInterestEvents(facility)
+
+    const projectedEvents: FacilityProjectionEvent[] = [
+      ...facilityEvents,
+      ...interestEvents,
+    ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
+
+    const transactions = projectedEvents.map((e) => {
+      applyEventToFacility(e, facility)
+      return convertEventToTransaction(e, facility)
+    })
+
+    const transactionEntities =
+      await this.facilityTransactionRepo.save(transactions)
+    await this.facilityRepo.save(facility)
+
+    return { facility, transactions: transactionEntities }
+  }
+
+  getFacilityAtCreation = (
+    facilityEvents: EventEntity<LoanServicingEvent>[],
+  ): FacilityEntity => {
     const creationEvent =
       facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
 
@@ -153,14 +175,18 @@ class FacilityProjectionsService {
       throw new Error('First effective event is not facility creation')
     }
 
-    const facilityEntity: FacilityEntity = this.facilityRepo.create({
-      streamId,
+    return this.facilityRepo.create({
+      streamId: creationEvent.streamId,
       streamVersion: 1,
       ...creationEvent.eventData,
     })
+  }
 
-    const expiryDate = new Date(creationEvent.eventData.expiryDate)
-    let dateToProcess = new Date(creationEvent.eventData.issuedEffectiveDate)
+  generateInterestEvents = (
+    facility: FacilityEntity,
+  ): FacilityProjectionEvent[] => {
+    const expiryDate = new Date(facility.expiryDate)
+    let dateToProcess = new Date(facility.issuedEffectiveDate)
     const interestEvents: FacilityProjectionEvent[] = []
     while (dateToProcess <= expiryDate) {
       interestEvents.push({
@@ -173,21 +199,7 @@ class FacilityProjectionsService {
 
       dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
     }
-
-    const projectedEvents: FacilityProjectionEvent[] = [
-      ...facilityEvents,
-      ...interestEvents,
-    ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
-
-    const transactions = projectedEvents.map((e) => {
-      applyEventToFacility(e, facilityEntity)
-      return convertEventToTransaction(e, facilityEntity)
-    })
-    const transactionEntities =
-      await this.facilityTransactionRepo.create(transactions)
-    await this.facilityTransactionRepo.save(transactionEntities)
-    await this.facilityRepo.save(facilityEntity)
-    return { facility: facilityEntity, transactions: transactionEntities }
+    return interestEvents
   }
 }
 
