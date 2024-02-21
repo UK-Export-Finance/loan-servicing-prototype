@@ -1,5 +1,9 @@
 import { PropertiesWithType } from '../../utils/type-utils'
-import { Facility, NewFacilityRequestDto } from '../facility'
+import {
+  Facility,
+  NewFacilityRequestDto,
+  UpdateInterestRequestDto,
+} from '../facility'
 import { EventBase } from './eventBase'
 
 export type CreateNewFacilityEvent = EventBase<
@@ -10,10 +14,10 @@ export type CreateNewFacilityEvent = EventBase<
 
 export type DeleteFacilityEvent = EventBase<'DeleteFacility', 1, {}>
 
-export type UpdateFacilityEvent = EventBase<
-  'UpdateFacility',
+export type UpdateInterestEvent = EventBase<
+  'UpdateInterest',
   1,
-  Partial<NewFacilityRequestDto>
+  UpdateInterestRequestDto
 >
 
 export type FacilityIncrementableProperties = PropertiesWithType<
@@ -29,5 +33,5 @@ export type AdjustFacilityPrincipalEvent = EventBase<
 export type FacilityEvent =
   | CreateNewFacilityEvent
   | DeleteFacilityEvent
-  | UpdateFacilityEvent
+  | UpdateInterestEvent
   | AdjustFacilityPrincipalEvent

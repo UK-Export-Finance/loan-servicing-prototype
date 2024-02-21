@@ -5,7 +5,6 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
   Query,
 } from '@nestjs/common'
 import {
@@ -14,28 +13,25 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import {
-  LoanServicingEvent,
-  FacilityTransaction,
-} from 'loan-servicing-common'
+import { LoanServicingEvent, FacilityTransaction } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
   AdjustFacilityPrincipalDtoClass,
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
-  UpdateFacilityRequestDtoClass,
+  UpdateInterestRequestDtoClass,
 } from 'models/dtos/facility'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityService from 'services/facility.service'
-import FacilityProjectionService from 'services/facilityProjection.service'
+import FacilityProjectionsService from 'services/facilityProjections.service'
 
 @ApiTags('Facility')
 @Controller('/facility')
 class FacilityController {
   constructor(
     private facilityService: FacilityService,
-    private transactionService: FacilityProjectionService,
+    private transactionService: FacilityProjectionsService,
   ) {}
 
   @Get()
@@ -91,19 +87,17 @@ class FacilityController {
   async newFacility(
     @Body() body: NewFacilityRequestDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const newFacility = await this.facilityService.createNewFacility(
-      body,
-    )
+    const newFacility = await this.facilityService.createNewFacility(body)
     return newFacility
   }
 
-  @Put()
+  @Post(':id/:version/updateInterestRate')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   @ApiQuery({ name: 'eventEffectiveDate', required: false })
-  async updateFacility(
+  async updateFacilityInterestRate(
     @Query('id') id: string,
     @Query('version') version: number,
-    @Body() body: UpdateFacilityRequestDtoClass,
+    @Body() body: UpdateInterestRequestDtoClass,
     @Query('eventEffectiveDate') eventEffectiveDate: Date = new Date(),
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.updateFacility(
@@ -117,7 +111,7 @@ class FacilityController {
 
   @Get('build')
   async buildTransactions(@Query('id') id: string): Promise<void> {
-    await this.transactionService.buildProjection(id)
+    await this.transactionService.buildProjections(id)
   }
 
   @Post(':id/:version/adjustPrincipal')

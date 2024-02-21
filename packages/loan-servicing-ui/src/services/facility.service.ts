@@ -1,6 +1,5 @@
 import { Injectable, NotImplementedException } from '@nestjs/common'
-import { getApiUrl, postApiData, tryGetApiData } from 'api/base-client'
-import axios from 'axios'
+import { postApiData, tryGetApiData } from 'api/base-client'
 import {
   LoanServicingEvent,
   NewFacilityRequestDto,
@@ -32,7 +31,7 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Facility principal was ${adjustment > 0 ? 'increased' : 'decreased'} by ${Math.abs(adjustment)}.`,
       }
-    case 'UpdateFacility':
+    case 'UpdateInterest':
       const updatedEntries = Object.entries(event.eventData)
       return {
         event: 'Facility property changed',
@@ -83,8 +82,8 @@ class FacilityService {
     streamVersion: string,
     adjustment: AdjustFacilityPrincipalDto,
   ): Promise<void> {
-    await axios.post(
-      getApiUrl(`facility/${streamId}/${streamVersion}/adjustPrincipal`),
+    await postApiData(
+      `facility/${streamId}/${streamVersion}/adjustPrincipal`,
       adjustment,
     )
   }

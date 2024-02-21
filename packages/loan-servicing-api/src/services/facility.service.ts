@@ -12,14 +12,15 @@ import {
   LoanServicingEvent,
   Facility,
   NewFacilityRequestDto,
-  UpdateFacilityEvent,
+  UpdateInterestEvent,
   AdjustFacilityPrincipalEvent,
   AdjustFacilityPrincipalDto,
+  UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from './event.service'
-import FacilityProjectionService from './facilityProjection.service'
+import FacilityProjectionsService from './facilityProjections.service'
 
 @Injectable()
 class FacilityService {
@@ -27,8 +28,8 @@ class FacilityService {
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(FacilityEntity)
     private facilityRepo: Repository<FacilityEntity>,
-    @Inject(FacilityProjectionService)
-    private transactionService: FacilityProjectionService,
+    @Inject(FacilityProjectionsService)
+    private projectionsService: FacilityProjectionsService,
   ) {}
 
   @Transactional()
@@ -44,7 +45,7 @@ class FacilityService {
         eventData: facilityRequest,
       },
     )
-    const { facility } = await this.transactionService.buildProjection(
+    const { facility } = await this.projectionsService.buildProjections(
       savedEvent.streamId,
     )
 
@@ -55,21 +56,21 @@ class FacilityService {
   async updateFacility(
     streamId: string,
     streamVersion: number,
-    update: Partial<NewFacilityRequestDto>,
+    update: UpdateInterestRequestDto,
     eventEffectiveDate: Date,
   ): Promise<Facility> {
-    await this.eventService.addEvent<UpdateFacilityEvent>(
+    await this.eventService.addEvent<UpdateInterestEvent>(
       {
         streamId,
         effectiveDate: eventEffectiveDate,
-        type: 'UpdateFacility',
+        type: 'UpdateInterest',
         typeVersion: 1,
         eventData: update,
       },
       streamVersion,
     )
     
-    const { facility } = await this.transactionService.buildProjection(streamId)
+    const { facility } = await this.projectionsService.buildProjections(streamId)
     return facility
   }
 
@@ -89,7 +90,7 @@ class FacilityService {
       },
       streamVersion,
     )
-    const { facility } = await this.transactionService.buildProjection(streamId)
+    const { facility } = await this.projectionsService.buildProjections(streamId)
     return facility
   }
 
@@ -128,7 +129,7 @@ class FacilityService {
     const updates = events.slice(1)
     const result: Facility = updates.reduce(
       (facility, update) => {
-        if (update.type === 'UpdateFacility') {
+        if (update.type === 'UpdateInterest') {
           return {
             ...facility,
             ...update.eventData,

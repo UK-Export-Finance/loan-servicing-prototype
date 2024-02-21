@@ -25,7 +25,7 @@ export type NewFacilityRequestDto = Omit<
   'streamId' | 'streamVersion'
 >
 
-export type UpdateFacilityRequestDto = Partial<NewFacilityRequestDto>
+export type UpdateInterestRequestDto = { newInterestRate: number }
 
 export type AdjustFacilityPrincipalDto = {
   effectiveDate: string
