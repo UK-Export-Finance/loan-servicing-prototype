@@ -32,21 +32,18 @@ class FacilityService {
   ) {}
 
   @Transactional()
-  async createNewFacility(
-    facility: NewFacilityRequestDto,
-  ): Promise<Facility> {
-    const createFacilityEvent: CreateNewFacilityEvent = {
-      streamId: crypto.randomUUID(),
-      streamVersion: 1,
-      eventDate: new Date(),
-      effectiveDate: facility.issuedEffectiveDate,
-      type: 'CreateNewFacility',
-      typeVersion: 1,
-      eventData: facility,
-    }
-    const savedEvent = await this.eventService.saveEvent(createFacilityEvent)
+  async createNewFacility(facility: NewFacilityRequestDto): Promise<Facility> {
+    const savedEvent = await this.eventService.addEvent<CreateNewFacilityEvent>(
+      {
+        streamId: crypto.randomUUID(),
+        effectiveDate: facility.issuedEffectiveDate,
+        type: 'CreateNewFacility',
+        typeVersion: 1,
+        eventData: facility,
+      },
+    )
     const transactions = await this.transactionService.buildTransactions(
-      createFacilityEvent.streamId,
+      savedEvent.streamId,
     )
     const latestTransaction = transactions[transactions.length - 1]
 
@@ -68,18 +65,17 @@ class FacilityService {
     update: Partial<NewFacilityRequestDto>,
     eventEffectiveDate: Date,
   ): Promise<Facility> {
-    const updateEvent =
-      await this.eventService.initialiseEvent<UpdateFacilityEvent>(
+    const updateEvent = await this.eventService.addEvent<UpdateFacilityEvent>(
+      {
         streamId,
-        streamVersion,
-        'UpdateFacility',
-        1,
-      )
+        effectiveDate: eventEffectiveDate,
+        type: 'UpdateFacility',
+        typeVersion: 1,
+        eventData: update,
+      },
+      streamVersion,
+    )
 
-    updateEvent.eventData = update
-    updateEvent.effectiveDate = eventEffectiveDate
-
-    await this.eventService.saveEvent(updateEvent)
     const transactions =
       await this.transactionService.buildTransactions(streamId)
     const latestTransaction = transactions[transactions.length - 1]
@@ -101,29 +97,29 @@ class FacilityService {
     streamVersion: number,
     { effectiveDate, adjustment }: AdjustFacilityPrincipalDto,
   ): Promise<Facility> {
+    // Add event
     const updateEvent =
-      await this.eventService.initialiseEvent<AdjustFacilityPrincipalEvent>(
-        streamId,
-        Number(streamVersion),
-        'AdjustFacilityPrincipal',
-        1,
+      await this.eventService.addEvent<AdjustFacilityPrincipalEvent>(
+        {
+          streamId,
+          effectiveDate: new Date(effectiveDate),
+          type: 'AdjustFacilityPrincipal',
+          typeVersion: 1,
+          eventData: { adjustment },
+        },
+        streamVersion,
       )
 
-    const facilityEntity = await this.getFacility(streamId)
-    updateEvent.eventData = {
-      adjustment,
-    }
-    updateEvent.effectiveDate = new Date(effectiveDate)
-    await this.eventService.saveEvent(updateEvent)
     const transactions =
       await this.transactionService.buildTransactions(streamId)
 
-    facilityEntity.streamVersion = updateEvent.streamVersion
     const latestTransaction = transactions[transactions.length - 1]
+
+    const facilityEntity = await this.getFacility(streamId)
+    facilityEntity.streamVersion = updateEvent.streamVersion
     facilityEntity.facilityAmount = latestTransaction.balanceAfterTransaction
 
-    const updatedFacility = await this.facilityRepo.save(facilityEntity)
-    return updatedFacility
+    return this.facilityRepo.save(facilityEntity)
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })

@@ -5,6 +5,11 @@ import EventEntity from 'models/entities/EventEntity'
 import { DataSource } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
 
+export type NewEvent<T extends LoanServicingEvent> = Omit<
+  EventEntity<T>,
+  'id' | 'eventDate' | 'streamVersion'
+>
+
 @Injectable()
 class EventService {
   constructor(
@@ -14,56 +19,35 @@ class EventService {
 
   @Transactional()
   // Default to never to enforce passing a type to T in all cases
-  async initialiseEvent<T extends LoanServicingEvent = never>(
-    streamId: string,
-    streamVersion: number,
-    // A little awkward but we need access to this at compile time
-    type: T['type'],
-    typeVersion: T['typeVersion'],
+  async addEvent<T extends LoanServicingEvent = never>(
+    event: NewEvent<T>,
+    lastSeenStreamVersion: number = 0 // Default to 0 when creating new streams
   ): Promise<EventEntity<T>> {
     const repo = this.dataSource.getRepository(EventEntity<T>)
 
-    const { max } = await repo
+    const maxStreamVersionResult = await repo
       .createQueryBuilder('e')
-      .where({ streamId })
+      .where({ streamId: event.streamId })
       // Prevents another event being written to this stream until transaction is complete
       .setLock('pessimistic_write')
-      .select('MAX(e.streamVersion)', 'max')
-      .getRawOne()
+      .select('MAX(e.streamVersion)', 'value')
+      .getRawOne<{ value: number }>()
 
-    const event = await repo.create({
-      streamId,
-      type,
-      typeVersion,
-      streamVersion: max + 1,
-    })
-    event.streamVersion = max + 1
+    const currentStreamVersion = maxStreamVersionResult?.value ?? 0
 
-    if (event.streamVersion !== streamVersion + 1) {
+    if (currentStreamVersion !== lastSeenStreamVersion) {
       throw new BadRequestException(
-        `Stream ${streamId} has an updated version, please refresh your data`,
+        `Stream ${event.streamId} has an updated version, please refresh your data`,
       )
     }
-    return event
-  }
 
-  @Transactional()
-  async saveEvent<T extends LoanServicingEvent>(
-    newEvent: T,
-  ): Promise<EventEntity<T>> {
-    const repo = this.dataSource.getRepository(EventEntity<T>)
+    const createdEvent = await repo.create({
+      ...event,
+      streamVersion: currentStreamVersion + 1,
+      eventDate: new Date(),
+    })
 
-    const { max } = await repo
-      .createQueryBuilder('e')
-      .where({ streamId: newEvent.streamId })
-      .select('MAX(e.streamVersion)', 'max')
-      .getRawOne()
-
-    const event = await repo.create(newEvent)
-    event.streamVersion = (max || 0) + 1
-    event.eventDate = new Date()
-    const result = await repo.save(event)
-    return result
+    return repo.save(createdEvent)
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
