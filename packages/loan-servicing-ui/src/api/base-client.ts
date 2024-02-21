@@ -1,6 +1,7 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
-export const getApiUrl = (route: string): string => `${process.env.API_URL}/${route}`
+export const getApiUrl = (route: string): string =>
+  `${process.env.API_URL}/${route}`
 
 export const tryGetApiData = async <T extends object>(
   route: string,
@@ -16,11 +17,13 @@ export const tryGetApiData = async <T extends object>(
 export const postApiData = async <T extends object>(
   route: string,
   body: object,
-): Promise<T | null> => {
+): Promise<T> => {
   try {
     const response = await axios.post(getApiUrl(route), body)
     return response.data
-  } catch {
-    return null
+  } catch (e) {
+    const axiosError = e as AxiosError
+    console.error(axiosError?.response?.data)
+    throw e
   }
 }

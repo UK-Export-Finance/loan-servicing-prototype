@@ -3,7 +3,7 @@ import FacilityService from 'services/facility.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityController from 'controllers/facility.controller'
-import FacilityTransactionService from 'services/facilityTransaction.service'
+import FacilityProjectionService from 'services/facilityProjection.service'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import EventModule from './event.module'
 
@@ -13,7 +13,7 @@ import EventModule from './event.module'
     EventModule,
     TypeOrmModule.forFeature([FacilityEntity, FacilityTransactionEntity]),
   ],
-  providers: [FacilityService, FacilityTransactionService],
+  providers: [FacilityService, FacilityProjectionService],
 })
 class FacilityModule {}
 

@@ -28,14 +28,14 @@ import {
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityService from 'services/facility.service'
-import FacilityTransactionService from 'services/facilityTransaction.service'
+import FacilityProjectionService from 'services/facilityProjection.service'
 
 @ApiTags('Facility')
 @Controller('/facility')
 class FacilityController {
   constructor(
     private facilityService: FacilityService,
-    private transactionService: FacilityTransactionService,
+    private transactionService: FacilityProjectionService,
   ) {}
 
   @Get()
@@ -117,7 +117,7 @@ class FacilityController {
 
   @Get('build')
   async buildTransactions(@Query('id') id: string): Promise<void> {
-    await this.transactionService.buildTransactions(id)
+    await this.transactionService.buildProjection(id)
   }
 
   @Post(':id/:version/adjustPrincipal')

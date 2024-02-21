@@ -78,12 +78,12 @@ class FacilityService {
     return newFacility
   }
 
-  adjustPrincipal(
+  async adjustPrincipal(
     streamId: string,
     streamVersion: string,
     adjustment: AdjustFacilityPrincipalDto,
   ): Promise<void> {
-    return axios.post(
+    await axios.post(
       getApiUrl(`facility/${streamId}/${streamVersion}/adjustPrincipal`),
       adjustment,
     )

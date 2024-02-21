@@ -51,7 +51,7 @@ class EventService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  getEventsInOrder(
+  getEventsInCreationOrder(
     streamId: string,
   ): Promise<EventEntity<LoanServicingEvent>[]> {
     const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)

@@ -19,7 +19,7 @@ import {
 import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from './event.service'
-import FacilityTransactionService from './facilityTransaction.service'
+import FacilityProjectionService from './facilityProjection.service'
 
 @Injectable()
 class FacilityService {
@@ -27,34 +27,28 @@ class FacilityService {
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(FacilityEntity)
     private facilityRepo: Repository<FacilityEntity>,
-    @Inject(FacilityTransactionService)
-    private transactionService: FacilityTransactionService,
+    @Inject(FacilityProjectionService)
+    private transactionService: FacilityProjectionService,
   ) {}
 
   @Transactional()
-  async createNewFacility(facility: NewFacilityRequestDto): Promise<Facility> {
+  async createNewFacility(
+    facilityRequest: NewFacilityRequestDto,
+  ): Promise<Facility> {
     const savedEvent = await this.eventService.addEvent<CreateNewFacilityEvent>(
       {
         streamId: crypto.randomUUID(),
-        effectiveDate: facility.issuedEffectiveDate,
+        effectiveDate: facilityRequest.issuedEffectiveDate,
         type: 'CreateNewFacility',
         typeVersion: 1,
-        eventData: facility,
+        eventData: facilityRequest,
       },
     )
-    const transactions = await this.transactionService.buildTransactions(
+    const { facility } = await this.transactionService.buildProjection(
       savedEvent.streamId,
     )
-    const latestTransaction = transactions[transactions.length - 1]
 
-    const projection = await this.facilityRepo.create({
-      ...savedEvent.eventData,
-      facilityAmount: latestTransaction.balanceAfterTransaction,
-      streamId: savedEvent.streamId,
-      streamVersion: 1,
-    })
-
-    return this.facilityRepo.save(projection)
+    return facility
   }
 
   @Transactional()
@@ -64,7 +58,7 @@ class FacilityService {
     update: Partial<NewFacilityRequestDto>,
     eventEffectiveDate: Date,
   ): Promise<Facility> {
-    const updateEvent = await this.eventService.addEvent<UpdateFacilityEvent>(
+    await this.eventService.addEvent<UpdateFacilityEvent>(
       {
         streamId,
         effectiveDate: eventEffectiveDate,
@@ -74,16 +68,9 @@ class FacilityService {
       },
       streamVersion,
     )
-
-    const transactions =
-      await this.transactionService.buildTransactions(streamId)
-    const latestTransaction = transactions[transactions.length - 1]
-
-    return this.updateFacilityProjection(streamId, {
-      ...update,
-      facilityAmount: latestTransaction.balanceAfterTransaction,
-      streamVersion: updateEvent.streamVersion,
-    })
+    
+    const { facility } = await this.transactionService.buildProjection(streamId)
+    return facility
   }
 
   @Transactional()
@@ -92,34 +79,25 @@ class FacilityService {
     streamVersion: number,
     { effectiveDate, adjustment }: AdjustFacilityPrincipalDto,
   ): Promise<Facility> {
-    const updateEvent =
-      await this.eventService.addEvent<AdjustFacilityPrincipalEvent>(
-        {
-          streamId,
-          effectiveDate: new Date(effectiveDate),
-          type: 'AdjustFacilityPrincipal',
-          typeVersion: 1,
-          eventData: { adjustment },
-        },
-        streamVersion,
-      )
-
-    const transactions =
-      await this.transactionService.buildTransactions(streamId)
-
-    const latestTransaction = transactions[transactions.length - 1]
-
-    return this.updateFacilityProjection(streamId, {
-      streamVersion: updateEvent.streamVersion,
-      facilityAmount: latestTransaction.balanceAfterTransaction,
-    })
+    await this.eventService.addEvent<AdjustFacilityPrincipalEvent>(
+      {
+        streamId,
+        effectiveDate: new Date(effectiveDate),
+        type: 'AdjustFacilityPrincipal',
+        typeVersion: 1,
+        eventData: { adjustment },
+      },
+      streamVersion,
+    )
+    const { facility } = await this.transactionService.buildProjection(streamId)
+    return facility
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacilityEvents(
     streamId: string,
   ): Promise<EventEntity<LoanServicingEvent>[]> {
-    const events = await this.eventService.getEventsInOrder(streamId)
+    const events = await this.eventService.getEventsInCreationOrder(streamId)
     return events
   }
 

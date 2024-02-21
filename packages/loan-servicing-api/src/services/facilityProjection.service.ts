@@ -10,6 +10,7 @@ import {
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
+import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from './event.service'
 
 const calculateDailyInterest = (
@@ -26,22 +27,14 @@ const calculateDailyInterest = (
   }
 }
 
-const createFacilityTransaction = (
-  facility: EventEntity<CreateNewFacilityEvent>,
-): FacilityTransaction => ({
-  streamId: facility.streamId,
-  datetime: facility.eventData.issuedEffectiveDate,
-  reference: 'Facility Created',
-  transactionAmount: facility.eventData.facilityAmount,
-  balanceAfterTransaction: facility.eventData.facilityAmount,
-})
-
 @Injectable()
-class FacilityTransactionService {
+class FacilityProjectionService {
   constructor(
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(FacilityTransactionEntity)
     private facilityTransactionRepo: Repository<FacilityTransactionEntity>,
+    @InjectRepository(FacilityEntity)
+    private facilityRepo: Repository<FacilityEntity>,
   ) {}
 
   @Transactional({ propagation: Propagation.SUPPORTS })
@@ -57,48 +50,70 @@ class FacilityTransactionService {
 
   @Transactional()
   // Very dodgy, do not use outside of prototype
-  async buildTransactions(
-    streamId: string,
-  ): Promise<FacilityTransactionEntity[]> {
+  async buildProjection(streamId: string): Promise<{
+    facility: FacilityEntity
+    transactions: FacilityTransactionEntity[]
+  }> {
     await this.facilityTransactionRepo.delete({ streamId })
 
     const facilityEvents =
-    await this.eventService.getEventsInEffectiveOrder(streamId)
-    const createFacilityEvent =
-      facilityEvents.shift() as EventEntity<CreateNewFacilityEvent>
-    const transactions = [createFacilityTransaction(createFacilityEvent)]
+      await this.eventService.getEventsInEffectiveOrder(streamId)
 
-    const expiryDate = new Date(createFacilityEvent.eventData.expiryDate)
-    let dateToProcess = new Date(
-      createFacilityEvent.eventData.issuedEffectiveDate,
-    )
-    let facilityBalance = createFacilityEvent.eventData.facilityAmount
-    let facilityInterestRate = createFacilityEvent.eventData.interestRate
+    const creationEvent =
+      facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
+
+    if (creationEvent.type !== 'CreateNewFacility') {
+      throw new Error('First effective event is not facility creation')
+    }
+
+    const facilityEntity: FacilityEntity = this.facilityRepo.create({
+      streamId,
+      streamVersion: 1,
+      ...creationEvent.eventData,
+    })
+
+    const transactions: FacilityTransaction[] = []
+
+    const expiryDate = new Date(creationEvent.eventData.expiryDate)
+    let dateToProcess = new Date(creationEvent.eventData.issuedEffectiveDate)
 
     while (dateToProcess <= expiryDate) {
       const interestTransaction = {
         streamId,
         datetime: dateToProcess,
         reference: 'interest',
-        ...calculateDailyInterest(facilityBalance, facilityInterestRate),
+        ...calculateDailyInterest(
+          facilityEntity.facilityAmount,
+          facilityEntity.interestRate,
+        ),
       }
       transactions.push(interestTransaction)
-      facilityBalance = interestTransaction.balanceAfterTransaction
+      facilityEntity.facilityAmount =
+        interestTransaction.balanceAfterTransaction
 
       while (facilityEvents[0]?.effectiveDate < dateToProcess) {
         const event = facilityEvents.shift()!
         switch (event.type) {
+          case 'CreateNewFacility':
+            transactions.push({
+              streamId: facilityEntity.streamId,
+              datetime: facilityEntity.issuedEffectiveDate,
+              reference: 'Facility Created',
+              transactionAmount: facilityEntity.facilityAmount,
+              balanceAfterTransaction: facilityEntity.facilityAmount,
+            })
+            break
           case 'UpdateFacility':
             const { eventData: updateEvent } = event as UpdateFacilityEvent
             if (updateEvent.interestRate) {
               transactions.push({
                 streamId,
                 datetime: event.effectiveDate,
-                reference: `interest changed from ${facilityInterestRate} to ${updateEvent.interestRate}`,
+                reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.interestRate}`,
                 transactionAmount: 0,
-                balanceAfterTransaction: facilityBalance,
+                balanceAfterTransaction: facilityEntity.facilityAmount,
               })
-              facilityInterestRate = updateEvent.interestRate
+              facilityEntity.interestRate = updateEvent.interestRate
             }
             break
           case 'AdjustFacilityPrincipal':
@@ -110,9 +125,9 @@ class FacilityTransactionService {
               reference: `facility amount adjustment (withdrawal or repayment)`,
               transactionAmount: incrementEvent.adjustment,
               balanceAfterTransaction:
-                facilityBalance + incrementEvent.adjustment,
+                facilityEntity.facilityAmount + incrementEvent.adjustment,
             })
-            facilityBalance += incrementEvent.adjustment
+            facilityEntity.facilityAmount += incrementEvent.adjustment
             break
           default:
             throw new NotImplementedException()
@@ -123,8 +138,9 @@ class FacilityTransactionService {
     const transactionEntities =
       await this.facilityTransactionRepo.create(transactions)
     await this.facilityTransactionRepo.save(transactionEntities)
-    return transactionEntities
+    await this.facilityRepo.save(facilityEntity)
+    return { facility: facilityEntity, transactions: transactionEntities }
   }
 }
 
-export default FacilityTransactionService
+export default FacilityProjectionService
