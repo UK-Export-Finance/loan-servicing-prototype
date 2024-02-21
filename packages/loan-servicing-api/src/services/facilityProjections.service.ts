@@ -20,7 +20,7 @@ type InterestEvent = EventBase<'CalculateInterest', 1, {}>
 
 type FacilityProjectionEvent = Pick<
   InterestEvent | LoanServicingEvent,
-  'effectiveDate' | 'eventData' | 'type' | 'streamVersion'
+  'effectiveDate' | 'eventData' | 'type'
 >
 
 const calculateDailyInterest = (
@@ -94,13 +94,11 @@ const applyEventToFacility = (
     case 'UpdateInterest':
       const { eventData: updateEvent } = event as UpdateInterestEvent
       facilityEntity.interestRate = updateEvent.newInterestRate
-      facilityEntity.streamVersion = event.streamVersion
       break
     case 'AdjustFacilityPrincipal':
       const { eventData: incrementEvent } =
         event as AdjustFacilityPrincipalEvent
       facilityEntity.facilityAmount += incrementEvent.adjustment
-      facilityEntity.streamVersion = event.streamVersion
       break
     case 'CalculateInterest':
       facilityEntity.facilityAmount = calculateDailyInterest(
@@ -142,7 +140,7 @@ class FacilityProjectionsService {
     await this.facilityTransactionRepo.delete({ streamId })
 
     const facilityEvents =
-      await this.eventService.getEventsInEffectiveOrder(streamId)
+      await this.eventService.getEventsInCreationOrder(streamId)
 
     const facility = this.getFacilityAtCreation(facilityEvents)
 
@@ -157,6 +155,9 @@ class FacilityProjectionsService {
       applyEventToFacility(e, facility)
       return convertEventToTransaction(e, facility)
     })
+
+    facility.streamVersion =
+      facilityEvents[facilityEvents.length - 1].streamVersion
 
     const transactionEntities =
       await this.facilityTransactionRepo.save(transactions)
@@ -190,8 +191,6 @@ class FacilityProjectionsService {
     const interestEvents: FacilityProjectionEvent[] = []
     while (dateToProcess <= expiryDate) {
       interestEvents.push({
-        // stream version is not used in the interest event as it is ephemeral
-        streamVersion: -1,
         effectiveDate: dateToProcess,
         type: 'CalculateInterest',
         eventData: {},
