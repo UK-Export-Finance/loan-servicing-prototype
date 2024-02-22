@@ -10,6 +10,7 @@ import {
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
 import { TransactionTableRow } from 'types/transactions'
+import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
   const { eventDate, effectiveDate } = event
@@ -58,16 +59,6 @@ const getTransactionTableRow = (
   balance: transaction.balanceAfterTransaction.toString(),
 })
 
-const eventTableRowToNunjucksTableRow = (r: EventTableRow): NunjuckTableRow =>
-  [r.eventDate, r.event, r.description, r.effectiveDate].map((c) => ({
-    text: c,
-  }))
-
-const transactionRowToNunjucksRow = (r: TransactionTableRow): NunjuckTableRow =>
-  [r.date, r.reference, r.transactionAmount, r.balance].map((c) => ({
-    text: c,
-  }))
-
 @Injectable()
 class FacilityService {
   async createFacility(
@@ -100,7 +91,16 @@ class FacilityService {
       `facility/events?id=${streamId}`,
     )
     return (
-      events?.map(getEventTableRow).map(eventTableRowToNunjucksTableRow) || null
+      events
+        ?.map(getEventTableRow)
+        .map((e) =>
+          buildNunjucksTableRow(e, [
+            'eventDate',
+            'event',
+            'description',
+            'effectiveDate',
+          ]),
+        ) || null
     )
   }
 
@@ -113,7 +113,14 @@ class FacilityService {
     return (
       transactions
         ?.map(getTransactionTableRow)
-        .map(transactionRowToNunjucksRow) || null
+        .map((e) =>
+          buildNunjucksTableRow(e, [
+            'date',
+            'reference',
+            'transactionAmount',
+            'balance',
+          ]),
+        ) || null
     )
   }
 }

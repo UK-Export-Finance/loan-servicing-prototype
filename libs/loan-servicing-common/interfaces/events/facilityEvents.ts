@@ -1,6 +1,4 @@
-import { PropertiesWithType } from '../../utils/type-utils'
 import {
-  Facility,
   NewFacilityRequestDto,
   UpdateInterestRequestDto,
 } from '../facility'
@@ -20,10 +18,6 @@ export type UpdateInterestEvent = EventBase<
   UpdateInterestRequestDto
 >
 
-export type FacilityIncrementableProperties = PropertiesWithType<
-  Facility,
-  number
->
 export type AdjustFacilityPrincipalEvent = EventBase<
   'AdjustFacilityPrincipal',
   1,
