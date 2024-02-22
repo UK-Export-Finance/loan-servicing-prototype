@@ -29,7 +29,7 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         event: 'Facility value adjusted',
         eventDate: eventDateObj.toLocaleString('en-GB'),
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
-        description: `Facility principal was ${adjustment > 0 ? 'increased' : 'decreased'} by ${Math.abs(adjustment)}.`,
+        description: `Facility principal was ${Number(adjustment) > 0 ? 'increased' : 'decreased'} by ${Math.abs(Number(adjustment))}.`,
       }
     case 'UpdateInterest':
       const updatedEntries = Object.entries(event.eventData)
@@ -110,6 +110,7 @@ class FacilityService {
     const transactions = await tryGetApiData<FacilityTransaction[]>(
       `facility/transactions?id=${streamId}`,
     )
+    console.log(transactions)
     return (
       transactions
         ?.map(getTransactionTableRow)

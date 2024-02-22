@@ -20,7 +20,7 @@ export class FacilityResponseDtoClass implements Facility {
 
   @ApiProperty()
   @IsNotEmpty()
-  facilityAmount!: number
+  facilityAmount!: string
 
   @ApiProperty()
   issuedEffectiveDate!: Date
@@ -30,7 +30,7 @@ export class FacilityResponseDtoClass implements Facility {
 
   @ApiProperty()
   @IsNotEmpty()
-  interestRate!: number
+  interestRate!: string
 }
 
 export class NewFacilityRequestDtoClass
@@ -41,7 +41,7 @@ export class UpdateInterestRequestDtoClass implements UpdateInterestRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  newInterestRate!: number
+  newInterestRate!: string
 }
 
 export class AdjustFacilityPrincipalDtoClass
@@ -51,5 +51,5 @@ export class AdjustFacilityPrincipalDtoClass
   effectiveDate!: string
 
   @ApiProperty()
-  adjustment!: number
+  adjustment!: string
 }

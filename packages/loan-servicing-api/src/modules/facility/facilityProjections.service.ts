@@ -15,6 +15,7 @@ import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
+import Big from 'big.js'
 
 type InterestEvent = EventBase<'CalculateInterest', 1, {}>
 
@@ -24,16 +25,17 @@ type FacilityProjectionEvent = Pick<
 >
 
 const calculateDailyInterest = (
-  balance: number,
-  interestRate: number,
+  balance: string,
+  interestRate: string,
 ): Pick<
   FacilityTransaction,
   'transactionAmount' | 'balanceAfterTransaction'
 > => {
-  const interestAccrued = (balance * (interestRate / 100)) / 365
+  const dailyInterestRate = new Big(interestRate).div(100)// .div(365)
+  const interestAccrued = new Big(balance).times(dailyInterestRate)
   return {
-    transactionAmount: interestAccrued,
-    balanceAfterTransaction: balance + interestAccrued,
+    transactionAmount: interestAccrued.toString(),
+    balanceAfterTransaction: Big(balance).add(interestAccrued).toString(),
   }
 }
 
@@ -56,7 +58,7 @@ const convertEventToTransaction = (
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
         reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.newInterestRate}`,
-        transactionAmount: 0,
+        transactionAmount: '0',
         balanceAfterTransaction: facilityEntity.facilityAmount,
       }
     case 'AdjustFacilityPrincipal':
@@ -175,7 +177,6 @@ class FacilityProjectionsService {
     if (creationEvent.type !== 'CreateNewFacility') {
       throw new Error('First effective event is not facility creation')
     }
-
     return this.facilityRepo.create({
       streamId: creationEvent.streamId,
       streamVersion: 1,

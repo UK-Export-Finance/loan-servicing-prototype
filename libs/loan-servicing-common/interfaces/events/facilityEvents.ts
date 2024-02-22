@@ -27,7 +27,7 @@ export type FacilityIncrementableProperties = PropertiesWithType<
 export type AdjustFacilityPrincipalEvent = EventBase<
   'AdjustFacilityPrincipal',
   1,
-  { adjustment: number }
+  { adjustment: string }
 >
 
 export type FacilityEvent =

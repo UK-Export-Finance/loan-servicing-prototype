@@ -7,8 +7,8 @@ export type Facility = {
   //   facilityType: string
   //   description: string
   //   currency: string
-  facilityAmount: number
-  interestRate: number
+  facilityAmount: string
+  interestRate: string
   //   commitmentDate: Date
   //   issuedNotEffectiveDate: Date
   issuedEffectiveDate: Date
@@ -22,9 +22,9 @@ export type FacilityDto = ConvertToDtoType<Facility>
 
 export type NewFacilityRequestDto = Omit<Facility, 'streamId' | 'streamVersion'>
 
-export type UpdateInterestRequestDto = { newInterestRate: number }
+export type UpdateInterestRequestDto = { newInterestRate: string }
 
 export type AdjustFacilityPrincipalDto = {
   effectiveDate: string
-  adjustment: number
+  adjustment: string
 }

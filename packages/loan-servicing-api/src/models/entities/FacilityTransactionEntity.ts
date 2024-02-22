@@ -15,11 +15,11 @@ class FacilityTransactionEntity implements FacilityTransaction {
   @Column()
   reference!: string
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  transactionAmount!: number
+  @Column()
+  transactionAmount!: string
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  balanceAfterTransaction!: number
+  @Column()
+  balanceAfterTransaction!: string
 }
 
 export default FacilityTransactionEntity
