@@ -5,6 +5,10 @@ export type FacilityPrincipalAdjustmentFormDto = {
   adjustment: string
 } & DateInputFormData<'effectiveDate'>
 
+export type FacilityInterestRateUpdateFormDto = {
+  interestRate: string
+} & DateInputFormData<'effectiveDate'>
+
 export type NewFacilityRequestFormDto = MapDatesToDateFormInputs<
   NewFacilityRequestDto,
   'expiryDate' | 'issuedEffectiveDate'

@@ -22,7 +22,10 @@ export type FacilityDto = ConvertToDtoType<Facility>
 
 export type NewFacilityRequestDto = Omit<Facility, 'streamId' | 'streamVersion'>
 
-export type UpdateInterestRequestDto = { newInterestRate: string }
+export type UpdateInterestRequestDto = {
+  effectiveDate: string
+  interestRate: string
+}
 
 export type AdjustFacilityPrincipalDto = {
   effectiveDate: string

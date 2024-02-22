@@ -38,7 +38,7 @@
 
   <h2 class="govuk-heading-m">Edit Facility</h2>
   <h3 class="govuk-heading-s">Facility Amount</h3>
-    <form action="/facility/{{facility.streamId}}/{{facility.streamVersion}}/adjustPrincipal" method="post">
+    <form action="/facility/{{facility.streamId}}/adjustPrincipal?version={{facility.streamVersion}}" method="post">
     {{ govukInput({
         label: {
           text: "Adjust facility amount"
@@ -46,6 +46,27 @@
         classes: "govuk-input--width-20",
         id: "adjustment",
         name: "adjustment"
+      }) }}
+    {{ govukDateInput({
+        id: "effectiveDate",
+        namePrefix: "effectiveDate",
+        fieldset: {
+          legend: {
+            text: "Effective date of adjustment"
+          }
+        }
+      }) }}
+    {{ govukButton({  text: "Add adjustment"}) }}
+  </form>
+  <h3 class="govuk-heading-s">Interest Rate</h3>
+    <form action="/facility/{{facility.streamId}}/updateInterest?version={{facility.streamVersion}}" method="post">
+    {{ govukInput({
+        label: {
+          text: "Updated Interest Value (%)"
+        },
+        classes: "govuk-input--width-20",
+        id: "interestRate",
+        name: "interestRate"
       }) }}
     {{ govukDateInput({
         id: "effectiveDate",

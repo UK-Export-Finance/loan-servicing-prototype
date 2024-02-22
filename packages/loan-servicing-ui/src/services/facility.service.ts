@@ -6,6 +6,7 @@ import {
   FacilityTransaction,
   FacilityDto,
   AdjustFacilityPrincipalDto,
+  UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
@@ -27,23 +28,18 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
     case 'AdjustFacilityPrincipal':
       const { adjustment } = event.eventData
       return {
-        event: 'Facility value adjusted',
+        event: 'Facility principal adjusted',
         eventDate: eventDateObj.toLocaleString('en-GB'),
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Facility principal was ${Number(adjustment) > 0 ? 'increased' : 'decreased'} by ${Math.abs(Number(adjustment))}.`,
       }
     case 'UpdateInterest':
-      const updatedEntries = Object.entries(event.eventData)
       return {
-        event: 'Facility property changed',
+        event: 'Interest Updated',
         eventDate: eventDateObj.toLocaleString('en-GB'),
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
-        description: updatedEntries
-          .map(
-            ([property, newValue]) =>
-              `Property '${property}' was changed to '${newValue}'.`,
-          )
-          .join('\n'),
+        description: `Interest rate was changed to ${event.eventData.interestRate}%.`,
+          
       }
     default:
       throw new NotImplementedException()
@@ -76,6 +72,17 @@ class FacilityService {
     await postApiData(
       `facility/${streamId}/adjustPrincipal?version=${streamVersion}`,
       adjustment,
+    )
+  }
+
+  async updateInterest(
+    streamId: string,
+    streamVersion: string,
+    update: UpdateInterestRequestDto,
+  ): Promise<void> {
+    await postApiData(
+      `facility/${streamId}/updateInterestRate?version=${streamVersion}`,
+      update,
     )
   }
 

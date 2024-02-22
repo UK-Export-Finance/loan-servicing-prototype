@@ -39,8 +39,11 @@ export class NewFacilityRequestDtoClass
 
 export class UpdateInterestRequestDtoClass implements UpdateInterestRequestDto {
   @ApiProperty()
+  effectiveDate!: string
+
+  @ApiProperty()
   @IsNotEmpty()
-  newInterestRate!: string
+  interestRate!: string
 }
 
 export class AdjustFacilityPrincipalDtoClass

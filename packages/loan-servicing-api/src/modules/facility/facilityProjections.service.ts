@@ -59,11 +59,11 @@ const applyEventToFacilityAsTransaction = (
       const transaction = {
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
-        reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.newInterestRate}`,
+        reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.interestRate}`,
         transactionAmount: '0',
         balanceAfterTransaction: facilityEntity.facilityAmount,
       }
-      facilityEntity.interestRate = updateEvent.newInterestRate
+      facilityEntity.interestRate = updateEvent.interestRate
       return transaction
     case 'AdjustFacilityPrincipal':
       const { eventData: incrementEvent } =

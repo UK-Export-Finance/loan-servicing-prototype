@@ -57,12 +57,11 @@ class FacilityService {
     streamId: string,
     streamVersion: number,
     update: UpdateInterestRequestDto,
-    eventEffectiveDate: Date,
   ): Promise<Facility> {
     await this.eventService.addEvent<UpdateInterestEvent>(
       {
         streamId,
-        effectiveDate: eventEffectiveDate,
+        effectiveDate: new Date(update.effectiveDate),
         type: 'UpdateInterest',
         typeVersion: 1,
         eventData: update,

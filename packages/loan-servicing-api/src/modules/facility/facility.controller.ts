@@ -72,7 +72,7 @@ class FacilityController {
     return facilityEvents
   }
 
-  @Get('all')
+  @Get()
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async getAllFacility(): Promise<FacilityResponseDtoClass[] | null> {
     const allEvents = await this.facilityService.getAllFacilities()
@@ -95,16 +95,14 @@ class FacilityController {
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async updateFacilityInterestRate(
-    @Query('id') id: string,
+    @Param('id') id: string,
     @Query('version') version: number,
     @Body() body: UpdateInterestRequestDtoClass,
-    @Query('eventEffectiveDate') eventEffectiveDate: Date = new Date(),
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.updateFacility(
       id,
       Number(version),
       body,
-      eventEffectiveDate,
     )
     return updatedFacility
   }

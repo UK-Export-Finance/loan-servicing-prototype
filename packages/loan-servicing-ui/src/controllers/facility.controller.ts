@@ -15,9 +15,11 @@ import {
   AdjustFacilityPrincipalDto,
   FacilityDto,
   NewFacilityRequestDto,
+  UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import FacilityService from 'services/facility.service'
 import {
+  FacilityInterestRateUpdateFormDto,
   FacilityPrincipalAdjustmentFormDto,
   NewFacilityRequestFormDto,
 } from 'types/dtos/facility.dto'
@@ -36,7 +38,7 @@ class FacilityController {
   async renderAllFacilities(): Promise<{
     allFacilities: FacilityDto[] | null
   }> {
-    const allFacilities = await tryGetApiData<FacilityDto[]>('facility/all')
+    const allFacilities = await tryGetApiData<FacilityDto[]>('facility')
     return { allFacilities }
   }
 
@@ -84,10 +86,10 @@ class FacilityController {
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
 
-  @Post('facility/:id/:version/adjustprincipal')
+  @Post('facility/:id/adjustprincipal')
   async addPrincipalAdjustment(
     @Param('id') id: string,
-    @Param('version') version: string,
+    @Query('version') version: string,
     @Body()
     requestDto: FacilityPrincipalAdjustmentFormDto,
     @Res() response: Response,
@@ -100,6 +102,25 @@ class FacilityController {
       adjustment: requestDto.adjustment,
     }
     await this.facilityService.adjustPrincipal(id, version, adjustmentDto)
+    response.redirect(`/facility/${id}`)
+  }
+
+  @Post('facility/:id/updateInterest')
+  async updateInterest(
+    @Param('id') id: string,
+    @Query('version') version: string,
+    @Body()
+    requestDto: FacilityInterestRateUpdateFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const updateDto: UpdateInterestRequestDto = {
+      effectiveDate: getDateFromDateInput(
+        requestDto,
+        'effectiveDate',
+      ).toISOString(),
+      interestRate: requestDto.interestRate
+    }
+    await this.facilityService.updateInterest(id, version, updateDto)
     response.redirect(`/facility/${id}`)
   }
 }
