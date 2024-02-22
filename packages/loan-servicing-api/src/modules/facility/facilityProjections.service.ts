@@ -24,21 +24,16 @@ type FacilityProjectionEvent = Pick<
   'effectiveDate' | 'eventData' | 'type'
 >
 
-const calculateDailyInterest = (
+const calculateDailyInterestAccrual = (
   balance: string,
   interestRate: string,
-): Pick<
-  FacilityTransaction,
-  'transactionAmount' | 'balanceAfterTransaction'
-> => {
+): Big => {
   const dailyInterestRate = Big(interestRate).div(100).div(365)
   const interestAccrued = Big(balance)
     .times(dailyInterestRate)
     .round(2, ROUND_MODE_HALF_EVEN)
-  return {
-    transactionAmount: interestAccrued.toString(),
-    balanceAfterTransaction: Big(balance).add(interestAccrued).toFixed(2),
-  }
+
+  return interestAccrued
 }
 
 const applyEventToFacilityAsTransaction = (
@@ -79,17 +74,19 @@ const applyEventToFacilityAsTransaction = (
         balanceAfterTransaction: facilityEntity.facilityAmount,
       }
     case 'CalculateInterest':
-      const { balanceAfterTransaction, transactionAmount } =
-        calculateDailyInterest(
-          facilityEntity.facilityAmount,
-          facilityEntity.interestRate,
-        )
+      const transactionAmount = calculateDailyInterestAccrual(
+        facilityEntity.facilityAmount,
+        facilityEntity.interestRate,
+      )
+      const balanceAfterTransaction = Big(facilityEntity.facilityAmount)
+        .add(transactionAmount)
+        .toString()
       facilityEntity.facilityAmount = balanceAfterTransaction
       return {
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
         reference: 'interest',
-        transactionAmount,
+        transactionAmount: transactionAmount.toString(),
         balanceAfterTransaction,
       }
     default:

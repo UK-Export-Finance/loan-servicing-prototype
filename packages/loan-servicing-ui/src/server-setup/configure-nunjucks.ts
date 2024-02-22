@@ -6,6 +6,7 @@ const TEMPLATES_DIR = 'src/templates'
 
 const configureNunjucks = (app: NestExpressApplication): void => {
   const express = app.getHttpAdapter().getInstance()
+  // This way allows the right dir to be found regardless of where node_modules is
   const govUkFrontendDir = dirname(
     require.resolve('govuk-frontend/package.json'),
   )

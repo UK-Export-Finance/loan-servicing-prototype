@@ -32,11 +32,5 @@
     "nodemon": "^3.0.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
-  },
-  "nodemonConfig": {
-    "watch": [
-      "src",
-      "../loan-servicing-common"
-    ]
   }
 }

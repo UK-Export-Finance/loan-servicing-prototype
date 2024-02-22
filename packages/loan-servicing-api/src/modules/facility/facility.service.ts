@@ -2,7 +2,6 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  NotImplementedException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
@@ -112,48 +111,8 @@ class FacilityService {
     return facility
   }
 
-  async updateFacilityProjection(
-    streamId: string,
-    update: Partial<Facility>,
-  ): Promise<Facility> {
-    const facilityEntity = await this.getFacility(streamId)
-    Object.assign(facilityEntity, update)
-    return this.facilityRepo.save(facilityEntity)
-  }
-
   async getAllFacilities(): Promise<Facility[] | null> {
     return this.facilityRepo.find()
-  }
-
-  getFacilityFromEvents(events: EventEntity<LoanServicingEvent>[]): Facility {
-    const create = events[0] as CreateNewFacilityEvent
-    const updates = events.slice(1)
-    const result: Facility = updates.reduce(
-      (facility, update) => {
-        if (update.type === 'UpdateInterest') {
-          return {
-            ...facility,
-            ...update.eventData,
-            streamVersion: update.streamVersion,
-          }
-        }
-        if (update.type === 'AdjustFacilityPrincipal') {
-          const { eventData } = update as AdjustFacilityPrincipalEvent
-          return {
-            ...facility,
-            streamVersion: update.streamVersion,
-            facilityAmount: facility.facilityAmount + eventData.adjustment,
-          }
-        }
-        throw new NotImplementedException()
-      },
-      {
-        streamId: create.streamId,
-        streamVersion: create.streamVersion,
-        ...create.eventData,
-      },
-    )
-    return result
   }
 }
 
