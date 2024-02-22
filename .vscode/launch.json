@@ -21,5 +21,12 @@
       "localRoot": "${workspaceFolder}/packages/loan-servicing-ui",
       "remoteRoot": "/opt/app/packages/loan-servicing-ui"
     }
+  ],
+  "compounds": [
+    {
+      "name": "Attach Debuggers",
+      "configurations": ["Attach API Debugger", "Attach Frontend Debugger"],
+      "stopAll": true
+    }
   ]
 }

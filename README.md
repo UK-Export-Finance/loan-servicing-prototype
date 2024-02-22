@@ -7,6 +7,10 @@ Run the applications by running `npm run dev` in the repo root
 If the `package.json` of any application is updated the rebuild the dev container with
 `npm run dev:build`
 
+### Debugging
+
+Full debugging support is available. To start the debugger, run the 'Attach Debuggers' launch configuration.
+
 ## Initial Setup
 
 Copy the `.env.sample` file as `.env` and add the [default Azurite connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=visual-studio%2Cblob-storage#http-connection-strings) for all conneciton string values.
