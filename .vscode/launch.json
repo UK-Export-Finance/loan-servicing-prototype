@@ -8,6 +8,7 @@
       "port": 5858,
       "address": "localhost",
       "sourceMaps": true,
+      "restart": true,
       "localRoot": "${workspaceFolder}/packages/loan-servicing-api",
       "remoteRoot": "/opt/app/packages/loan-servicing-api"
     },
@@ -18,6 +19,7 @@
       "port": 5959,
       "address": "localhost",
       "sourceMaps": true,
+      "restart": true,
       "localRoot": "${workspaceFolder}/packages/loan-servicing-ui",
       "remoteRoot": "/opt/app/packages/loan-servicing-ui"
     }

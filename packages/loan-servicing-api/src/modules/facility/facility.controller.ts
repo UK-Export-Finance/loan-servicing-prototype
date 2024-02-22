@@ -34,10 +34,10 @@ class FacilityController {
     private transactionService: FacilityProjectionsService,
   ) {}
 
-  @Get()
+  @Get(':id')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async getFacility(
-    @Query('id') streamId: string,
+    @Param('id') streamId: string,
   ): Promise<FacilityResponseDtoClass> {
     const facility = await this.facilityService.getFacility(streamId)
     if (facility === null) {
@@ -46,10 +46,10 @@ class FacilityController {
     return facility
   }
 
-  @Get('events')
+  @Get(':id/events')
   @ApiOkResponse({ type: UntypedEvent })
   async getFacilityEvents(
-    @Query('id') streamId: string,
+    @Param('id') streamId: string,
   ): Promise<EventEntity<LoanServicingEvent>[]> {
     const facilityEvents =
       await this.facilityService.getFacilityEvents(streamId)
@@ -59,10 +59,10 @@ class FacilityController {
     return facilityEvents
   }
 
-  @Get('transactions')
+  @Get(':id/transactions')
   @ApiOkResponse({ type: FacilityTransactionEntity })
   async getFacilityTransactions(
-    @Query('id') streamId: string,
+    @Param('id') streamId: string,
   ): Promise<FacilityTransaction[]> {
     const facilityEvents =
       await this.transactionService.getTransactions(streamId)
@@ -82,7 +82,7 @@ class FacilityController {
     return allEvents
   }
 
-  @Post()
+  @Post('new')
   @ApiCreatedResponse({ type: FacilityResponseDtoClass })
   async newFacility(
     @Body() body: NewFacilityRequestDtoClass,
@@ -91,7 +91,7 @@ class FacilityController {
     return newFacility
   }
 
-  @Post(':id/:version/updateInterestRate')
+  @Post(':id/updateInterestRate')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async updateFacilityInterestRate(
@@ -109,16 +109,16 @@ class FacilityController {
     return updatedFacility
   }
 
-  @Get('build')
-  async buildTransactions(@Query('id') id: string): Promise<void> {
+  @Get(':id/build')
+  async buildTransactions(@Param('id') id: string): Promise<void> {
     await this.transactionService.buildProjections(id)
   }
 
-  @Post(':id/:version/adjustPrincipal')
+  @Post(':id/adjustPrincipal')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async incrementValue(
     @Param('id') id: string,
-    @Param('version') version: string,
+    @Query('version') version: string,
     @Body() adjustment: AdjustFacilityPrincipalDtoClass,
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.adjustFacilityPrincipal(

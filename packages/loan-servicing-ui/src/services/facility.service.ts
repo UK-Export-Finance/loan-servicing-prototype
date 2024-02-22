@@ -64,7 +64,7 @@ class FacilityService {
   async createFacility(
     facility: NewFacilityRequestDto,
   ): Promise<FacilityDto | null> {
-    const newFacility = await postApiData<FacilityDto>('facility', facility)
+    const newFacility = await postApiData<FacilityDto>('facility/new', facility)
     return newFacility
   }
 
@@ -74,13 +74,13 @@ class FacilityService {
     adjustment: AdjustFacilityPrincipalDto,
   ): Promise<void> {
     await postApiData(
-      `facility/${streamId}/${streamVersion}/adjustPrincipal`,
+      `facility/${streamId}/adjustPrincipal?version=${streamVersion}`,
       adjustment,
     )
   }
 
   async getFacility(streamId: string): Promise<FacilityDto | null> {
-    const facility = await tryGetApiData<FacilityDto>(`facility?id=${streamId}`)
+    const facility = await tryGetApiData<FacilityDto>(`facility/${streamId}`)
     return facility
   }
 
@@ -88,7 +88,7 @@ class FacilityService {
     streamId: string,
   ): Promise<NunjuckTableRow[] | null> {
     const events = await tryGetApiData<LoanServicingEvent[]>(
-      `facility/events?id=${streamId}`,
+      `facility/${streamId}/events`,
     )
     return (
       events
@@ -108,7 +108,7 @@ class FacilityService {
     streamId: string,
   ): Promise<NunjuckTableRow[] | null> {
     const transactions = await tryGetApiData<FacilityTransaction[]>(
-      `facility/transactions?id=${streamId}`,
+      `facility/${streamId}/transactions`,
     )
     return (
       transactions
