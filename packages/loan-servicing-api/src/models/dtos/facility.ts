@@ -1,5 +1,5 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber } from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
 import {
   AdjustFacilityPrincipalDto,
   Facility,
@@ -40,7 +40,6 @@ export class NewFacilityRequestDtoClass
 export class UpdateInterestRequestDtoClass implements UpdateInterestRequestDto {
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
   newInterestRate!: string
 }
 

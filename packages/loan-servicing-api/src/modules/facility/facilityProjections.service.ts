@@ -56,14 +56,15 @@ const applyEventToFacilityAsTransaction = (
       }
     case 'UpdateInterest':
       const { eventData: updateEvent } = event as UpdateInterestEvent
-      facilityEntity.interestRate = updateEvent.newInterestRate
-      return {
+      const transaction = {
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
         reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.newInterestRate}`,
         transactionAmount: '0',
         balanceAfterTransaction: facilityEntity.facilityAmount,
       }
+      facilityEntity.interestRate = updateEvent.newInterestRate
+      return transaction
     case 'AdjustFacilityPrincipal':
       const { eventData: incrementEvent } =
         event as AdjustFacilityPrincipalEvent
@@ -136,7 +137,9 @@ class FacilityProjectionsService {
       ...interestEvents,
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
-    const transactions = projectedEvents.map((e) => applyEventToFacilityAsTransaction(e, facility))
+    const transactions = projectedEvents.map((e) =>
+      applyEventToFacilityAsTransaction(e, facility),
+    )
 
     facility.streamVersion =
       facilityEvents[facilityEvents.length - 1].streamVersion
