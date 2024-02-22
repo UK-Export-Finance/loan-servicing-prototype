@@ -17,7 +17,7 @@ import {
   NewFacilityRequestDto,
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
-import FacilityService from 'services/facility.service'
+import FacilityService from 'modules/facility/facility.service'
 import {
   FacilityInterestRateUpdateFormDto,
   FacilityPrincipalAdjustmentFormDto,

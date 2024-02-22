@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import HomeModule from './home.module'
+import FacilityModule from './facility/facility.module'
 
 @Module({
-  imports: [HomeModule],
+  imports: [FacilityModule],
 })
 class AppModule {}
 
