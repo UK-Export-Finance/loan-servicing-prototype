@@ -158,7 +158,7 @@ class FacilityProjectionsService {
       facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
 
     if (creationEvent.type !== 'CreateNewFacility') {
-      throw new Error('First effective event is not facility creation')
+      throw new Error('First created event is not facility creation')
     }
     return this.facilityRepo.create({
       streamId: creationEvent.streamId,
@@ -179,7 +179,7 @@ class FacilityProjectionsService {
         type: 'CalculateInterest',
         eventData: {},
       })
-
+      // Naive date management - not suitable for production
       dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
     }
     return interestEvents
