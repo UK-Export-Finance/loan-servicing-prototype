@@ -110,7 +110,6 @@ class FacilityService {
     const transactions = await tryGetApiData<FacilityTransaction[]>(
       `facility/transactions?id=${streamId}`,
     )
-    console.log(transactions)
     return (
       transactions
         ?.map(getTransactionTableRow)

@@ -15,7 +15,7 @@ import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
-import Big from 'big.js'
+import Big, { roundHalfEven as ROUND_MODE_HALF_EVEN } from 'big.js'
 
 type InterestEvent = EventBase<'CalculateInterest', 1, {}>
 
@@ -31,15 +31,17 @@ const calculateDailyInterest = (
   FacilityTransaction,
   'transactionAmount' | 'balanceAfterTransaction'
 > => {
-  const dailyInterestRate = new Big(interestRate).div(100)// .div(365)
-  const interestAccrued = new Big(balance).times(dailyInterestRate)
+  const dailyInterestRate = Big(interestRate).div(100).div(365)
+  const interestAccrued = Big(balance)
+    .times(dailyInterestRate)
+    .round(2, ROUND_MODE_HALF_EVEN)
   return {
     transactionAmount: interestAccrued.toString(),
-    balanceAfterTransaction: Big(balance).add(interestAccrued).toString(),
+    balanceAfterTransaction: Big(balance).add(interestAccrued).toFixed(2),
   }
 }
 
-const convertEventToTransaction = (
+const applyEventToFacilityAsTransaction = (
   event: FacilityProjectionEvent,
   facilityEntity: FacilityEntity,
 ): FacilityTransaction => {
@@ -54,6 +56,7 @@ const convertEventToTransaction = (
       }
     case 'UpdateInterest':
       const { eventData: updateEvent } = event as UpdateInterestEvent
+      facilityEntity.interestRate = updateEvent.newInterestRate
       return {
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
@@ -64,6 +67,9 @@ const convertEventToTransaction = (
     case 'AdjustFacilityPrincipal':
       const { eventData: incrementEvent } =
         event as AdjustFacilityPrincipalEvent
+      facilityEntity.facilityAmount = Big(facilityEntity.facilityAmount)
+        .add(incrementEvent.adjustment)
+        .toFixed(2)
       return {
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
@@ -72,42 +78,19 @@ const convertEventToTransaction = (
         balanceAfterTransaction: facilityEntity.facilityAmount,
       }
     case 'CalculateInterest':
+      const { balanceAfterTransaction, transactionAmount } =
+        calculateDailyInterest(
+          facilityEntity.facilityAmount,
+          facilityEntity.interestRate,
+        )
+      facilityEntity.facilityAmount = balanceAfterTransaction
       return {
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
         reference: 'interest',
-        ...calculateDailyInterest(
-          facilityEntity.facilityAmount,
-          facilityEntity.interestRate,
-        ),
+        transactionAmount,
+        balanceAfterTransaction,
       }
-    default:
-      throw new NotImplementedException()
-  }
-}
-
-const applyEventToFacility = (
-  event: FacilityProjectionEvent,
-  facilityEntity: FacilityEntity,
-): void => {
-  switch (event.type) {
-    case 'CreateNewFacility':
-      break
-    case 'UpdateInterest':
-      const { eventData: updateEvent } = event as UpdateInterestEvent
-      facilityEntity.interestRate = updateEvent.newInterestRate
-      break
-    case 'AdjustFacilityPrincipal':
-      const { eventData: incrementEvent } =
-        event as AdjustFacilityPrincipalEvent
-      facilityEntity.facilityAmount += incrementEvent.adjustment
-      break
-    case 'CalculateInterest':
-      facilityEntity.facilityAmount = calculateDailyInterest(
-        facilityEntity.facilityAmount,
-        facilityEntity.interestRate,
-      ).balanceAfterTransaction
-      break
     default:
       throw new NotImplementedException()
   }
@@ -153,10 +136,7 @@ class FacilityProjectionsService {
       ...interestEvents,
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
-    const transactions = projectedEvents.map((e) => {
-      applyEventToFacility(e, facility)
-      return convertEventToTransaction(e, facility)
-    })
+    const transactions = projectedEvents.map((e) => applyEventToFacilityAsTransaction(e, facility))
 
     facility.streamVersion =
       facilityEvents[facilityEvents.length - 1].streamVersion
