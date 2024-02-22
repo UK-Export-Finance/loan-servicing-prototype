@@ -24,6 +24,7 @@ services:
     ports:
       - '3000:3000'
       - '35729:35729' # Live reload server port
+      - '5959:5959'
     volumes:
       - './packages/loan-servicing-ui/src:/opt/app/packages/loan-servicing-ui/src:ro'
       - './packages/loan-servicing-ui/public:/opt/app/packages/loan-servicing-ui/public:ro'
@@ -43,6 +44,7 @@ services:
     image: loan-servicing/api
     ports:
       - '3001:3001'
+      - '5858:5858'
     volumes:
       - ./packages/loan-servicing-api/src:/opt/app/packages/loan-servicing-api/src:ro
       - ./libs:/opt/app/libs:ro

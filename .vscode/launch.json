@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach API Debugger",
+      "port": 5858,
+      "address": "localhost",
+      "sourceMaps": true,
+      "localRoot": "${workspaceFolder}/packages/loan-servicing-api",
+      "remoteRoot": "/opt/app/packages/loan-servicing-api"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach Frontend Debugger",
+      "port": 5959,
+      "address": "localhost",
+      "sourceMaps": true,
+      "localRoot": "${workspaceFolder}/packages/loan-servicing-ui",
+      "remoteRoot": "/opt/app/packages/loan-servicing-ui"
+    }
+  ]
+}

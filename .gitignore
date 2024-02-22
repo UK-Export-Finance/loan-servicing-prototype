@@ -23,7 +23,6 @@ lerna-debug.log*
 
 # IDE - VSCode
 .vscode/tasks.json
-.vscode/launch.json
 
 # IDE - JetBrains
 .idea
