@@ -16,9 +16,7 @@ import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
-import StrategyService, {
-  FacilityContextOptions,
-} from 'modules/strategy/strategy.service'
+import StrategyService from 'modules/strategy/strategy.service'
 
 type InterestEvent = EventBase<'CalculateInterest', 1, {}>
 
@@ -50,10 +48,7 @@ class FacilityProjectionsService {
   }
 
   @Transactional()
-  async buildProjections(
-    streamId: string,
-    context: FacilityContextOptions,
-  ): Promise<{
+  async buildProjections(streamId: string): Promise<{
     facility: FacilityEntity
     transactions: FacilityTransactionEntity[]
   }> {
@@ -72,7 +67,7 @@ class FacilityProjectionsService {
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
     const transactions = projectedEvents.map((e) =>
-      this.applyEventToFacilityAsTransaction(e, facility, context),
+      this.applyEventToFacilityAsTransaction(e, facility),
     )
 
     facility.streamVersion =
@@ -122,7 +117,6 @@ class FacilityProjectionsService {
   applyEventToFacilityAsTransaction = (
     event: FacilityProjectionEvent,
     facilityEntity: FacilityEntity,
-    context: FacilityContextOptions,
   ): FacilityTransaction => {
     switch (event.type) {
       case 'CreateNewFacility':
@@ -161,10 +155,8 @@ class FacilityProjectionsService {
           interestAccrued: facilityEntity.interestAccrued,
         }
       case 'CalculateInterest':
-        const transactionAmount = this.strategyService.calculateInterest(
-          context,
-          facilityEntity,
-        )
+        const transactionAmount =
+          this.strategyService.calculateInterest(facilityEntity)
         const totalInterestAfterTransaction = Big(
           facilityEntity.interestAccrued,
         )

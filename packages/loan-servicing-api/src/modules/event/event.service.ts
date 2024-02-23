@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'
-import { LoanServicingEvent } from 'loan-servicing-common'
+import {
+  CreateNewFacilityEvent,
+  LoanServicingEvent,
+} from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import { DataSource } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
@@ -72,6 +75,19 @@ class EventService {
       .where({ streamId })
       .orderBy({ 'e.effectiveDate': 'ASC' })
       .getMany()
+  }
+
+  async getFacilityTypeOfEventStream(
+    streamId: string,
+  ): Promise<string> {
+    const repo = this.dataSource.getRepository(
+      EventEntity<CreateNewFacilityEvent>,
+    )
+    const event = await repo.findOne({ where: { streamId } })
+    if(!event){
+      throw new Error(`No facility found with id ${streamId}`)
+    }
+    return event.eventData.facilityType
   }
 }
 

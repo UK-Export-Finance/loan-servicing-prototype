@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common'
-import StrategyService from './strategy.service'
+import EventModule from 'modules/event/event.module'
 import CalculateInterestService from './calculateInterest/service'
+import StrategyService from './strategy.service'
+import { strategyOptionsProviderConfig } from './strategyOptions.provider'
 
 @Module({
-  imports: [],
+  imports: [EventModule],
   providers: [
     CalculateInterestService,
-    StrategyService
+    StrategyService,
+    strategyOptionsProviderConfig
   ],
   exports: [StrategyService],
 })

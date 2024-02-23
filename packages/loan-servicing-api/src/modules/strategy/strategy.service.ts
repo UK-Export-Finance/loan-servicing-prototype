@@ -1,23 +1,23 @@
-import { Inject } from '@nestjs/common'
+import { Inject, Injectable, Scope } from '@nestjs/common'
 import { Facility } from 'loan-servicing-common'
 import CalculateInterestService from './calculateInterest/service'
-import { CalculateInterestStrategyName } from './calculateInterest/strategies'
+import StrategyOptionsProvider, {
+  FacilityStrategyOptions,
+} from './strategyOptions.provider'
 
-export type FacilityContextOptions = {
-  calculateInterestStrategy: CalculateInterestStrategyName
-}
-
+@Injectable({ scope: Scope.REQUEST })
 class StrategyService {
   constructor(
+    @Inject(StrategyOptionsProvider)
+    private strategyOptions: FacilityStrategyOptions,
     @Inject(CalculateInterestService)
     private calculateInterestService: CalculateInterestService,
   ) {}
 
-  calculateInterest(
-    { calculateInterestStrategy }: FacilityContextOptions,
-    facility: Facility,
-  ): string {
-    this.calculateInterestService.setStrategy(calculateInterestStrategy)
+  calculateInterest(facility: Facility): string {
+    this.calculateInterestService.setStrategy(
+      this.strategyOptions.calculateInterestStrategy,
+    )
     return this.calculateInterestService.calculate(facility)
   }
 }

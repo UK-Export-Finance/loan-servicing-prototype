@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { FacilityContextOptions } from 'modules/strategy/strategy.service'
+import { FacilityStrategyOptions } from 'modules/strategy/strategyOptions.provider'
 
 @Injectable()
 class FacilityContextService {
-  getContextForFacilityType(): FacilityContextOptions {
-    const contextOptions: FacilityContextOptions = {
+  getContextForFacilityType(): FacilityStrategyOptions {
+    const contextOptions: FacilityStrategyOptions = {
       calculateInterestStrategy: 'Compounding',
     }
     return contextOptions

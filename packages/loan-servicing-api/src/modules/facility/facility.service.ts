@@ -34,7 +34,6 @@ class FacilityService {
   async createNewFacility(
     facilityRequest: NewFacilityRequestDto,
   ): Promise<Facility> {
-    const context = this.contextService.getContextForFacilityType()
     const savedEvent = await this.eventService.addEvent<CreateNewFacilityEvent>(
       {
         streamId: crypto.randomUUID(),
@@ -46,7 +45,6 @@ class FacilityService {
     )
     const { facility } = await this.projectionsService.buildProjections(
       savedEvent.streamId,
-      context,
     )
 
     return facility
@@ -58,7 +56,6 @@ class FacilityService {
     streamVersion: number,
     update: UpdateInterestRequestDto,
   ): Promise<Facility> {
-    const context = this.contextService.getContextForFacilityType()
     await this.eventService.addEvent<UpdateInterestEvent>(
       {
         streamId,
@@ -70,10 +67,8 @@ class FacilityService {
       streamVersion,
     )
 
-    const { facility } = await this.projectionsService.buildProjections(
-      streamId,
-      context,
-    )
+    const { facility } =
+      await this.projectionsService.buildProjections(streamId)
     return facility
   }
 
@@ -83,7 +78,6 @@ class FacilityService {
     streamVersion: number,
     { effectiveDate, adjustment }: AdjustFacilityPrincipalDto,
   ): Promise<Facility> {
-    const context = this.contextService.getContextForFacilityType()
     await this.eventService.addEvent<AdjustFacilityPrincipalEvent>(
       {
         streamId,
@@ -94,10 +88,8 @@ class FacilityService {
       },
       streamVersion,
     )
-    const { facility } = await this.projectionsService.buildProjections(
-      streamId,
-      context,
-    )
+    const { facility } =
+      await this.projectionsService.buildProjections(streamId)
     return facility
   }
 
