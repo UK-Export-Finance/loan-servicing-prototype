@@ -3,6 +3,11 @@ import Big, { roundHalfEven as ROUND_MODE_HALF_EVEN } from 'big.js'
 
 export type CalculateInterestStrategy = (facility: Facility) => string
 
+export type CalculateInterestStrategyName =
+  | 'NoInterest'
+  | 'PrincipalOnly'
+  | 'Compounding'
+
 export const calculateNoInterest: CalculateInterestStrategy = () => '0'
 
 export const calculatePrincipalOnlyInterest: CalculateInterestStrategy = ({
@@ -32,3 +37,14 @@ export const calculateCompoundingInterest: CalculateInterestStrategy = ({
 
   return newInterestAccrued
 }
+
+const calculateInterestStrategies: Record<
+  CalculateInterestStrategyName,
+  CalculateInterestStrategy
+> = {
+  NoInterest: calculateNoInterest,
+  PrincipalOnly: calculatePrincipalOnlyInterest,
+  Compounding: calculateCompoundingInterest,
+}
+
+export default calculateInterestStrategies

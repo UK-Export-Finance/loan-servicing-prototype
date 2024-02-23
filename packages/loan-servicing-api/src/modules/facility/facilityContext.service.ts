@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import createFacilityContext, {
   FacilityContext,
+  FacilityContextOptions,
 } from 'facilityStrategies/facilityContext'
 
 @Injectable()
 class FacilityContextService {
   getContextForFacilityType(): FacilityContext {
-    return createFacilityContext()
+    const contextOptions: FacilityContextOptions = {
+      calculateInterest: 'Compounding',
+    }
+    return createFacilityContext(contextOptions)
   }
 }
 
