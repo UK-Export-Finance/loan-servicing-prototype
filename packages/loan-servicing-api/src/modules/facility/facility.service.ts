@@ -12,7 +12,6 @@ import {
   AdjustFacilityPrincipalDto,
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
-import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import FacilityProjectionsService from './facilityProjections.service'
@@ -96,7 +95,7 @@ class FacilityService {
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacilityEvents(
     streamId: string,
-  ): Promise<EventEntity<LoanServicingEvent>[]> {
+  ): Promise<LoanServicingEvent[]> {
     const events = await this.eventService.getEventsInCreationOrder(streamId)
     return events
   }

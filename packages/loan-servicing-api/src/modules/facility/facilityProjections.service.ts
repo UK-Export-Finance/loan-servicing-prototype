@@ -10,6 +10,7 @@ import {
   UpdateInterestEvent,
   LoanServicingEvent,
   EventBase,
+  Facility,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
@@ -39,7 +40,7 @@ class FacilityProjectionsService {
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getTransactions(
     streamId: string,
-  ): Promise<FacilityTransactionEntity[] | null> {
+  ): Promise<FacilityTransaction[] | null> {
     return this.facilityTransactionRepo
       .createQueryBuilder('t')
       .where({ streamId })
@@ -49,13 +50,13 @@ class FacilityProjectionsService {
 
   @Transactional()
   async buildProjections(streamId: string): Promise<{
-    facility: FacilityEntity
-    transactions: FacilityTransactionEntity[]
+    facility: Facility
+    transactions: FacilityTransaction[]
   }> {
     await this.facilityTransactionRepo.delete({ streamId })
 
     const facilityEvents =
-      await this.eventService.getEventsInCreationOrder(streamId)
+      await this.eventService.getEventsInCreationOrder(streamId) 
 
     const facility = this.getFacilityAtCreation(facilityEvents)
 
@@ -81,8 +82,8 @@ class FacilityProjectionsService {
   }
 
   getFacilityAtCreation = (
-    facilityEvents: EventEntity<LoanServicingEvent>[],
-  ): FacilityEntity => {
+    facilityEvents: LoanServicingEvent[],
+  ): Facility => {
     const creationEvent =
       facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
 
@@ -97,7 +98,7 @@ class FacilityProjectionsService {
   }
 
   generateInterestEvents = (
-    facility: FacilityEntity,
+    facility: Facility,
   ): FacilityProjectionEvent[] => {
     const expiryDate = new Date(facility.expiryDate)
     let dateToProcess = new Date(facility.issuedEffectiveDate)
@@ -116,7 +117,7 @@ class FacilityProjectionsService {
 
   applyEventToFacilityAsTransaction = (
     event: FacilityProjectionEvent,
-    facilityEntity: FacilityEntity,
+    facilityEntity: Facility,
   ): FacilityTransaction => {
     switch (event.type) {
       case 'CreateNewFacility':

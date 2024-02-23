@@ -54,37 +54,37 @@ class EventService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  getEventsInCreationOrder(
+  async getEventsInCreationOrder(
     streamId: string,
-  ): Promise<EventEntity<LoanServicingEvent>[]> {
+  ): Promise<LoanServicingEvent[]> {
     const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
-    return repo
+    const result = await repo
       .createQueryBuilder('e')
       .where({ streamId })
       .orderBy({ 'e.streamVersion': 'ASC' })
       .getMany()
+    return result as LoanServicingEvent[]
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  getEventsInEffectiveOrder(
+  async getEventsInEffectiveOrder(
     streamId: string,
-  ): Promise<EventEntity<LoanServicingEvent>[]> {
+  ): Promise<LoanServicingEvent[]> {
     const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
-    return repo
+    const result = await repo
       .createQueryBuilder('e')
       .where({ streamId })
       .orderBy({ 'e.effectiveDate': 'ASC' })
       .getMany()
+    return result as LoanServicingEvent[]
   }
 
-  async getFacilityTypeOfEventStream(
-    streamId: string,
-  ): Promise<string> {
+  async getFacilityTypeOfEventStream(streamId: string): Promise<string> {
     const repo = this.dataSource.getRepository(
       EventEntity<CreateNewFacilityEvent>,
     )
     const event = await repo.findOne({ where: { streamId } })
-    if(!event){
+    if (!event) {
       throw new Error(`No facility found with id ${streamId}`)
     }
     return event.eventData.facilityType

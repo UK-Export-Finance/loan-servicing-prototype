@@ -21,7 +21,6 @@ import {
   NewFacilityRequestDtoClass,
   UpdateInterestRequestDtoClass,
 } from 'models/dtos/facility'
-import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityService from 'modules/facility/facility.service'
 import FacilityProjectionsService from 'modules/facility/facilityProjections.service'
@@ -50,7 +49,7 @@ class FacilityController {
   @ApiOkResponse({ type: UntypedEvent })
   async getFacilityEvents(
     @Param('id') streamId: string,
-  ): Promise<EventEntity<LoanServicingEvent>[]> {
+  ): Promise<LoanServicingEvent[]> {
     const facilityEvents =
       await this.facilityService.getFacilityEvents(streamId)
     if (facilityEvents === null) {

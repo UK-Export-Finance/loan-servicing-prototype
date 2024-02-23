@@ -8,8 +8,8 @@ import { CalculateInterestStrategyName } from './calculateInterest/strategies'
 const StrategyOptionsProvider = 'StrategyOptionsProvider'
 
 export type FacilityStrategyOptions = {
-    calculateInterestStrategy: CalculateInterestStrategyName
-  }
+  calculateInterestStrategy: CalculateInterestStrategyName
+}
 
 export const strategyOptionsProviderConfig: Provider = {
   provide: StrategyOptionsProvider,
