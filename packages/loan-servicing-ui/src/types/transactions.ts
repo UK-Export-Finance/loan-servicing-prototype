@@ -3,4 +3,5 @@ export type TransactionTableRow = {
   reference: string
   transactionAmount: string
   balance: string
+  interestAccrued: string
 }

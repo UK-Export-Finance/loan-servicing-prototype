@@ -25,6 +25,9 @@ class FacilityEntity implements Facility {
   facilityAmount!: string
 
   @Column()
+  interestAccrued: string = '0'
+
+  @Column()
   interestRate!: string
 
   // @Column()

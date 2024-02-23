@@ -4,4 +4,5 @@ export type FacilityTransaction = {
   reference: string
   transactionAmount: string
   balanceAfterTransaction: string
+  interestAccrued: string
 }

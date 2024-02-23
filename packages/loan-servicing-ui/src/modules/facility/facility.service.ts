@@ -51,8 +51,9 @@ const getTransactionTableRow = (
 ): TransactionTableRow => ({
   date: new Date(transaction.datetime).toLocaleString('en-GB'),
   reference: transaction.reference,
-  transactionAmount: transaction.transactionAmount.toString(),
-  balance: transaction.balanceAfterTransaction.toString(),
+  transactionAmount: transaction.transactionAmount,
+  balance: transaction.balanceAfterTransaction,
+  interestAccrued: transaction.interestAccrued
 })
 
 @Injectable()
@@ -126,6 +127,7 @@ class FacilityService {
             'reference',
             'transactionAmount',
             'balance',
+            'interestAccrued'
           ]),
         ) || null
     )

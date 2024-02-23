@@ -48,6 +48,7 @@ const applyEventToFacilityAsTransaction = (
         reference: 'Facility Created',
         transactionAmount: facilityEntity.facilityAmount,
         balanceAfterTransaction: facilityEntity.facilityAmount,
+        interestAccrued: facilityEntity.interestAccrued,
       }
     case 'UpdateInterest':
       const { eventData: updateEvent } = event as UpdateInterestEvent
@@ -57,6 +58,7 @@ const applyEventToFacilityAsTransaction = (
         reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.interestRate}`,
         transactionAmount: '0',
         balanceAfterTransaction: facilityEntity.facilityAmount,
+        interestAccrued: facilityEntity.interestAccrued,
       }
       facilityEntity.interestRate = updateEvent.interestRate
       return transaction
@@ -72,22 +74,26 @@ const applyEventToFacilityAsTransaction = (
         reference: `facility amount adjustment (withdrawal or repayment)`,
         transactionAmount: incrementEvent.adjustment,
         balanceAfterTransaction: facilityEntity.facilityAmount,
+        interestAccrued: facilityEntity.interestAccrued,
       }
     case 'CalculateInterest':
       const transactionAmount = calculateDailyInterestAccrual(
         facilityEntity.facilityAmount,
         facilityEntity.interestRate,
       )
-      const balanceAfterTransaction = Big(facilityEntity.facilityAmount)
+      const totalInterestAfterTransaction = Big(
+        facilityEntity.interestAccrued,
+      )
         .add(transactionAmount)
-        .toString()
-      facilityEntity.facilityAmount = balanceAfterTransaction
+        .toFixed(2)
+      facilityEntity.interestAccrued = totalInterestAfterTransaction
       return {
         streamId: facilityEntity.streamId,
         datetime: event.effectiveDate,
         reference: 'interest',
         transactionAmount: transactionAmount.toString(),
-        balanceAfterTransaction,
+        balanceAfterTransaction: facilityEntity.facilityAmount,
+        interestAccrued: facilityEntity.interestAccrued
       }
     default:
       throw new NotImplementedException()

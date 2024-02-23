@@ -23,6 +23,10 @@ export class FacilityResponseDtoClass implements Facility {
   facilityAmount!: string
 
   @ApiProperty()
+  @IsNotEmpty()
+  interestAccrued!: string;
+
+  @ApiProperty()
   issuedEffectiveDate!: Date
 
   @ApiProperty()
@@ -34,7 +38,7 @@ export class FacilityResponseDtoClass implements Facility {
 }
 
 export class NewFacilityRequestDtoClass
-  extends OmitType(FacilityResponseDtoClass, ['streamId', 'streamVersion'])
+  extends OmitType(FacilityResponseDtoClass, ['streamId', 'streamVersion', 'interestAccrued'])
   implements NewFacilityRequestDto {}
 
 export class UpdateInterestRequestDtoClass implements UpdateInterestRequestDto {
