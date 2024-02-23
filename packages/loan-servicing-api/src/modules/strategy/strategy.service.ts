@@ -15,10 +15,10 @@ class StrategyService {
   ) {}
 
   calculateInterest(facility: Facility): string {
-    this.calculateInterestService.setStrategy(
+    return this.calculateInterestService.calculate(
+      facility,
       this.strategyOptions.calculateInterestStrategy,
     )
-    return this.calculateInterestService.calculate(facility)
   }
 }
 
