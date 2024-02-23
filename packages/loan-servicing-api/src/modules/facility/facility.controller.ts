@@ -107,11 +107,6 @@ class FacilityController {
     return updatedFacility
   }
 
-  @Get(':id/build')
-  async buildTransactions(@Param('id') id: string): Promise<void> {
-    await this.transactionService.buildProjections(id)
-  }
-
   @Post(':id/adjustPrincipal')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async incrementValue(

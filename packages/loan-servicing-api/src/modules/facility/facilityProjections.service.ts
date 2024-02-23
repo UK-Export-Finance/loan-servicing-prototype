@@ -15,7 +15,8 @@ import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
-import Big, { roundHalfEven as ROUND_MODE_HALF_EVEN } from 'big.js'
+import Big from 'big.js'
+import { FacilityContext } from 'facilityStrategies/facilityContext'
 
 type InterestEvent = EventBase<'CalculateInterest', 1, {}>
 
@@ -24,21 +25,10 @@ type FacilityProjectionEvent = Pick<
   'effectiveDate' | 'eventData' | 'type'
 >
 
-const calculateDailyInterestAccrual = (
-  balance: string,
-  interestRate: string,
-): Big => {
-  const dailyInterestRate = Big(interestRate).div(100).div(365)
-  const interestAccrued = Big(balance)
-    .times(dailyInterestRate)
-    .round(2, ROUND_MODE_HALF_EVEN)
-
-  return interestAccrued
-}
-
 const applyEventToFacilityAsTransaction = (
   event: FacilityProjectionEvent,
   facilityEntity: FacilityEntity,
+  context: FacilityContext,
 ): FacilityTransaction => {
   switch (event.type) {
     case 'CreateNewFacility':
@@ -77,13 +67,8 @@ const applyEventToFacilityAsTransaction = (
         interestAccrued: facilityEntity.interestAccrued,
       }
     case 'CalculateInterest':
-      const transactionAmount = calculateDailyInterestAccrual(
-        facilityEntity.facilityAmount,
-        facilityEntity.interestRate,
-      )
-      const totalInterestAfterTransaction = Big(
-        facilityEntity.interestAccrued,
-      )
+      const transactionAmount = context.calculateInterest(facilityEntity)
+      const totalInterestAfterTransaction = Big(facilityEntity.interestAccrued)
         .add(transactionAmount)
         .toFixed(2)
       facilityEntity.interestAccrued = totalInterestAfterTransaction
@@ -93,7 +78,7 @@ const applyEventToFacilityAsTransaction = (
         reference: 'interest',
         transactionAmount: transactionAmount.toString(),
         balanceAfterTransaction: facilityEntity.facilityAmount,
-        interestAccrued: facilityEntity.interestAccrued
+        interestAccrued: facilityEntity.interestAccrued,
       }
     default:
       throw new NotImplementedException()
@@ -122,7 +107,10 @@ class FacilityProjectionsService {
   }
 
   @Transactional()
-  async buildProjections(streamId: string): Promise<{
+  async buildProjections(
+    streamId: string,
+    context: FacilityContext,
+  ): Promise<{
     facility: FacilityEntity
     transactions: FacilityTransactionEntity[]
   }> {
@@ -141,7 +129,7 @@ class FacilityProjectionsService {
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
     const transactions = projectedEvents.map((e) =>
-      applyEventToFacilityAsTransaction(e, facility),
+      applyEventToFacilityAsTransaction(e, facility, context),
     )
 
     facility.streamVersion =

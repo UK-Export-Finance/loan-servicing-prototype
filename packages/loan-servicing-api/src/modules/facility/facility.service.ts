@@ -1,8 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
@@ -20,6 +16,7 @@ import EventEntity from 'models/entities/EventEntity'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import FacilityProjectionsService from './facilityProjections.service'
+import FacilityContextService from './facilityContext.service'
 
 @Injectable()
 class FacilityService {
@@ -29,12 +26,15 @@ class FacilityService {
     private facilityRepo: Repository<FacilityEntity>,
     @Inject(FacilityProjectionsService)
     private projectionsService: FacilityProjectionsService,
+    @Inject(FacilityContextService)
+    private contextService: FacilityContextService,
   ) {}
 
   @Transactional()
   async createNewFacility(
     facilityRequest: NewFacilityRequestDto,
   ): Promise<Facility> {
+    const context = this.contextService.getContextForFacilityType()
     const savedEvent = await this.eventService.addEvent<CreateNewFacilityEvent>(
       {
         streamId: crypto.randomUUID(),
@@ -46,6 +46,7 @@ class FacilityService {
     )
     const { facility } = await this.projectionsService.buildProjections(
       savedEvent.streamId,
+      context,
     )
 
     return facility
@@ -57,6 +58,7 @@ class FacilityService {
     streamVersion: number,
     update: UpdateInterestRequestDto,
   ): Promise<Facility> {
+    const context = this.contextService.getContextForFacilityType()
     await this.eventService.addEvent<UpdateInterestEvent>(
       {
         streamId,
@@ -68,8 +70,10 @@ class FacilityService {
       streamVersion,
     )
 
-    const { facility } =
-      await this.projectionsService.buildProjections(streamId)
+    const { facility } = await this.projectionsService.buildProjections(
+      streamId,
+      context,
+    )
     return facility
   }
 
@@ -79,6 +83,7 @@ class FacilityService {
     streamVersion: number,
     { effectiveDate, adjustment }: AdjustFacilityPrincipalDto,
   ): Promise<Facility> {
+    const context = this.contextService.getContextForFacilityType()
     await this.eventService.addEvent<AdjustFacilityPrincipalEvent>(
       {
         streamId,
@@ -89,8 +94,10 @@ class FacilityService {
       },
       streamVersion,
     )
-    const { facility } =
-      await this.projectionsService.buildProjections(streamId)
+    const { facility } = await this.projectionsService.buildProjections(
+      streamId,
+      context,
+    )
     return facility
   }
 
