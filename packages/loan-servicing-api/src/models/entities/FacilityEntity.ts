@@ -8,6 +8,9 @@ class FacilityEntity implements Facility {
 
   @Column()
   streamVersion!: number
+  
+  @Column()
+  facilityType!: string
 
   @Column()
   obligor!: string

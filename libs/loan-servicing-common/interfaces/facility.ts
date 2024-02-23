@@ -4,7 +4,7 @@ export type Facility = {
   streamId: string
   streamVersion: number
   obligor: string
-  //   facilityType: string
+  facilityType: string
   //   description: string
   //   currency: string
   facilityAmount: string

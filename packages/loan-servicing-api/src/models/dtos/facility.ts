@@ -16,6 +16,10 @@ export class FacilityResponseDtoClass implements Facility {
 
   @ApiProperty()
   @IsNotEmpty()
+  facilityType!: string
+
+  @ApiProperty()
+  @IsNotEmpty()
   obligor!: string
 
   @ApiProperty()

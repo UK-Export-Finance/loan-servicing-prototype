@@ -16,7 +16,9 @@ import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
-import { FacilityContext } from 'facilityStrategies/facilityContext'
+import StrategyService, {
+  FacilityContextOptions,
+} from 'modules/strategy/strategy.service'
 
 type InterestEvent = EventBase<'CalculateInterest', 1, {}>
 
@@ -24,66 +26,6 @@ type FacilityProjectionEvent = Pick<
   InterestEvent | LoanServicingEvent,
   'effectiveDate' | 'eventData' | 'type'
 >
-
-const applyEventToFacilityAsTransaction = (
-  event: FacilityProjectionEvent,
-  facilityEntity: FacilityEntity,
-  context: FacilityContext,
-): FacilityTransaction => {
-  switch (event.type) {
-    case 'CreateNewFacility':
-      return {
-        streamId: facilityEntity.streamId,
-        datetime: facilityEntity.issuedEffectiveDate,
-        reference: 'Facility Created',
-        transactionAmount: facilityEntity.facilityAmount,
-        balanceAfterTransaction: facilityEntity.facilityAmount,
-        interestAccrued: facilityEntity.interestAccrued,
-      }
-    case 'UpdateInterest':
-      const { eventData: updateEvent } = event as UpdateInterestEvent
-      const transaction = {
-        streamId: facilityEntity.streamId,
-        datetime: event.effectiveDate,
-        reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.interestRate}`,
-        transactionAmount: '0',
-        balanceAfterTransaction: facilityEntity.facilityAmount,
-        interestAccrued: facilityEntity.interestAccrued,
-      }
-      facilityEntity.interestRate = updateEvent.interestRate
-      return transaction
-    case 'AdjustFacilityPrincipal':
-      const { eventData: incrementEvent } =
-        event as AdjustFacilityPrincipalEvent
-      facilityEntity.facilityAmount = Big(facilityEntity.facilityAmount)
-        .add(incrementEvent.adjustment)
-        .toFixed(2)
-      return {
-        streamId: facilityEntity.streamId,
-        datetime: event.effectiveDate,
-        reference: `facility amount adjustment (withdrawal or repayment)`,
-        transactionAmount: incrementEvent.adjustment,
-        balanceAfterTransaction: facilityEntity.facilityAmount,
-        interestAccrued: facilityEntity.interestAccrued,
-      }
-    case 'CalculateInterest':
-      const transactionAmount = context.calculateInterest(facilityEntity)
-      const totalInterestAfterTransaction = Big(facilityEntity.interestAccrued)
-        .add(transactionAmount)
-        .toFixed(2)
-      facilityEntity.interestAccrued = totalInterestAfterTransaction
-      return {
-        streamId: facilityEntity.streamId,
-        datetime: event.effectiveDate,
-        reference: 'interest',
-        transactionAmount: transactionAmount.toString(),
-        balanceAfterTransaction: facilityEntity.facilityAmount,
-        interestAccrued: facilityEntity.interestAccrued,
-      }
-    default:
-      throw new NotImplementedException()
-  }
-}
 
 @Injectable()
 class FacilityProjectionsService {
@@ -93,6 +35,7 @@ class FacilityProjectionsService {
     private facilityTransactionRepo: Repository<FacilityTransactionEntity>,
     @InjectRepository(FacilityEntity)
     private facilityRepo: Repository<FacilityEntity>,
+    @Inject(StrategyService) private strategyService: StrategyService,
   ) {}
 
   @Transactional({ propagation: Propagation.SUPPORTS })
@@ -109,7 +52,7 @@ class FacilityProjectionsService {
   @Transactional()
   async buildProjections(
     streamId: string,
-    context: FacilityContext,
+    context: FacilityContextOptions,
   ): Promise<{
     facility: FacilityEntity
     transactions: FacilityTransactionEntity[]
@@ -129,7 +72,7 @@ class FacilityProjectionsService {
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
     const transactions = projectedEvents.map((e) =>
-      applyEventToFacilityAsTransaction(e, facility, context),
+      this.applyEventToFacilityAsTransaction(e, facility, context),
     )
 
     facility.streamVersion =
@@ -174,6 +117,71 @@ class FacilityProjectionsService {
       dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
     }
     return interestEvents
+  }
+
+  applyEventToFacilityAsTransaction = (
+    event: FacilityProjectionEvent,
+    facilityEntity: FacilityEntity,
+    context: FacilityContextOptions,
+  ): FacilityTransaction => {
+    switch (event.type) {
+      case 'CreateNewFacility':
+        return {
+          streamId: facilityEntity.streamId,
+          datetime: facilityEntity.issuedEffectiveDate,
+          reference: 'Facility Created',
+          transactionAmount: facilityEntity.facilityAmount,
+          balanceAfterTransaction: facilityEntity.facilityAmount,
+          interestAccrued: facilityEntity.interestAccrued,
+        }
+      case 'UpdateInterest':
+        const { eventData: updateEvent } = event as UpdateInterestEvent
+        const transaction = {
+          streamId: facilityEntity.streamId,
+          datetime: event.effectiveDate,
+          reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.interestRate}`,
+          transactionAmount: '0',
+          balanceAfterTransaction: facilityEntity.facilityAmount,
+          interestAccrued: facilityEntity.interestAccrued,
+        }
+        facilityEntity.interestRate = updateEvent.interestRate
+        return transaction
+      case 'AdjustFacilityPrincipal':
+        const { eventData: incrementEvent } =
+          event as AdjustFacilityPrincipalEvent
+        facilityEntity.facilityAmount = Big(facilityEntity.facilityAmount)
+          .add(incrementEvent.adjustment)
+          .toFixed(2)
+        return {
+          streamId: facilityEntity.streamId,
+          datetime: event.effectiveDate,
+          reference: `facility amount adjustment (withdrawal or repayment)`,
+          transactionAmount: incrementEvent.adjustment,
+          balanceAfterTransaction: facilityEntity.facilityAmount,
+          interestAccrued: facilityEntity.interestAccrued,
+        }
+      case 'CalculateInterest':
+        const transactionAmount = this.strategyService.calculateInterest(
+          context,
+          facilityEntity,
+        )
+        const totalInterestAfterTransaction = Big(
+          facilityEntity.interestAccrued,
+        )
+          .add(transactionAmount)
+          .toFixed(2)
+        facilityEntity.interestAccrued = totalInterestAfterTransaction
+        return {
+          streamId: facilityEntity.streamId,
+          datetime: event.effectiveDate,
+          reference: 'interest',
+          transactionAmount: transactionAmount.toString(),
+          balanceAfterTransaction: facilityEntity.facilityAmount,
+          interestAccrued: facilityEntity.interestAccrued,
+        }
+      default:
+        throw new NotImplementedException()
+    }
   }
 }
 
