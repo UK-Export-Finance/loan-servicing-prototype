@@ -15,7 +15,6 @@ import {
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import FacilityProjectionsService from './facilityProjections.service'
-import FacilityContextService from './facilityContext.service'
 
 @Injectable()
 class FacilityService {
@@ -25,8 +24,6 @@ class FacilityService {
     private facilityRepo: Repository<FacilityEntity>,
     @Inject(FacilityProjectionsService)
     private projectionsService: FacilityProjectionsService,
-    @Inject(FacilityContextService)
-    private contextService: FacilityContextService,
   ) {}
 
   @Transactional()
@@ -93,9 +90,7 @@ class FacilityService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getFacilityEvents(
-    streamId: string,
-  ): Promise<LoanServicingEvent[]> {
+  async getFacilityEvents(streamId: string): Promise<LoanServicingEvent[]> {
     const events = await this.eventService.getEventsInCreationOrder(streamId)
     return events
   }

@@ -3,6 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
+import FacilityType from 'models/entities/FacilityType'
 
 const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   type: 'mssql',
@@ -12,7 +13,12 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   password: 'AbC!2345',
   database: 'LoanServicing',
   synchronize: true,
-  entities: [EventEntity, FacilityEntity, FacilityTransactionEntity],
+  entities: [
+    EventEntity,
+    FacilityEntity,
+    FacilityTransactionEntity,
+    FacilityType,
+  ],
   options: {
     encrypt: true,
     trustServerCertificate: true,

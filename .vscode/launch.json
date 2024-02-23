@@ -29,7 +29,6 @@
       "name": "Attach Debuggers",
       "configurations": ["Attach API Debugger", "Attach Frontend Debugger"],
       "stopAll": true,
-      "preLaunchTask": "Start Dev"
     }
   ]
 }

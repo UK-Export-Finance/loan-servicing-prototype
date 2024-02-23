@@ -7,7 +7,6 @@ import FacilityProjectionsService from 'modules/facility/facilityProjections.ser
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import EventModule from 'modules/event/event.module'
 import StrategyModule from 'modules/strategy/strategy.module'
-import FacilityContextService from './facilityContext.service'
 
 @Module({
   controllers: [FacilityController],
@@ -16,11 +15,7 @@ import FacilityContextService from './facilityContext.service'
     TypeOrmModule.forFeature([FacilityEntity, FacilityTransactionEntity]),
     StrategyModule,
   ],
-  providers: [
-    FacilityService,
-    FacilityProjectionsService,
-    FacilityContextService,
-  ],
+  providers: [FacilityService, FacilityProjectionsService],
 })
 class FacilityModule {}
 

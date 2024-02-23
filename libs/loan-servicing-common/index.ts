@@ -1,4 +1,5 @@
 export * from './interfaces/facility'
+export * from './interfaces/facilityType'
 export * from './interfaces/facility-transaction'
 export * from './interfaces/events'
 export * from './interfaces/events/eventBase'

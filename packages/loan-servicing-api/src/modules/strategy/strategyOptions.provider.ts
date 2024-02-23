@@ -1,14 +1,23 @@
-import { Provider } from '@nestjs/common'
+import { Injectable, Provider } from '@nestjs/common'
 import { REQUEST } from '@nestjs/core'
-import { NewFacilityRequestDto } from 'loan-servicing-common'
+import {
+  FacilityStrategyOptions,
+  NewFacilityRequestDto,
+} from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import { Request } from 'express'
-import { CalculateInterestStrategyName } from './calculateInterest/strategies'
+import { InjectRepository } from '@nestjs/typeorm'
+import FacilityTypeEntity from 'models/entities/FacilityType'
+import { Repository } from 'typeorm'
 
 const StrategyOptionsProvider = 'StrategyOptionsProvider'
 
-export type FacilityStrategyOptions = {
-  calculateInterestStrategy: CalculateInterestStrategyName
+@Injectable()
+export class StrategyOptionsService {
+  constructor(
+    @InjectRepository(FacilityTypeEntity)
+    private facilityTypeRepo: Repository<FacilityTypeEntity>,
+  ) {}
 }
 
 export const strategyOptionsProviderConfig: Provider = {

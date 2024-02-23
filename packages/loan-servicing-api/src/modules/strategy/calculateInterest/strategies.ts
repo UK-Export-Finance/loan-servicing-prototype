@@ -1,12 +1,7 @@
-import { Facility } from 'loan-servicing-common'
+import { CalculateInterestStrategyName, Facility } from 'loan-servicing-common'
 import Big, { roundHalfEven as ROUND_MODE_HALF_EVEN } from 'big.js'
 
 export type CalculateInterestStrategy = (facility: Facility) => string
-
-export type CalculateInterestStrategyName =
-  | 'NoInterest'
-  | 'PrincipalOnly'
-  | 'Compounding'
 
 export const calculateNoInterest: CalculateInterestStrategy = () => '0'
 
