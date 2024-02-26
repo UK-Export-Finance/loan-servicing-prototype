@@ -109,8 +109,10 @@ class FacilityService {
   }
 
   async recalculateFacilitiesOfType(facilityType: string): Promise<void> {
-    const facilities = await this.facilityRepo.find({where: {facilityType}})
-    const updates = facilities.map(f => this.projectionsService.buildProjections(f.streamId))
+    const facilities = await this.facilityRepo.find({ where: { facilityType } })
+    const updates = facilities.map((f) =>
+      this.projectionsService.buildProjections(f.streamId),
+    )
     await Promise.all(updates)
   }
 }

@@ -19,7 +19,7 @@ class FacilityTransactionEntity implements FacilityTransaction {
   transactionAmount!: string
 
   @Column()
-  interestAccrued!: string;
+  interestAccrued!: string
 
   @Column()
   balanceAfterTransaction!: string

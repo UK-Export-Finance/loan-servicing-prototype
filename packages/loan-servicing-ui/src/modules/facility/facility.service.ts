@@ -39,7 +39,6 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         eventDate: eventDateObj.toLocaleString('en-GB'),
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Interest rate was changed to ${event.eventData.interestRate}%.`,
-          
       }
     default:
       throw new NotImplementedException()
@@ -53,7 +52,7 @@ const getTransactionTableRow = (
   reference: transaction.reference,
   transactionAmount: transaction.transactionAmount,
   balance: transaction.balanceAfterTransaction,
-  interestAccrued: transaction.interestAccrued
+  interestAccrued: transaction.interestAccrued,
 })
 
 @Injectable()
@@ -127,7 +126,7 @@ class FacilityService {
             'reference',
             'transactionAmount',
             'balance',
-            'interestAccrued'
+            'interestAccrued',
           ]),
         ) || null
     )

@@ -16,7 +16,7 @@ import StrategyModule from 'modules/strategy/strategy.module'
     StrategyModule,
   ],
   providers: [FacilityService, FacilityProjectionsService],
-  exports: [FacilityService]
+  exports: [FacilityService],
 })
 class FacilityModule {}
 

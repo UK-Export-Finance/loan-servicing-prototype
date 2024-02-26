@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import { putApiData, tryGetApiData } from 'api/base-client'
-import {
-  FacilityType,
-} from 'loan-servicing-common'
+import { FacilityType } from 'loan-servicing-common'
 
 @Injectable()
 class FacilityTypeService {
-  async createFacility(
-    facility: FacilityType,
-  ): Promise<FacilityType | null> {
-    const newFacility = await putApiData<FacilityType>('facility-type', facility)
+  async createFacility(facility: FacilityType): Promise<FacilityType | null> {
+    const newFacility = await putApiData<FacilityType>(
+      'facility-type',
+      facility,
+    )
     return newFacility
   }
 

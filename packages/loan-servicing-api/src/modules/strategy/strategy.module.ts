@@ -7,10 +7,7 @@ import StrategyService from './strategy.service'
 import { strategyOptionsProviderConfig } from './strategyOptions.provider'
 
 @Module({
-  imports: [
-    EventModule,
-    TypeOrmModule.forFeature([FacilityTypeEntity]),
-  ],
+  imports: [EventModule, TypeOrmModule.forFeature([FacilityTypeEntity])],
   providers: [
     CalculateInterestService,
     StrategyService,

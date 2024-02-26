@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Put,
-} from '@nestjs/common'
+import { Body, Controller, Get, Param, Put } from '@nestjs/common'
 import { ApiCreatedResponse, ApiFoundResponse, ApiTags } from '@nestjs/swagger'
 import FacilityTypeDtoClass from 'models/dtos/facilityType'
 import FacilityTypeService from './facilityType.service'
@@ -20,7 +14,7 @@ class FacilityTypeController {
     @Param('name') name: string,
   ): Promise<FacilityTypeDtoClass> {
     const result = this.facilityTypeService.getPropertiesOfFacilityType(name)
-    
+
     return result
   }
 

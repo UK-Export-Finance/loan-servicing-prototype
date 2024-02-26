@@ -1,4 +1,7 @@
-import { CalculateInterestStrategyName, FacilityType } from 'loan-servicing-common'
+import {
+  CalculateInterestStrategyName,
+  FacilityType,
+} from 'loan-servicing-common'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()

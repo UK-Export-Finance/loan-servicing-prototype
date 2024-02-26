@@ -56,7 +56,7 @@ class FacilityProjectionsService {
     await this.facilityTransactionRepo.delete({ streamId })
 
     const facilityEvents =
-      await this.eventService.getEventsInCreationOrder(streamId) 
+      await this.eventService.getEventsInCreationOrder(streamId)
 
     const facility = this.getFacilityAtCreation(facilityEvents)
 
@@ -81,9 +81,7 @@ class FacilityProjectionsService {
     return { facility, transactions: transactionEntities }
   }
 
-  getFacilityAtCreation = (
-    facilityEvents: LoanServicingEvent[],
-  ): Facility => {
+  getFacilityAtCreation = (facilityEvents: LoanServicingEvent[]): Facility => {
     const creationEvent =
       facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
 
@@ -97,9 +95,7 @@ class FacilityProjectionsService {
     })
   }
 
-  generateInterestEvents = (
-    facility: Facility,
-  ): FacilityProjectionEvent[] => {
+  generateInterestEvents = (facility: Facility): FacilityProjectionEvent[] => {
     const expiryDate = new Date(facility.expiryDate)
     let dateToProcess = new Date(facility.issuedEffectiveDate)
     const interestEvents: FacilityProjectionEvent[] = []
