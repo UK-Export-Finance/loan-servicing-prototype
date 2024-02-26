@@ -12,17 +12,21 @@ class FacilityTypeService {
   ) {}
 
   async getPropertiesOfFacilityType(
-    facilityType: string,
+    facilityTypeName: string,
   ): Promise<FacilityType> {
     const result = await this.facilityTypeRepo.findOne({
-      where: { name: facilityType },
+      where: { name: facilityTypeName },
     })
     if (!result) {
       throw new NotFoundException(
-        `No definition found for facility type "${facilityType}"`,
+        `No definition found for facility type "${facilityTypeName}"`,
       )
     }
     return result
+  }
+
+  createFacilityType(facilityTypeDefintion: FacilityType): Promise<FacilityType> {
+    return this.facilityTypeRepo.save(facilityTypeDefintion)
   }
 }
 
