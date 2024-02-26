@@ -7,12 +7,24 @@
 {%- endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-l">All Facilities
+  <h1 class="govuk-heading-l">Loan Servicing Home
     {{ facility.streamId }}</h1>
-    {{ govukButton({  text: "Create New Facility", href: "/facility/new"  }) }}
+  <h2 class="govuk-heading-m">All Facilities</h2>
+  {{ govukButton({  text: "Create New Facility", href: "/facility/new"  }) }}
   <ul>
     {% for facility in allFacilities %}
-      <li><a href="/facility/{{ facility.streamId }}">{{facility.obligor}}</a></li>
+      <li>
+        <a href="/facility/{{ facility.streamId }}">{{facility.obligor}}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  <h2 class="govuk-heading-m">Facility Types</h2>
+  {{ govukButton({  text: "Create New Facility Type", href: "/facility-type/new"  }) }}
+  <ul>
+    {% for facilityType in allFacilityTypes %}
+      <li>
+        <a href="/facility-type/{{ facility.streamId }}">{{facilityType.name}}</a>
+      </li>
     {% endfor %}
   </ul>
 

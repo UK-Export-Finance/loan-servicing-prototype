@@ -11,42 +11,29 @@ import {
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
-import {
-  AdjustFacilityPrincipalDto,
-  FacilityDto,
-  FacilityType,
-  NewFacilityRequestDto,
-  UpdateInterestRequestDto,
-} from 'loan-servicing-common'
+import { FacilityDto, NewFacilityRequestDto } from 'loan-servicing-common'
 import FacilityService from 'modules/facility/facility.service'
-import {
-  FacilityInterestRateUpdateFormDto,
-  FacilityPrincipalAdjustmentFormDto,
-  NewFacilityRequestFormDto,
-} from 'types/dtos/facility.dto'
+import { NewFacilityRequestFormDto } from 'types/dtos/facility.dto'
 import { getDateFromDateInput } from 'utils/form-helpers'
 
-@Controller('')
-class FacilityController {
+@Controller('facility-type')
+class FacilityTypeController {
   constructor(private facilityService: FacilityService) {}
 
-  @Get('facility/new')
+  @Get('new')
   @Render('create-facility')
   renderCreateFacilityPage(): void {}
 
   @Get()
-  @Render('facility-list')
+  @Render('list')
   async renderAllFacilities(): Promise<{
     allFacilities: FacilityDto[] | null
-    allFacilityTypes: FacilityType[] | null
   }> {
     const allFacilities = await tryGetApiData<FacilityDto[]>('facility')
-    const allFacilityTypes =
-      await tryGetApiData<FacilityType[]>('facility-type')
-    return { allFacilities, allFacilityTypes }
+    return { allFacilities }
   }
 
-  @Get('facility/:id')
+  @Get(':id')
   @Render('facility')
   async renderFacilityPage(
     @Param('id') id: string,
@@ -89,44 +76,6 @@ class FacilityController {
     const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
-
-  @Post('facility/:id/adjustprincipal')
-  async addPrincipalAdjustment(
-    @Param('id') id: string,
-    @Query('version') version: string,
-    @Body()
-    requestDto: FacilityPrincipalAdjustmentFormDto,
-    @Res() response: Response,
-  ): Promise<void> {
-    const adjustmentDto: AdjustFacilityPrincipalDto = {
-      effectiveDate: getDateFromDateInput(
-        requestDto,
-        'effectiveDate',
-      ).toISOString(),
-      adjustment: requestDto.adjustment,
-    }
-    await this.facilityService.adjustPrincipal(id, version, adjustmentDto)
-    response.redirect(`/facility/${id}`)
-  }
-
-  @Post('facility/:id/updateInterest')
-  async updateInterest(
-    @Param('id') id: string,
-    @Query('version') version: string,
-    @Body()
-    requestDto: FacilityInterestRateUpdateFormDto,
-    @Res() response: Response,
-  ): Promise<void> {
-    const updateDto: UpdateInterestRequestDto = {
-      effectiveDate: getDateFromDateInput(
-        requestDto,
-        'effectiveDate',
-      ).toISOString(),
-      interestRate: requestDto.interestRate,
-    }
-    await this.facilityService.updateInterest(id, version, updateDto)
-    response.redirect(`/facility/${id}`)
-  }
 }
 
-export default FacilityController
+export default FacilityTypeController

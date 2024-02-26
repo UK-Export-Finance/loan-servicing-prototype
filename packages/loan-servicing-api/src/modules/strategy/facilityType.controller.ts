@@ -4,7 +4,7 @@ import FacilityTypeDtoClass from 'models/dtos/facilityType'
 import FacilityTypeService from './facilityType.service'
 
 @ApiTags('FacilityType')
-@Controller('/facilitytype')
+@Controller('/facility-type')
 class FacilityTypeController {
   constructor(private facilityTypeService: FacilityTypeService) {}
 
@@ -14,6 +14,14 @@ class FacilityTypeController {
     @Param('name') name: string,
   ): Promise<FacilityTypeDtoClass> {
     return this.facilityTypeService.getPropertiesOfFacilityType(name)
+  }
+
+  @Get()
+  @ApiFoundResponse({ type: FacilityTypeDtoClass })
+  async getAllFacilityTypes(
+  ): Promise<FacilityTypeDtoClass[]> {
+    const result = await this.facilityTypeService.getAllFacilityTypes()
+    return result
   }
 
   @Post()

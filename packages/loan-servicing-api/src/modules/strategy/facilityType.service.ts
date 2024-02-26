@@ -25,6 +25,10 @@ class FacilityTypeService {
     return result
   }
 
+  async getAllFacilityTypes(): Promise<FacilityType[]> {
+    return this.facilityTypeRepo.find()
+  }
+
   createFacilityType(facilityTypeDefintion: FacilityType): Promise<FacilityType> {
     return this.facilityTypeRepo.save(facilityTypeDefintion)
   }
