@@ -22,7 +22,7 @@ class FacilityTypeController {
   renderCreateFacilityPage(): void {}
 
   @Get(':name')
-  @Render('edit-facility-type')
+  @Render('facility-type')
   async renderFacilityPage(
     @Param('name') name: string,
     @Query('created') created?: boolean,

@@ -1,0 +1,15 @@
+{% extends "index.njk" %}
+
+{% block pageTitle -%}
+  Facility Type
+{%- endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">Facility Type</h1>
+
+  <p class="govuk-body govuk-!-margin-bottom-6">Name:
+    {{facilityType.name}}</p>
+  <p class="govuk-body govuk-!-margin-bottom-6">Interest Calculation Method:
+    {{facilityType.calculateInterestStrategy}}</p>
+
+{% endblock %}

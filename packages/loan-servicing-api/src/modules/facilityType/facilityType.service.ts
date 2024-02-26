@@ -1,8 +1,11 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FacilityType } from 'loan-servicing-common'
 import FacilityTypeEntity from 'models/entities/FacilityTypeEntity'
-import FacilityService from 'modules/facility/facility.service'
 import { Repository } from 'typeorm'
 
 @Injectable()
@@ -10,7 +13,6 @@ class FacilityTypeService {
   constructor(
     @InjectRepository(FacilityTypeEntity)
     private facilityTypeRepo: Repository<FacilityTypeEntity>,
-    @Inject(FacilityService) private facilityService: FacilityService,
   ) {}
 
   async tryGetPropertiesOfFacilityType(
@@ -43,14 +45,12 @@ class FacilityTypeService {
     const exisiting = await this.tryGetPropertiesOfFacilityType(
       facilityTypeDefintion.name,
     )
-    if (!exisiting) {
-      return this.facilityTypeRepo.save(facilityTypeDefintion)
+    if (exisiting) {
+      throw new BadRequestException(
+        `Existing facility type with name "${facilityTypeDefintion.name}"`,
+      )
     }
-    Object.assign(exisiting, facilityTypeDefintion)
-    const savedType = await this.facilityTypeRepo.save(exisiting)
-
-    await this.facilityService.recalculateFacilitiesOfType(savedType.name)
-    return savedType
+    return this.facilityTypeRepo.save(facilityTypeDefintion)
   }
 }
 
