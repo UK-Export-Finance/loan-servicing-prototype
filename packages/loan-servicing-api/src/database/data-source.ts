@@ -3,7 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
-import FacilityType from 'models/entities/FacilityType'
+import FacilityType from 'models/entities/FacilityTypeEntity'
 
 const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   type: 'mssql',
