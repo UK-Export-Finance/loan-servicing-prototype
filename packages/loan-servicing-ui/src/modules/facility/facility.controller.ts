@@ -32,7 +32,20 @@ class FacilityController {
 
   @Get('facility/new')
   @Render('create-facility')
-  renderCreateFacilityPage(): void {}
+  async renderCreateFacilityPage(): Promise<{
+    facilityTypes: { value: string; text: string }[]
+  }> {
+    const facilityTypes = await tryGetApiData<FacilityType[]>('facility-type')
+    if (!facilityTypes || facilityTypes.length === 0) {
+      throw new Error('No facility types found')
+    }
+    return {
+      facilityTypes: facilityTypes?.map((t) => ({
+        value: t.name,
+        text: t.name,
+      })),
+    }
+  }
 
   @Get()
   @Render('facility-list')
