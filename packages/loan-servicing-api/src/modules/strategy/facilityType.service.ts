@@ -11,12 +11,18 @@ class FacilityTypeService {
     private facilityTypeRepo: Repository<FacilityTypeEntity>,
   ) {}
 
+  async tryGetPropertiesOfFacilityType(
+    facilityTypeName: string,
+  ): Promise<FacilityType | null> {
+    return this.facilityTypeRepo.findOne({
+      where: { name: facilityTypeName },
+    })
+  }
+
   async getPropertiesOfFacilityType(
     facilityTypeName: string,
   ): Promise<FacilityType> {
-    const result = await this.facilityTypeRepo.findOne({
-      where: { name: facilityTypeName },
-    })
+    const result = await this.tryGetPropertiesOfFacilityType(facilityTypeName)
     if (!result) {
       throw new NotFoundException(
         `No definition found for facility type "${facilityTypeName}"`,
@@ -29,8 +35,17 @@ class FacilityTypeService {
     return this.facilityTypeRepo.find()
   }
 
-  createFacilityType(facilityTypeDefintion: FacilityType): Promise<FacilityType> {
-    return this.facilityTypeRepo.save(facilityTypeDefintion)
+  async saveFacilityType(
+    facilityTypeDefintion: FacilityType,
+  ): Promise<FacilityType> {
+    const exisiting = await this.tryGetPropertiesOfFacilityType(
+      facilityTypeDefintion.name,
+    )
+    if (!exisiting) {
+      return this.facilityTypeRepo.save(facilityTypeDefintion)
+    }
+    Object.assign(exisiting, facilityTypeDefintion)
+    return this.facilityTypeRepo.save(exisiting)
   }
 }
 

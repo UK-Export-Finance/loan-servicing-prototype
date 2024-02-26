@@ -28,3 +28,18 @@ export const postApiData = async <T extends object>(
     throw e
   }
 }
+
+export const putApiData = async <T extends object>(
+  route: string,
+  body: object,
+): Promise<T> => {
+  try {
+    const response = await axios.put(getApiUrl(route), body)
+    return response.data
+  } catch (e) {
+    const axiosError = e as AxiosError
+    // eslint-disable-next-line no-console
+    console.error(axiosError?.response?.data)
+    throw e
+  }
+}
