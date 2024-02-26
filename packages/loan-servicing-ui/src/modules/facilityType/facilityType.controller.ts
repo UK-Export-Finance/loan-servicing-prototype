@@ -9,72 +9,45 @@ import {
   Render,
   Res,
 } from '@nestjs/common'
-import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
-import { FacilityDto, NewFacilityRequestDto } from 'loan-servicing-common'
-import FacilityService from 'modules/facility/facility.service'
-import { NewFacilityRequestFormDto } from 'types/dtos/facility.dto'
-import { getDateFromDateInput } from 'utils/form-helpers'
+import { FacilityType } from 'loan-servicing-common'
+import FacilityTypeService from './facilityType.service'
 
 @Controller('facility-type')
 class FacilityTypeController {
-  constructor(private facilityService: FacilityService) {}
+  constructor(private facilityTypeService: FacilityTypeService) {}
 
   @Get('new')
-  @Render('create-facility')
+  @Render('edit-facility-type')
   renderCreateFacilityPage(): void {}
 
-  @Get()
-  @Render('list')
-  async renderAllFacilities(): Promise<{
-    allFacilities: FacilityDto[] | null
-  }> {
-    const allFacilities = await tryGetApiData<FacilityDto[]>('facility')
-    return { allFacilities }
-  }
-
-  @Get(':id')
-  @Render('facility')
+  @Get(':name')
+  @Render('edit-facility-type')
   async renderFacilityPage(
-    @Param('id') id: string,
-    @Query('facilityCreated') facilityCreated?: boolean,
+    @Param('name') name: string,
+    @Query('created') created?: boolean,
   ): Promise<{
-    facility: FacilityDto
-    facilityCreated?: boolean
-    eventRows: object
-    transactionRows: object
+    facilityType: FacilityType
+    created: boolean | undefined
   }> {
-    const facility = await this.facilityService.getFacility(id)
-    if (!facility) {
+    const facilityType = await this.facilityTypeService.getFacility(name)
+    if (!facilityType) {
       throw new NotFoundException()
     }
-    const events = await this.facilityService.getFacilityEventTableRows(id)
-    const transactionRows =
-      await this.facilityService.getFacilityTransactionRows(id)
-
     return {
-      facility,
-      eventRows: events!,
-      facilityCreated,
-      transactionRows: transactionRows!,
+      facilityType,
+      created,
     }
   }
 
-  @Post('facility')
+  @Post()
   async createFacility(
-    @Body() requestDto: NewFacilityRequestFormDto,
+    @Body() requestDto: FacilityType,
     @Res() response: Response,
   ): Promise<void> {
-    const request: NewFacilityRequestDto = {
-      ...requestDto,
-      expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
-      issuedEffectiveDate: getDateFromDateInput(
-        requestDto,
-        'issuedEffectiveDate',
-      ),
-    }
-    const newFacility = await this.facilityService.createFacility(request)
-    response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
+    const newFacilityType =
+      await this.facilityTypeService.createFacility(requestDto)
+    response.redirect(`/facility-type/${newFacilityType?.name}?created=true`)
   }
 }
 

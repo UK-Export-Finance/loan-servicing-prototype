@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import FacilityController from 'modules/facility/facility.controller'
-import FacilityService from 'modules/facility/facility.service'
+import FacilityTypeController from './facilityType.controller'
+import FacilityTypeService from './facilityType.service'
 
-@Module({ controllers: [FacilityController], providers: [FacilityService] })
+@Module({ controllers: [FacilityTypeController], providers: [FacilityTypeService] })
 class FacilityTypeModule {}
 
 export default FacilityTypeModule
