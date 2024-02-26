@@ -2,9 +2,10 @@ import {
   CalculateInterestStrategyName,
   FacilityType,
 } from 'loan-servicing-common'
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
 @Entity()
+@Unique('unique_type_name', ['name'])
 class FacilityTypeEntity implements FacilityType {
   @PrimaryGeneratedColumn()
   id!: number
