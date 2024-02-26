@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import EventModule from 'modules/event/event.module'
 import FacilityTypeEntity from 'models/entities/FacilityTypeEntity'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import FacilityTypeModule from 'modules/facilityType/facilityType.module'
 import CalculateInterestService from './calculateInterest/service'
 import StrategyService from './strategy.service'
 import { strategyOptionsProviderConfig } from './strategyOptions.provider'
@@ -11,7 +10,6 @@ import { strategyOptionsProviderConfig } from './strategyOptions.provider'
   imports: [
     EventModule,
     TypeOrmModule.forFeature([FacilityTypeEntity]),
-    FacilityTypeModule,
   ],
   providers: [
     CalculateInterestService,

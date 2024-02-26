@@ -6,26 +6,38 @@ import {
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import { Request } from 'express'
-import FacilityTypeService from 'modules/facilityType/facilityType.service'
+import FacilityTypeEntity from 'models/entities/FacilityTypeEntity'
+import { Repository } from 'typeorm/browser'
+import { getRepositoryToken } from '@nestjs/typeorm'
 
 const StrategyOptionsProvider = 'StrategyOptionsProvider'
 
 export const strategyOptionsProviderConfig: Provider = {
   provide: StrategyOptionsProvider,
-  inject: [REQUEST, EventService, FacilityTypeService],
+  inject: [REQUEST, EventService, getRepositoryToken(FacilityTypeEntity)],
   useFactory: async (
     request: Request,
     eventService: EventService,
-    facilityTypeService: FacilityTypeService,
+    facilityTypeRepo: Repository<FacilityTypeEntity>,
   ): Promise<FacilityStrategyOptions> => {
     const streamId = (request.params as { id?: string }).id
+    let facilityType: string
     if (streamId) {
-      const facilityType =
-        await eventService.getFacilityTypeOfEventStream(streamId)
-      return facilityTypeService.getPropertiesOfFacilityType(facilityType)
+      facilityType = await eventService.getFacilityTypeOfEventStream(streamId)
+    } else {
+      facilityType = (request.body as NewFacilityRequestDto).facilityType
     }
-    const { facilityType } = request.body as NewFacilityRequestDto
-    return facilityTypeService.getPropertiesOfFacilityType(facilityType)
+
+    const result = await facilityTypeRepo.findOne({
+      where: { name: facilityType },
+    })
+    if (!result) {
+      throw new Error(
+        `No facility type definition found for type ${facilityType}`,
+      )
+    }
+
+    return result
   },
 }
 

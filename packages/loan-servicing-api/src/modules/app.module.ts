@@ -4,10 +4,12 @@ import SQL_DB_CONFIG from 'database/data-source'
 import { DataSource } from 'typeorm'
 import { addTransactionalDataSource } from 'typeorm-transactional'
 import FacilityModule from './facility/facility.module'
+import FacilityTypeModule from './facilityType/facilityType.module'
 
 @Module({
   imports: [
     FacilityModule,
+    FacilityTypeModule,
     TypeOrmModule.forRootAsync({
       useFactory: () => SQL_DB_CONFIG,
       dataSourceFactory: async (options) => {

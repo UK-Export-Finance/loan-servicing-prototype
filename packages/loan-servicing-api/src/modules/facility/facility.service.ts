@@ -107,6 +107,12 @@ class FacilityService {
   async getAllFacilities(): Promise<Facility[] | null> {
     return this.facilityRepo.find()
   }
+
+  async recalculateFacilitiesOfType(facilityType: string): Promise<void> {
+    const facilities = await this.facilityRepo.find({where: {facilityType}})
+    const updates = facilities.map(f => this.projectionsService.buildProjections(f.streamId))
+    await Promise.all(updates)
+  }
 }
 
 export default FacilityService
