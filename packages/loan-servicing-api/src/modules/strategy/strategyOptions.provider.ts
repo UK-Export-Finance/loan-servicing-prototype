@@ -6,7 +6,7 @@ import {
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import { Request } from 'express'
-import FacilityTypeService from './facilityType.service'
+import FacilityTypeService from 'modules/facilityType/facilityType.service'
 
 const StrategyOptionsProvider = 'StrategyOptionsProvider'
 
