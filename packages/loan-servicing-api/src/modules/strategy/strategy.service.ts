@@ -17,6 +17,8 @@ class StrategyService {
       facility,
       this.strategyOptions.calculateInterestStrategy,
     )
+
+  getInterestEvents = this.calculateInterestService.generateInterestEvents
 }
 
 export default StrategyService

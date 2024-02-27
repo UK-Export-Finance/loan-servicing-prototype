@@ -9,8 +9,8 @@ import {
   AdjustFacilityPrincipalEvent,
   UpdateInterestEvent,
   LoanServicingEvent,
-  EventBase,
   Facility,
+  FacilityProjectionEvent,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
@@ -19,12 +19,6 @@ import EventService from 'modules/event/event.service'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
 
-type InterestEvent = EventBase<'CalculateInterest', 1, {}>
-
-type FacilityProjectionEvent = Pick<
-  InterestEvent | LoanServicingEvent,
-  'effectiveDate' | 'eventData' | 'type'
->
 
 @Injectable()
 class FacilityProjectionsService {
@@ -101,7 +95,7 @@ class FacilityProjectionsService {
 
     const facility = this.getFacilityAtCreation(facilityEvents)
 
-    const interestEvents = this.generateInterestEvents(facility)
+    const interestEvents = this.strategyService.getInterestEvents(facility)
 
     const projectedEvents: FacilityProjectionEvent[] = [
       ...facilityEvents,
@@ -136,22 +130,6 @@ class FacilityProjectionsService {
       streamVersion: 1,
       ...creationEvent.eventData,
     })
-  }
-
-  generateInterestEvents = (facility: Facility): FacilityProjectionEvent[] => {
-    const expiryDate = new Date(facility.expiryDate)
-    let dateToProcess = new Date(facility.issuedEffectiveDate)
-    const interestEvents: FacilityProjectionEvent[] = []
-    while (dateToProcess <= expiryDate) {
-      interestEvents.push({
-        effectiveDate: dateToProcess,
-        type: 'CalculateInterest',
-        eventData: {},
-      })
-      // Naive date management - not suitable for production
-      dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
-    }
-    return interestEvents
   }
 
   setBalancesForSummarisedTransactions(
