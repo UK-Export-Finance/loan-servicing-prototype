@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import CalculateInterestService from './calculateInterest/service'
 import StrategyService from './strategy.service'
 import { strategyOptionsProviderConfig } from './strategyOptions.provider'
+import RepaymentsService from './repayments/service'
 
 @Module({
   imports: [EventModule, TypeOrmModule.forFeature([FacilityTypeEntity])],
   providers: [
     CalculateInterestService,
     StrategyService,
+    RepaymentsService,
     strategyOptionsProviderConfig,
   ],
   exports: [StrategyService],

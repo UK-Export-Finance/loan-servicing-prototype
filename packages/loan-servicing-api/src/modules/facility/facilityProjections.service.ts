@@ -19,7 +19,6 @@ import EventService from 'modules/event/event.service'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
 
-
 @Injectable()
 class FacilityProjectionsService {
   constructor(
@@ -61,7 +60,7 @@ class FacilityProjectionsService {
         streamId,
         // We use the first day of the next month for the interest transaction
         // But JS dates are zero indexed so we also subtract 1
-        datetime: new Date(a.year, (a.month + 1) - 1),
+        datetime: new Date(a.year, a.month + 1 - 1),
         reference: `accrued interest for ${a.month}/${a.year}`,
         interestChange: Big(a.interest).toString(),
         principalChange: '0',
@@ -77,9 +76,7 @@ class FacilityProjectionsService {
     const summarisedTransactions = [
       ...monthlyInterestTransactions,
       ...nonInterestTransactions,
-    ].sort(
-      (a, b) => a.datetime.getTime() - b.datetime.getTime(),
-    )
+    ].sort((a, b) => a.datetime.getTime() - b.datetime.getTime())
     return this.setBalancesForSummarisedTransactions(summarisedTransactions)
   }
 
@@ -96,14 +93,20 @@ class FacilityProjectionsService {
     const facility = this.getFacilityAtCreation(facilityEvents)
 
     const interestEvents = this.strategyService.getInterestEvents(facility)
+    const repaymentEvents = this.strategyService.getRepaymentEvents(
+      facility,
+      6,
+      3,
+    )
 
     const projectedEvents: FacilityProjectionEvent[] = [
       ...facilityEvents,
       ...interestEvents,
+      ...repaymentEvents,
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
-    const transactions = projectedEvents.map((e) =>
-      this.applyEventToFacilityAsTransaction(e, facility),
+    const transactions = projectedEvents.map((e, index, allEvents) =>
+      this.applyEventToFacilityAsTransaction(e, index, allEvents, facility),
     )
 
     facility.streamVersion =
@@ -150,6 +153,8 @@ class FacilityProjectionsService {
 
   applyEventToFacilityAsTransaction = (
     event: FacilityProjectionEvent,
+    eventIndex: number,
+    allEvents: FacilityProjectionEvent[],
     facilityEntity: Facility,
   ): FacilityTransaction => {
     switch (event.type) {
@@ -206,6 +211,25 @@ class FacilityProjectionsService {
           reference: 'interest',
           principalChange: '0',
           interestChange: transactionAmount.toString(),
+          balanceAfterTransaction: facilityEntity.facilityAmount,
+          interestAccrued: facilityEntity.interestAccrued,
+        }
+      case 'Repayment':
+      case 'FinalRepayment':
+        const paymentAmount = this.strategyService.calculateRepayment(
+          facilityEntity,
+          event,
+          allEvents.slice(eventIndex),
+        )
+        facilityEntity.facilityAmount = Big(facilityEntity.facilityAmount)
+          .minus(paymentAmount)
+          .toString()
+        return {
+          streamId: facilityEntity.streamId,
+          datetime: event.effectiveDate,
+          reference: 'repayment',
+          principalChange: Big(paymentAmount).times(-1).toString(),
+          interestChange: '0',
           balanceAfterTransaction: facilityEntity.facilityAmount,
           interestAccrued: facilityEntity.interestAccrued,
         }

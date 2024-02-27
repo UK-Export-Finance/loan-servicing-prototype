@@ -69,6 +69,7 @@ class FacilityController {
     @Query('interestResolution')
     interestResolution: TransactionResolution = 'daily',
   ): Promise<FacilityTransaction[]> {
+    await this.transactionService.buildProjections(streamId)
     const facilityEvents =
       interestResolution === 'daily'
         ? await this.transactionService.getDailyTransactions(streamId)
