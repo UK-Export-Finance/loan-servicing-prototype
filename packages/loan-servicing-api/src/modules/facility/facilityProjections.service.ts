@@ -38,7 +38,7 @@ class FacilityProjectionsService {
   ) {}
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getTransactions(
+  async getDailyTransactions(
     streamId: string,
   ): Promise<FacilityTransaction[] | null> {
     return this.facilityTransactionRepo
@@ -46,6 +46,47 @@ class FacilityProjectionsService {
       .where({ streamId })
       .orderBy({ 't.datetime': 'ASC' })
       .getMany()
+  }
+
+  @Transactional({ propagation: Propagation.SUPPORTS })
+  async getMonthlyTransactions(
+    streamId: string,
+  ): Promise<FacilityTransaction[] | null> {
+    const monthlyInterestAmounts = (await this.facilityTransactionRepo.query(`
+      SELECT
+        YEAR([datetime]) AS 'year',
+        MONTH([datetime]) AS 'month',
+        SUM([interestChange]) AS 'interest'
+      FROM [LoanServicing].[dbo].[facility_transaction_entity]
+      WHERE [streamId] = '${streamId}'
+      AND [reference] = 'interest'
+      GROUP BY MONTH([datetime]), YEAR([datetime])
+    `)) as { year: number; month: number; interest: number }[]
+    const monthlyInterestTransactions =
+      monthlyInterestAmounts.map<FacilityTransaction>((a) => ({
+        streamId,
+        // We use the first day of the next month for the interest transaction
+        // But JS dates are zero indexed so we also subtract 1
+        datetime: new Date(a.year, (a.month + 1) - 1),
+        reference: `accrued interest for ${a.month}/${a.year}`,
+        interestChange: Big(a.interest).toString(),
+        principalChange: '0',
+        balanceAfterTransaction: '0',
+        interestAccrued: '0',
+      }))
+    const nonInterestTransactions = await this.facilityTransactionRepo
+      .createQueryBuilder('t')
+      .where({ streamId })
+      .andWhere('t.reference != :ref', { ref: 'interest' })
+      .orderBy({ 't.datetime': 'ASC' })
+      .getMany()
+    const summarisedTransactions = [
+      ...monthlyInterestTransactions,
+      ...nonInterestTransactions,
+    ].sort(
+      (a, b) => a.datetime.getTime() - b.datetime.getTime(),
+    )
+    return this.setBalancesForSummarisedTransactions(summarisedTransactions)
   }
 
   @Transactional()
@@ -74,8 +115,10 @@ class FacilityProjectionsService {
     facility.streamVersion =
       facilityEvents[facilityEvents.length - 1].streamVersion
 
-    const transactionEntities =
-      await this.facilityTransactionRepo.save(transactions)
+    const transactionEntities = await this.facilityTransactionRepo.save(
+      transactions,
+      { chunk: 100 },
+    )
     await this.facilityRepo.save(facility)
 
     return { facility, transactions: transactionEntities }
@@ -111,6 +154,22 @@ class FacilityProjectionsService {
     return interestEvents
   }
 
+  setBalancesForSummarisedTransactions(
+    transactions: FacilityTransaction[],
+  ): FacilityTransaction[] {
+    let principal = Big(0)
+    let interest = Big(0)
+    return transactions.map((t) => {
+      principal = principal.add(t.principalChange)
+      interest = interest.add(t.interestChange)
+      return {
+        ...t,
+        balanceAfterTransaction: principal.toString(),
+        interestAccrued: interest.toString(),
+      }
+    })
+  }
+
   applyEventToFacilityAsTransaction = (
     event: FacilityProjectionEvent,
     facilityEntity: Facility,
@@ -121,17 +180,19 @@ class FacilityProjectionsService {
           streamId: facilityEntity.streamId,
           datetime: facilityEntity.issuedEffectiveDate,
           reference: 'Facility Created',
-          transactionAmount: facilityEntity.facilityAmount,
+          principalChange: facilityEntity.facilityAmount,
+          interestChange: '0',
           balanceAfterTransaction: facilityEntity.facilityAmount,
           interestAccrued: facilityEntity.interestAccrued,
         }
       case 'UpdateInterest':
         const { eventData: updateEvent } = event as UpdateInterestEvent
-        const transaction = {
+        const transaction: FacilityTransaction = {
           streamId: facilityEntity.streamId,
           datetime: event.effectiveDate,
           reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.interestRate}`,
-          transactionAmount: '0',
+          principalChange: '0',
+          interestChange: '0',
           balanceAfterTransaction: facilityEntity.facilityAmount,
           interestAccrued: facilityEntity.interestAccrued,
         }
@@ -147,7 +208,8 @@ class FacilityProjectionsService {
           streamId: facilityEntity.streamId,
           datetime: event.effectiveDate,
           reference: `facility amount adjustment (withdrawal or repayment)`,
-          transactionAmount: incrementEvent.adjustment,
+          principalChange: incrementEvent.adjustment,
+          interestChange: '0',
           balanceAfterTransaction: facilityEntity.facilityAmount,
           interestAccrued: facilityEntity.interestAccrued,
         }
@@ -164,7 +226,8 @@ class FacilityProjectionsService {
           streamId: facilityEntity.streamId,
           datetime: event.effectiveDate,
           reference: 'interest',
-          transactionAmount: transactionAmount.toString(),
+          principalChange: '0',
+          interestChange: transactionAmount.toString(),
           balanceAfterTransaction: facilityEntity.facilityAmount,
           interestAccrued: facilityEntity.interestAccrued,
         }

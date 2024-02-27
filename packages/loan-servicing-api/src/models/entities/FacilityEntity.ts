@@ -1,3 +1,4 @@
+import { CurrencyColumn } from 'database/decorators'
 import { Facility } from 'loan-servicing-common'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
@@ -16,18 +17,15 @@ class FacilityEntity implements Facility {
   obligor!: string
 
   // @Column()
-  // facilityType!: string
-
-  // @Column()
   // description!: string
 
   // @Column()
   // currency!: string
 
-  @Column()
+  @CurrencyColumn()
   facilityAmount!: string
 
-  @Column()
+  @CurrencyColumn()
   interestAccrued: string = '0'
 
   @Column()

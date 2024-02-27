@@ -50,7 +50,10 @@ const getTransactionTableRow = (
 ): TransactionTableRow => ({
   date: new Date(transaction.datetime).toLocaleString('en-GB'),
   reference: transaction.reference,
-  transactionAmount: transaction.transactionAmount,
+  transactionAmount:
+    transaction.principalChange === '0'
+      ? transaction.interestChange
+      : transaction.principalChange,
   balance: transaction.balanceAfterTransaction,
   interestAccrued: transaction.interestAccrued,
 })
@@ -115,7 +118,7 @@ class FacilityService {
     streamId: string,
   ): Promise<NunjuckTableRow[] | null> {
     const transactions = await tryGetApiData<FacilityTransaction[]>(
-      `facility/${streamId}/transactions`,
+      `facility/${streamId}/transactions?interestResolution=monthly`,
     )
     return (
       transactions

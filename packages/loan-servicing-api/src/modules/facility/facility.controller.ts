@@ -13,7 +13,11 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { LoanServicingEvent, FacilityTransaction } from 'loan-servicing-common'
+import {
+  LoanServicingEvent,
+  FacilityTransaction,
+  TransactionResolution,
+} from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
   AdjustFacilityPrincipalDtoClass,
@@ -62,9 +66,13 @@ class FacilityController {
   @ApiOkResponse({ type: FacilityTransactionEntity })
   async getFacilityTransactions(
     @Param('id') streamId: string,
+    @Query('interestResolution')
+    interestResolution: TransactionResolution = 'daily',
   ): Promise<FacilityTransaction[]> {
     const facilityEvents =
-      await this.transactionService.getTransactions(streamId)
+      interestResolution === 'daily'
+        ? await this.transactionService.getDailyTransactions(streamId)
+        : await this.transactionService.getMonthlyTransactions(streamId)
     if (facilityEvents === null) {
       throw new NotFoundException()
     }

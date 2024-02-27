@@ -1,3 +1,4 @@
+import { CurrencyColumn } from 'database/decorators'
 import { FacilityTransaction } from 'loan-servicing-common'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
@@ -15,13 +16,16 @@ class FacilityTransactionEntity implements FacilityTransaction {
   @Column()
   reference!: string
 
-  @Column()
-  transactionAmount!: string
+  @CurrencyColumn()
+  principalChange!: string
 
-  @Column()
+  @CurrencyColumn()
+  interestChange!: string
+
+  @CurrencyColumn()
   interestAccrued!: string
 
-  @Column()
+  @CurrencyColumn()
   balanceAfterTransaction!: string
 }
 
