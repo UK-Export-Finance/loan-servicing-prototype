@@ -3,10 +3,10 @@ import { IsNotEmpty } from 'class-validator'
 import {
   AdjustFacilityPrincipalDto,
   Facility,
-  FacilityConfiguration,
   NewFacilityRequestDto,
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
+import { FacilityConfigurationDtoClass } from './facilityConfiguration'
 
 export class FacilityResponseDtoClass implements Facility {
   @ApiProperty()
@@ -21,7 +21,7 @@ export class FacilityResponseDtoClass implements Facility {
 
   @ApiProperty()
   @IsNotEmpty()
-  facilityConfig!: FacilityConfiguration
+  facilityConfig!: FacilityConfigurationDtoClass
 
   @ApiProperty()
   @IsNotEmpty()

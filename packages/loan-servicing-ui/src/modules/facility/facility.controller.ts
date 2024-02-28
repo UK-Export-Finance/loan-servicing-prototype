@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
+import mapCreateFacilityFormToRequest from 'form-mappers/createFacilityMapper'
 import {
   AdjustFacilityPrincipalDto,
   FacilityDto,
@@ -91,14 +92,7 @@ class FacilityController {
     @Body() requestDto: NewFacilityRequestFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const request: NewFacilityRequestDto = {
-      ...requestDto,
-      expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
-      issuedEffectiveDate: getDateFromDateInput(
-        requestDto,
-        'issuedEffectiveDate',
-      ),
-    }
+    const request: NewFacilityRequestDto = mapCreateFacilityFormToRequest(requestDto)
     const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }

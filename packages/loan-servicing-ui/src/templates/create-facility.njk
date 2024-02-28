@@ -23,6 +23,29 @@
       items: facilityTypes
     }) }}
 
+    {{ govukSelect({
+      id: "calculateInterestStrategy",
+      name: "calculateInterestStrategy",
+      label: {
+        text: "Interest Calculation Method"
+      },
+      value: facilityType.calculateInterestStrategy,
+      items: [
+        {
+          value: "NoInterest",
+          text: "Interest Free"
+        },
+        {
+          value: "PrincipalOnly",
+          text: "On Principal Only"
+        },
+        {
+          value: "Compounding",
+          text: "Compounding"
+        }
+      ]
+    }) }}
+
     {{ govukInput({
       label: {
         text: "Obligor ID"
