@@ -1,5 +1,6 @@
 {% extends "index.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 
 {% block pageTitle -%}
   Facility
@@ -10,7 +11,17 @@
   <h1 class="govuk-heading-l">Loan Servicing Home
     {{ facility.streamId }}</h1>
   <h2 class="govuk-heading-m">All Facilities</h2>
+  <form>
+  {{ govukSelect({
+      id: "facilityType",
+      name: "facilityType",
+      label: {
+        text: "Facility Type"
+      },
+      items: facilityTypeNames
+    }) }}
   {{ govukButton({  text: "Create New Facility", href: "/facility/new"  }) }}
+  </form>
   <ul>
     {% for facility in allFacilities %}
       <li>

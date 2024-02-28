@@ -15,15 +15,6 @@
 
   <form action="/facility" method="post">
     {{ govukSelect({
-      id: "facilityType",
-      name: "facilityType",
-      label: {
-        text: "Facility Type"
-      },
-      items: facilityTypes
-    }) }}
-
-    {{ govukSelect({
       id: "calculateInterestStrategy",
       name: "calculateInterestStrategy",
       label: {

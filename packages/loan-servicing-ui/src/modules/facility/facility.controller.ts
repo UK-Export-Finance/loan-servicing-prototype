@@ -20,6 +20,7 @@ import {
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import FacilityService from 'modules/facility/facility.service'
+import { FacilityListNjkInput } from 'templates/facility-list'
 import {
   FacilityInterestRateUpdateFormDto,
   FacilityPrincipalAdjustmentFormDto,
@@ -34,14 +35,14 @@ class FacilityController {
   @Get('facility/new')
   @Render('create-facility')
   async renderCreateFacilityPage(): Promise<{
-    facilityTypes: { value: string; text: string }[]
+    facilityTypeNames: { value: string; text: string }[]
   }> {
     const facilityTypes = await tryGetApiData<FacilityType[]>('facility-type')
     if (!facilityTypes || facilityTypes.length === 0) {
       throw new Error('No facility types found')
     }
     return {
-      facilityTypes: facilityTypes?.map((t) => ({
+      facilityTypeNames: facilityTypes?.map((t) => ({
         value: t.name,
         text: t.name,
       })),
@@ -50,14 +51,19 @@ class FacilityController {
 
   @Get()
   @Render('facility-list')
-  async renderAllFacilities(): Promise<{
-    allFacilities: FacilityDto[] | null
-    allFacilityTypes: FacilityType[] | null
-  }> {
+  async renderAllFacilities(): Promise<FacilityListNjkInput> {
     const allFacilities = await tryGetApiData<FacilityDto[]>('facility')
     const allFacilityTypes =
       await tryGetApiData<FacilityType[]>('facility-type')
-    return { allFacilities, allFacilityTypes }
+    return {
+      allFacilities,
+      allFacilityTypes,
+      facilityTypeNames:
+        allFacilityTypes?.map((t) => ({
+          value: t.name,
+          text: t.name,
+        })) ?? [],
+    }
   }
 
   @Get('facility/:id')
@@ -92,7 +98,8 @@ class FacilityController {
     @Body() requestDto: NewFacilityRequestFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const request: NewFacilityRequestDto = mapCreateFacilityFormToRequest(requestDto)
+    const request: NewFacilityRequestDto =
+      mapCreateFacilityFormToRequest(requestDto)
     const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
