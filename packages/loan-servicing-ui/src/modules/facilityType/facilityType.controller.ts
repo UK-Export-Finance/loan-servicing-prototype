@@ -10,12 +10,15 @@ import {
   Res,
 } from '@nestjs/common'
 import { Response } from 'express'
-import { FacilityType } from 'loan-servicing-common'
 import {
   CreateFacilityTypeFormOutput,
   CreateFacilityTypeNjkInput,
 } from 'templates/edit-facility-type'
-import { calculateInterestSelectOptions } from 'controls/strategyControlsOptions'
+import {
+  calculateInterestSelectOptions,
+  repaymentsSelectOptions,
+} from 'controls/strategyControlsOptions'
+import { FacilityTypeNjkInput } from 'templates/facility-type'
 import FacilityTypeService from './facilityType.service'
 
 @Controller('facility-type')
@@ -27,6 +30,7 @@ class FacilityTypeController {
   renderCreateFacilityTypePage(): CreateFacilityTypeNjkInput {
     return {
       calculateInterestSelectOptions,
+      repaymentsSelectOptions,
     }
   }
 
@@ -35,10 +39,7 @@ class FacilityTypeController {
   async renderFacilityTypePage(
     @Param('name') name: string,
     @Query('created') created?: boolean,
-  ): Promise<{
-    facilityType: FacilityType
-    created: boolean | undefined
-  }> {
+  ): Promise<FacilityTypeNjkInput> {
     const facilityType = await this.facilityTypeService.getFacilityType(name)
     if (!facilityType) {
       throw new NotFoundException()
@@ -54,10 +55,8 @@ class FacilityTypeController {
     @Body() requestDto: CreateFacilityTypeFormOutput,
     @Res() response: Response,
   ): Promise<void> {
-    const newFacilityType = await this.facilityTypeService.createFacilityType({
-      ...requestDto,
-      repaymentsStrategies: ['regular'],
-    })
+    const newFacilityType =
+      await this.facilityTypeService.createFacilityType(requestDto)
     response.redirect(`/facility-type/${newFacilityType?.name}?created=true`)
   }
 }

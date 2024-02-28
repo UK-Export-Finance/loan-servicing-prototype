@@ -26,13 +26,27 @@
       fieldset: {
         legend: {
           text: "Supported Interest Calculation Types",
-          classes: "govuk-fieldset__legend--l"
+          classes: "govuk-fieldset__legend--m"
         }
       },
       hint: {
         text: "Select all that apply."
       },
       items: calculateInterestSelectOptions
+    }) }}
+
+    {{ govukCheckboxes({
+      name: "repaymentsStrategies",
+      fieldset: {
+        legend: {
+          text: "Supported Repayment Schedule Types",
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: "Select all that apply."
+      },
+      items: repaymentsSelectOptions
     }) }}
 
     {{ govukButton({  text: "Save facility type"}) }}

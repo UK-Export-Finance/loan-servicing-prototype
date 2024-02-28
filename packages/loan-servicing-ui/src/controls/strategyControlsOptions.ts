@@ -1,5 +1,12 @@
-import { CalculateInterestStrategyName } from 'loan-servicing-common'
+import {
+  CalculateInterestStrategyName,
+  RepaymentStrategyName,
+} from 'loan-servicing-common'
 import { NunjuckSelectInputOption } from 'types/nunjucks'
+import {
+  interestStrategyNames,
+  repaymentsStrategyNames,
+} from 'strings/strategyNames'
 
 export const filterSelectOptions = <T extends string>(
   availableOptions: NunjuckSelectInputOption<T>[],
@@ -7,18 +14,15 @@ export const filterSelectOptions = <T extends string>(
 ): NunjuckSelectInputOption<T>[] =>
   availableOptions.filter((opt) => permittedValues.includes(opt.value))
 
+const buildSelectOptionsFromStrings = <T extends string>(
+  stringRecord: Record<T, string>,
+): NunjuckSelectInputOption<T>[] => {
+  const entries = Object.entries(stringRecord) as [T, string][]
+  return entries.map(([value, text]) => ({ value, text }))
+}
+
 export const calculateInterestSelectOptions: NunjuckSelectInputOption<CalculateInterestStrategyName>[] =
-  [
-    {
-      value: 'NoInterest',
-      text: 'Interest Free',
-    },
-    {
-      value: 'PrincipalOnly',
-      text: 'On Principal Only',
-    },
-    {
-      value: 'Compounding',
-      text: 'Compounding',
-    },
-  ]
+  buildSelectOptionsFromStrings(interestStrategyNames)
+
+export const repaymentsSelectOptions: NunjuckSelectInputOption<RepaymentStrategyName>[] =
+  buildSelectOptionsFromStrings(repaymentsStrategyNames)

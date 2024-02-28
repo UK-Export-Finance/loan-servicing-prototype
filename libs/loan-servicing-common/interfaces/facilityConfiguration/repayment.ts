@@ -1,7 +1,7 @@
 import { StrategyOptionsBase } from './strategyOptionsBase'
 
 export type RegularRepaymentStrategyOptions = StrategyOptionsBase<
-  'regular',
+  'Regular',
   {
     startDate: Date
     monthsBetweenRepayments: number
@@ -9,7 +9,7 @@ export type RegularRepaymentStrategyOptions = StrategyOptionsBase<
 >
 
 export type ManualRepaymentStrategyOptions = StrategyOptionsBase<
-  'manual',
+  'Manual',
   {
     repayments: { date: Date; amount: string }[]
   }

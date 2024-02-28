@@ -1,6 +1,7 @@
 import nunjucks from 'nunjucks'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { dirname } from 'path'
+import { allPlaceholders } from 'strings/strategyNames'
 
 const TEMPLATES_DIR = 'src/templates'
 
@@ -24,6 +25,11 @@ const configureNunjucks = (app: NestExpressApplication): void => {
 
   nunjucksEnv.addFilter('parseDate', (date: string): string =>
     new Date(date).toLocaleString('en-GB'),
+  )
+
+  nunjucksEnv.addFilter(
+    'enumToNameString',
+    (enumValue: string): string => allPlaceholders[enumValue] ?? enumValue,
   )
 
   nunjucksEnv.addGlobal('env', process.env.NODE_ENV)

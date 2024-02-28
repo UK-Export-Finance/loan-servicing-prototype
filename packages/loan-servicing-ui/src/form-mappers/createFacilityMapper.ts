@@ -13,7 +13,7 @@ const mapCreateFacilityFormToRequest = (
       name: request.calculateInterestStrategy,
     },
     repaymentsStrategy: {
-      name: 'regular',
+      name: 'Regular',
       startDate: new Date(),
       monthsBetweenRepayments: 3,
     },
