@@ -21,20 +21,7 @@
         text: "Interest Calculation Method"
       },
       value: facilityType.calculateInterestStrategy,
-      items: [
-        {
-          value: "NoInterest",
-          text: "Interest Free"
-        },
-        {
-          value: "PrincipalOnly",
-          text: "On Principal Only"
-        },
-        {
-          value: "Compounding",
-          text: "Compounding"
-        }
-      ]
+      items: calculateInterestStrategyNames
     }) }}
 
     {{ govukInput({

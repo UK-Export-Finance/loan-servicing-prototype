@@ -20,6 +20,10 @@ import {
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import FacilityService from 'modules/facility/facility.service'
+import {
+  CreateFacilityNjkInput,
+  calculateInterestSelectOptions,
+} from 'templates/create-facility'
 import { FacilityListNjkInput } from 'templates/facility-list'
 import {
   FacilityInterestRateUpdateFormDto,
@@ -34,18 +38,19 @@ class FacilityController {
 
   @Get('facility/new')
   @Render('create-facility')
-  async renderCreateFacilityPage(): Promise<{
-    facilityTypeNames: { value: string; text: string }[]
-  }> {
-    const facilityTypes = await tryGetApiData<FacilityType[]>('facility-type')
-    if (!facilityTypes || facilityTypes.length === 0) {
-      throw new Error('No facility types found')
+  async renderCreateFacilityPage(
+    @Query('facilityType') facilityTypeName: string,
+  ): Promise<CreateFacilityNjkInput> {
+    const facilityType = await tryGetApiData<FacilityType>(
+      `facility-type/${facilityTypeName}`,
+    )
+    if (!facilityType) {
+      throw new Error('No facility type found')
     }
     return {
-      facilityTypeNames: facilityTypes?.map((t) => ({
-        value: t.name,
-        text: t.name,
-      })),
+      calculateInterestStrategyNames: calculateInterestSelectOptions.filter(
+        (o) => facilityType.interestStrategies.includes(o.value),
+      ),
     }
   }
 

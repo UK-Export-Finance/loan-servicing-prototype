@@ -4,5 +4,5 @@ import { NunjuckSelectInputOption } from "types/nunjucks";
 export type FacilityListNjkInput = {
     allFacilities: FacilityDto[] | null
     allFacilityTypes: FacilityType[] | null
-    facilityTypeNames: NunjuckSelectInputOption[]
+    facilityTypeNames: NunjuckSelectInputOption<string>[]
   }
