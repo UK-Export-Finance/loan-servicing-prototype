@@ -4,7 +4,6 @@ import FacilityTypeEntity from 'models/entities/FacilityTypeEntity'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import CalculateInterestService from './calculateInterest/service'
 import StrategyService from './strategy.service'
-import { strategyOptionsProviderConfig } from './strategyOptions.provider'
 import RepaymentsService from './repayments/service'
 
 @Module({
@@ -13,7 +12,6 @@ import RepaymentsService from './repayments/service'
     CalculateInterestService,
     StrategyService,
     RepaymentsService,
-    strategyOptionsProviderConfig,
   ],
   exports: [StrategyService],
 })

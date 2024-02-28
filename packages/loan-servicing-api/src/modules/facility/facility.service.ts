@@ -14,7 +14,7 @@ import {
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
-import FacilityProjectionsService from './facilityProjections.service'
+import FacilityProjectionsService from './facility.service.projections'
 
 @Injectable()
 class FacilityService {

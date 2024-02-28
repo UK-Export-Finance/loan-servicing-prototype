@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { CalculateInterestStrategyName, Facility, FacilityProjectionEvent } from 'loan-servicing-common'
+import {
+  CalculateInterestStrategyOption,
+  Facility,
+  FacilityProjectionEvent,
+} from 'loan-servicing-common'
 import calculateInterestStrategies from './strategies'
 
 @Injectable()
 class CalculateInterestService {
   calculate(
     facility: Facility,
-    strategy: CalculateInterestStrategyName,
+    strategy: CalculateInterestStrategyOption,
   ): string {
-    return calculateInterestStrategies[strategy](facility)
+    return calculateInterestStrategies[strategy.name](facility)
   }
 
   generateInterestEvents = (facility: Facility): FacilityProjectionEvent[] => {

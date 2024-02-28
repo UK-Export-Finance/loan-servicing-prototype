@@ -13,8 +13,8 @@ class FacilityTypeEntity implements FacilityType {
   @Column()
   name!: string
 
-  @Column()
-  calculateInterestStrategy!: CalculateInterestStrategyName
+  @Column({type: 'simple-array'})
+  interestStrategies!: CalculateInterestStrategyName[]
 }
 
 export default FacilityTypeEntity

@@ -9,7 +9,7 @@ class FacilityTypeDtoClass implements FacilityType {
   name!: string
 
   @ApiProperty()
-  calculateInterestStrategy!: CalculateInterestStrategyName
+  interestStrategies!: CalculateInterestStrategyName[]
 }
 
 export default FacilityTypeDtoClass
