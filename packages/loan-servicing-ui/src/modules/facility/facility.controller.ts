@@ -51,6 +51,7 @@ class FacilityController {
       calculateInterestStrategyNames: calculateInterestSelectOptions.filter(
         (o) => facilityType.interestStrategies.includes(o.value),
       ),
+      facilityType: facilityTypeName
     }
   }
 
@@ -101,10 +102,11 @@ class FacilityController {
   @Post('facility')
   async createFacility(
     @Body() requestDto: NewFacilityRequestFormDto,
+    @Query('facilityType') facilityType: string,
     @Res() response: Response,
   ): Promise<void> {
     const request: NewFacilityRequestDto =
-      mapCreateFacilityFormToRequest(requestDto)
+      mapCreateFacilityFormToRequest(facilityType, requestDto)
     const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }

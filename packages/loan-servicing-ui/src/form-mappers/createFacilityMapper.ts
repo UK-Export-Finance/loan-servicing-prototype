@@ -3,8 +3,10 @@ import { NewFacilityRequestFormDto } from 'types/dtos/facility.dto'
 import { getDateFromDateInput } from 'utils/form-helpers'
 
 const mapCreateFacilityFormToRequest = (
+  facilityType: string,
   request: NewFacilityRequestFormDto,
 ): NewFacilityRequestDto => ({
+  facilityType,
   ...request,
   facilityConfig: {
     calculateInterestStrategy: {

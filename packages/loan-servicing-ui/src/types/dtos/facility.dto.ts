@@ -12,7 +12,6 @@ export type FacilityInterestRateUpdateFormDto = {
 export type NewFacilityRequestFormDto = MapDatesToDateFormInputs<
   {
     obligor: string
-    facilityType: string
     calculateInterestStrategy: CalculateInterestStrategyName
     facilityAmount: string
     interestRate: string

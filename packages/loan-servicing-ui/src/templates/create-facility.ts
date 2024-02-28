@@ -3,6 +3,7 @@ import { NunjuckSelectInputOption } from 'types/nunjucks'
 
 export type CreateFacilityNjkInput = {
   calculateInterestStrategyNames: NunjuckSelectInputOption<CalculateInterestStrategyName>[]
+  facilityType: string
 }
 
 export const calculateInterestSelectOptions: NunjuckSelectInputOption<CalculateInterestStrategyName>[] =

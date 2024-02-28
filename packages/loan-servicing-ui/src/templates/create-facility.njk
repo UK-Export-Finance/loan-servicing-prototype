@@ -13,7 +13,7 @@
 
   <p class="govuk-body govuk-!-margin-bottom-6">Add a new facility to the loan servicing system</p>
 
-  <form action="/facility" method="post">
+  <form action="/facility?facilityType={{ facilityType }}" method="post">
     {{ govukSelect({
       id: "calculateInterestStrategy",
       name: "calculateInterestStrategy",

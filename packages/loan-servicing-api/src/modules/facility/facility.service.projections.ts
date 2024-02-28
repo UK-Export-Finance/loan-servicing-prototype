@@ -62,7 +62,7 @@ class FacilityProjectionsService {
         // But JS dates are zero indexed so we also subtract 1
         datetime: new Date(a.year, a.month + 1 - 1),
         reference: `accrued interest for ${a.month}/${a.year}`,
-        interestChange: Big(a.interest).toString(),
+        interestChange: Big(a.interest).toFixed(2),
         principalChange: '0',
         balanceAfterTransaction: '0',
         interestAccrued: '0',
