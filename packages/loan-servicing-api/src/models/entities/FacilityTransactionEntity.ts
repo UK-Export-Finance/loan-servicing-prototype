@@ -1,8 +1,9 @@
 import { CurrencyColumn } from 'database/decorators'
 import { FacilityTransaction } from 'loan-servicing-common'
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
+@Index(['streamId', 'datetime'])
 class FacilityTransactionEntity implements FacilityTransaction {
   @PrimaryGeneratedColumn()
   id!: number

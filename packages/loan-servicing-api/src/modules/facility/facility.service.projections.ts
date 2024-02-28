@@ -45,6 +45,7 @@ class FacilityProjectionsService {
   async getMonthlyTransactions(
     streamId: string,
   ): Promise<FacilityTransaction[] | null> {
+    // BEWARE: SQL Injection risk 
     const monthlyInterestAmounts = (await this.facilityTransactionRepo.query(`
       SELECT
         YEAR([datetime]) AS 'year',
