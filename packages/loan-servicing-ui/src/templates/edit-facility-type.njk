@@ -1,7 +1,7 @@
 {% extends "index.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 {% block pageTitle -%}
   Edit Facility Type
@@ -21,25 +21,29 @@
       value: facilityType.name
     }) }}
 
-    {{ govukSelect({
-      id: "calculateInterestStrategy",
-      name: "calculateInterestStrategy",
-      label: {
-        text: "Interest Calculation Method"
+    {{ govukCheckboxes({
+      name: "interestStrategies",
+      fieldset: {
+        legend: {
+          text: "Supported Interest Calculation Types",
+          classes: "govuk-fieldset__legend--l"
+        }
       },
-      value: facilityType.calculateInterestStrategy,
+      hint: {
+        text: "Select all that apply."
+      },
       items: [
         {
-          value: "NoInterest",
-          text: "Interest Free"
+          value: "Compounding",
+          text: "Compounding Interest"
         },
         {
           value: "PrincipalOnly",
-          text: "On Principal Only"
+          text: "Principal only interest"
         },
         {
-          value: "Compounding",
-          text: "Compounding"
+          value: "NoInterest",
+          text: "Interest free"
         }
       ]
     }) }}

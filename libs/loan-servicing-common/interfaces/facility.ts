@@ -1,10 +1,12 @@
 import { ConvertToDtoType } from '../utils/type-utils'
+import { FacilityConfiguration } from './facilityConfiguration'
 
 export type Facility = {
   streamId: string
   streamVersion: number
   obligor: string
   facilityType: string
+  facilityConfig: FacilityConfiguration
   //   description: string
   //   currency: string
   facilityAmount: string
