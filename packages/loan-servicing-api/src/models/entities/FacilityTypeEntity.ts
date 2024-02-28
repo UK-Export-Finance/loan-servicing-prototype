@@ -1,6 +1,7 @@
 import {
   CalculateInterestStrategyName,
   FacilityType,
+  RepaymentStrategyName,
 } from 'loan-servicing-common'
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm'
 
@@ -15,6 +16,9 @@ class FacilityTypeEntity implements FacilityType {
 
   @Column({type: 'simple-array'})
   interestStrategies!: CalculateInterestStrategyName[]
+
+  @Column({type: 'simple-array'})
+  repaymentsStrategies!: RepaymentStrategyName[]
 }
 
 export default FacilityTypeEntity

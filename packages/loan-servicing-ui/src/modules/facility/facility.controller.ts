@@ -10,6 +10,7 @@ import {
   Res,
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
+import { calculateInterestSelectOptions, filterSelectOptions } from 'controls/strategyControlsOptions'
 import { Response } from 'express'
 import mapCreateFacilityFormToRequest from 'form-mappers/createFacilityMapper'
 import {
@@ -22,7 +23,6 @@ import {
 import FacilityService from 'modules/facility/facility.service'
 import {
   CreateFacilityNjkInput,
-  calculateInterestSelectOptions,
 } from 'templates/create-facility'
 import { FacilityListNjkInput } from 'templates/facility-list'
 import {
@@ -48,9 +48,7 @@ class FacilityController {
       throw new Error('No facility type found')
     }
     return {
-      calculateInterestStrategyNames: calculateInterestSelectOptions.filter(
-        (o) => facilityType.interestStrategies.includes(o.value),
-      ),
+      calculateInterestStrategyNames: filterSelectOptions(calculateInterestSelectOptions, facilityType.interestStrategies),
       facilityType: facilityTypeName
     }
   }

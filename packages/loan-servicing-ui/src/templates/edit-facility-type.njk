@@ -32,20 +32,7 @@
       hint: {
         text: "Select all that apply."
       },
-      items: [
-        {
-          value: "Compounding",
-          text: "Compounding Interest"
-        },
-        {
-          value: "PrincipalOnly",
-          text: "Principal only interest"
-        },
-        {
-          value: "NoInterest",
-          text: "Interest free"
-        }
-      ]
+      items: calculateInterestSelectOptions
     }) }}
 
     {{ govukButton({  text: "Save facility type"}) }}

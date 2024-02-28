@@ -12,6 +12,11 @@ const mapCreateFacilityFormToRequest = (
     calculateInterestStrategy: {
       name: request.calculateInterestStrategy,
     },
+    repaymentsStrategy: {
+      name: 'regular',
+      startDate: new Date(),
+      monthsBetweenRepayments: 3,
+    },
   },
   expiryDate: getDateFromDateInput(request, 'expiryDate'),
   issuedEffectiveDate: getDateFromDateInput(request, 'issuedEffectiveDate'),

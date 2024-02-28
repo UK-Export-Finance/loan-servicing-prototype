@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   CalculateInterestStrategyName,
   FacilityType,
+  RepaymentStrategyName,
 } from 'loan-servicing-common'
 
 class FacilityTypeDtoClass implements FacilityType {
@@ -10,6 +11,9 @@ class FacilityTypeDtoClass implements FacilityType {
 
   @ApiProperty()
   interestStrategies!: CalculateInterestStrategyName[]
+
+  @ApiProperty()
+  repaymentsStrategies!: RepaymentStrategyName[]
 }
 
 export default FacilityTypeDtoClass
