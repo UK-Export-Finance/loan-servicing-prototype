@@ -1,21 +1,19 @@
 import { add } from 'date-fns'
 import {
-  Facility,
-  ManualRepaymentStrategyOptions,
-  RegularRepaymentStrategyOptions,
+  FacilityWithSpecifiedConfig,
   RepaymentEvent,
-  RepaymentStrategyOptions,
+  RepaymentStrategyName,
 } from 'loan-servicing-common'
-import { StrategyLookup } from 'modules/utils/strategies'
 
-export type GetRepaymentEventsStrategy<T extends RepaymentStrategyOptions> = (
-  facility: Facility,
-  strategyOptions: T,
+export type GetRepaymentEventsStrategy<T extends RepaymentStrategyName> = (
+  facility: FacilityWithSpecifiedConfig<'repaymentsStrategy', T>,
 ) => RepaymentEvent[]
 
 export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
-  RegularRepaymentStrategyOptions
-> = (facility, { startDate, monthsBetweenRepayments }) => {
+  'Regular'
+> = (facility) => {
+  const { startDate, monthsBetweenRepayments } =
+    facility.facilityConfig.repaymentsStrategy
   const expiryDate = new Date(facility.expiryDate)
   let dateToProcess = new Date(startDate)
   const repaymentEvents: RepaymentEvent[] = []
@@ -36,13 +34,14 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
 }
 
 export const getManualRepaymentEvents: GetRepaymentEventsStrategy<
-  ManualRepaymentStrategyOptions
+  'Manual'
 > = () => []
 
-export const repaymentEventStrategies: StrategyLookup<
-  'repaymentsStrategy',
-  RepaymentEvent[]
-> = {
+type RepaymentEventStrategies = {
+  [K in RepaymentStrategyName]: GetRepaymentEventsStrategy<K>
+}
+
+export const repaymentEventStrategies: RepaymentEventStrategies = {
   Regular: getRegularRepaymentEvents,
   Manual: getManualRepaymentEvents,
 }

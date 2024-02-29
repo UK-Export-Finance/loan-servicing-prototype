@@ -1,15 +1,21 @@
-import { Facility } from 'loan-servicing-common'
+import {
+  CalculateInterestStrategyName,
+  FacilityWithSpecifiedConfig,
+} from 'loan-servicing-common'
 import Big, { roundHalfEven as ROUND_MODE_HALF_EVEN } from 'big.js'
-import { StrategyLookup } from 'modules/utils/strategies'
 
-export type CalculateInterestStrategy = (facility: Facility) => string
+export type CalculateInterestStrategy<T extends CalculateInterestStrategyName> =
+  (
+    facility: FacilityWithSpecifiedConfig<'calculateInterestStrategy', T>,
+  ) => string
 
-export const calculateNoInterest: CalculateInterestStrategy = () => '0'
+export const calculateNoInterest: CalculateInterestStrategy<
+  'NoInterest'
+> = () => '0'
 
-export const calculatePrincipalOnlyInterest: CalculateInterestStrategy = ({
-  facilityAmount,
-  interestRate,
-}) => {
+export const calculatePrincipalOnlyInterest: CalculateInterestStrategy<
+  'PrincipalOnly'
+> = ({ facilityAmount, interestRate }) => {
   const dailyInterestRate = Big(interestRate).div(100).div(365)
   const interestAccrued = Big(facilityAmount)
     .times(dailyInterestRate)
@@ -19,11 +25,9 @@ export const calculatePrincipalOnlyInterest: CalculateInterestStrategy = ({
   return interestAccrued
 }
 
-export const calculateCompoundingInterest: CalculateInterestStrategy = ({
-  facilityAmount,
-  interestRate,
-  interestAccrued,
-}) => {
+export const calculateCompoundingInterest: CalculateInterestStrategy<
+  'Compounding'
+> = ({ facilityAmount, interestRate, interestAccrued }) => {
   const dailyInterestRate = Big(interestRate).div(100).div(365)
   const accruableTotal = Big(facilityAmount).add(interestAccrued)
   const newInterestAccrued = Big(accruableTotal)
@@ -34,10 +38,11 @@ export const calculateCompoundingInterest: CalculateInterestStrategy = ({
   return newInterestAccrued
 }
 
-const calculateInterestStrategies: StrategyLookup<
-  'calculateInterestStrategy',
-  string
-> = {
+type CalculateInterestStrategies = {
+  [K in CalculateInterestStrategyName]: CalculateInterestStrategy<K>
+}
+
+const calculateInterestStrategies: CalculateInterestStrategies = {
   NoInterest: calculateNoInterest,
   PrincipalOnly: calculatePrincipalOnlyInterest,
   Compounding: calculateCompoundingInterest,

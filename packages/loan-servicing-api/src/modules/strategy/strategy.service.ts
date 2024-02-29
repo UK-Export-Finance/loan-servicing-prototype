@@ -1,7 +1,6 @@
 import { Inject } from '@nestjs/common'
 import CalculateInterestService from './calculateInterest/service'
 import RepaymentsService from './repayments/service'
-import { CalculateInterestStrategy } from './calculateInterest/strategies'
 
 class StrategyService {
   constructor(
@@ -10,10 +9,7 @@ class StrategyService {
     @Inject(RepaymentsService) private repaymentsService: RepaymentsService,
   ) {}
 
-  calculateInterest: CalculateInterestStrategy = (facility) =>
-    this.calculateInterestService.calculate(
-      facility,
-    )
+  calculateInterest = this.calculateInterestService.calculate
 
   getInterestEvents = this.calculateInterestService.generateInterestEvents
 

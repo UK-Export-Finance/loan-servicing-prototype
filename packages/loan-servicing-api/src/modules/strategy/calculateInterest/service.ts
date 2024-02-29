@@ -13,10 +13,9 @@ class CalculateInterestService {
     facility: FacilityWithSpecifiedConfig<'calculateInterestStrategy',T>,
   ): string {
     const option = facility.facilityConfig.calculateInterestStrategy
-    const oName: T = option.name
-    return calculateInterestStrategies[oName](
+    const strategyName: T = option.name
+    return calculateInterestStrategies[strategyName](
       facility,
-      facility.facilityConfig.calculateInterestStrategy,
     )
   }
 
