@@ -95,9 +95,7 @@ class FacilityProjectionsService {
 
     const interestEvents = this.strategyService.getInterestEvents(facility)
     const repaymentEvents = this.strategyService.getRepaymentEvents(
-      facility,
-      6,
-      3,
+      facility
     )
 
     const projectedEvents: FacilityProjectionEvent[] = [

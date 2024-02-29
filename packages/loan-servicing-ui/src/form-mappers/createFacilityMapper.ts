@@ -14,7 +14,7 @@ const mapCreateFacilityFormToRequest = (
     },
     repaymentsStrategy: {
       name: 'Regular',
-      startDate: new Date(),
+      startDate: new Date(2024, 7, 1),
       monthsBetweenRepayments: 3,
     },
   },

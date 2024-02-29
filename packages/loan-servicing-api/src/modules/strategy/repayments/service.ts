@@ -1,38 +1,26 @@
 import { Injectable } from '@nestjs/common'
 import Big, { roundDown } from 'big.js'
-import { add } from 'date-fns'
 import {
   Facility,
   FacilityProjectionEvent,
+  FacilityWithSpecifiedConfig,
   RepaymentEvent,
+  RepaymentStrategyName,
 } from 'loan-servicing-common'
+import { repaymentEventStrategies } from './strategies'
 
 @Injectable()
 class RepaymentsService {
-  createRepaymentEvents(
-    facility: Facility,
-    monthsWithoutRepayment: number,
-    monthsBetweenRepayments: number,
+  createRepaymentEvents<T extends RepaymentStrategyName>(
+    facility: FacilityWithSpecifiedConfig<'repaymentsStrategy', T>,
   ): RepaymentEvent[] {
-    const expiryDate = new Date(facility.expiryDate)
-    let dateToProcess = add(new Date(facility.issuedEffectiveDate), {
-      months: monthsWithoutRepayment,
-    })
-    const repaymentEvents: RepaymentEvent[] = []
-    while (dateToProcess <= expiryDate) {
-      repaymentEvents.push({
-        effectiveDate: dateToProcess,
-        type: 'Repayment',
-        eventData: { totalRepayments: 0 },
-      })
-      dateToProcess = add(dateToProcess, { months: monthsBetweenRepayments })
-    }
-    repaymentEvents[repaymentEvents.length - 1].type = 'FinalRepayment'
-
-    return repaymentEvents.map((e) => ({
-      ...e,
-      totalRepayments: repaymentEvents.length,
-    }))
+    const options = facility.facilityConfig.repaymentsStrategy
+    // Needed to get the typing correct
+    // eslint-disable-next-line prefer-destructuring
+    const name: T = options.name
+    const func = repaymentEventStrategies[name]
+    const result = func(facility, options)
+    return result
   }
 
   calculateRepayment(

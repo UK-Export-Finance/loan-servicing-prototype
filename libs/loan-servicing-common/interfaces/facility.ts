@@ -1,5 +1,8 @@
 import { ConvertToDtoType } from '../utils/type-utils'
-import { FacilityConfiguration } from './facilityConfiguration'
+import {
+  FacilityConfiguration,
+  SpecifiedFacilityConfig,
+} from './facilityConfiguration'
 
 export type Facility = {
   streamId: string
@@ -19,6 +22,13 @@ export type Facility = {
   expiryDate: Date
   //   usedAmount: number
   //   availableAmount: number
+}
+
+export type FacilityWithSpecifiedConfig<
+  StrategyGroup extends keyof FacilityConfiguration,
+  StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
+> = Omit<Facility, 'facilityConfig'> & {
+  facilityConfig: SpecifiedFacilityConfig<StrategyGroup, StrategyName>
 }
 
 export type FacilityDto = ConvertToDtoType<Facility>

@@ -1,9 +1,8 @@
-import { Inject, Injectable, Scope } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import CalculateInterestService from './calculateInterest/service'
 import RepaymentsService from './repayments/service'
 import { CalculateInterestStrategy } from './calculateInterest/strategies'
 
-@Injectable({ scope: Scope.REQUEST })
 class StrategyService {
   constructor(
     @Inject(CalculateInterestService)
