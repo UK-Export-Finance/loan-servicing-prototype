@@ -1,13 +1,12 @@
 import { add } from 'date-fns'
 import {
   Facility,
-  FacilityWithSpecifiedConfig,
   ManualRepaymentStrategyOptions,
   RegularRepaymentStrategyOptions,
   RepaymentEvent,
-  RepaymentStrategyName,
   RepaymentStrategyOptions,
 } from 'loan-servicing-common'
+import { StrategyLookup } from 'modules/utils/strategies'
 
 export type GetRepaymentEventsStrategy<T extends RepaymentStrategyOptions> = (
   facility: Facility,
@@ -40,17 +39,10 @@ export const getManualRepaymentEvents: GetRepaymentEventsStrategy<
   ManualRepaymentStrategyOptions
 > = () => []
 
-export type TranslateArg<K extends RepaymentStrategyName> = Extract<
-  RepaymentStrategyOptions,
-  { name: K }
->
-
-export const repaymentEventStrategies: {
-  [K in RepaymentStrategyName]: (
-    facility: FacilityWithSpecifiedConfig<'repaymentsStrategy', K>,
-    arg: TranslateArg<K>,
-  ) => RepaymentEvent[]
-} = {
+export const repaymentEventStrategies: StrategyLookup<
+  'repaymentsStrategy',
+  RepaymentEvent[]
+> = {
   Regular: getRegularRepaymentEvents,
   Manual: getManualRepaymentEvents,
 }

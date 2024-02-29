@@ -18,9 +18,7 @@ class RepaymentsService {
     // Needed to get the typing correct
     // eslint-disable-next-line prefer-destructuring
     const name: T = options.name
-    const func = repaymentEventStrategies[name]
-    const result = func(facility, options)
-    return result
+    return repaymentEventStrategies[name](facility, options)
   }
 
   calculateRepayment(

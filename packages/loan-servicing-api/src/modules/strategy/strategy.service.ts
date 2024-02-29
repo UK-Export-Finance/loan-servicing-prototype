@@ -13,7 +13,6 @@ class StrategyService {
   calculateInterest: CalculateInterestStrategy = (facility) =>
     this.calculateInterestService.calculate(
       facility,
-      facility.facilityConfig.calculateInterestStrategy,
     )
 
   getInterestEvents = this.calculateInterestService.generateInterestEvents
