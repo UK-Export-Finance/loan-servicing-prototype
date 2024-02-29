@@ -8,6 +8,12 @@ export type MapAllTypeAtoTypeB<Subject, A, B> = {
 
 export type ConvertToDtoType<T> = MapAllTypeAtoTypeB<T, Date, string>
 
+export type ReplaceProperty<
+  Object extends object,
+  KeyToReplace extends keyof Object,
+  NewType,
+> = Omit<Object, KeyToReplace> & { [k in KeyToReplace]: NewType }
+
 // Use this type to force Intellisense to show the computed type
 // instead of type aliases.
 // eslint-disable-next-line @typescript-eslint/naming-convention

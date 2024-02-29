@@ -1,3 +1,4 @@
+import { ReplaceProperty } from '../../utils/type-utils'
 import {
   CalculateInterestStrategyName,
   CalculateInterestStrategyOption,
@@ -12,12 +13,11 @@ export type FacilityConfiguration = {
 export type SpecifiedFacilityConfig<
   StrategyGroup extends keyof FacilityConfiguration,
   StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
-> = Omit<FacilityConfiguration, StrategyGroup> & {
-  [k in StrategyGroup]: Extract<
-    FacilityConfiguration[StrategyGroup],
-    { name: StrategyName }
-  >
-}
+> = ReplaceProperty<
+  FacilityConfiguration,
+  StrategyGroup,
+  Extract<FacilityConfiguration[StrategyGroup], { name: StrategyName }>
+>
 
 export type FacilityType = {
   name: string

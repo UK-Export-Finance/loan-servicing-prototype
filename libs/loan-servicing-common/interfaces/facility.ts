@@ -1,4 +1,4 @@
-import { ConvertToDtoType } from '../utils/type-utils'
+import { ConvertToDtoType, ReplaceProperty } from '../utils/type-utils'
 import {
   FacilityConfiguration,
   SpecifiedFacilityConfig,
@@ -27,9 +27,11 @@ export type Facility = {
 export type FacilityWithSpecifiedConfig<
   StrategyGroup extends keyof FacilityConfiguration,
   StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
-> = Omit<Facility, 'facilityConfig'> & {
-  facilityConfig: SpecifiedFacilityConfig<StrategyGroup, StrategyName>
-}
+> = ReplaceProperty<
+  Facility,
+  'facilityConfig',
+  SpecifiedFacilityConfig<StrategyGroup, StrategyName>
+>
 
 export type FacilityDto = ConvertToDtoType<Facility>
 
