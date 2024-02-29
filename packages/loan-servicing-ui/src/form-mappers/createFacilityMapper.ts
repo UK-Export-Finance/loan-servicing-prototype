@@ -1,6 +1,7 @@
 import { NewFacilityRequestDto } from 'loan-servicing-common'
-import { NewFacilityRequestFormDto } from 'types/dtos/facility.dto'
+import { NewFacilityRequestFormDto } from 'templates/create-facility'
 import { getDateFromDateInput } from 'utils/form-helpers'
+import mapRepaymentOptions from './repaymentOptionMappers'
 
 const mapCreateFacilityFormToRequest = (
   facilityType: string,
@@ -12,11 +13,7 @@ const mapCreateFacilityFormToRequest = (
     calculateInterestStrategy: {
       name: request.calculateInterestStrategy,
     },
-    repaymentsStrategy: {
-      name: 'Regular',
-      startDate: new Date(2024, 7, 1),
-      monthsBetweenRepayments: 3,
-    },
+    repaymentsStrategy: mapRepaymentOptions(request),
   },
   expiryDate: getDateFromDateInput(request, 'expiryDate'),
   issuedEffectiveDate: getDateFromDateInput(request, 'issuedEffectiveDate'),

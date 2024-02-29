@@ -24,6 +24,36 @@
       items: calculateInterestStrategyNames
     }) }}
 
+    {{ govukSelect({
+      id: "repaymentStrategy",
+      name: "repaymentStrategy",
+      label: {
+        text: "Repayment Schedule Type"
+      },
+      value: facilityType.calculateInterestStrategy,
+      items: repaymentStrategyNames
+    }) }}
+
+    {{ govukDateInput({
+      id: "repaymentStartDate",
+      namePrefix: "repaymentStartDate",
+      fieldset: {
+        legend: {
+          text: "Date of first repayment"
+        }
+      }
+    }) }}
+
+    {{ govukInput({
+      label: {
+        text: "Months between repayments"
+      },
+      classes: "govuk-input--width-20",
+      id: "repaymentInterval",
+      name: "repaymentInterval",
+      type: "number"
+    }) }}
+
     {{ govukInput({
       label: {
         text: "Obligor ID"

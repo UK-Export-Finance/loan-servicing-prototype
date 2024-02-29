@@ -10,7 +10,7 @@ import {
   Res,
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
-import { calculateInterestSelectOptions, filterSelectOptions } from 'controls/strategyControlsOptions'
+import { calculateInterestSelectOptions, filterSelectOptions, repaymentsSelectOptions } from 'controls/strategyControlsOptions'
 import { Response } from 'express'
 import mapCreateFacilityFormToRequest from 'form-mappers/createFacilityMapper'
 import {
@@ -22,13 +22,12 @@ import {
 } from 'loan-servicing-common'
 import FacilityService from 'modules/facility/facility.service'
 import {
-  CreateFacilityNjkInput,
+  CreateFacilityNjkInput, NewFacilityRequestFormDto,
 } from 'templates/create-facility'
 import { FacilityListNjkInput } from 'templates/facility-list'
 import {
   FacilityInterestRateUpdateFormDto,
   FacilityPrincipalAdjustmentFormDto,
-  NewFacilityRequestFormDto,
 } from 'types/dtos/facility.dto'
 import { getDateFromDateInput } from 'utils/form-helpers'
 
@@ -49,6 +48,7 @@ class FacilityController {
     }
     return {
       calculateInterestStrategyNames: filterSelectOptions(calculateInterestSelectOptions, facilityType.interestStrategies),
+      repaymentStrategyNames: filterSelectOptions(repaymentsSelectOptions, facilityType.repaymentsStrategies),
       facilityType: facilityTypeName
     }
   }

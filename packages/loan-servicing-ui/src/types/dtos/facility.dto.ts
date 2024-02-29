@@ -1,5 +1,4 @@
-import { CalculateInterestStrategyName } from 'loan-servicing-common'
-import { DateInputFormData, MapDatesToDateFormInputs } from 'utils/form-helpers'
+import { DateInputFormData } from 'utils/form-helpers'
 
 export type FacilityPrincipalAdjustmentFormDto = {
   adjustment: string
@@ -9,14 +8,4 @@ export type FacilityInterestRateUpdateFormDto = {
   interestRate: string
 } & DateInputFormData<'effectiveDate'>
 
-export type NewFacilityRequestFormDto = MapDatesToDateFormInputs<
-  {
-    obligor: string
-    calculateInterestStrategy: CalculateInterestStrategyName
-    facilityAmount: string
-    interestRate: string
-    issuedEffectiveDate: Date
-    expiryDate: Date
-  },
-  'expiryDate' | 'issuedEffectiveDate'
->
+
