@@ -4,7 +4,7 @@ export type RegularRepaymentStrategyOptions = StrategyOptionsBase<
   'Regular',
   {
     startDate: Date
-    monthsBetweenRepayments: number
+    monthsBetweenRepayments: string
   }
 >
 

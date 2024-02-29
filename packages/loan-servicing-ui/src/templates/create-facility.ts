@@ -1,26 +1,26 @@
-import { CalculateInterestStrategyName, RepaymentStrategyName } from 'loan-servicing-common'
-import { NunjuckSelectInputOption } from 'types/nunjucks'
-import { MapDatesToDateFormInputs } from 'utils/form-helpers'
+import {
+  CalculateInterestStrategyName,
+  RepaymentStrategyName,
+} from 'loan-servicing-common'
+import {
+  MandatoryDateInputFormData,
+  OptionalDateFormInput,
+} from 'utils/form-helpers'
 
 export type CreateFacilityNjkInput = {
-  calculateInterestStrategyNames: NunjuckSelectInputOption<CalculateInterestStrategyName>[]
-  repaymentStrategyNames: NunjuckSelectInputOption<RepaymentStrategyName>[]
+  calculateInterestStrategy: CalculateInterestStrategyName
+  repaymentStrategy: RepaymentStrategyName
   facilityType: string
 }
 
-export type NewFacilityRequestFormDto = MapDatesToDateFormInputs<
-  {
-    obligor: string
-    calculateInterestStrategy: CalculateInterestStrategyName
-    facilityAmount: string
-    repaymentStrategy: RepaymentStrategyName
-    repaymentStartDate: Date
-    repaymentInterval: string
-    interestRate: string
-    issuedEffectiveDate: Date
-    expiryDate: Date
-  },
-  'expiryDate' | 'issuedEffectiveDate' | 'repaymentStartDate'
->
-
-
+export type NewFacilityRequestFormDto = {
+  facilityType: string
+  obligor: string
+  calculateInterestStrategy: CalculateInterestStrategyName
+  facilityAmount: string
+  repaymentStrategy: RepaymentStrategyName
+  repaymentInterval?: string
+  interestRate: string
+} & MandatoryDateInputFormData<'expiryDate'> &
+  MandatoryDateInputFormData<'issuedEffectiveDate'> &
+  OptionalDateFormInput<'repaymentStartDate'>

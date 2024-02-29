@@ -23,7 +23,7 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
       type: 'Repayment',
       eventData: { totalRepayments: 0 },
     })
-    dateToProcess = add(dateToProcess, { months: monthsBetweenRepayments })
+    dateToProcess = add(dateToProcess, { months: Number(monthsBetweenRepayments) })
   }
   repaymentEvents[repaymentEvents.length - 1].type = 'FinalRepayment'
 

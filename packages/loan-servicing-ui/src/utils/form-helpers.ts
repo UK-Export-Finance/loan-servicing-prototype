@@ -1,23 +1,23 @@
+import { BadRequestException } from '@nestjs/common'
+
 type BaseDateInputFormData = {
   '-day': string
   '-month': string
   '-year': string
 }
 
-export type DateInputFormData<P extends string> = {
+export type MandatoryDateInputFormData<P extends string> = {
   [K in keyof BaseDateInputFormData as K extends string
     ? `${P}${K}`
     : never]: string
 }
 
-// P should be a union of the keys with type Date
-export type MapDatesToDateFormInputs<
-  Subject,
-  P extends string & keyof Subject,
-> = Omit<Subject, P> & DateInputFormData<P>
+export type OptionalDateFormInput<P extends string> = Partial<
+  MandatoryDateInputFormData<P>
+>
 
 export const getDateFromDateInput = <P extends string>(
-  formData: DateInputFormData<P>,
+  formData: OptionalDateFormInput<P>,
   dateInputName: P,
 ): Date => {
   const {
@@ -27,5 +27,11 @@ export const getDateFromDateInput = <P extends string>(
     // Use looser type as TS doesn't pick up the mapped type
   } = formData as { [t: string]: string }
 
-  return new Date(Number(year), Number(month) - 1, Number(day))
+  if (day && month && year) {
+    return new Date(Number(year), Number(month) - 1, Number(day))
+  }
+
+  throw new BadRequestException(
+    `Date input ${dateInputName} is missing a value`,
+  )
 }

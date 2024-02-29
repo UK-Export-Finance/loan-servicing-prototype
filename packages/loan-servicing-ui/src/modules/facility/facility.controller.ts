@@ -10,21 +10,29 @@ import {
   Res,
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
-import { calculateInterestSelectOptions, filterSelectOptions, repaymentsSelectOptions } from 'controls/strategyControlsOptions'
+import {
+  calculateInterestSelectOptions,
+  filterSelectOptions,
+  repaymentsSelectOptions,
+} from 'controls/strategyControlsOptions'
 import { Response } from 'express'
 import mapCreateFacilityFormToRequest from 'form-mappers/createFacilityMapper'
 import {
   AdjustFacilityPrincipalDto,
+  CalculateInterestStrategyName,
   FacilityDto,
   FacilityType,
   NewFacilityRequestDto,
+  RepaymentStrategyName,
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import FacilityService from 'modules/facility/facility.service'
 import {
-  CreateFacilityNjkInput, NewFacilityRequestFormDto,
+  CreateFacilityNjkInput,
+  NewFacilityRequestFormDto,
 } from 'templates/create-facility'
 import { FacilityListNjkInput } from 'templates/facility-list'
+import { ConfigureFacilityStrategiesNjkInput } from 'templates/new-facility-strategies'
 import {
   FacilityInterestRateUpdateFormDto,
   FacilityPrincipalAdjustmentFormDto,
@@ -39,6 +47,9 @@ class FacilityController {
   @Render('create-facility')
   async renderCreateFacilityPage(
     @Query('facilityType') facilityTypeName: string,
+    @Query('repaymentStrategy') repaymentStrategy: RepaymentStrategyName,
+    @Query('calculateInterestStrategy')
+    calculateInterestStrategy: CalculateInterestStrategyName,
   ): Promise<CreateFacilityNjkInput> {
     const facilityType = await tryGetApiData<FacilityType>(
       `facility-type/${facilityTypeName}`,
@@ -47,9 +58,33 @@ class FacilityController {
       throw new Error('No facility type found')
     }
     return {
-      calculateInterestStrategyNames: filterSelectOptions(calculateInterestSelectOptions, facilityType.interestStrategies),
-      repaymentStrategyNames: filterSelectOptions(repaymentsSelectOptions, facilityType.repaymentsStrategies),
-      facilityType: facilityTypeName
+      calculateInterestStrategy,
+      repaymentStrategy,
+      facilityType: facilityTypeName,
+    }
+  }
+
+  @Get('facility/new/start')
+  @Render('new-facility-strategies')
+  async renderFacilityStrategySelectionPage(
+    @Query('facilityType') facilityTypeName: string,
+  ): Promise<ConfigureFacilityStrategiesNjkInput> {
+    const facilityType = await tryGetApiData<FacilityType>(
+      `facility-type/${facilityTypeName}`,
+    )
+    if (!facilityType) {
+      throw new Error('No facility type found')
+    }
+    return {
+      calculateInterestStrategyNames: filterSelectOptions(
+        calculateInterestSelectOptions,
+        facilityType.interestStrategies,
+      ),
+      repaymentStrategyNames: filterSelectOptions(
+        repaymentsSelectOptions,
+        facilityType.repaymentsStrategies,
+      ),
+      facilityType: facilityTypeName,
     }
   }
 
@@ -100,11 +135,11 @@ class FacilityController {
   @Post('facility')
   async createFacility(
     @Body() requestDto: NewFacilityRequestFormDto,
-    @Query('facilityType') facilityType: string,
     @Res() response: Response,
   ): Promise<void> {
-    const request: NewFacilityRequestDto =
-      mapCreateFacilityFormToRequest(facilityType, requestDto)
+    const request: NewFacilityRequestDto = mapCreateFacilityFormToRequest(
+      requestDto,
+    )
     const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }

@@ -4,10 +4,8 @@ import { getDateFromDateInput } from 'utils/form-helpers'
 import mapRepaymentOptions from './repaymentOptionMappers'
 
 const mapCreateFacilityFormToRequest = (
-  facilityType: string,
   request: NewFacilityRequestFormDto,
 ): NewFacilityRequestDto => ({
-  facilityType,
   ...request,
   facilityConfig: {
     calculateInterestStrategy: {

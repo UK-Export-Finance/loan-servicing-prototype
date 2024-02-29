@@ -1,4 +1,4 @@
-import { NotImplementedException } from '@nestjs/common'
+import { BadRequestException, NotImplementedException } from '@nestjs/common'
 import { RepaymentStrategyOptions } from 'loan-servicing-common'
 import { NewFacilityRequestFormDto } from 'templates/create-facility'
 import { getDateFromDateInput } from 'utils/form-helpers'
@@ -8,10 +8,16 @@ const mapRepaymentOptions = (
 ): RepaymentStrategyOptions => {
   switch (createFacilityForm.repaymentStrategy) {
     case 'Regular':
+      if (!createFacilityForm.repaymentInterval) {
+        throw new BadRequestException('No value found for repayment interval')
+      }
       return {
         name: createFacilityForm.repaymentStrategy,
-        startDate: getDateFromDateInput(createFacilityForm, 'repaymentStartDate'),
-        monthsBetweenRepayments: Number(createFacilityForm.repaymentInterval),
+        startDate: getDateFromDateInput(
+          createFacilityForm,
+          'repaymentStartDate',
+        ),
+        monthsBetweenRepayments: createFacilityForm.repaymentInterval,
       }
     case 'Manual':
       return {

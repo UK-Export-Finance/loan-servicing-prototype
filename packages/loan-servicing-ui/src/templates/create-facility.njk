@@ -13,46 +13,9 @@
 
   <p class="govuk-body govuk-!-margin-bottom-6">Add a new facility to the loan servicing system</p>
 
-  <form action="/facility?facilityType={{ facilityType }}" method="post">
-    {{ govukSelect({
-      id: "calculateInterestStrategy",
-      name: "calculateInterestStrategy",
-      label: {
-        text: "Interest Calculation Method"
-      },
-      value: facilityType.calculateInterestStrategy,
-      items: calculateInterestStrategyNames
-    }) }}
+  <form action="/facility" method="post">
 
-    {{ govukSelect({
-      id: "repaymentStrategy",
-      name: "repaymentStrategy",
-      label: {
-        text: "Repayment Schedule Type"
-      },
-      value: facilityType.calculateInterestStrategy,
-      items: repaymentStrategyNames
-    }) }}
-
-    {{ govukDateInput({
-      id: "repaymentStartDate",
-      namePrefix: "repaymentStartDate",
-      fieldset: {
-        legend: {
-          text: "Date of first repayment"
-        }
-      }
-    }) }}
-
-    {{ govukInput({
-      label: {
-        text: "Months between repayments"
-      },
-      classes: "govuk-input--width-20",
-      id: "repaymentInterval",
-      name: "repaymentInterval",
-      type: "number"
-    }) }}
+    <input name="facilityType" type="hidden" value="{{facilityType}}">
 
     {{ govukInput({
       label: {
@@ -67,6 +30,7 @@
       label: {
         text: "Facility Amount"
       },
+      classes: "govuk-input--width-20",
       id: "facilityAmount",
       name: "facilityAmount"
     }) }}
@@ -90,15 +54,48 @@
         }
       }) }}
 
-      {{ govukDateInput({
+    {{ govukDateInput({
         id: "expiryDate",
         namePrefix: "expiryDate",
         fieldset: {
           legend: {
-            text: "Expirty date of facility"
+            text: "Expiry date of facility"
           }
         }
       }) }}
+
+    <h3 class="govuk-heading-s">Repayment Schedule -
+      {{ repaymentStrategy | enumToNameString }}</h3>
+    
+    <input name="repaymentStrategy" type="hidden" value="{{repaymentStrategy}}">
+
+    {% if repaymentStrategy === 'Regular' %}
+      {{ govukDateInput({
+        id: "repaymentStartDate",
+        namePrefix: "repaymentStartDate",
+        fieldset: {
+          legend: {
+            text: "Date of first repayment"
+          }
+        }
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "Months between repayments"
+        },
+        classes: "govuk-input--width-20",
+        id: "repaymentInterval",
+        name: "repaymentInterval",
+        type: "number"
+      }) }}
+
+    {% endif %}
+
+    <h3 class="govuk-heading-s">Interest Strategy -
+      {{ calculateInterestStrategy | enumToNameString }}</h3>
+
+    <input name="calculateInterestStrategy" type="hidden" value="{{calculateInterestStrategy}}">
 
     {{ govukButton({  text: "Create Facility"}) }}
   </form>

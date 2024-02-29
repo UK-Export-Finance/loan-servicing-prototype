@@ -14,6 +14,8 @@ export type ReplaceProperty<
   NewType,
 > = Omit<Object, KeyToReplace> & { [k in KeyToReplace]: NewType }
 
+export type FlattenByKey<T, K extends keyof T> = Omit<T, K> & T[K]
+
 // Use this type to force Intellisense to show the computed type
 // instead of type aliases.
 // eslint-disable-next-line @typescript-eslint/naming-convention
