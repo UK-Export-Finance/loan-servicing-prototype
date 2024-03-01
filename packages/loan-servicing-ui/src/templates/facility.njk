@@ -109,7 +109,8 @@
         text: "Repayments Strategy"
       },
       value: {
-        text: facility.facilityConfig.repaymentsStrategy.name
+        html: facility.facilityConfig.repaymentsStrategy | repaymentToString
+        
       }
     }
   ]
