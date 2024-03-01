@@ -1,9 +1,11 @@
 {% extends "index.njk" %}
-{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% from "macros/transaction-tables.njk" import transactionTables %}
 
 {% block pageTitle -%}
   Facility
@@ -25,105 +27,86 @@
   {% endif %}
   <h1 class="govuk-heading-l">Facility
     {{ facility.streamId }}</h1>
-  <p class="govuk-body govuk-!-margin-bottom-6">Facility Type:
-    {{facility.facilityType}}</p>
-  <p class="govuk-body govuk-!-margin-bottom-6">Obligor:
-    {{facility.obligor}}</p>
-  <p class="govuk-body govuk-!-margin-bottom-6">Facility Amount:
-    £{{facility.facilityAmount}}</p>
-  <p class="govuk-body govuk-!-margin-bottom-6">Interest Rate:
-    {{facility.interestRate}}%</p>
-  <p class="govuk-body govuk-!-margin-bottom-6">Start Date:
-    {{facility.issuedEffectiveDate|parseDate}}</p>
-  <p class="govuk-body govuk-!-margin-bottom-6">End Date:
-    {{facility.expiryDate|parseDate}}</p>
 
-  <h2 class="govuk-heading-m">Edit Facility</h2>
-
-  <h3 class="govuk-heading-s">Facility Amount</h3>
-    <form action="/facility/{{facility.streamId}}/adjustPrincipal?version={{facility.streamVersion}}" method="post">
-    {{ govukInput({
-        label: {
-          text: "Adjust facility amount"
-        },
-        classes: "govuk-input--width-20",
-        id: "adjustment",
-        name: "adjustment"
-      }) }}
-    {{ govukDateInput({
-        id: "effectiveDate",
-        namePrefix: "effectiveDate",
-        fieldset: {
-          legend: {
-            text: "Effective date of adjustment"
-          }
-        }
-      }) }}
-    {{ govukButton({  text: "Add adjustment"}) }}
-  </form>
-  <h3 class="govuk-heading-s">Interest Rate</h3>
-    <form action="/facility/{{facility.streamId}}/updateInterest?version={{facility.streamVersion}}" method="post">
-    {{ govukInput({
-        label: {
-          text: "Updated Interest Value (%)"
-        },
-        classes: "govuk-input--width-20",
-        id: "interestRate",
-        name: "interestRate"
-      }) }}
-    {{ govukDateInput({
-        id: "effectiveDate",
-        namePrefix: "effectiveDate",
-        fieldset: {
-          legend: {
-            text: "Effective date of adjustment"
-          }
-        }
-      }) }}
-    {{ govukButton({  text: "Update Interest Rate"}) }}
-  </form>
-
-  {{ govukTable({
-    caption: "Facility Transactions",
-    captionClasses: "govuk-table__caption--m",
-    head: [
-      {
-        text: "Date"
+  {{ govukSummaryList({
+  rows: [
+    {
+      key: {
+        text: "Facility Type"
       },
-      {
-        text: "Reference"
-      },
-      {
-        text: "Change"
-      },
-      {
-        text: "Principal"
-      },
-      {
-        text: "Total Interest Accrued"
+      value: {
+        text: facility.facilityType
       }
-    ],
-    rows: transactionRows
-  }) }}
-
-  {{ govukTable({
-    caption: "Event History",
-    captionClasses: "govuk-table__caption--m",
-    head: [
-      {
-        text: "Event Date"
+    },
+    {
+      key: {
+        text: "Obligor ID"
       },
-      {
-        text: "Action"
-      },
-      {
-        text: "Changes"
-      },
-      {
-        text: "Effective Date"
+      value: {
+        text: facility.obligor
       }
-    ],
-    rows: eventRows
-  }) }}
+    },
+    {
+      key: {
+        text: "Facility Amount"
+      },
+      value: {
+        text: "£" + facility.facilityAmount
+      },
+      actions: {
+        items: [
+          {
+            href: "/facility/"+facility.streamId+"/adjustPrincipal",
+            text: "Amend",
+            visuallyHiddenText: "facility amount"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "Interest Strategy"
+      },
+      value: {
+        text: facility.facilityConfig.calculateInterestStrategy.name | enumToNameString
+      }
+    },
+    {
+      key: {
+        text: "Interest Rate"
+      },
+      value: {
+        text: facility.interestRate + "%"
+      },
+      actions: {
+        items: [
+          {
+            href: "/facility/"+facility.streamId+"/changeInterest",
+            text: "Change",
+            visuallyHiddenText: "interest rate"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "Start Date"
+      },
+      value: {
+        text: facility.issuedEffectiveDate|parseDate
+      }
+    },
+    {
+      key: {
+        text: "End Date"
+      },
+      value: {
+        text: facility.expiryDate|parseDate
+      }
+    }
+  ]
+}) }}
+
+  {{ transactionTables(transactionRows, eventRows) }}
 
 {% endblock %}

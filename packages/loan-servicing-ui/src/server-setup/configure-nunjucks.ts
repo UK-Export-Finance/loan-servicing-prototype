@@ -24,7 +24,7 @@ const configureNunjucks = (app: NestExpressApplication): void => {
   )
 
   nunjucksEnv.addFilter('parseDate', (date: string): string =>
-    new Date(date).toLocaleString('en-GB'),
+    new Date(date).toLocaleDateString('en-GB'),
   )
 
   nunjucksEnv.addFilter(

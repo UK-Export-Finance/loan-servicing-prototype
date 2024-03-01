@@ -48,7 +48,7 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
 const getTransactionTableRow = (
   transaction: FacilityTransaction,
 ): TransactionTableRow => ({
-  date: new Date(transaction.datetime).toLocaleString('en-GB'),
+  date: new Date(transaction.datetime).toLocaleDateString('en-GB'),
   reference: transaction.reference,
   transactionAmount:
     transaction.principalChange === '0'
