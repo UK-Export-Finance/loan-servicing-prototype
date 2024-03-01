@@ -7,5 +7,3 @@ export type FacilityPrincipalAdjustmentFormDto = {
 export type FacilityInterestRateUpdateFormDto = {
   interestRate: string
 } & DateInputFormData<'effectiveDate'>
-
-

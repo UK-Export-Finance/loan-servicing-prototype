@@ -9,14 +9,12 @@ import calculateInterestStrategies from './strategies'
 
 @Injectable()
 class CalculateInterestService {
-  calculate< T extends CalculateInterestStrategyName>(
-    facility: FacilityWithSpecifiedConfig<'calculateInterestStrategy',T>,
+  calculate<T extends CalculateInterestStrategyName>(
+    facility: FacilityWithSpecifiedConfig<'calculateInterestStrategy', T>,
   ): string {
     const option = facility.facilityConfig.calculateInterestStrategy
     const strategyName: T = option.name
-    return calculateInterestStrategies[strategyName](
-      facility,
-    )
+    return calculateInterestStrategies[strategyName](facility)
   }
 
   generateInterestEvents = (facility: Facility): FacilityProjectionEvent[] => {

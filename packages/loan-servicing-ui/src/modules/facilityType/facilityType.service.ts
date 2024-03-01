@@ -4,7 +4,9 @@ import { FacilityType } from 'loan-servicing-common'
 
 @Injectable()
 class FacilityTypeService {
-  async createFacilityType(facility: FacilityType): Promise<FacilityType | null> {
+  async createFacilityType(
+    facility: FacilityType,
+  ): Promise<FacilityType | null> {
     const newFacility = await putApiData<FacilityType>(
       'facility-type',
       facility,

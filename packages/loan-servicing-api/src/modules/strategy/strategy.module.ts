@@ -8,11 +8,7 @@ import RepaymentsService from './repayments/service'
 
 @Module({
   imports: [EventModule, TypeOrmModule.forFeature([FacilityTypeEntity])],
-  providers: [
-    CalculateInterestService,
-    StrategyService,
-    RepaymentsService,
-  ],
+  providers: [CalculateInterestService, StrategyService, RepaymentsService],
   exports: [StrategyService],
 })
 class StrategyModule {}

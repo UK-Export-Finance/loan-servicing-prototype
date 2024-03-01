@@ -1,4 +1,7 @@
-import { CalculateInterestStrategyName, RepaymentStrategyName } from 'loan-servicing-common'
+import {
+  CalculateInterestStrategyName,
+  RepaymentStrategyName,
+} from 'loan-servicing-common'
 import { NunjuckSelectInputOption } from 'types/nunjucks'
 
 export type CreateFacilityTypeNjkInput = {

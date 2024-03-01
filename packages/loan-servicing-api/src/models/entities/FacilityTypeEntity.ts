@@ -14,10 +14,10 @@ class FacilityTypeEntity implements FacilityType {
   @Column()
   name!: string
 
-  @Column({type: 'simple-array'})
+  @Column({ type: 'simple-array' })
   interestStrategies!: CalculateInterestStrategyName[]
 
-  @Column({type: 'simple-array'})
+  @Column({ type: 'simple-array' })
   repaymentsStrategies!: RepaymentStrategyName[]
 }
 

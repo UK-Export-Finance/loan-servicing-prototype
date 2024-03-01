@@ -137,9 +137,8 @@ class FacilityController {
     @Body() requestDto: NewFacilityRequestFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const request: NewFacilityRequestDto = mapCreateFacilityFormToRequest(
-      requestDto,
-    )
+    const request: NewFacilityRequestDto =
+      mapCreateFacilityFormToRequest(requestDto)
     const newFacility = await this.facilityService.createFacility(request)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }

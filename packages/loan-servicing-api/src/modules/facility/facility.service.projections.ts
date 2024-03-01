@@ -45,7 +45,7 @@ class FacilityProjectionsService {
   async getMonthlyTransactions(
     streamId: string,
   ): Promise<FacilityTransaction[] | null> {
-    // BEWARE: SQL Injection risk 
+    // BEWARE: SQL Injection risk
     const monthlyInterestAmounts = (await this.facilityTransactionRepo.query(`
       SELECT
         YEAR([datetime]) AS 'year',
@@ -94,9 +94,7 @@ class FacilityProjectionsService {
     const facility = this.getFacilityAtCreation(facilityEvents)
 
     const interestEvents = this.strategyService.getInterestEvents(facility)
-    const repaymentEvents = this.strategyService.getRepaymentEvents(
-      facility
-    )
+    const repaymentEvents = this.strategyService.getRepaymentEvents(facility)
 
     const projectedEvents: FacilityProjectionEvent[] = [
       ...facilityEvents,

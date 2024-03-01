@@ -1,6 +1,12 @@
 import { ApiExtraModels, ApiProperty, refs } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { ArrayNotEmpty, IsArray, IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  ValidateNested,
+} from 'class-validator'
 import {
   CalculateInterestStrategyName,
   FacilityConfiguration,
@@ -62,7 +68,7 @@ export class ManualRepaymentStrategyOptionsDtoClass
   @IsNotEmpty()
   name: 'Manual' = 'Manual'
 
-  @ApiProperty({ type: () => [RepaymentDtoClass]})
+  @ApiProperty({ type: () => [RepaymentDtoClass] })
   @ArrayNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
