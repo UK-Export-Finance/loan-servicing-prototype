@@ -2,13 +2,13 @@ import Big, { roundDown } from 'big.js'
 import {
   FacilityProjectionEvent,
   FacilityWithSpecifiedConfig,
-  RepaymentEvent,
   RepaymentStrategyName,
+  RepaymentsEvent,
 } from 'loan-servicing-common'
 
 export type CalculateRepaymentsStrategy<T extends RepaymentStrategyName> = (
   facility: FacilityWithSpecifiedConfig<'repaymentsStrategy', T>,
-  event: RepaymentEvent,
+  event: RepaymentsEvent,
   remainingEvents: FacilityProjectionEvent[],
 ) => string
 
@@ -28,9 +28,13 @@ export const calculateRegularRepayment: CalculateRepaymentsStrategy<
   return nonFinalRepaymentAmount.toString()
 }
 
-export const calculateManualRepayment: CalculateRepaymentsStrategy<
-  'Manual'
-> = () => '0'
+export const calculateManualRepayment: CalculateRepaymentsStrategy<'Manual'> = (
+  facility,
+  event,
+) =>
+  facility.facilityConfig.repaymentsStrategy.repayments[
+    event.eventData.repaymentNumber - 1
+  ].amount
 
 type RepaymentEventStrategies = {
   [K in RepaymentStrategyName]: CalculateRepaymentsStrategy<K>

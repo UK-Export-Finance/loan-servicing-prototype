@@ -24,10 +24,7 @@ const bootstrap = async (): Promise<void> => {
   SwaggerModule.setup('api', app, document)
 
   app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
+    new ValidationPipe(),
   )
 
   await app.listen(port ?? 3000)

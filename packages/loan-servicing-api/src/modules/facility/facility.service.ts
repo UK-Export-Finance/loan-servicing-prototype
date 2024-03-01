@@ -42,7 +42,6 @@ class FacilityService {
     const { facility } = await this.projectionsService.buildProjections(
       savedEvent.streamId,
     )
-
     return facility
   }
 
