@@ -14,7 +14,7 @@ export const interestStrategyNames: Record<
 
 export const repaymentsStrategyNames: Record<RepaymentStrategyName, string> = {
   Regular: 'Regular Repayments',
-  Manual: 'Irregular Repayments',
+  Manual: 'Manual Repayments',
 }
 
 export const allPlaceholders: { [key: string]: string } = {

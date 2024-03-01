@@ -1,6 +1,9 @@
 import { BadRequestException, NotImplementedException } from '@nestjs/common'
 import { RepaymentStrategyOptions } from 'loan-servicing-common'
-import { NewFacilityRequestFormDto } from 'templates/create-facility'
+import {
+  NewFacilityRequestFormDto,
+  PermittedRepaymentNumbers,
+} from 'templates/create-facility'
 import { getDateFromDateInput } from 'utils/form-helpers'
 
 const mapRepaymentOptions = (
@@ -20,9 +23,33 @@ const mapRepaymentOptions = (
         monthsBetweenRepayments: createFacilityForm.repaymentInterval,
       }
     case 'Manual':
+      const repaymentNumbers: PermittedRepaymentNumbers[] = [
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+      ]
+
+      const repayments = repaymentNumbers
+        .map((number) => {
+          const amount = createFacilityForm[`repaymentAmount${number}`]
+          return amount
+            ? {
+                date: getDateFromDateInput(
+                  createFacilityForm,
+                  `repaymentDate${number}`,
+                ),
+                amount: createFacilityForm[`repaymentAmount${number}`]!,
+              }
+            : undefined
+        })
+        .filter((repayment) => repayment)
+        .map((r) => r!)
+
       return {
         name: createFacilityForm.repaymentStrategy,
-        repayments: [],
+        repayments,
       }
     default:
       throw new NotImplementedException()

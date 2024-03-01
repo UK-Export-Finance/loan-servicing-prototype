@@ -12,6 +12,11 @@ export type CreateFacilityNjkInput = {
   repaymentStrategy: RepaymentStrategyName
   facilityType: string
 }
+export type PermittedRepaymentNumbers = '1' | '2' | '3' | '4' | '5'
+
+type ManualRepaymentFormData<Id extends string> = {
+  [key in `repaymentAmount${Id}`]?: string
+} & OptionalDateFormInput<`repaymentDate${Id}`>
 
 export type NewFacilityRequestFormDto = {
   facilityType: string
@@ -23,4 +28,5 @@ export type NewFacilityRequestFormDto = {
   interestRate: string
 } & MandatoryDateInputFormData<'expiryDate'> &
   MandatoryDateInputFormData<'issuedEffectiveDate'> &
-  OptionalDateFormInput<'repaymentStartDate'>
+  OptionalDateFormInput<'repaymentStartDate'> &
+  ManualRepaymentFormData<PermittedRepaymentNumbers>
