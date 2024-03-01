@@ -103,6 +103,14 @@
       value: {
         text: facility.expiryDate|parseDate
       }
+    },
+    {
+      key: {
+        text: "Repayments Strategy"
+      },
+      value: {
+        text: facility.facilityConfig.repaymentsStrategy.name
+      }
     }
   ]
 }) }}
