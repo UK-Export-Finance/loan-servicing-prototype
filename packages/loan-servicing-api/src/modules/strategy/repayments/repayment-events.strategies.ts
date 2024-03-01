@@ -45,7 +45,7 @@ export const getManualRepaymentEvents: GetRepaymentEventsStrategy<'Manual'> = ({
   },
 }) => {
   const repaymentEvents = repayments.map<RepaymentsEvent>((r, i) => ({
-    effectiveDate: new Date(r.date),
+    effectiveDate: r.date,
     type: 'Repayment',
     eventData: { totalRepayments: repayments.length, repaymentNumber: i +1 },
   }))

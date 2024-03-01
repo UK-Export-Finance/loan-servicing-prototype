@@ -7,8 +7,6 @@ export type CreateNewFacilityEvent = EventBase<
   NewFacilityRequestDto
 >
 
-export type DeleteFacilityEvent = EventBase<'DeleteFacility', 1, {}>
-
 export type UpdateInterestEvent = EventBase<
   'UpdateInterest',
   1,
@@ -23,6 +21,5 @@ export type AdjustFacilityPrincipalEvent = EventBase<
 
 export type FacilityEvent =
   | CreateNewFacilityEvent
-  | DeleteFacilityEvent
   | UpdateInterestEvent
   | AdjustFacilityPrincipalEvent

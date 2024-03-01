@@ -1,5 +1,6 @@
-import { CurrencyColumn } from 'database/decorators'
+import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
 import { Facility, FacilityConfiguration } from 'loan-servicing-common'
+import { FacilityConfigurationDtoClass } from 'models/dtos/facilityConfiguration'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
@@ -13,7 +14,7 @@ class FacilityEntity implements Facility {
   @Column()
   facilityType!: string
 
-  @Column({ type: 'simple-json' })
+  @ClassAsJsonColumn(FacilityConfigurationDtoClass)
   facilityConfig!: FacilityConfiguration
 
   @Column()

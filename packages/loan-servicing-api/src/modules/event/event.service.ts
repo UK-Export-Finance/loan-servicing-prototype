@@ -1,9 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'
+import { instanceToPlain, plainToInstance } from 'class-transformer'
 import {
   CreateNewFacilityEvent,
   LoanServicingEvent,
 } from 'loan-servicing-common'
+import eventTypeToEventClassDefinition from 'models/dtos'
 import EventEntity from 'models/entities/EventEntity'
 import { DataSource } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
@@ -49,12 +51,6 @@ class EventService {
       streamVersion: currentStreamVersion + 1,
       eventDate: new Date(),
     })
-    console.log(
-      JSON.stringify(
-        (createdEvent as CreateNewFacilityEvent).eventData.facilityConfig
-          .repaymentsStrategy,
-      ),
-    )
 
     return repo.save(createdEvent)
   }
@@ -69,7 +65,8 @@ class EventService {
       .where({ streamId })
       .orderBy({ 'e.streamVersion': 'ASC' })
       .getMany()
-    return result as LoanServicingEvent[]
+    const transformed = result.map(this.parseEvent)
+    return transformed
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
@@ -82,18 +79,39 @@ class EventService {
       .where({ streamId })
       .orderBy({ 'e.effectiveDate': 'ASC' })
       .getMany()
-    return result as LoanServicingEvent[]
+    return result.map(this.parseEvent)
   }
 
   async getFacilityTypeOfEventStream(streamId: string): Promise<string> {
     const repo = this.dataSource.getRepository(
       EventEntity<CreateNewFacilityEvent>,
     )
-    const event = await repo.findOne({ where: { streamId } })
+    const eventRaw = await repo.findOne({ where: { streamId } })
+    const event = this.tryParseEvent(eventRaw)
     if (!event) {
       throw new Error(`No facility found with id ${streamId}`)
     }
     return event.eventData.facilityType
+  }
+
+  parseEvent<T extends LoanServicingEvent>(rawEvent: EventEntity<T>): T {
+    const eventData = plainToInstance(
+      eventTypeToEventClassDefinition[rawEvent.type],
+      rawEvent.eventData,
+    )
+    return {
+      ...instanceToPlain(rawEvent),
+      eventData,
+    } as T
+  }
+
+  tryParseEvent<T extends LoanServicingEvent>(
+    rawEvent: EventEntity<T> | null,
+  ): T | null {
+    if (!rawEvent) {
+      return null
+    }
+    return this.parseEvent(rawEvent)
   }
 }
 

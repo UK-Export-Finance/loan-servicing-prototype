@@ -1,11 +1,12 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { IsNotEmpty } from 'class-validator'
+import { IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
 import {
   AdjustFacilityPrincipalDto,
   Facility,
   NewFacilityRequestDto,
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
+import { Type } from 'class-transformer'
 import { FacilityConfigurationDtoClass } from './facilityConfiguration'
 
 export class FacilityResponseDtoClass implements Facility {
@@ -20,7 +21,8 @@ export class FacilityResponseDtoClass implements Facility {
   facilityType!: string
 
   @ApiProperty()
-  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => FacilityConfigurationDtoClass)
   facilityConfig!: FacilityConfigurationDtoClass
 
   @ApiProperty()
@@ -36,9 +38,13 @@ export class FacilityResponseDtoClass implements Facility {
   interestAccrued!: string
 
   @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
   issuedEffectiveDate!: Date
 
   @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
   expiryDate!: Date
 
   @ApiProperty()

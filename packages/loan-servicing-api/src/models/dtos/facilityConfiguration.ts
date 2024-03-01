@@ -1,6 +1,6 @@
 import { ApiExtraModels, ApiProperty, refs } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { ArrayNotEmpty, IsArray, ValidateNested } from 'class-validator'
+import { ArrayNotEmpty, IsArray, IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
 import {
   CalculateInterestStrategyName,
   FacilityConfiguration,
@@ -27,12 +27,15 @@ export class CalculateInterestStrategyOptionDtoClass {
 }
 
 export class RegularRepaymentStrategyOptionsDtoClass
+  extends StrategyOptionDtoClass
   implements RegularRepaymentStrategyOptions
 {
   @ApiProperty({ enum: ['Regular'] })
   name: 'Regular' = 'Regular'
 
   @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
   startDate!: Date
 
   @ApiProperty()
@@ -41,36 +44,45 @@ export class RegularRepaymentStrategyOptionsDtoClass
 
 export class RepaymentDtoClass implements Repayment {
   @ApiProperty()
+  @IsDate()
+  @IsNotEmpty()
+  @Type(() => Date)
   date!: Date
 
   @ApiProperty()
+  @IsNotEmpty()
   amount!: string
 }
 @ApiExtraModels(RepaymentDtoClass)
 export class ManualRepaymentStrategyOptionsDtoClass
+  extends StrategyOptionDtoClass
   implements ManualRepaymentStrategyOptions
 {
   @ApiProperty({ enum: ['Manual'] })
+  @IsNotEmpty()
   name: 'Manual' = 'Manual'
 
   @ApiProperty({ type: () => [RepaymentDtoClass]})
   @ArrayNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
+  @Type(() => RepaymentDtoClass)
+  @IsNotEmpty()
   repayments!: RepaymentDtoClass[]
 }
 
 @ApiExtraModels(
-  // RegularRepaymentStrategyOptionsDtoClass,
+  RegularRepaymentStrategyOptionsDtoClass,
   ManualRepaymentStrategyOptionsDtoClass,
 )
 export class FacilityConfigurationDtoClass implements FacilityConfiguration {
   @ApiProperty()
+  @Type(() => CalculateInterestStrategyOptionDtoClass)
   calculateInterestStrategy!: CalculateInterestStrategyOptionDtoClass
 
   @ApiProperty({
     oneOf: refs(
-      // RegularRepaymentStrategyOptionsDtoClass,
+      RegularRepaymentStrategyOptionsDtoClass,
       ManualRepaymentStrategyOptionsDtoClass,
     ),
   })
@@ -79,11 +91,12 @@ export class FacilityConfigurationDtoClass implements FacilityConfiguration {
     discriminator: {
       property: 'name',
       subTypes: [
-        // { value: RegularRepaymentStrategyOptionsDtoClass, name: 'Regular' },
+        { value: RegularRepaymentStrategyOptionsDtoClass, name: 'Regular' },
         { value: ManualRepaymentStrategyOptionsDtoClass, name: 'Manual' },
       ],
     },
   })
+  @ValidateNested()
   repaymentsStrategy!:
     | RegularRepaymentStrategyOptionsDtoClass
     | ManualRepaymentStrategyOptionsDtoClass

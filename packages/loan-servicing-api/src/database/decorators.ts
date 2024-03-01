@@ -1,4 +1,9 @@
 import Big from 'big.js'
+import {
+  ClassConstructor,
+  instanceToPlain,
+  plainToInstance,
+} from 'class-transformer'
 import { Column } from 'typeorm'
 
 class DecimalStringTransformer {
@@ -18,4 +23,24 @@ export const CurrencyColumn = (): PropertyDecorator =>
     scale: 2,
     precision: 12,
     transformer: new DecimalStringTransformer(),
+  })
+
+class ClassTransformer<T> {
+  constructor(private targetClass: ClassConstructor<T>) {}
+
+  to(data: object): T {
+    return plainToInstance(this.targetClass, data)
+  }
+
+  from(d: T): object {
+    return instanceToPlain(d)
+  }
+}
+
+export const ClassAsJsonColumn = <T>(
+  classConstructor: ClassConstructor<T>,
+): PropertyDecorator =>
+  Column({
+    type: 'simple-json',
+    transformer: new ClassTransformer(classConstructor),
   })
