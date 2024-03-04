@@ -191,7 +191,7 @@ class FacilityProjectionsService {
           streamId: facilityEntity.streamId,
           datetime: event.effectiveDate,
           reference: `Max principal ${Number(incrementEvent.adjustment) > 0 ? 'increased' : 'decreased'} by ${incrementEvent.adjustment}`,
-          principalChange: incrementEvent.adjustment,
+          principalChange: '0',
           interestChange: '0',
           balanceAfterTransaction: facilityEntity.outstandingPrincipal,
           interestAccrued: facilityEntity.interestAccrued,
