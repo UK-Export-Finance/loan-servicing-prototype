@@ -1,8 +1,8 @@
-import { FacilityDto, FacilityType } from 'loan-servicing-common'
+import { DrawingDto, FacilityType } from 'loan-servicing-common'
 import { NunjuckSelectInputOption } from 'types/nunjucks'
 
 export type FacilityListNjkInput = {
-  allFacilities: FacilityDto[] | null
+  allFacilities: DrawingDto[] | null
   allFacilityTypes: FacilityType[] | null
   facilityTypeNames: NunjuckSelectInputOption<string>[]
 }

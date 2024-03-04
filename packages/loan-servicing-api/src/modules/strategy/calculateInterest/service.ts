@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common'
 import {
   CalculateInterestStrategyName,
-  Facility,
-  FacilityProjectionEvent,
-  FacilityWithSpecifiedConfig,
+  Drawing,
+  DrawingProjectionEvent,
+  DrawingWithSpecifiedConfig,
 } from 'loan-servicing-common'
 import calculateInterestStrategies from './strategies'
 
 @Injectable()
 class CalculateInterestService {
   calculate<T extends CalculateInterestStrategyName>(
-    facility: FacilityWithSpecifiedConfig<'calculateInterestStrategy', T>,
+    drawing: DrawingWithSpecifiedConfig<'calculateInterestStrategy', T>,
   ): string {
-    const option = facility.facilityConfig.calculateInterestStrategy
+    const option = drawing.drawingConfig.calculateInterestStrategy
     const strategyName: T = option.name
-    return calculateInterestStrategies[strategyName](facility)
+    return calculateInterestStrategies[strategyName](drawing)
   }
 
-  generateInterestEvents = (facility: Facility): FacilityProjectionEvent[] => {
-    const expiryDate = new Date(facility.expiryDate)
-    let dateToProcess = new Date(facility.issuedEffectiveDate)
-    const interestEvents: FacilityProjectionEvent[] = []
+  generateInterestEvents = (drawing: Drawing): DrawingProjectionEvent[] => {
+    const expiryDate = new Date(drawing.expiryDate)
+    let dateToProcess = new Date(drawing.issuedEffectiveDate)
+    const interestEvents: DrawingProjectionEvent[] = []
     while (dateToProcess <= expiryDate) {
       interestEvents.push({
         effectiveDate: dateToProcess,

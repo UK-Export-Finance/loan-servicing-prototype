@@ -9,7 +9,7 @@ import {
 } from 'class-validator'
 import {
   CalculateInterestStrategyName,
-  FacilityConfiguration,
+  DrawingConfiguration,
   ManualRepaymentStrategyOptions,
   RegularRepaymentStrategyOptions,
   Repayment,
@@ -81,7 +81,7 @@ export class ManualRepaymentStrategyOptionsDtoClass
   RegularRepaymentStrategyOptionsDtoClass,
   ManualRepaymentStrategyOptionsDtoClass,
 )
-export class FacilityConfigurationDtoClass implements FacilityConfiguration {
+export class DrawingConfigurationDtoClass implements DrawingConfiguration {
   @ApiProperty()
   @Type(() => CalculateInterestStrategyOptionDtoClass)
   calculateInterestStrategy!: CalculateInterestStrategyOptionDtoClass

@@ -1,19 +1,19 @@
 import { add } from 'date-fns'
 import {
-  FacilityWithSpecifiedConfig,
+  DrawingWithSpecifiedConfig,
   RepaymentsEvent,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
 
 export type GetRepaymentEventsStrategy<T extends RepaymentStrategyName> = (
-  facility: FacilityWithSpecifiedConfig<'repaymentsStrategy', T>,
+  facility: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
 ) => RepaymentsEvent[]
 
 export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
   'Regular'
 > = ({
   expiryDate,
-  facilityConfig: {
+  drawingConfig: {
     repaymentsStrategy: { startDate, monthsBetweenRepayments },
   },
 }) => {
@@ -41,7 +41,7 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
 }
 
 export const getManualRepaymentEvents: GetRepaymentEventsStrategy<'Manual'> = ({
-  facilityConfig: {
+  drawingConfig: {
     repaymentsStrategy: { repayments },
   },
 }) => {

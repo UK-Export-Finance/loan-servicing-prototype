@@ -4,10 +4,10 @@ import {
   LoanServicingEvent,
   NewFacilityRequestDto,
   FacilityTransaction,
-  FacilityDto,
-  AdjustFacilityMaxPrincipalDto,
-  UpdateInterestRequestDto,
-  AddDrawingDto,
+  DrawingDto,
+  AdjustFacilityAmountDto,
+  UpdateDrawingInterestRequestDto,
+  AddWithdrawalToDrawingDto,
 } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
@@ -70,15 +70,15 @@ const getTransactionTableRow = (
 class FacilityService {
   async createFacility(
     facility: NewFacilityRequestDto,
-  ): Promise<FacilityDto | null> {
-    const newFacility = await postApiData<FacilityDto>('facility/new', facility)
+  ): Promise<DrawingDto | null> {
+    const newFacility = await postApiData<DrawingDto>('facility/new', facility)
     return newFacility
   }
 
   async adjustPrincipal(
     streamId: string,
     streamVersion: string,
-    adjustment: AdjustFacilityMaxPrincipalDto,
+    adjustment: AdjustFacilityAmountDto,
   ): Promise<void> {
     await postApiData(
       `facility/${streamId}/adjustPrincipal?version=${streamVersion}`,
@@ -89,7 +89,7 @@ class FacilityService {
   async addDrawing(
     streamId: string,
     streamVersion: string,
-    drawing: AddDrawingDto,
+    drawing: AddWithdrawalToDrawingDto,
   ): Promise<void> {
     await postApiData(
       `facility/${streamId}/drawing?version=${streamVersion}`,
@@ -100,7 +100,7 @@ class FacilityService {
   async updateInterest(
     streamId: string,
     streamVersion: string,
-    update: UpdateInterestRequestDto,
+    update: UpdateDrawingInterestRequestDto,
   ): Promise<void> {
     await postApiData(
       `facility/${streamId}/updateInterestRate?version=${streamVersion}`,
@@ -108,8 +108,8 @@ class FacilityService {
     )
   }
 
-  async getFacility(streamId: string): Promise<FacilityDto | null> {
-    const facility = await tryGetApiData<FacilityDto>(`facility/${streamId}`)
+  async getFacility(streamId: string): Promise<DrawingDto | null> {
+    const facility = await tryGetApiData<DrawingDto>(`facility/${streamId}`)
     return facility
   }
 

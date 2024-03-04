@@ -1,12 +1,12 @@
 import {
   CalculateInterestStrategyName,
-  FacilityWithSpecifiedConfig,
+  DrawingWithSpecifiedConfig,
 } from 'loan-servicing-common'
 import Big, { roundHalfEven as ROUND_MODE_HALF_EVEN } from 'big.js'
 
 export type CalculateInterestStrategy<T extends CalculateInterestStrategyName> =
   (
-    facility: FacilityWithSpecifiedConfig<'calculateInterestStrategy', T>,
+    facility: DrawingWithSpecifiedConfig<'calculateInterestStrategy', T>,
   ) => string
 
 export const calculateNoInterest: CalculateInterestStrategy<

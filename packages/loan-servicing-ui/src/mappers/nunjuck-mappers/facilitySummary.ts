@@ -1,12 +1,12 @@
-import { FacilityDto } from 'loan-servicing-common'
+import { DrawingDto } from 'loan-servicing-common'
 import { placeholderToString } from 'strings/strategyNames'
 import { GovUkSummaryListProps } from 'types/nunjucks'
 
 // eslint-disable-next-line import/prefer-default-export
 export const facilityToFacilitySummaryProps = (
-  facility: FacilityDto,
+  facility: DrawingDto,
 ): GovUkSummaryListProps => {
-  const repayment = facility.facilityConfig.repaymentsStrategy
+  const repayment = facility.drawingConfig.repaymentsStrategy
   return {
     rows: [
       {
@@ -30,7 +30,7 @@ export const facilityToFacilitySummaryProps = (
           text: 'Facility Max Principal',
         },
         value: {
-          text: `£${facility.maxPrincipal}`,
+          text: `£${facility.facilityAmount}`,
         },
         actions: {
           items: [
@@ -48,7 +48,7 @@ export const facilityToFacilitySummaryProps = (
         },
         value: {
           text: placeholderToString(
-            facility.facilityConfig.calculateInterestStrategy.name,
+            facility.drawingConfig.calculateInterestStrategy.name,
           ),
         },
       },

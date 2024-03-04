@@ -1,21 +1,17 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import FacilityEntity from 'models/entities/FacilityEntity'
 import { Repository } from 'typeorm'
 import {
   CreateNewFacilityEvent,
   LoanServicingEvent,
-  Facility,
   NewFacilityRequestDto,
-  UpdateInterestEvent,
-  AdjustFacilityMaxPrincipalEvent,
-  AdjustFacilityMaxPrincipalDto,
-  UpdateInterestRequestDto,
-  AddDrawingDto,
-  AddDrawingEvent,
+  AdjustFacilityAmountEvent,
+  AdjustFacilityAmountDto,
+  Facility,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
+import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityProjectionsService from './facility.service.projections'
 
 @Injectable()
@@ -41,74 +37,29 @@ class FacilityService {
         eventData: facilityRequest,
       },
     )
-    const { facility } = await this.projectionsService.buildProjections(
+    const facility = await this.projectionsService.buildProjections(
       savedEvent.streamId,
     )
     return facility
   }
 
   @Transactional()
-  async updateInterestRate(
+  async adjustFacilityAmount(
     streamId: string,
     streamVersion: number,
-    update: UpdateInterestRequestDto,
+    { effectiveDate, adjustment }: AdjustFacilityAmountDto,
   ): Promise<Facility> {
-    await this.eventService.addEvent<UpdateInterestEvent>(
-      {
-        streamId,
-        effectiveDate: new Date(update.effectiveDate),
-        type: 'UpdateInterest',
-        typeVersion: 1,
-        eventData: update,
-      },
-      streamVersion,
-    )
-
-    const { facility } =
-      await this.projectionsService.buildProjections(streamId)
-    return facility
-  }
-
-  @Transactional()
-  async addDrawing(
-    streamId: string,
-    streamVersion: number,
-    update: AddDrawingDto,
-  ): Promise<Facility> {
-    await this.eventService.addEvent<AddDrawingEvent>(
-      {
-        streamId,
-        effectiveDate: update.date,
-        type: 'AddDrawing',
-        typeVersion: 1,
-        eventData: update,
-      },
-      streamVersion,
-    )
-    
-    const { facility } =
-      await this.projectionsService.buildProjections(streamId)
-    return facility
-  }
-
-  @Transactional()
-  async adjustFacilityPrincipal(
-    streamId: string,
-    streamVersion: number,
-    { effectiveDate, adjustment }: AdjustFacilityMaxPrincipalDto,
-  ): Promise<Facility> {
-    await this.eventService.addEvent<AdjustFacilityMaxPrincipalEvent>(
+    await this.eventService.addEvent<AdjustFacilityAmountEvent>(
       {
         streamId,
         effectiveDate: new Date(effectiveDate),
-        type: 'AdjustFacilityMaxPrincipal',
+        type: 'AdjustFacilityAmount',
         typeVersion: 1,
         eventData: { adjustment },
       },
       streamVersion,
     )
-    const { facility } =
-      await this.projectionsService.buildProjections(streamId)
+    const facility = await this.projectionsService.buildProjections(streamId)
     return facility
   }
 

@@ -1,8 +1,8 @@
-import { LoanServicingEvent } from '../events'
+import { DrawingEvent } from '../events/drawingEvents'
 import { InterestEvent } from './interest'
 import { RepaymentsEvent } from './repayment'
 
-export type FacilityProjectionEvent =
+export type DrawingProjectionEvent =
   | InterestEvent
   | RepaymentsEvent
-  | Pick<LoanServicingEvent, 'effectiveDate' | 'eventData' | 'type'>
+  | Pick<DrawingEvent, 'effectiveDate' | 'eventData' | 'type'>

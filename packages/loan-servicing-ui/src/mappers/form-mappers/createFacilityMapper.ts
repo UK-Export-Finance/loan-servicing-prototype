@@ -7,7 +7,7 @@ const mapCreateFacilityFormToRequest = (
   request: NewFacilityRequestFormDto,
 ): NewFacilityRequestDto => ({
   ...request,
-  facilityConfig: {
+  drawingConfig: {
     calculateInterestStrategy: {
       name: request.calculateInterestStrategy,
     },

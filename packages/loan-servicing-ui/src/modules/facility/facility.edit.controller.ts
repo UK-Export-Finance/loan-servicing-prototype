@@ -11,9 +11,9 @@ import {
   } from '@nestjs/common'
   import { Response } from 'express'
   import {
-      AddDrawingDto,
-    AdjustFacilityMaxPrincipalDto,
-    UpdateInterestRequestDto,
+      AddWithdrawalToDrawingDto,
+    AdjustFacilityAmountDto,
+    UpdateDrawingInterestRequestDto,
   } from 'loan-servicing-common'
   import FacilityService from 'modules/facility/facility.service'
   import {
@@ -56,7 +56,7 @@ import { AddDrawingFormDto, AddDrawingNjkInput } from 'templates/facility-edit/a
       requestDto: FacilityPrincipalAdjustmentFormDto,
       @Res() response: Response,
     ): Promise<void> {
-      const adjustmentDto: AdjustFacilityMaxPrincipalDto = {
+      const adjustmentDto: AdjustFacilityAmountDto = {
         effectiveDate: getDateFromDateInput(
           requestDto,
           'effectiveDate',
@@ -95,7 +95,7 @@ import { AddDrawingFormDto, AddDrawingNjkInput } from 'templates/facility-edit/a
       requestDto: AddDrawingFormDto,
       @Res() response: Response,
     ): Promise<void> {
-      const addDrawingDto: AddDrawingDto = {
+      const addDrawingDto: AddWithdrawalToDrawingDto = {
         date: getDateFromDateInput(
           requestDto,
           'date',
@@ -134,7 +134,7 @@ import { AddDrawingFormDto, AddDrawingNjkInput } from 'templates/facility-edit/a
       requestDto: FacilityInterestRateUpdateFormDto,
       @Res() response: Response,
     ): Promise<void> {
-      const updateDto: UpdateInterestRequestDto = {
+      const updateDto: UpdateDrawingInterestRequestDto = {
         effectiveDate: getDateFromDateInput(
           requestDto,
           'effectiveDate',

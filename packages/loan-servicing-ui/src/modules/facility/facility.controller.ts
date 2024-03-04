@@ -18,13 +18,13 @@ import {
 import { Response } from 'express'
 import mapCreateFacilityFormToRequest from 'mappers/form-mappers/createFacilityMapper'
 import {
-  AdjustFacilityMaxPrincipalDto,
+  AdjustFacilityAmountDto,
   CalculateInterestStrategyName,
-  FacilityDto,
+  DrawingDto,
   FacilityType,
   NewFacilityRequestDto,
   RepaymentStrategyName,
-  UpdateInterestRequestDto,
+  UpdateDrawingInterestRequestDto,
 } from 'loan-servicing-common'
 import FacilityService from 'modules/facility/facility.service'
 import {
@@ -94,7 +94,7 @@ class FacilityController {
   @Get()
   @Render('facility-list')
   async renderAllFacilities(): Promise<FacilityListNjkInput> {
-    const allFacilities = await tryGetApiData<FacilityDto[]>('facility')
+    const allFacilities = await tryGetApiData<DrawingDto[]>('facility')
     const allFacilityTypes =
       await tryGetApiData<FacilityType[]>('facility-type')
     return {
@@ -170,7 +170,7 @@ class FacilityController {
     requestDto: FacilityPrincipalAdjustmentFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const adjustmentDto: AdjustFacilityMaxPrincipalDto = {
+    const adjustmentDto: AdjustFacilityAmountDto = {
       effectiveDate: getDateFromDateInput(
         requestDto,
         'effectiveDate',
@@ -209,7 +209,7 @@ class FacilityController {
     requestDto: FacilityInterestRateUpdateFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const updateDto: UpdateInterestRequestDto = {
+    const updateDto: UpdateDrawingInterestRequestDto = {
       effectiveDate: getDateFromDateInput(
         requestDto,
         'effectiveDate',

@@ -1,10 +1,10 @@
 import { CurrencyColumn } from 'database/decorators'
-import { FacilityTransaction } from 'loan-servicing-common'
+import { DrawingTransaction } from 'loan-servicing-common'
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 @Index(['streamId', 'datetime'])
-class FacilityTransactionEntity implements FacilityTransaction {
+class DrawingTransactionEntity implements DrawingTransaction {
   @PrimaryGeneratedColumn()
   id!: number
 
@@ -30,4 +30,4 @@ class FacilityTransactionEntity implements FacilityTransaction {
   balanceAfterTransaction!: string
 }
 
-export default FacilityTransactionEntity
+export default DrawingTransactionEntity

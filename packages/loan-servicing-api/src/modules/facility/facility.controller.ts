@@ -14,18 +14,13 @@ import {
 } from '@nestjs/swagger'
 import {
   LoanServicingEvent,
-  FacilityTransaction,
-  TransactionResolution,
 } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
-  AddDrawingDtoClass,
-  AdjustFacilityMaxPrincipalDtoClass,
+  AdjustFacilityAmountDtoClass,
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
-  UpdateInterestRequestDtoClass,
 } from 'models/dtos/facility'
-import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import FacilityService from 'modules/facility/facility.service'
 import FacilityProjectionsService from 'modules/facility/facility.service.projections'
 
@@ -62,24 +57,6 @@ class FacilityController {
     return facilityEvents
   }
 
-  @Get(':id/transactions')
-  @ApiOkResponse({ type: FacilityTransactionEntity })
-  async getFacilityTransactions(
-    @Param('id') streamId: string,
-    @Query('interestResolution')
-    interestResolution: TransactionResolution = 'daily',
-  ): Promise<FacilityTransaction[]> {
-   await this.transactionService.buildProjections(streamId)
-    const facilityEvents =
-      interestResolution === 'daily'
-        ? await this.transactionService.getDailyTransactions(streamId)
-        : await this.transactionService.getMonthlyTransactions(streamId)
-    if (facilityEvents === null) {
-      throw new NotFoundException()
-    }
-    return facilityEvents
-  }
-
   @Get()
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async getAllFacility(): Promise<FacilityResponseDtoClass[] | null> {
@@ -99,47 +76,17 @@ class FacilityController {
     return newFacility
   }
 
-  @Post(':id/updateInterestRate')
-  @ApiOkResponse({ type: FacilityResponseDtoClass })
-  async updateFacilityInterestRate(
-    @Param('id') id: string,
-    @Query('version') version: number,
-    @Body() body: UpdateInterestRequestDtoClass,
-  ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.updateInterestRate(
-      id,
-      Number(version),
-      body,
-    )
-    return updatedFacility
-  }
-
   @Post(':id/adjustPrincipal')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async incrementValue(
     @Param('id') id: string,
     @Query('version') version: string,
-    @Body() adjustment: AdjustFacilityMaxPrincipalDtoClass,
+    @Body() adjustment: AdjustFacilityAmountDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.adjustFacilityPrincipal(
+    const updatedFacility = await this.facilityService.adjustFacilityAmount(
       id,
       Number(version),
       adjustment,
-    )
-    return updatedFacility
-  }
-
-  @Post(':id/drawing')
-  @ApiOkResponse({ type: FacilityResponseDtoClass })
-  async addDrawing(
-    @Param('id') id: string,
-    @Query('version') version: number,
-    @Body() body: AddDrawingDtoClass,
-  ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.addDrawing(
-      id,
-      Number(version),
-      body,
     )
     return updatedFacility
   }

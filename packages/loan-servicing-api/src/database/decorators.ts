@@ -44,3 +44,23 @@ export const ClassAsJsonColumn = <T>(
     type: 'simple-json',
     transformer: new ClassTransformer(classConstructor),
   })
+
+  class ArrayOfClassTransformer<T> {
+    constructor(private targetClass: ClassConstructor<T>) {}
+  
+    to(data: object[]): T[] {
+      return data.map(x => plainToInstance(this.targetClass, x))
+    }
+  
+    from(data: T[]): object[] {
+      return data.map(d => instanceToPlain(d))
+    }
+  }
+
+  export const ArrayOfClassAsJsonColumn = <T>(
+    classConstructor: ClassConstructor<T>,
+  ): PropertyDecorator =>
+    Column({
+      type: 'simple-json',
+      transformer: new ArrayOfClassTransformer(classConstructor),
+    })

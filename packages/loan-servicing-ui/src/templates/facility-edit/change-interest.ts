@@ -1,8 +1,8 @@
-import { FacilityDto } from 'loan-servicing-common'
+import { DrawingDto } from 'loan-servicing-common'
 import { MandatoryDateInputFormData } from 'utils/form-helpers'
 
 export type AmendPrincipalNjkInput = {
-  facility: FacilityDto
+  facility: DrawingDto
   eventRows: object
   transactionRows: object
 }

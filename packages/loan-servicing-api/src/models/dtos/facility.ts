@@ -1,14 +1,19 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
 import {
-  AddDrawingDto,
-  AdjustFacilityMaxPrincipalDto,
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  ValidateNested,
+} from 'class-validator'
+import {
+  AddWithdrawalToDrawingDto,
+  AdjustFacilityAmountDto,
   Facility,
   NewFacilityRequestDto,
-  UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import { Type } from 'class-transformer'
-import { FacilityConfigurationDtoClass } from './facilityConfiguration'
+import { DrawingDtoClass } from './drawing'
 
 export class FacilityResponseDtoClass implements Facility {
   @ApiProperty()
@@ -21,10 +26,13 @@ export class FacilityResponseDtoClass implements Facility {
   @IsNotEmpty()
   facilityType!: string
 
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => FacilityConfigurationDtoClass)
-  facilityConfig!: FacilityConfigurationDtoClass
+  @ApiProperty({ type: () => [DrawingDtoClass] })
+  @ArrayNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DrawingDtoClass)
+  @IsNotEmpty()
+  drawings!: DrawingDtoClass[]
 
   @ApiProperty()
   @IsNotEmpty()
@@ -32,15 +40,7 @@ export class FacilityResponseDtoClass implements Facility {
 
   @ApiProperty()
   @IsNotEmpty()
-  outstandingPrincipal!: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  maxPrincipal!: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  interestAccrued!: string
+  facilityAmount!: string
 
   @ApiProperty()
   @IsDate()
@@ -51,32 +51,17 @@ export class FacilityResponseDtoClass implements Facility {
   @IsDate()
   @Type(() => Date)
   expiryDate!: Date
-
-  @ApiProperty()
-  @IsNotEmpty()
-  interestRate!: string
 }
 
 export class NewFacilityRequestDtoClass
   extends OmitType(FacilityResponseDtoClass, [
     'streamId',
     'streamVersion',
-    'interestAccrued',
-    'outstandingPrincipal',
   ])
   implements NewFacilityRequestDto {}
 
-export class UpdateInterestRequestDtoClass implements UpdateInterestRequestDto {
-  @ApiProperty()
-  effectiveDate!: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  interestRate!: string
-}
-
-export class AdjustFacilityMaxPrincipalDtoClass
-  implements AdjustFacilityMaxPrincipalDto
+export class AdjustFacilityAmountDtoClass
+  implements AdjustFacilityAmountDto
 {
   @ApiProperty()
   effectiveDate!: string
@@ -85,9 +70,7 @@ export class AdjustFacilityMaxPrincipalDtoClass
   adjustment!: string
 }
 
-export class AddDrawingDtoClass
-  implements AddDrawingDto
-{
+export class AddDrawingDtoClass implements AddWithdrawalToDrawingDto {
   @ApiProperty()
   @IsDate()
   @Type(() => Date)

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
-  FacilityProjectionEvent,
-  FacilityWithSpecifiedConfig,
+  DrawingProjectionEvent,
+  DrawingWithSpecifiedConfig,
   RepaymentsEvent,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
@@ -11,22 +11,22 @@ import { calculateRepaymentStrategies } from './calculate-repayment.strategies'
 @Injectable()
 class RepaymentsService {
   createRepaymentEvents<T extends RepaymentStrategyName>(
-    facility: FacilityWithSpecifiedConfig<'repaymentsStrategy', T>,
+    drawing: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
   ): RepaymentsEvent[] {
-    const options = facility.facilityConfig.repaymentsStrategy
+    const options = drawing.drawingConfig.repaymentsStrategy
     const strategyName: T = options.name
-    return repaymentEventStrategies[strategyName](facility)
+    return repaymentEventStrategies[strategyName](drawing)
   }
 
   calculateRepayment<T extends RepaymentStrategyName>(
-    facility: FacilityWithSpecifiedConfig<'repaymentsStrategy', T>,
+    drawing: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
     event: RepaymentsEvent,
-    remainingEvents: FacilityProjectionEvent[],
+    remainingEvents: DrawingProjectionEvent[],
   ): string {
-    const options = facility.facilityConfig.repaymentsStrategy
+    const options = drawing.drawingConfig.repaymentsStrategy
     const strategyName: T = options.name
     return calculateRepaymentStrategies[strategyName](
-      facility,
+      drawing,
       event,
       remainingEvents,
     )

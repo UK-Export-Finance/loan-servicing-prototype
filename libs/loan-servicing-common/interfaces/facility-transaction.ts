@@ -1,4 +1,4 @@
-export type FacilityTransaction = {
+export type DrawingTransaction = {
   streamId: string
   datetime: Date
   reference: string

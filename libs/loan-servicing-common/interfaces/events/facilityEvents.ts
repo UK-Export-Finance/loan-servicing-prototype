@@ -1,4 +1,4 @@
-import { NewFacilityRequestDto, UpdateInterestRequestDto } from '../facility'
+import { NewFacilityRequestDto } from '../facility'
 import { EventBase } from './eventBase'
 
 export type CreateNewFacilityEvent = EventBase<
@@ -7,14 +7,8 @@ export type CreateNewFacilityEvent = EventBase<
   NewFacilityRequestDto
 >
 
-export type UpdateInterestEvent = EventBase<
-  'UpdateInterest',
-  1,
-  UpdateInterestRequestDto
->
-
-export type AdjustFacilityMaxPrincipalEvent = EventBase<
-  'AdjustFacilityMaxPrincipal',
+export type AdjustFacilityAmountEvent = EventBase<
+  'AdjustFacilityAmount',
   1,
   { adjustment: string }
 >
@@ -27,6 +21,5 @@ export type AddDrawingEvent = EventBase<
 
 export type FacilityEvent =
   | CreateNewFacilityEvent
-  | UpdateInterestEvent
-  | AdjustFacilityMaxPrincipalEvent
+  | AdjustFacilityAmountEvent
   | AddDrawingEvent
