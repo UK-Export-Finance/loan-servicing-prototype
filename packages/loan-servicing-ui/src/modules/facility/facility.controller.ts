@@ -18,7 +18,7 @@ import {
 import { Response } from 'express'
 import mapCreateFacilityFormToRequest from 'mappers/form-mappers/createFacilityMapper'
 import {
-  AdjustFacilityPrincipalDto,
+  AdjustFacilityMaxPrincipalDto,
   CalculateInterestStrategyName,
   FacilityDto,
   FacilityType,
@@ -170,7 +170,7 @@ class FacilityController {
     requestDto: FacilityPrincipalAdjustmentFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const adjustmentDto: AdjustFacilityPrincipalDto = {
+    const adjustmentDto: AdjustFacilityMaxPrincipalDto = {
       effectiveDate: getDateFromDateInput(
         requestDto,
         'effectiveDate',

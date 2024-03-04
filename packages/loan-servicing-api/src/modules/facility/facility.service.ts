@@ -8,8 +8,8 @@ import {
   Facility,
   NewFacilityRequestDto,
   UpdateInterestEvent,
-  AdjustFacilityPrincipalEvent,
-  AdjustFacilityPrincipalDto,
+  AdjustFacilityMaxPrincipalEvent,
+  AdjustFacilityMaxPrincipalDto,
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
@@ -71,13 +71,13 @@ class FacilityService {
   async adjustFacilityPrincipal(
     streamId: string,
     streamVersion: number,
-    { effectiveDate, adjustment }: AdjustFacilityPrincipalDto,
+    { effectiveDate, adjustment }: AdjustFacilityMaxPrincipalDto,
   ): Promise<Facility> {
-    await this.eventService.addEvent<AdjustFacilityPrincipalEvent>(
+    await this.eventService.addEvent<AdjustFacilityMaxPrincipalEvent>(
       {
         streamId,
         effectiveDate: new Date(effectiveDate),
-        type: 'AdjustFacilityPrincipal',
+        type: 'AdjustFacilityMaxPrincipal',
         typeVersion: 1,
         eventData: { adjustment },
       },

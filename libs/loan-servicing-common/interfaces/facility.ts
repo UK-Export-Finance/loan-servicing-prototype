@@ -12,7 +12,8 @@ export type Facility = {
   facilityConfig: FacilityConfiguration
   //   description: string
   //   currency: string
-  facilityAmount: string
+  outstandingPrincipal: string
+  maxPrincipal: string
   interestAccrued: string
   interestRate: string
   //   commitmentDate: Date
@@ -37,7 +38,7 @@ export type FacilityDto = ConvertToDtoType<Facility>
 
 export type NewFacilityRequestDto = Omit<
   Facility,
-  'streamId' | 'streamVersion' | 'interestAccrued'
+  'streamId' | 'streamVersion' | 'interestAccrued' | 'outstandingPrincipal'
 >
 
 export type UpdateInterestRequestDto = {
@@ -45,7 +46,7 @@ export type UpdateInterestRequestDto = {
   interestRate: string
 }
 
-export type AdjustFacilityPrincipalDto = {
+export type AdjustFacilityMaxPrincipalDto = {
   effectiveDate: string
   adjustment: string
 }

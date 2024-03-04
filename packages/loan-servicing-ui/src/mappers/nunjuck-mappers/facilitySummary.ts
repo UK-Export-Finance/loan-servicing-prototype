@@ -27,10 +27,10 @@ export const facilityToFacilitySummaryProps = (
       },
       {
         key: {
-          text: 'Facility Amount',
+          text: 'Facility Max Principal',
         },
         value: {
-          text: `£${facility.facilityAmount}`,
+          text: `£${facility.maxPrincipal}`,
         },
         actions: {
           items: [

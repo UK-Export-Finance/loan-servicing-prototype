@@ -16,9 +16,9 @@ export const calculateRegularRepayment: CalculateRepaymentsStrategy<
   'Regular'
 > = (facility, event, remainingEvents) => {
   if (event.type === 'FinalRepayment') {
-    return facility.facilityAmount
+    return facility.outstandingPrincipal
   }
-  const principalToPay = Big(facility.facilityAmount)
+  const principalToPay = Big(facility.outstandingPrincipal)
   const repaymentsRemaining = remainingEvents.filter(
     (e) => e.type === 'Repayment' || e.type === 'FinalRepayment',
   ).length

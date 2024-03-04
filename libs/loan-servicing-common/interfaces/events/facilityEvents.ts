@@ -13,13 +13,20 @@ export type UpdateInterestEvent = EventBase<
   UpdateInterestRequestDto
 >
 
-export type AdjustFacilityPrincipalEvent = EventBase<
-  'AdjustFacilityPrincipal',
+export type AdjustFacilityMaxPrincipalEvent = EventBase<
+  'AdjustFacilityMaxPrincipal',
   1,
   { adjustment: string }
+>
+
+export type AddDrawing = EventBase<
+  'AddDrawing',
+  1,
+  { date: Date; amount: string }
 >
 
 export type FacilityEvent =
   | CreateNewFacilityEvent
   | UpdateInterestEvent
-  | AdjustFacilityPrincipalEvent
+  | AdjustFacilityMaxPrincipalEvent
+  // | AddDrawing

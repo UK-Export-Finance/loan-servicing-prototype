@@ -22,7 +22,7 @@ export type NewFacilityRequestFormDto = {
   facilityType: string
   obligor: string
   calculateInterestStrategy: CalculateInterestStrategyName
-  facilityAmount: string
+  maxPrincipal: string
   repaymentStrategy: RepaymentStrategyName
   repaymentInterval?: string
   interestRate: string

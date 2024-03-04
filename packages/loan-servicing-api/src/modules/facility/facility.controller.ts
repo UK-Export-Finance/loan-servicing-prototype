@@ -20,7 +20,7 @@ import {
 } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
-  AdjustFacilityPrincipalDtoClass,
+  AdjustFacilityMaxPrincipalDtoClass,
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
   UpdateInterestRequestDtoClass,
@@ -120,7 +120,7 @@ class FacilityController {
   async incrementValue(
     @Param('id') id: string,
     @Query('version') version: string,
-    @Body() adjustment: AdjustFacilityPrincipalDtoClass,
+    @Body() adjustment: AdjustFacilityMaxPrincipalDtoClass,
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.adjustFacilityPrincipal(
       id,

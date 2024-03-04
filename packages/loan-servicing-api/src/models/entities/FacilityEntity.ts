@@ -27,7 +27,10 @@ class FacilityEntity implements Facility {
   // currency!: string
 
   @CurrencyColumn()
-  facilityAmount!: string
+  outstandingPrincipal!: string
+
+  @CurrencyColumn()
+  maxPrincipal!: string
 
   @CurrencyColumn()
   interestAccrued: string = '0'

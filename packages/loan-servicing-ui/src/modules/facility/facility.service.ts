@@ -5,7 +5,7 @@ import {
   NewFacilityRequestDto,
   FacilityTransaction,
   FacilityDto,
-  AdjustFacilityPrincipalDto,
+  AdjustFacilityMaxPrincipalDto,
   UpdateInterestRequestDto,
 } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
@@ -25,7 +25,7 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: 'Facility created with intial values',
       }
-    case 'AdjustFacilityPrincipal':
+    case 'AdjustFacilityMaxPrincipal':
       const { adjustment } = event.eventData
       return {
         event: 'Facility principal adjusted',
@@ -70,7 +70,7 @@ class FacilityService {
   async adjustPrincipal(
     streamId: string,
     streamVersion: string,
-    adjustment: AdjustFacilityPrincipalDto,
+    adjustment: AdjustFacilityMaxPrincipalDto,
   ): Promise<void> {
     await postApiData(
       `facility/${streamId}/adjustPrincipal?version=${streamVersion}`,

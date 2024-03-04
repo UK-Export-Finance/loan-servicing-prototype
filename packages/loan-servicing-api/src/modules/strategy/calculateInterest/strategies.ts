@@ -15,7 +15,7 @@ export const calculateNoInterest: CalculateInterestStrategy<
 
 export const calculatePrincipalOnlyInterest: CalculateInterestStrategy<
   'PrincipalOnly'
-> = ({ facilityAmount, interestRate }) => {
+> = ({ outstandingPrincipal: facilityAmount, interestRate }) => {
   const dailyInterestRate = Big(interestRate).div(100).div(365)
   const interestAccrued = Big(facilityAmount)
     .times(dailyInterestRate)
@@ -27,7 +27,7 @@ export const calculatePrincipalOnlyInterest: CalculateInterestStrategy<
 
 export const calculateCompoundingInterest: CalculateInterestStrategy<
   'Compounding'
-> = ({ facilityAmount, interestRate, interestAccrued }) => {
+> = ({ outstandingPrincipal: facilityAmount, interestRate, interestAccrued }) => {
   const dailyInterestRate = Big(interestRate).div(100).div(365)
   const accruableTotal = Big(facilityAmount).add(interestAccrued)
   const newInterestAccrued = Big(accruableTotal)

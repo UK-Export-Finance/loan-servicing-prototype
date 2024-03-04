@@ -1,7 +1,7 @@
 import { ClassConstructor } from 'class-transformer'
 import { EventTypes, LoanServicingEvent } from 'loan-servicing-common'
 import {
-  AdjustFacilityPrincipalDtoClass,
+  AdjustFacilityMaxPrincipalDtoClass,
   NewFacilityRequestDtoClass,
   UpdateInterestRequestDtoClass,
 } from './facility'
@@ -13,7 +13,7 @@ const eventTypeToEventClassDefinition: {
 } = {
   CreateNewFacility: NewFacilityRequestDtoClass,
   UpdateInterest: UpdateInterestRequestDtoClass,
-  AdjustFacilityPrincipal: AdjustFacilityPrincipalDtoClass,
+  AdjustFacilityMaxPrincipal: AdjustFacilityMaxPrincipalDtoClass,
 }
 
 export default eventTypeToEventClassDefinition

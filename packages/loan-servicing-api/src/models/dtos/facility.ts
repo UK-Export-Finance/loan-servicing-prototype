@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
 import {
-  AdjustFacilityPrincipalDto,
+  AdjustFacilityMaxPrincipalDto,
   Facility,
   NewFacilityRequestDto,
   UpdateInterestRequestDto,
@@ -31,7 +31,11 @@ export class FacilityResponseDtoClass implements Facility {
 
   @ApiProperty()
   @IsNotEmpty()
-  facilityAmount!: string
+  outstandingPrincipal!: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  maxPrincipal!: string
 
   @ApiProperty()
   @IsNotEmpty()
@@ -57,6 +61,7 @@ export class NewFacilityRequestDtoClass
     'streamId',
     'streamVersion',
     'interestAccrued',
+    'outstandingPrincipal',
   ])
   implements NewFacilityRequestDto {}
 
@@ -69,8 +74,8 @@ export class UpdateInterestRequestDtoClass implements UpdateInterestRequestDto {
   interestRate!: string
 }
 
-export class AdjustFacilityPrincipalDtoClass
-  implements AdjustFacilityPrincipalDto
+export class AdjustFacilityMaxPrincipalDtoClass
+  implements AdjustFacilityMaxPrincipalDto
 {
   @ApiProperty()
   effectiveDate!: string

@@ -6,7 +6,7 @@ import { Propagation, Transactional } from 'typeorm-transactional'
 import {
   CreateNewFacilityEvent,
   FacilityTransaction,
-  AdjustFacilityPrincipalEvent,
+  AdjustFacilityMaxPrincipalEvent,
   UpdateInterestEvent,
   LoanServicingEvent,
   Facility,
@@ -125,9 +125,11 @@ class FacilityProjectionsService {
     if (creationEvent.type !== 'CreateNewFacility') {
       throw new Error('First created event is not facility creation')
     }
+
     return this.facilityRepo.create({
       streamId: creationEvent.streamId,
       streamVersion: 1,
+      outstandingPrincipal: '0',
       ...creationEvent.eventData,
     })
   }
@@ -160,9 +162,9 @@ class FacilityProjectionsService {
           streamId: facilityEntity.streamId,
           datetime: facilityEntity.issuedEffectiveDate,
           reference: 'Facility Created',
-          principalChange: facilityEntity.facilityAmount,
+          principalChange: facilityEntity.outstandingPrincipal,
           interestChange: '0',
-          balanceAfterTransaction: facilityEntity.facilityAmount,
+          balanceAfterTransaction: facilityEntity.outstandingPrincipal,
           interestAccrued: facilityEntity.interestAccrued,
         }
       case 'UpdateInterest':
@@ -173,24 +175,24 @@ class FacilityProjectionsService {
           reference: `interest changed from ${facilityEntity.interestRate} to ${updateEvent.interestRate}`,
           principalChange: '0',
           interestChange: '0',
-          balanceAfterTransaction: facilityEntity.facilityAmount,
+          balanceAfterTransaction: facilityEntity.outstandingPrincipal,
           interestAccrued: facilityEntity.interestAccrued,
         }
         facilityEntity.interestRate = updateEvent.interestRate
         return transaction
-      case 'AdjustFacilityPrincipal':
+      case 'AdjustFacilityMaxPrincipal':
         const { eventData: incrementEvent } =
-          event as AdjustFacilityPrincipalEvent
-        facilityEntity.facilityAmount = Big(facilityEntity.facilityAmount)
+          event as AdjustFacilityMaxPrincipalEvent
+        facilityEntity.maxPrincipal = Big(facilityEntity.maxPrincipal)
           .add(incrementEvent.adjustment)
           .toFixed(2)
         return {
           streamId: facilityEntity.streamId,
           datetime: event.effectiveDate,
-          reference: `facility amount adjustment (withdrawal or repayment)`,
+          reference: `Max principal ${Number(incrementEvent.adjustment) > 0 ? 'increased' : 'decreased'} by ${incrementEvent.adjustment}`,
           principalChange: incrementEvent.adjustment,
           interestChange: '0',
-          balanceAfterTransaction: facilityEntity.facilityAmount,
+          balanceAfterTransaction: facilityEntity.outstandingPrincipal,
           interestAccrued: facilityEntity.interestAccrued,
         }
       case 'CalculateInterest':
@@ -208,7 +210,7 @@ class FacilityProjectionsService {
           reference: 'interest',
           principalChange: '0',
           interestChange: transactionAmount.toString(),
-          balanceAfterTransaction: facilityEntity.facilityAmount,
+          balanceAfterTransaction: facilityEntity.outstandingPrincipal,
           interestAccrued: facilityEntity.interestAccrued,
         }
       case 'Repayment':
@@ -218,7 +220,9 @@ class FacilityProjectionsService {
           event,
           allEvents.slice(eventIndex),
         )
-        facilityEntity.facilityAmount = Big(facilityEntity.facilityAmount)
+        facilityEntity.outstandingPrincipal = Big(
+          facilityEntity.outstandingPrincipal,
+        )
           .minus(paymentAmount)
           .toString()
         return {
@@ -227,7 +231,7 @@ class FacilityProjectionsService {
           reference: 'repayment',
           principalChange: Big(paymentAmount).times(-1).toString(),
           interestChange: '0',
-          balanceAfterTransaction: facilityEntity.facilityAmount,
+          balanceAfterTransaction: facilityEntity.outstandingPrincipal,
           interestAccrued: facilityEntity.interestAccrued,
         }
       default:
