@@ -21,3 +21,6 @@ export const allPlaceholders: { [key: string]: string } = {
   ...interestStrategyNames,
   ...repaymentsStrategyNames,
 }
+
+export const placeholderToString = (placeholderName: string): string =>
+  allPlaceholders[placeholderName] ?? placeholderName

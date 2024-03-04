@@ -16,7 +16,7 @@ import {
   repaymentsSelectOptions,
 } from 'controls/strategyControlsOptions'
 import { Response } from 'express'
-import mapCreateFacilityFormToRequest from 'form-mappers/createFacilityMapper'
+import mapCreateFacilityFormToRequest from 'mappers/form-mappers/createFacilityMapper'
 import {
   AdjustFacilityPrincipalDto,
   CalculateInterestStrategyName,
@@ -40,6 +40,7 @@ import {
   FacilityPrincipalAdjustmentFormDto,
 } from 'types/dtos/facility.dto'
 import { getDateFromDateInput } from 'utils/form-helpers'
+import { facilityToFacilitySummaryProps } from 'mappers/nunjuck-mappers/facilitySummary'
 
 @Controller('')
 class FacilityController {
@@ -126,6 +127,7 @@ class FacilityController {
       eventRows: events!,
       facilityCreated,
       transactionRows: transactionRows!,
+      facilitySummaryListProps: facilityToFacilitySummaryProps(facility)
     }
   }
 

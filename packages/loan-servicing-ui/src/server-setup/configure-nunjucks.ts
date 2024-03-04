@@ -1,10 +1,13 @@
 import nunjucks from 'nunjucks'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { dirname } from 'path'
-import { allPlaceholders } from 'strings/strategyNames'
+import { placeholderToString } from 'strings/strategyNames'
 import { RepaymentStrategyOptions } from 'loan-servicing-common'
 
 const TEMPLATES_DIR = 'src/templates'
+
+export const parseDate = (date: string): string =>
+  new Date(date).toLocaleDateString('en-GB')
 
 const configureNunjucks = (app: NestExpressApplication): void => {
   const express = app.getHttpAdapter().getInstance()
@@ -24,20 +27,15 @@ const configureNunjucks = (app: NestExpressApplication): void => {
     },
   )
 
-  nunjucksEnv.addFilter('parseDate', (date: string): string =>
-    new Date(date).toLocaleDateString('en-GB'),
-  )
+  nunjucksEnv.addFilter('parseDate', parseDate)
 
-  nunjucksEnv.addFilter(
-    'enumToNameString',
-    (enumValue: string): string => allPlaceholders[enumValue] ?? enumValue,
-  )
+  nunjucksEnv.addFilter('enumToNameString', placeholderToString)
 
   nunjucksEnv.addFilter(
     'repaymentToString',
     (repayment: RepaymentStrategyOptions) =>
       repayment.name === 'Regular'
-        ? `<b>${repayment.name}</b> <br/>First payment: ${new Date(repayment.startDate).toLocaleDateString('en-GB')}<br/> Months between payments: ${repayment.monthsBetweenRepayments})`
+        ? `<b>${repayment.name}</b><br/>First payment: ${new Date(repayment.startDate).toLocaleDateString('en-GB')}<br/>Months between payments: ${repayment.monthsBetweenRepayments}`
         : `<b>${repayment.name}</b> - ${repayment.repayments.length} payments`,
   )
 
