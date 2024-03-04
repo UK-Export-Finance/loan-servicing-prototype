@@ -7,6 +7,7 @@ import {
   FacilityDto,
   AdjustFacilityMaxPrincipalDto,
   UpdateInterestRequestDto,
+  AddDrawingDto,
 } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
@@ -82,6 +83,17 @@ class FacilityService {
     await postApiData(
       `facility/${streamId}/adjustPrincipal?version=${streamVersion}`,
       adjustment,
+    )
+  }
+
+  async addDrawing(
+    streamId: string,
+    streamVersion: string,
+    drawing: AddDrawingDto,
+  ): Promise<void> {
+    await postApiData(
+      `facility/${streamId}/drawing?version=${streamVersion}`,
+      drawing,
     )
   }
 

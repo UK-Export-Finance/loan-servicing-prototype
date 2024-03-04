@@ -98,6 +98,23 @@ export const facilityToFacilitySummaryProps = (
               : `<b>${repayment.name}</b> - ${repayment.repayments.length} payments`,
         },
       },
+      {
+        key: {
+          text: 'Drawings',
+        },
+        value: {
+          text: 'blah',
+        },
+        actions: {
+          items: [
+            {
+              href: `/facility/${facility.streamId}/drawing`,
+              text: 'Add',
+              visuallyHiddenText: 'new drawing',
+            },
+          ],
+        },
+      },
     ],
   }
 }
