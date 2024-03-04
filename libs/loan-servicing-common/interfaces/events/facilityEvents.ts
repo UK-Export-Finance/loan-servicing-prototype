@@ -19,7 +19,7 @@ export type AdjustFacilityMaxPrincipalEvent = EventBase<
   { adjustment: string }
 >
 
-export type AddDrawing = EventBase<
+export type AddDrawingEvent = EventBase<
   'AddDrawing',
   1,
   { date: Date; amount: string }
@@ -29,4 +29,4 @@ export type FacilityEvent =
   | CreateNewFacilityEvent
   | UpdateInterestEvent
   | AdjustFacilityMaxPrincipalEvent
-  // | AddDrawing
+  | AddDrawingEvent

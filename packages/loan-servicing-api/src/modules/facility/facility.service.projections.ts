@@ -11,6 +11,7 @@ import {
   LoanServicingEvent,
   Facility,
   FacilityProjectionEvent,
+  AddDrawingEvent,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityTransactionEntity from 'models/entities/FacilityTransactionEntity'
@@ -191,6 +192,21 @@ class FacilityProjectionsService {
           datetime: event.effectiveDate,
           reference: `Max principal ${Number(incrementEvent.adjustment) > 0 ? 'increased' : 'decreased'} by ${incrementEvent.adjustment}`,
           principalChange: incrementEvent.adjustment,
+          interestChange: '0',
+          balanceAfterTransaction: facilityEntity.outstandingPrincipal,
+          interestAccrued: facilityEntity.interestAccrued,
+        }
+      case 'AddDrawing':
+        const { eventData: drawing } =
+          event as AddDrawingEvent
+        facilityEntity.outstandingPrincipal = Big(facilityEntity.outstandingPrincipal)
+          .add(drawing.amount)
+          .toFixed(2)
+        return {
+          streamId: facilityEntity.streamId,
+          datetime: event.effectiveDate,
+          reference: `£${drawing.amount} drawn`,
+          principalChange: drawing.amount,
           interestChange: '0',
           balanceAfterTransaction: facilityEntity.outstandingPrincipal,
           interestAccrued: facilityEntity.interestAccrued,

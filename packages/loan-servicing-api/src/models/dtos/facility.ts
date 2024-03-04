@@ -1,6 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
 import {
+  AddDrawingDto,
   AdjustFacilityMaxPrincipalDto,
   Facility,
   NewFacilityRequestDto,
@@ -82,4 +83,16 @@ export class AdjustFacilityMaxPrincipalDtoClass
 
   @ApiProperty()
   adjustment!: string
+}
+
+export class AddDrawingDtoClass
+  implements AddDrawingDto
+{
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  date!: Date
+
+  @ApiProperty()
+  amount!: string
 }

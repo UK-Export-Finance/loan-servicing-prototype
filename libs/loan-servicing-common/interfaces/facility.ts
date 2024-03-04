@@ -50,3 +50,8 @@ export type AdjustFacilityMaxPrincipalDto = {
   effectiveDate: string
   adjustment: string
 }
+
+export type AddDrawingDto = {
+  date: Date
+  amount: string
+}

@@ -11,6 +11,8 @@ import {
   AdjustFacilityMaxPrincipalEvent,
   AdjustFacilityMaxPrincipalDto,
   UpdateInterestRequestDto,
+  AddDrawingDto,
+  AddDrawingEvent,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -46,7 +48,7 @@ class FacilityService {
   }
 
   @Transactional()
-  async updateFacility(
+  async updateInterestRate(
     streamId: string,
     streamVersion: number,
     update: UpdateInterestRequestDto,
@@ -62,6 +64,28 @@ class FacilityService {
       streamVersion,
     )
 
+    const { facility } =
+      await this.projectionsService.buildProjections(streamId)
+    return facility
+  }
+
+  @Transactional()
+  async addDrawing(
+    streamId: string,
+    streamVersion: number,
+    update: AddDrawingDto,
+  ): Promise<Facility> {
+    await this.eventService.addEvent<AddDrawingEvent>(
+      {
+        streamId,
+        effectiveDate: update.date,
+        type: 'AddDrawing',
+        typeVersion: 1,
+        eventData: update,
+      },
+      streamVersion,
+    )
+    
     const { facility } =
       await this.projectionsService.buildProjections(streamId)
     return facility

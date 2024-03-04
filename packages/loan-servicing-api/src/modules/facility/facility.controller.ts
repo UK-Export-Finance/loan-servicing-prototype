@@ -10,7 +10,6 @@ import {
 import {
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
 import {
@@ -20,6 +19,7 @@ import {
 } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
+  AddDrawingDtoClass,
   AdjustFacilityMaxPrincipalDtoClass,
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
@@ -101,13 +101,12 @@ class FacilityController {
 
   @Post(':id/updateInterestRate')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
-  @ApiQuery({ name: 'eventEffectiveDate', required: false })
   async updateFacilityInterestRate(
     @Param('id') id: string,
     @Query('version') version: number,
     @Body() body: UpdateInterestRequestDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.updateFacility(
+    const updatedFacility = await this.facilityService.updateInterestRate(
       id,
       Number(version),
       body,
@@ -126,6 +125,21 @@ class FacilityController {
       id,
       Number(version),
       adjustment,
+    )
+    return updatedFacility
+  }
+
+  @Post(':id/drawing')
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
+  async addDrawing(
+    @Param('id') id: string,
+    @Query('version') version: number,
+    @Body() body: AddDrawingDtoClass,
+  ): Promise<FacilityResponseDtoClass> {
+    const updatedFacility = await this.facilityService.addDrawing(
+      id,
+      Number(version),
+      body,
     )
     return updatedFacility
   }

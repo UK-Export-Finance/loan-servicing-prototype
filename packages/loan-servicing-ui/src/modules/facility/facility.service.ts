@@ -40,6 +40,13 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Interest rate was changed to ${event.eventData.interestRate}%.`,
       }
+      case 'AddDrawing':
+      return {
+        event: 'Drawing Added',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: `£${event.eventData.amount} was drawn.`,
+      }
     default:
       throw new NotImplementedException()
   }
