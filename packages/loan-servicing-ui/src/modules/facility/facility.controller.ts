@@ -32,15 +32,15 @@ import {
   NewFacilityRequestFormDto,
 } from 'templates/create-facility'
 import { FacilityNjkInput } from 'templates/facility'
-import { AmendPrincipalNjkInput } from 'templates/facility-edit/amend-principal'
+import {
+  AmendPrincipalNjkInput,
+  FacilityPrincipalAdjustmentFormDto,
+} from 'templates/facility-edit/amend-principal'
 import { FacilityListNjkInput } from 'templates/facility-list'
 import { ConfigureFacilityStrategiesNjkInput } from 'templates/new-facility-strategies'
-import {
-  FacilityInterestRateUpdateFormDto,
-  FacilityPrincipalAdjustmentFormDto,
-} from 'types/dtos/facility.dto'
 import { getDateFromDateInput } from 'utils/form-helpers'
 import { facilityToFacilitySummaryProps } from 'mappers/nunjuck-mappers/facilitySummary'
+import { FacilityInterestRateUpdateFormDto } from 'templates/facility-edit/change-interest'
 
 @Controller('')
 class FacilityController {
@@ -127,7 +127,7 @@ class FacilityController {
       eventRows: events!,
       facilityCreated,
       transactionRows: transactionRows!,
-      facilitySummaryListProps: facilityToFacilitySummaryProps(facility)
+      facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
     }
   }
 
