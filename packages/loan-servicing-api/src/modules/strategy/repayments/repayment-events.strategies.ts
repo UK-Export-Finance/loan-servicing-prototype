@@ -18,25 +18,26 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
   },
 }) => {
   let dateToProcess = new Date(startDate)
-  const repaymentEvents: RepaymentsEvent[] = []
+  const repaymentDates: Date[] = []
 
   while (dateToProcess <= new Date(expiryDate)) {
-    repaymentEvents.push({
-      effectiveDate: dateToProcess,
-      type: 'Repayment',
-      eventData: { totalRepayments: 0, repaymentNumber: 0 },
-    })
+    repaymentDates.push(dateToProcess)
     dateToProcess = add(dateToProcess, {
       months: Number(monthsBetweenRepayments),
     })
   }
+  const repaymentEvents = repaymentDates.map<RepaymentsEvent>((date, i) => ({
+    effectiveDate: date,
+    type: 'Repayment',
+    eventData: {
+      totalRepayments: repaymentDates.length,
+      repaymentNumber: i + 1,
+    },
+  }))
+
   repaymentEvents[repaymentEvents.length - 1].type = 'FinalRepayment'
 
-  return repaymentEvents.map((e, i) => ({
-    ...e,
-    totalRepayments: repaymentEvents.length,
-    repaymentNumber: i + 1,
-  }))
+  return repaymentEvents
 }
 
 export const getManualRepaymentEvents: GetRepaymentEventsStrategy<'Manual'> = ({
