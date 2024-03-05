@@ -4,8 +4,8 @@ import {
 } from 'loan-servicing-common'
 import { NunjuckSelectInputOption } from 'types/nunjucks'
 
-export type ConfigureFacilityStrategiesNjkInput = {
+export type CreateDrawingStrategySelectNjkInput = {
   calculateInterestStrategyNames: NunjuckSelectInputOption<CalculateInterestStrategyName>[]
   repaymentStrategyNames: NunjuckSelectInputOption<RepaymentStrategyName>[]
-  facilityType: string
+  facilityId: string
 }

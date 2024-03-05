@@ -67,7 +67,7 @@ export const facilityToFacilitySummaryProps = (
       actions: {
         items: [
           {
-            href: `/facility/${facility.streamId}/drawing?repaymentStrategy=Regular&calculateInterestStrategy=Compounding`,
+            href: `/facility/${facility.streamId}/drawing/new/start?facilityType=${facility.facilityType}`,
             text: 'Create new drawing',
           },
         ],

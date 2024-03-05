@@ -13,7 +13,7 @@
 
   <p class="govuk-body govuk-!-margin-bottom-6">Select the relevant properties of the facility</p>
 
-  <form action="/facility/new">
+  <form action="/facility/{{facilityId}}/drawing" >
     {{ govukSelect({
       id: "calculateInterestStrategy",
       name: "calculateInterestStrategy",
@@ -34,8 +34,6 @@
       items: repaymentStrategyNames
     }) }}
 
-    <input name="facilityType" type="hidden" value="{{facilityType}}">
-    
     {{ govukButton({  text: "Next"}) }}
   </form>
 

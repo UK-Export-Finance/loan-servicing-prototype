@@ -18,19 +18,24 @@ import {
   CalculateInterestStrategyName,
   Facility,
   NewDrawingRequestDto,
+  FacilityType,
 } from 'loan-servicing-common'
 import {
   CreateDrawingNjkInput,
   NewDrawingRequestFormDto,
 } from 'templates/create-drawing'
 import mapCreateDrawingFormToRequest from 'mappers/form-mappers/createDrawingMapper'
+import { CreateDrawingStrategySelectNjkInput } from 'templates/create-drawing-start'
+import {
+  filterSelectOptions,
+  calculateInterestSelectOptions,
+  repaymentsSelectOptions,
+} from 'controls/strategyControlsOptions'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
 class DrawingController {
-  constructor(
-    private drawingService: DrawingService,
-  ) {}
+  constructor(private drawingService: DrawingService) {}
 
   @Get(':drawingId')
   @Render('drawing')
@@ -58,6 +63,31 @@ class DrawingController {
       drawingCreated,
       transactionRows: transactionRows!,
       drawingSummaryListProps: drawingToDrawingSummary(drawing),
+    }
+  }
+
+  @Get('new/start')
+  @Render('create-drawing-start')
+  async renderFacilityStrategySelectionPage(
+    @Param('facilityId') facilityId: string,
+    @Query('facilityType') facilityTypeName: string,
+  ): Promise<CreateDrawingStrategySelectNjkInput> {
+    const facilityType = await tryGetApiData<FacilityType>(
+      `facility-type/${facilityTypeName}`,
+    )
+    if (!facilityType) {
+      throw new Error('No facility type found')
+    }
+    return {
+      calculateInterestStrategyNames: filterSelectOptions(
+        calculateInterestSelectOptions,
+        facilityType.interestStrategies,
+      ),
+      repaymentStrategyNames: filterSelectOptions(
+        repaymentsSelectOptions,
+        facilityType.repaymentsStrategies,
+      ),
+      facilityId,
     }
   }
 
