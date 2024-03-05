@@ -8,7 +8,7 @@ import {
   DrawingTransaction,
   Facility,
 } from 'loan-servicing-common'
-import getEventTableRow, {
+import {
   getTransactionTableRow,
 } from 'mappers/nunjuck-mappers/eventTable'
 import { NunjuckTableRow } from 'types/nunjucks'
@@ -41,22 +41,11 @@ class FacilityService {
 
   async getFacilityEventTableRows(
     streamId: string,
-  ): Promise<NunjuckTableRow[] | null> {
+  ): Promise<LoanServicingEvent[] | null> {
     const events = await tryGetApiData<LoanServicingEvent[]>(
       `facility/${streamId}/events`,
     )
-    return (
-      events
-        ?.map(getEventTableRow)
-        .map((e) =>
-          buildNunjucksTableRow(e, [
-            'eventDate',
-            'event',
-            'description',
-            'effectiveDate',
-          ]),
-        ) || null
-    )
+    return events
   }
 
   async getFacilityTransactionRows(

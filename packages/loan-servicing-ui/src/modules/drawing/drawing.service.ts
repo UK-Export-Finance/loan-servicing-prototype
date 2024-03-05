@@ -8,11 +8,6 @@ import {
   NewDrawingRequestDto,
   DrawingTransaction,
 } from 'loan-servicing-common'
-import getEventTableRow, {
-  getTransactionTableRow,
-} from 'mappers/nunjuck-mappers/eventTable'
-import { NunjuckTableRow } from 'types/nunjucks'
-import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 @Injectable()
 class DrawingService {
@@ -64,44 +59,21 @@ class DrawingService {
   async getDrawingEventTableRows(
     facilityStreamId: string,
     drawingStreamId: string,
-  ): Promise<NunjuckTableRow[] | null> {
+  ): Promise<LoanServicingEvent[] | null> {
     const events = await tryGetApiData<LoanServicingEvent[]>(
       `facility/${facilityStreamId}/drawing/${drawingStreamId}/events`,
     )
-    return (
-      events
-        ?.map(getEventTableRow)
-        .map((e) =>
-          buildNunjucksTableRow(e, [
-            'eventDate',
-            'event',
-            'description',
-            'effectiveDate',
-          ]),
-        ) || null
-    )
+    return events
   }
 
   async getDrawingTransactionRows(
     facilityStreamId: string,
     drawingStreamId: string,
-  ): Promise<NunjuckTableRow[] | null> {
+  ): Promise<DrawingTransaction[] | null> {
     const transactions = await tryGetApiData<DrawingTransaction[]>(
       `facility/${facilityStreamId}/drawing/${drawingStreamId}/transactions?interestResolution=monthly`,
     )
-    return (
-      transactions
-        ?.map(getTransactionTableRow)
-        .map((e) =>
-          buildNunjucksTableRow(e, [
-            'date',
-            'reference',
-            'transactionAmount',
-            'balance',
-            'interestAccrued',
-          ]),
-        ) || null
-    )
+    return transactions
   }
 }
 

@@ -11,6 +11,7 @@ import {
   WithdrawFromDrawingEvent,
   DrawingEvent,
   CreateNewDrawingEvent,
+  SummarisedTransaction,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import DrawingTransactionEntity from 'models/entities/FacilityTransactionEntity'
@@ -44,7 +45,7 @@ class DrawingProjectionsService {
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getMonthlyTransactions(
     streamId: string,
-  ): Promise<DrawingTransaction[] | null> {
+  ): Promise<SummarisedTransaction[] | null> {
     // BEWARE: SQL Injection risk
     const monthlyInterestAmounts = (await this.drawingTransactionRepo.query(`
       SELECT
@@ -57,7 +58,7 @@ class DrawingProjectionsService {
       GROUP BY MONTH([datetime]), YEAR([datetime])
     `)) as { year: number; month: number; interest: number }[]
     const monthlyInterestTransactions =
-      monthlyInterestAmounts.map<DrawingTransaction>((a) => ({
+      monthlyInterestAmounts.map<SummarisedTransaction>((a) => ({
         streamId,
         // We use the first day of the next month for the interest transaction
         // But JS dates are zero indexed so we also subtract 1
@@ -144,8 +145,8 @@ class DrawingProjectionsService {
   }
 
   setBalancesForSummarisedTransactions(
-    transactions: DrawingTransaction[],
-  ): DrawingTransaction[] {
+    transactions: SummarisedTransaction[],
+  ): SummarisedTransaction[] {
     let principal = Big(0)
     let interest = Big(0)
     return transactions.map((t) => {
@@ -160,15 +161,16 @@ class DrawingProjectionsService {
   }
 
   applyEventToFacilityAsTransaction = (
-    event: DrawingProjectionEvent,
+    sourceEvent: DrawingProjectionEvent,
     eventIndex: number,
     allEvents: DrawingProjectionEvent[],
     drawingEntity: Drawing,
   ): DrawingTransaction => {
-    switch (event.type) {
+    switch (sourceEvent.type) {
       case 'CreateNewDrawing':
         return {
           streamId: drawingEntity.streamId,
+          sourceEvent,
           datetime: drawingEntity.issuedEffectiveDate,
           reference: 'Drawing Created',
           principalChange: drawingEntity.outstandingPrincipal,
@@ -177,10 +179,11 @@ class DrawingProjectionsService {
           interestAccrued: drawingEntity.interestAccrued,
         }
       case 'UpdateInterest':
-        const { eventData: updateEvent } = event as UpdateInterestEvent
+        const { eventData: updateEvent } = sourceEvent as UpdateInterestEvent
         const transaction: DrawingTransaction = {
           streamId: drawingEntity.streamId,
-          datetime: event.effectiveDate,
+          sourceEvent,
+          datetime: sourceEvent.effectiveDate,
           reference: `interest changed from ${drawingEntity.interestRate} to ${updateEvent.interestRate}`,
           principalChange: '0',
           interestChange: '0',
@@ -190,7 +193,7 @@ class DrawingProjectionsService {
         drawingEntity.interestRate = updateEvent.interestRate
         return transaction
       case 'WithdrawFromDrawing':
-        const { eventData: drawing } = event as WithdrawFromDrawingEvent
+        const { eventData: drawing } = sourceEvent as WithdrawFromDrawingEvent
         drawingEntity.outstandingPrincipal = Big(
           drawingEntity.outstandingPrincipal,
         )
@@ -198,7 +201,8 @@ class DrawingProjectionsService {
           .toFixed(2)
         return {
           streamId: drawingEntity.streamId,
-          datetime: event.effectiveDate,
+          sourceEvent,
+          datetime: sourceEvent.effectiveDate,
           reference: `£${drawing.amount} drawn`,
           principalChange: drawing.amount,
           interestChange: '0',
@@ -214,7 +218,8 @@ class DrawingProjectionsService {
         drawingEntity.interestAccrued = totalInterestAfterTransaction
         return {
           streamId: drawingEntity.streamId,
-          datetime: event.effectiveDate,
+          sourceEvent,
+          datetime: sourceEvent.effectiveDate,
           reference: 'interest',
           principalChange: '0',
           interestChange: transactionAmount.toString(),
@@ -225,7 +230,7 @@ class DrawingProjectionsService {
       case 'FinalRepayment':
         const paymentAmount = this.strategyService.calculateRepayment(
           drawingEntity,
-          event,
+          sourceEvent,
           allEvents.slice(eventIndex),
         )
         drawingEntity.outstandingPrincipal = Big(
@@ -235,7 +240,8 @@ class DrawingProjectionsService {
           .toString()
         return {
           streamId: drawingEntity.streamId,
-          datetime: event.effectiveDate,
+          sourceEvent,
+          datetime: sourceEvent.effectiveDate,
           reference: 'repayment',
           principalChange: Big(paymentAmount).times(-1).toString(),
           interestChange: '0',

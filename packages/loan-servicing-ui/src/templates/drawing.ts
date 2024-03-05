@@ -7,4 +7,5 @@ export type DrawingNjkInput = {
   eventRows: object
   transactionRows: object
   drawingSummaryListProps: GovUkSummaryListProps
+  // withdrawalsSummaryProps: GovUkSummaryListProps
 }

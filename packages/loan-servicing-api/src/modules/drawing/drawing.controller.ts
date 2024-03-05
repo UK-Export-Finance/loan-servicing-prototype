@@ -17,6 +17,7 @@ import {
   LoanServicingEvent,
   DrawingTransaction,
   TransactionResolution,
+  SummarisedTransaction,
 } from 'loan-servicing-common'
 import {
   DrawingDtoClass,
@@ -70,7 +71,7 @@ class DrawingController {
     @Param('drawingId') drawingStreamId: string,
     @Query('interestResolution')
     interestResolution: TransactionResolution = 'daily',
-  ): Promise<DrawingTransaction[]> {
+  ): Promise<DrawingTransaction[] | SummarisedTransaction[]> {
     await this.transactionService.buildProjections(facilityId, drawingStreamId)
     const facilityEvents =
       interestResolution === 'daily'

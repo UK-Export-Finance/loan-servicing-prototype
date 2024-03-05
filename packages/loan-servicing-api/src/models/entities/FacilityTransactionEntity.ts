@@ -1,5 +1,6 @@
-import { CurrencyColumn } from 'database/decorators'
-import { DrawingTransaction } from 'loan-servicing-common'
+import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
+import { DrawingProjectionEvent, DrawingTransaction } from 'loan-servicing-common'
+import DrawingProjectionEventDtoClass from 'models/dtos/DrawingProjectedEventDto'
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
@@ -10,6 +11,9 @@ class DrawingTransactionEntity implements DrawingTransaction {
 
   @Column()
   streamId!: string
+
+  @ClassAsJsonColumn(DrawingProjectionEventDtoClass)
+  sourceEvent!: DrawingProjectionEvent;
 
   @Column()
   datetime!: Date

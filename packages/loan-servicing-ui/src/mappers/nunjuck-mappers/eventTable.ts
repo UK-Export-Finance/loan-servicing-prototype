@@ -1,7 +1,9 @@
 import { NotImplementedException } from '@nestjs/common'
 import { DrawingTransaction, LoanServicingEvent } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
+import { NunjuckTableRow } from 'types/nunjucks'
 import { TransactionTableRow } from 'types/transactions'
+import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
   const { eventDate, effectiveDate } = event
@@ -62,4 +64,18 @@ export const getTransactionTableRow = (
   interestAccrued: transaction.interestAccrued,
 })
 
-export default getEventTableRow
+const mapEventsToTable = (
+  events: LoanServicingEvent[],
+): NunjuckTableRow[] =>
+  events
+    ?.map(getEventTableRow)
+    .map((e) =>
+      buildNunjucksTableRow(e, [
+        'eventDate',
+        'event',
+        'description',
+        'effectiveDate',
+      ]),
+    ) || null
+
+export default mapEventsToTable

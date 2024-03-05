@@ -31,6 +31,8 @@ import {
   calculateInterestSelectOptions,
   repaymentsSelectOptions,
 } from 'controls/strategyControlsOptions'
+import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
+import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
@@ -52,16 +54,16 @@ class DrawingController {
       facilityId,
       drawingId,
     )
-    const transactionRows = await this.drawingService.getDrawingTransactionRows(
+    const transactions = await this.drawingService.getDrawingTransactionRows(
       facilityId,
       drawingId,
     )
 
     return {
       drawing,
-      eventRows: events!,
+      eventRows: mapEventsToTable(events!),
       drawingCreated,
-      transactionRows: transactionRows!,
+      transactionRows: mapTransactionsToTable(transactions!),
       drawingSummaryListProps: drawingToDrawingSummary(drawing),
     }
   }
