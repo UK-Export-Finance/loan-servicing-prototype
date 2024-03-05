@@ -10,6 +10,7 @@ import {
 import {
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
 import {
@@ -17,60 +18,64 @@ import {
   DrawingTransaction,
   TransactionResolution,
 } from 'loan-servicing-common'
-import { DrawingDtoClass, NewDrawingRequestDtoClass, UpdateInterestRequestDtoClass } from 'models/dtos/drawing'
-import { UntypedEvent } from 'models/dtos/event'
 import {
-  AddDrawingDtoClass,
-} from 'models/dtos/facility'
+  DrawingDtoClass,
+  NewDrawingRequestDtoClass,
+  UpdateInterestRequestDtoClass,
+} from 'models/dtos/drawing'
+import { UntypedEvent } from 'models/dtos/event'
+import { AddDrawingDtoClass } from 'models/dtos/facility'
 import DrawingTransactionEntity from 'models/entities/FacilityTransactionEntity'
 import DrawingService from './drawing.service'
 import DrawingProjectionsService from './drawing.service.projections'
 
 @ApiTags('Drawing')
 @Controller('/facility/:facilityId/drawing')
+@ApiParam({ name: 'facilityId', required: true, type: 'string' })
 class DrawingController {
   constructor(
     private drawingService: DrawingService,
     private transactionService: DrawingProjectionsService,
   ) {}
 
-  @Get(':id')
+  @Get(':drawingId')
   @ApiOkResponse({ type: DrawingDtoClass })
   async getDrawing(
-    @Param('id') streamId: string,
+    @Param('drawingId') drawingStreamId: string,
   ): Promise<DrawingDtoClass> {
-    const facility = await this.drawingService.getDrawing(streamId)
+    const facility = await this.drawingService.getDrawing(drawingStreamId)
     if (facility === null) {
       throw new NotFoundException()
     }
     return facility
   }
 
-  @Get(':id/events')
+  @Get(':drawingId/events')
   @ApiOkResponse({ type: UntypedEvent })
   async getDrawingEvents(
-    @Param('id') streamId: string,
+    @Param('drawingId') drawingStreamId: string,
   ): Promise<LoanServicingEvent[]> {
     const facilityEvents =
-      await this.drawingService.getDrawingEvents(streamId)
+      await this.drawingService.getDrawingEvents(drawingStreamId)
     if (facilityEvents === null) {
       throw new NotFoundException()
     }
     return facilityEvents
   }
 
-  @Get(':id/transactions')
+  @Get(':drawingId/transactions')
   @ApiOkResponse({ type: DrawingTransactionEntity })
   async getDrawingTransactions(
-    @Param('id') streamId: string,
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingStreamId: string,
     @Query('interestResolution')
     interestResolution: TransactionResolution = 'daily',
   ): Promise<DrawingTransaction[]> {
-   await this.transactionService.buildProjections(streamId)
+    await this.transactionService.buildProjections(facilityId, drawingStreamId)
     const facilityEvents =
       interestResolution === 'daily'
-        ? await this.transactionService.getDailyTransactions(streamId)
-        : await this.transactionService.getMonthlyTransactions(streamId)
+        ? await this.transactionService.getDailyTransactions(drawingStreamId)
+        : await this.transactionService.getMonthlyTransactions(drawingStreamId)
     if (facilityEvents === null) {
       throw new NotFoundException()
     }
@@ -87,39 +92,47 @@ class DrawingController {
     return allEvents
   }
 
-  @Post('new')
+  @Post('')
   @ApiCreatedResponse({ type: DrawingDtoClass })
   async newDrawing(
     @Body() body: NewDrawingRequestDtoClass,
+    @Param('facilityId') facilityId: string,
   ): Promise<DrawingDtoClass> {
-    const newDrawing = await this.drawingService.createNewDrawing(body)
+    const newDrawing = await this.drawingService.createNewDrawing(
+      facilityId,
+      body,
+    )
     return newDrawing
   }
 
-  @Post(':id/updateInterestRate')
+  @Post(':drawingId/updateInterestRate')
   @ApiOkResponse({ type: DrawingDtoClass })
   async updateDrawingInterestRate(
-    @Param('id') id: string,
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
     @Query('version') version: number,
     @Body() body: UpdateInterestRequestDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.updateInterestRate(
-      id,
+      facilityId,
+      drawingId,
       Number(version),
       body,
     )
     return updatedDrawing
   }
 
-  @Post(':id/withdrawal')
+  @Post(':drawingId/withdrawal')
   @ApiOkResponse({ type: DrawingDtoClass })
   async withdrawFromDrawing(
-    @Param('id') id: string,
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
     @Query('version') version: number,
     @Body() body: AddDrawingDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.addDrawing(
-      id,
+      facilityId,
+      drawingId,
       Number(version),
       body,
     )

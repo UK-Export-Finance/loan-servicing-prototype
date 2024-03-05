@@ -1,4 +1,5 @@
-import { Drawing } from "./drawing"
+import { ReplaceProperty } from '../utils/type-utils'
+import type { Drawing } from './drawing'
 
 export type Facility = {
   streamId: string
@@ -10,12 +11,19 @@ export type Facility = {
   issuedEffectiveDate: Date
   expiryDate: Date
 }
+
+export type FacilityResponseDto = ReplaceProperty<
+  Facility,
+  'drawings',
+  Omit<Drawing, 'facility'>[]
+>
+
 export type AdjustFacilityAmountDto = {
   effectiveDate: string
   adjustment: string
 }
 
 export type NewFacilityRequestDto = Omit<
-  Facility, 'streamId' | 'streamVersion'
+  Facility,
+  'streamId' | 'streamVersion' | 'drawings'
 >
-

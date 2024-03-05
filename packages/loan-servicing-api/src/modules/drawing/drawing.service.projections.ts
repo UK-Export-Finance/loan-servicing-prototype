@@ -4,14 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import {
-  CreateNewFacilityEvent,
   DrawingTransaction,
   UpdateInterestEvent,
-  LoanServicingEvent,
   Drawing,
   DrawingProjectionEvent,
   WithdrawFromDrawingEvent,
   DrawingEvent,
+  CreateNewDrawingEvent,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import DrawingTransactionEntity from 'models/entities/FacilityTransactionEntity'
@@ -25,9 +24,9 @@ class DrawingProjectionsService {
   constructor(
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(DrawingTransactionEntity)
-    private facilityTransactionRepo: Repository<DrawingTransactionEntity>,
+    private drawingTransactionRepo: Repository<DrawingTransactionEntity>,
     @InjectRepository(DrawingEntity)
-    private facilityRepo: Repository<DrawingEntity>,
+    private drawingRepo: Repository<DrawingEntity>,
     @Inject(StrategyService) private strategyService: StrategyService,
   ) {}
 
@@ -35,7 +34,7 @@ class DrawingProjectionsService {
   async getDailyTransactions(
     streamId: string,
   ): Promise<DrawingTransaction[] | null> {
-    return this.facilityTransactionRepo
+    return this.drawingTransactionRepo
       .createQueryBuilder('t')
       .where({ streamId })
       .orderBy({ 't.datetime': 'ASC' })
@@ -47,7 +46,7 @@ class DrawingProjectionsService {
     streamId: string,
   ): Promise<DrawingTransaction[] | null> {
     // BEWARE: SQL Injection risk
-    const monthlyInterestAmounts = (await this.facilityTransactionRepo.query(`
+    const monthlyInterestAmounts = (await this.drawingTransactionRepo.query(`
       SELECT
         YEAR([datetime]) AS 'year',
         MONTH([datetime]) AS 'month',
@@ -69,7 +68,7 @@ class DrawingProjectionsService {
         balanceAfterTransaction: '0',
         interestAccrued: '0',
       }))
-    const nonInterestTransactions = await this.facilityTransactionRepo
+    const nonInterestTransactions = await this.drawingTransactionRepo
       .createQueryBuilder('t')
       .where({ streamId })
       .andWhere('t.reference != :ref', { ref: 'interest' })
@@ -83,54 +82,56 @@ class DrawingProjectionsService {
   }
 
   @Transactional()
-  async buildProjections(drawingStreamId: string): Promise<{
-    drawing: Drawing
+  async buildProjections(facilityId: string, drawingStreamId: string): Promise<{
+    drawing: DrawingEntity
     transactions: DrawingTransaction[]
   }> {
-    await this.facilityTransactionRepo.delete({ streamId: drawingStreamId })
+    await this.drawingTransactionRepo.delete({ streamId: drawingStreamId })
+    await this.drawingRepo.delete({ streamId: drawingStreamId })
 
-    const facilityEvents = (await this.eventService.getEventsInCreationOrder(
+    const drawingEvents = (await this.eventService.getEventsInCreationOrder(
       drawingStreamId,
     )) as DrawingEvent[]
 
-    const facility = this.getFacilityAtCreation(facilityEvents)
+    const drawing = this.getDrawingAtCreation(drawingEvents, facilityId)
 
-    const interestEvents = this.strategyService.getInterestEvents(facility)
-    const repaymentEvents = this.strategyService.getRepaymentEvents(facility)
+    const interestEvents = this.strategyService.getInterestEvents(drawing)
+    const repaymentEvents = this.strategyService.getRepaymentEvents(drawing)
 
     const projectedEvents: DrawingProjectionEvent[] = [
-      ...facilityEvents,
+      ...drawingEvents,
       ...interestEvents,
       ...repaymentEvents,
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
     const transactions = projectedEvents.map((e, index, allEvents) =>
-      this.applyEventToFacilityAsTransaction(e, index, allEvents, facility),
+      this.applyEventToFacilityAsTransaction(e, index, allEvents, drawing),
     )
 
-    facility.streamVersion =
-      facilityEvents[facilityEvents.length - 1].streamVersion
+    drawing.streamVersion =
+      drawingEvents[drawingEvents.length - 1].streamVersion
 
-    const transactionEntities = await this.facilityTransactionRepo.save(
+    const transactionEntities = await this.drawingTransactionRepo.save(
       transactions,
       { chunk: 100 },
     )
-    await this.facilityRepo.save(facility)
+    await this.drawingRepo.save(drawing)
 
-    return { drawing: facility, transactions: transactionEntities }
+    return { drawing, transactions: transactionEntities }
   }
 
-  getFacilityAtCreation = (facilityEvents: LoanServicingEvent[]): Drawing => {
+  getDrawingAtCreation = (drawingEvents: DrawingEvent[], facilityId: string): DrawingEntity => {
     const creationEvent =
-      facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
+      drawingEvents[0] as EventEntity<CreateNewDrawingEvent>
 
-    if (creationEvent.type !== 'CreateNewFacility') {
-      throw new Error('First created event is not facility creation')
+    if (creationEvent.type !== 'CreateNewDrawing') {
+      throw new Error('First created event is not drawing creation')
     }
 
-    return this.facilityRepo.create({
+    return this.drawingRepo.create({
       streamId: creationEvent.streamId,
       streamVersion: 1,
+      facilityId,
       outstandingPrincipal: '0',
       ...creationEvent.eventData,
     })

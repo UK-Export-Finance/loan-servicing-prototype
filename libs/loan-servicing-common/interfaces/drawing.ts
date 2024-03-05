@@ -1,3 +1,4 @@
+import type { Facility } from './facility'
 import { ConvertToDtoType, ReplaceProperty } from '../utils/type-utils'
 import {
   DrawingConfiguration,
@@ -8,6 +9,7 @@ export type Drawing = {
   streamId: string
   streamVersion: number
   facilityId: string
+  facility: Facility
   drawingConfig: DrawingConfiguration
   //   description: string
   //   currency: string
@@ -34,7 +36,12 @@ export type DrawingWithSpecifiedConfig<
 
 export type NewDrawingRequestDto = Omit<
   Drawing,
-  'streamId' | 'streamVersion' | 'interestAccrued' | 'outstandingPrincipal'
+  | 'streamId'
+  | 'streamVersion'
+  | 'interestAccrued'
+  | 'outstandingPrincipal'
+  | 'facility'
+  | 'facilityId'
 >
 
 export type DrawingDto = ConvertToDtoType<Drawing>

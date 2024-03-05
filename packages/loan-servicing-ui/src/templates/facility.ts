@@ -1,8 +1,8 @@
-import { DrawingDto } from 'loan-servicing-common'
+import { Facility } from 'loan-servicing-common'
 import { GovUkSummaryListProps } from 'types/nunjucks'
 
 export type FacilityNjkInput = {
-  facility: DrawingDto
+  facility: Facility
   facilityCreated?: boolean
   eventRows: object
   transactionRows: object

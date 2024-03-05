@@ -1,8 +1,13 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
+import {
+  IsDate,
+  IsNotEmpty,
+  ValidateNested,
+} from 'class-validator'
 import {
   AddWithdrawalToDrawingDto,
   Drawing,
+  Facility,
   NewDrawingRequestDto,
   UpdateDrawingInterestRequestDto,
 } from 'loan-servicing-common'
@@ -17,7 +22,10 @@ export class DrawingDtoClass implements Drawing {
   streamVersion!: number
 
   @ApiProperty()
-  facilityId!: string;
+  facilityId!: string 
+
+  @ApiProperty()
+  facility!: Facility
 
   @ApiProperty()
   @ValidateNested()
@@ -53,10 +61,16 @@ export class NewDrawingRequestDtoClass
     'streamVersion',
     'interestAccrued',
     'outstandingPrincipal',
+    'facilityId'
   ])
-  implements NewDrawingRequestDto {}
+  implements NewDrawingRequestDto
+{
+  facilityId!: string
+}
 
-export class UpdateInterestRequestDtoClass implements UpdateDrawingInterestRequestDto {
+export class UpdateInterestRequestDtoClass
+  implements UpdateDrawingInterestRequestDto
+{
   @ApiProperty()
   effectiveDate!: string
 

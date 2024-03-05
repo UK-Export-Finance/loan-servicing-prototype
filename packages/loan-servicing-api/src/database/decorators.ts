@@ -11,8 +11,12 @@ class DecimalStringTransformer {
     return data
   }
 
-  from(data: number): string {
-    return Big(data).toString()
+  from(data: number): string | null {
+    try {
+      return Big(data).toString()
+    } catch (e) {
+      return null
+    }
   }
 }
 
@@ -45,22 +49,22 @@ export const ClassAsJsonColumn = <T>(
     transformer: new ClassTransformer(classConstructor),
   })
 
-  class ArrayOfClassTransformer<T> {
-    constructor(private targetClass: ClassConstructor<T>) {}
-  
-    to(data: object[]): T[] {
-      return data.map(x => plainToInstance(this.targetClass, x))
-    }
-  
-    from(data: T[]): object[] {
-      return data.map(d => instanceToPlain(d))
-    }
+class ArrayOfClassTransformer<T> {
+  constructor(private targetClass: ClassConstructor<T>) {}
+
+  to(data: object[]): T[] {
+    return data?.map?.((x) => plainToInstance(this.targetClass, x)) ?? []
   }
 
-  export const ArrayOfClassAsJsonColumn = <T>(
-    classConstructor: ClassConstructor<T>,
-  ): PropertyDecorator =>
-    Column({
-      type: 'simple-json',
-      transformer: new ArrayOfClassTransformer(classConstructor),
-    })
+  from(data: T[]): object[] {
+    return data.map((d) => instanceToPlain(d))
+  }
+}
+
+export const ArrayOfClassAsJsonColumn = <T>(
+  classConstructor: ClassConstructor<T>,
+): PropertyDecorator =>
+  Column({
+    type: 'simple-json',
+    transformer: new ArrayOfClassTransformer(classConstructor),
+  })

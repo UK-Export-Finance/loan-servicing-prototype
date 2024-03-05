@@ -11,7 +11,7 @@
 {%- endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-l">Facility - Amend Maximum Principal
+  <h1 class="govuk-heading-l">Facility - Amend Principal
     {{ facility.streamId }}</h1>
     <form action="/facility/{{facility.streamId}}/adjustPrincipal?version={{facility.streamVersion}}" method="post">
     {{ govukInput({

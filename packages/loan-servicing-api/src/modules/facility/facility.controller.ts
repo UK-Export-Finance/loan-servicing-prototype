@@ -7,14 +7,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger'
-import {
-  LoanServicingEvent,
-} from 'loan-servicing-common'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { LoanServicingEvent } from 'loan-servicing-common'
 import { UntypedEvent } from 'models/dtos/event'
 import {
   AdjustFacilityAmountDtoClass,
@@ -22,35 +16,33 @@ import {
   NewFacilityRequestDtoClass,
 } from 'models/dtos/facility'
 import FacilityService from 'modules/facility/facility.service'
-import FacilityProjectionsService from 'modules/facility/facility.service.projections'
 
 @ApiTags('Facility')
 @Controller('/facility')
 class FacilityController {
   constructor(
     private facilityService: FacilityService,
-    private transactionService: FacilityProjectionsService,
   ) {}
 
-  @Get(':id')
+  @Get(':facilityId')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async getFacility(
-    @Param('id') streamId: string,
+    @Param('facilityId') facilityStreamId: string,
   ): Promise<FacilityResponseDtoClass> {
-    const facility = await this.facilityService.getFacility(streamId)
+    const facility = await this.facilityService.getFacility(facilityStreamId)
     if (facility === null) {
       throw new NotFoundException()
     }
     return facility
   }
 
-  @Get(':id/events')
+  @Get(':facilityId/events')
   @ApiOkResponse({ type: UntypedEvent })
   async getFacilityEvents(
-    @Param('id') streamId: string,
+    @Param('facilityId') facilityStreamId: string,
   ): Promise<LoanServicingEvent[]> {
     const facilityEvents =
-      await this.facilityService.getFacilityEvents(streamId)
+      await this.facilityService.getFacilityEvents(facilityStreamId)
     if (facilityEvents === null) {
       throw new NotFoundException()
     }
@@ -76,15 +68,15 @@ class FacilityController {
     return newFacility
   }
 
-  @Post(':id/adjustPrincipal')
+  @Post(':facilityId/adjustPrincipal')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async incrementValue(
-    @Param('id') id: string,
+    @Param('facilityId') facilityId: string,
     @Query('version') version: string,
     @Body() adjustment: AdjustFacilityAmountDtoClass,
   ): Promise<FacilityResponseDtoClass> {
     const updatedFacility = await this.facilityService.adjustFacilityAmount(
-      id,
+      facilityId,
       Number(version),
       adjustment,
     )

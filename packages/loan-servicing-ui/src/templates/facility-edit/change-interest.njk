@@ -13,7 +13,7 @@
 {% block content %}
   <h1 class="govuk-heading-l">Facility - Change Interest
     {{ facility.streamId }}</h1>
-    <form action="/facility/{{facility.streamId}}/changeInterest?version={{facility.streamVersion}}" method="post">
+    <form action="/facility/{{drawing.facilityId}}/drawing/{{drawing.streamId}}?version={{facility.streamVersion}}" method="post">
     {{ govukInput({
         label: {
           text: "Updated Interest Value (%)"

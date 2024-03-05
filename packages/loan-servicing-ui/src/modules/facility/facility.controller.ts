@@ -16,7 +16,9 @@ import {
   repaymentsSelectOptions,
 } from 'controls/strategyControlsOptions'
 import { Response } from 'express'
-import mapCreateFacilityFormToRequest from 'mappers/form-mappers/createFacilityMapper'
+import mapCreateFacilityFormToRequest, {
+  mapCreateFacilityFormToCreateDrawing,
+} from 'mappers/form-mappers/createFacilityMapper'
 import {
   AdjustFacilityAmountDto,
   CalculateInterestStrategyName,
@@ -41,10 +43,14 @@ import { ConfigureFacilityStrategiesNjkInput } from 'templates/new-facility-stra
 import { getDateFromDateInput } from 'utils/form-helpers'
 import { facilityToFacilitySummaryProps } from 'mappers/nunjuck-mappers/facilitySummary'
 import { FacilityInterestRateUpdateFormDto } from 'templates/facility-edit/change-interest'
+import DrawingService from 'modules/drawing/drawing.service'
 
 @Controller('')
 class FacilityController {
-  constructor(private facilityService: FacilityService) {}
+  constructor(
+    private facilityService: FacilityService,
+    private drawingService: DrawingService,
+  ) {}
 
   @Get('facility/new')
   @Render('create-facility')
@@ -136,9 +142,17 @@ class FacilityController {
     @Body() requestDto: NewFacilityRequestFormDto,
     @Res() response: Response,
   ): Promise<void> {
-    const request: NewFacilityRequestDto =
+    const newFacilityRequest: NewFacilityRequestDto =
       mapCreateFacilityFormToRequest(requestDto)
-    const newFacility = await this.facilityService.createFacility(request)
+    const newFacility =
+      await this.facilityService.createFacility(newFacilityRequest)
+    if (!newFacility) {
+      throw new Error('Failed to create facility')
+    }
+    const newDrawingRequest = mapCreateFacilityFormToCreateDrawing(
+      requestDto,
+    )
+    await this.drawingService.createDrawing(newFacility.streamId, newDrawingRequest)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
 
@@ -216,7 +230,7 @@ class FacilityController {
       ).toISOString(),
       interestRate: requestDto.interestRate,
     }
-    await this.facilityService.updateInterest(id, version, updateDto)
+    await this.drawingService.updateInterest(id, 'd', version, updateDto)
     response.redirect(`/facility/${id}`)
   }
 }

@@ -9,13 +9,14 @@ import {
 import {
   AddWithdrawalToDrawingDto,
   AdjustFacilityAmountDto,
-  Facility,
+  Drawing,
+  FacilityResponseDto,
   NewFacilityRequestDto,
 } from 'loan-servicing-common'
 import { Type } from 'class-transformer'
 import { DrawingDtoClass } from './drawing'
 
-export class FacilityResponseDtoClass implements Facility {
+export class FacilityResponseDtoClass implements FacilityResponseDto {
   @ApiProperty()
   streamId!: string
 
@@ -32,7 +33,7 @@ export class FacilityResponseDtoClass implements Facility {
   @ValidateNested({ each: true })
   @Type(() => DrawingDtoClass)
   @IsNotEmpty()
-  drawings!: DrawingDtoClass[]
+  drawings!: Drawing[]
 
   @ApiProperty()
   @IsNotEmpty()
@@ -57,6 +58,7 @@ export class NewFacilityRequestDtoClass
   extends OmitType(FacilityResponseDtoClass, [
     'streamId',
     'streamVersion',
+    'drawings'
   ])
   implements NewFacilityRequestDto {}
 

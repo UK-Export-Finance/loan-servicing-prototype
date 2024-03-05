@@ -1,7 +1,8 @@
 import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
 import { Drawing, DrawingConfiguration } from 'loan-servicing-common'
 import { DrawingConfigurationDtoClass } from 'models/dtos/facilityConfiguration'
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
+import type FacilityEntity from './FacilityEntity'
 
 @Entity()
 class DrawingEntity implements Drawing {
@@ -11,6 +12,10 @@ class DrawingEntity implements Drawing {
   @Column()
   streamVersion!: number
 
+  @ManyToOne('FacilityEntity', 'drawings')
+  facility!: Relation<FacilityEntity>
+
+  // Computed column by TypeORM
   @Column()
   facilityId!: string
 

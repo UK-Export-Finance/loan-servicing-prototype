@@ -14,6 +14,7 @@ import {
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
+import FacilityEntity from 'models/entities/FacilityEntity'
 import DrawingProjectionsService from './drawing.service.projections'
 
 @Injectable()
@@ -21,15 +22,22 @@ class DrawingService {
   constructor(
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(DrawingEntity)
-    private facilityRepo: Repository<DrawingEntity>,
+    private drawingRepo: Repository<DrawingEntity>,
+    @InjectRepository(FacilityEntity)
+    private facilityRepo: Repository<FacilityEntity>,
     @Inject(DrawingProjectionsService)
     private projectionsService: DrawingProjectionsService,
   ) {}
 
   @Transactional()
   async createNewDrawing(
+    facilityId: string,
     facilityRequest: NewDrawingRequestDto,
   ): Promise<Drawing> {
+    const facility = await this.facilityRepo.findOneOrFail({
+      where: { streamId: facilityId },
+    })
+
     const savedEvent = await this.eventService.addEvent<CreateNewDrawingEvent>({
       streamId: crypto.randomUUID(),
       effectiveDate: facilityRequest.issuedEffectiveDate,
@@ -38,42 +46,47 @@ class DrawingService {
       eventData: facilityRequest,
     })
     const { drawing } = await this.projectionsService.buildProjections(
+      facilityId,
       savedEvent.streamId,
     )
+    drawing.facility = facility
+    await this.drawingRepo.save(drawing)
     return drawing
   }
 
   @Transactional()
   async updateInterestRate(
-    streamId: string,
-    streamVersion: number,
+    facilityId: string,
+    drawingId: string,
+    drawingVersion: number,
     update: UpdateDrawingInterestRequestDto,
   ): Promise<Drawing> {
     await this.eventService.addEvent<UpdateInterestEvent>(
       {
-        streamId,
+        streamId: drawingId,
         effectiveDate: new Date(update.effectiveDate),
         type: 'UpdateInterest',
         typeVersion: 1,
         eventData: update,
       },
-      streamVersion,
+      drawingVersion,
     )
 
-    const { drawing: facility } =
-      await this.projectionsService.buildProjections(streamId)
-    return facility
+    const { drawing } =
+      await this.projectionsService.buildProjections(facilityId, drawingId)
+    return drawing
   }
 
   @Transactional()
   async addDrawing(
-    streamId: string,
+    facilityId: string,
+    drawingId: string,
     streamVersion: number,
     update: AddWithdrawalToDrawingDto,
   ): Promise<Drawing> {
     await this.eventService.addEvent<AddDrawingEvent>(
       {
-        streamId,
+        streamId: drawingId,
         effectiveDate: update.date,
         type: 'AddDrawing',
         typeVersion: 1,
@@ -83,7 +96,7 @@ class DrawingService {
     )
 
     const { drawing: facility } =
-      await this.projectionsService.buildProjections(streamId)
+      await this.projectionsService.buildProjections(facilityId, drawingId)
     return facility
   }
 
@@ -95,7 +108,7 @@ class DrawingService {
 
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getDrawing(streamId: string): Promise<Drawing> {
-    const facility = await this.facilityRepo.findOne({ where: { streamId } })
+    const facility = await this.drawingRepo.findOne({ where: { streamId } })
     if (!facility) {
       throw new NotFoundException(`No facility found for id ${streamId}`)
     }
@@ -103,7 +116,7 @@ class DrawingService {
   }
 
   async getAllDrawings(): Promise<Drawing[] | null> {
-    return this.facilityRepo.find()
+    return this.drawingRepo.find()
   }
 }
 

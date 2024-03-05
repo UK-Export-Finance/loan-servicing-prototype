@@ -2,46 +2,69 @@ import { Injectable } from '@nestjs/common'
 import { postApiData, tryGetApiData } from 'api/base-client'
 import {
   LoanServicingEvent,
-  NewFacilityRequestDto,
   DrawingDto,
-  AdjustFacilityAmountDto,
+  UpdateDrawingInterestRequestDto,
+  AddWithdrawalToDrawingDto,
+  NewDrawingRequestDto,
   DrawingTransaction,
-  Facility,
 } from 'loan-servicing-common'
 import getEventTableRow, { getTransactionTableRow } from 'mappers/nunjuck-mappers/eventTable'
 import { NunjuckTableRow } from 'types/nunjucks'
 import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 @Injectable()
-class FacilityService {
-  async createFacility(
-    facility: NewFacilityRequestDto,
+class DrawingService {
+  
+  async createDrawing(
+    drawingRequest: NewDrawingRequestDto,
   ): Promise<DrawingDto | null> {
-    const newFacility = await postApiData<DrawingDto>('facility/new', facility)
-    return newFacility
+    const newDrawing = await postApiData<DrawingDto>(
+      `facility/${drawingRequest.facilityId}/drawing`,
+      drawingRequest,
+    )
+    return newDrawing
   }
 
-  async adjustPrincipal(
-    streamId: string,
+  async addWithdrawalToDrawing(
+    facilityStreamId: string,
+    drawingStreamId: string,
     streamVersion: string,
-    adjustment: AdjustFacilityAmountDto,
+    drawing: AddWithdrawalToDrawingDto,
   ): Promise<void> {
     await postApiData(
-      `facility/${streamId}/adjustPrincipal?version=${streamVersion}`,
-      adjustment,
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}/withdrawal?version=${streamVersion}`,
+      drawing,
     )
   }
 
-  async getFacility(streamId: string): Promise<Facility | null> {
-    const facility = await tryGetApiData<Facility>(`facility/${streamId}`)
+  async updateInterest(
+    facilityStreamId: string,
+    drawingStreamId: string,
+    streamVersion: string,
+    update: UpdateDrawingInterestRequestDto,
+  ): Promise<void> {
+    await postApiData(
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}/updateInterestRate?version=${streamVersion}`,
+      update,
+    )
+  }
+
+  async getDrawing(
+    facilityStreamId: string,
+    drawingStreamId: string,
+  ): Promise<DrawingDto | null> {
+    const facility = await tryGetApiData<DrawingDto>(
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}`,
+    )
     return facility
   }
 
   async getFacilityEventTableRows(
-    streamId: string,
+    facilityStreamId: string,
+    drawingStreamId: string,
   ): Promise<NunjuckTableRow[] | null> {
     const events = await tryGetApiData<LoanServicingEvent[]>(
-      `facility/${streamId}/events`,
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}/events`,
     )
     return (
       events
@@ -79,4 +102,4 @@ class FacilityService {
   }
 }
 
-export default FacilityService
+export default DrawingService
