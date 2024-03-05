@@ -17,7 +17,6 @@ import {
 } from 'controls/strategyControlsOptions'
 import { Response } from 'express'
 import mapCreateFacilityFormToRequest, {
-  mapCreateFacilityFormToCreateDrawing,
 } from 'mappers/form-mappers/createFacilityMapper'
 import {
   AdjustFacilityAmountDto,
@@ -128,14 +127,11 @@ class FacilityController {
       throw new NotFoundException()
     }
     const events = await this.facilityService.getFacilityEventTableRows(id)
-    const transactionRows =
-      await this.facilityService.getFacilityTransactionRows(id)
 
     return {
       facility,
       eventRows: events!,
       facilityCreated,
-      transactionRows: transactionRows!,
       facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
       drawingSummaries: facilityToDrawingSummaries(facility),
     }
@@ -153,11 +149,6 @@ class FacilityController {
     if (!newFacility) {
       throw new Error('Failed to create facility')
     }
-    const newDrawingRequest = mapCreateFacilityFormToCreateDrawing(requestDto)
-    await this.drawingService.createDrawing(
-      newFacility.streamId,
-      newDrawingRequest,
-    )
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
 

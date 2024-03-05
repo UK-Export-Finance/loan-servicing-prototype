@@ -3,7 +3,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 
-{% from "macros/transaction-tables.njk" import transactionTables %}
+{% from "macros/transaction-tables.njk" import transactionTable %}
+{% from "macros/transaction-tables.njk" import eventTable %}
 
 {% block pageTitle -%}
   Facility
@@ -34,5 +35,6 @@
     {{ govukButton({  text: "Update Interest Rate"}) }}
   </form>
 
-  {{ transactionTables(transactionRows, eventRows) }}
+  {{ transactionTable(transactionRows) }}
+  {{ eventTable(eventRows) }}
 {% endblock %}

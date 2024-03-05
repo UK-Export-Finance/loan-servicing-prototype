@@ -70,7 +70,7 @@ export const drawingToDrawingSummary = (
           text: 'Withdrawals',
         },
         value: {
-          text: 'blah',
+          text: '',
         },
         actions: {
           items: [

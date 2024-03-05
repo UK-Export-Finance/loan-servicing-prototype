@@ -35,15 +35,6 @@
       name: "maxPrincipal"
     }) }}
 
-    {{ govukInput({
-      label: {
-        text: "Interest Rate"
-      },
-      classes: "govuk-input--width-20",
-      id: "interestRate",
-      name: "interestRate"
-    }) }}
-
     {{ govukDateInput({
         id: "issuedEffectiveDate",
         namePrefix: "issuedEffectiveDate",
@@ -63,69 +54,6 @@
           }
         }
       }) }}
-
-    <h3 class="govuk-heading-s">Repayment Schedule -
-      {{ repaymentStrategy | enumToNameString }}</h3>
-
-    <input name="repaymentStrategy" type="hidden" value="{{repaymentStrategy}}">
-
-    {% if repaymentStrategy === 'Regular' %}
-      {{ govukDateInput({
-        id: "repaymentStartDate",
-        namePrefix: "repaymentStartDate",
-        fieldset: {
-          legend: {
-            text: "Date of first repayment"
-          }
-        }
-      }) }}
-
-      {{ govukInput({
-        label: {
-          text: "Months between repayments"
-        },
-        classes: "govuk-input--width-20",
-        id: "repaymentInterval",
-        name: "repaymentInterval",
-        type: "number"
-      }) }}
-
-    {% endif %}
-
-    {% if repaymentStrategy === 'Manual' %}
-    {% for repaymentNumber in [1,2,3,4,5] %}
-      <p class="govuk-body">Repayment {{repaymentNumber}}:</p>
-      <div class="govuk-grid-row" style="display: flex; align-items: flex-end;">
-        <div class="govuk-grid-column-one-third">
-          {{ govukDateInput({
-          id: "repaymentDate" + repaymentNumber,
-          namePrefix: "repaymentDate" + repaymentNumber,
-          fieldset: {
-            legend: {
-              text: "Date of repayment"
-            }
-          }
-        }) }}
-        </div>
-        <div class="govuk-grid-column-one-half">
-          {{ govukInput({
-            label: {
-              text: "Repayment Amount"
-            },
-            classes: "govuk-input--width-20",
-            id: "repaymentAmount" + repaymentNumber,
-            name: "repaymentAmount" + repaymentNumber,
-            type: "number"
-          }) }}
-        </div>
-      </div>
-    {% endfor %}
-    {% endif %}
-
-    <h3 class="govuk-heading-s">Interest Strategy -
-      {{ calculateInterestStrategy | enumToNameString }}</h3>
-
-    <input name="calculateInterestStrategy" type="hidden" value="{{calculateInterestStrategy}}">
 
     {{ govukButton({  text: "Create Facility"}) }}
   </form>

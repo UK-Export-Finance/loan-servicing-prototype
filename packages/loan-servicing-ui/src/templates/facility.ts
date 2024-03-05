@@ -5,7 +5,6 @@ export type FacilityNjkInput = {
   facility: Facility
   facilityCreated?: boolean
   eventRows: object
-  transactionRows: object
   facilitySummaryListProps: GovUkSummaryListProps
   drawingSummaries: GovUkSummaryListProps[]
 }
