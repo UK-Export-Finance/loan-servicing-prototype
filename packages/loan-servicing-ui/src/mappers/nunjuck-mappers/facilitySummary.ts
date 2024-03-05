@@ -56,23 +56,7 @@ export const facilityToFacilitySummaryProps = (
       value: {
         text: new Date(facility.expiryDate).toLocaleDateString('en-GB'),
       },
-    },
-    {
-      key: {
-        text: 'Drawings',
-      },
-      value: {
-        text: 'blah',
-      },
-      actions: {
-        items: [
-          {
-            href: `/facility/${facility.streamId}/drawing/new/start?facilityType=${facility.facilityType}`,
-            text: 'Create new drawing',
-          },
-        ],
-      },
-    },
+    }
   ],
 })
 

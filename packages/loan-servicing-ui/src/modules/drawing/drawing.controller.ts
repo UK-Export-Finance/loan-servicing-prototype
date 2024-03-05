@@ -96,9 +96,9 @@ class DrawingController {
   async renderCreateFacilityPage(
     @Param('facilityId') facilityId: string,
     @Query('repaymentStrategy')
-    repaymentStrategy: RepaymentStrategyName = 'Regular',
+    repaymentStrategy: RepaymentStrategyName,
     @Query('calculateInterestStrategy')
-    calculateInterestStrategy: CalculateInterestStrategyName = 'Compounding',
+    calculateInterestStrategy: CalculateInterestStrategyName,
   ): Promise<CreateDrawingNjkInput> {
     const facility = await tryGetApiData<Facility>(`facility/${facilityId}`)
     if (!facility) {

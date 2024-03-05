@@ -35,6 +35,8 @@
 
   {{ govukSummaryList(facilitySummaryListProps) }}
 
+  {{ govukButton({ text: "Create New Drawing", href: "/facility/" + facility.streamId + "/drawing/new/start?facilityType=" + facility.facilityType }) }}
+
   {% for summary in drawingSummaries %}
     {{ govukSummaryList(summary) }}
   {% endfor %}
