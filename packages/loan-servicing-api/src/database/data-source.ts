@@ -19,7 +19,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
     DrawingEntity,
     DrawingTransactionEntity,
     FacilityType,
-    FacilityEntity
+    FacilityEntity,
   ],
   options: {
     encrypt: true,

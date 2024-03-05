@@ -13,6 +13,4 @@ export type AdjustFacilityAmountEvent = EventBase<
   { adjustment: string }
 >
 
-export type FacilityEvent =
-  | CreateNewFacilityEvent
-  | AdjustFacilityAmountEvent
+export type FacilityEvent = CreateNewFacilityEvent | AdjustFacilityAmountEvent

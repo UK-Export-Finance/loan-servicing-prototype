@@ -41,7 +41,10 @@ import {
 import { FacilityListNjkInput } from 'templates/facility-list'
 import { ConfigureFacilityStrategiesNjkInput } from 'templates/new-facility-strategies'
 import { getDateFromDateInput } from 'utils/form-helpers'
-import { facilityToDrawingSummaries, facilityToFacilitySummaryProps } from 'mappers/nunjuck-mappers/facilitySummary'
+import {
+  facilityToDrawingSummaries,
+  facilityToFacilitySummaryProps,
+} from 'mappers/nunjuck-mappers/facilitySummary'
 import { FacilityInterestRateUpdateFormDto } from 'templates/facility-edit/change-interest'
 import DrawingService from 'modules/drawing/drawing.service'
 
@@ -134,7 +137,7 @@ class FacilityController {
       facilityCreated,
       transactionRows: transactionRows!,
       facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
-      drawingSummaries: facilityToDrawingSummaries(facility)
+      drawingSummaries: facilityToDrawingSummaries(facility),
     }
   }
 
@@ -150,10 +153,11 @@ class FacilityController {
     if (!newFacility) {
       throw new Error('Failed to create facility')
     }
-    const newDrawingRequest = mapCreateFacilityFormToCreateDrawing(
-      requestDto,
+    const newDrawingRequest = mapCreateFacilityFormToCreateDrawing(requestDto)
+    await this.drawingService.createDrawing(
+      newFacility.streamId,
+      newDrawingRequest,
     )
-    await this.drawingService.createDrawing(newFacility.streamId, newDrawingRequest)
     response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
 

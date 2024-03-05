@@ -27,7 +27,11 @@ export const calculatePrincipalOnlyInterest: CalculateInterestStrategy<
 
 export const calculateCompoundingInterest: CalculateInterestStrategy<
   'Compounding'
-> = ({ outstandingPrincipal: facilityAmount, interestRate, interestAccrued }) => {
+> = ({
+  outstandingPrincipal: facilityAmount,
+  interestRate,
+  interestAccrued,
+}) => {
   const dailyInterestRate = Big(interestRate).div(100).div(365)
   const accruableTotal = Big(facilityAmount).add(interestAccrued)
   const newInterestAccrued = Big(accruableTotal)

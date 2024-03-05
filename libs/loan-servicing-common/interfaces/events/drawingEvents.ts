@@ -1,4 +1,7 @@
-import { NewDrawingRequestDto, UpdateDrawingInterestRequestDto } from '../drawing'
+import {
+  NewDrawingRequestDto,
+  UpdateDrawingInterestRequestDto,
+} from '../drawing'
 import { EventBase } from './eventBase'
 
 export type CreateNewDrawingEvent = EventBase<

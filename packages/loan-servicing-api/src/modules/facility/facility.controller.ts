@@ -20,9 +20,7 @@ import FacilityService from 'modules/facility/facility.service'
 @ApiTags('Facility')
 @Controller('/facility')
 class FacilityController {
-  constructor(
-    private facilityService: FacilityService,
-  ) {}
+  constructor(private facilityService: FacilityService) {}
 
   @Get(':facilityId')
   @ApiOkResponse({ type: FacilityResponseDtoClass })

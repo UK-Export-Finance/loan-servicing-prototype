@@ -1,4 +1,7 @@
-import { NewDrawingRequestDto, NewFacilityRequestDto } from 'loan-servicing-common'
+import {
+  NewDrawingRequestDto,
+  NewFacilityRequestDto,
+} from 'loan-servicing-common'
 import { NewFacilityRequestFormDto } from 'templates/create-facility'
 import { getDateFromDateInput } from 'utils/form-helpers'
 import mapRepaymentOptions from './repaymentOptionMappers'
@@ -12,7 +15,9 @@ const mapCreateFacilityFormToRequest = (
   issuedEffectiveDate: getDateFromDateInput(request, 'issuedEffectiveDate'),
 })
 
-export const mapCreateFacilityFormToCreateDrawing = (request: NewFacilityRequestFormDto): NewDrawingRequestDto => ({
+export const mapCreateFacilityFormToCreateDrawing = (
+  request: NewFacilityRequestFormDto,
+): NewDrawingRequestDto => ({
   ...request,
   drawingConfig: {
     calculateInterestStrategy: {

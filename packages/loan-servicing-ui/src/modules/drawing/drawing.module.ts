@@ -6,7 +6,7 @@ import DrawingController from './drawing.controller'
 @Module({
   controllers: [DrawingController, EditDrawingController],
   providers: [DrawingService],
-  exports: [DrawingService]
+  exports: [DrawingService],
 })
 class DrawingModule {}
 

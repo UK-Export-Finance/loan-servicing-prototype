@@ -58,13 +58,11 @@ export class NewFacilityRequestDtoClass
   extends OmitType(FacilityResponseDtoClass, [
     'streamId',
     'streamVersion',
-    'drawings'
+    'drawings',
   ])
   implements NewFacilityRequestDto {}
 
-export class AdjustFacilityAmountDtoClass
-  implements AdjustFacilityAmountDto
-{
+export class AdjustFacilityAmountDtoClass implements AdjustFacilityAmountDto {
   @ApiProperty()
   effectiveDate!: string
 

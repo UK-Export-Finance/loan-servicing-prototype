@@ -8,7 +8,9 @@ import {
   DrawingTransaction,
   Facility,
 } from 'loan-servicing-common'
-import getEventTableRow, { getTransactionTableRow } from 'mappers/nunjuck-mappers/eventTable'
+import getEventTableRow, {
+  getTransactionTableRow,
+} from 'mappers/nunjuck-mappers/eventTable'
 import { NunjuckTableRow } from 'types/nunjucks'
 import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 

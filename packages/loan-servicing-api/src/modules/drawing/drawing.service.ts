@@ -72,8 +72,10 @@ class DrawingService {
       drawingVersion,
     )
 
-    const { drawing } =
-      await this.projectionsService.buildProjections(facilityId, drawingId)
+    const { drawing } = await this.projectionsService.buildProjections(
+      facilityId,
+      drawingId,
+    )
     return drawing
   }
 
