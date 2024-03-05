@@ -4,6 +4,7 @@
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% from "macros/transaction-tables.njk" import eventTable %}
 
@@ -13,6 +14,10 @@
 {%- endblock %}
 
 {% block content %}
+  {{ govukBackLink({
+    text: "Back to List",
+    href: "/"
+  }) }}
   {% if facilityCreated %}
     {% set html %}
     <p class="govuk-notification-banner__heading">

@@ -10,13 +10,13 @@
   <p class="govuk-body govuk-!-margin-bottom-6">Name:
     {{facilityType.name}}</p>
   <p class="govuk-body govuk-!-margin-bottom-6">Permitted Interest Calculation Methods:</p>
-  <ul>
+  <ul class="govuk-body">
     {% for s in facilityType.interestStrategies %}
       <li>{{s|enumToNameString}}</li>
     {% endfor %}
   </ul>
   <p class="govuk-body govuk-!-margin-bottom-6">Permitted Repayments Methods:</p>
-  <ul>
+  <ul class="govuk-body">
     {% for s in facilityType.repaymentsStrategies %}
       <li>{{s|enumToNameString}}</li>
     {% endfor %}

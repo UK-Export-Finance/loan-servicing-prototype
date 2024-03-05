@@ -10,7 +10,7 @@
 {% block content %}
   <h1 class="govuk-heading-l">Loan Servicing Home
     {{ facility.streamId }}</h1>
-  <h2 class="govuk-heading-m">All Facilities</h2>
+  <h2 class="govuk-heading-m">New Facility</h2>
   <form action="facility/new">
     {{ govukSelect({
         id: "facilityType",
@@ -22,7 +22,8 @@
       }) }}
     {{ govukButton({  text: "Create New Facility"  }) }}
   </form>
-  <ul>
+  <h2 class="govuk-heading-m">All Facilities</h2>
+  <ul class="govuk-body">
     {% for facility in allFacilities %}
       <li>
         <a href="/facility/{{ facility.streamId }}">{{facility.obligor}}</a>
@@ -30,13 +31,13 @@
     {% endfor %}
   </ul>
   <h2 class="govuk-heading-m">Facility Types</h2>
-  {{ govukButton({  text: "Create New Facility Type", href: "/facility-type/new"  }) }}
-  <ul>
+  <ul class="govuk-body">
     {% for facilityType in allFacilityTypes %}
       <li>
         <a href="/facility-type/{{ facilityType.name }}">{{facilityType.name}}</a>
       </li>
     {% endfor %}
   </ul>
+  {{ govukButton({  text: "Create New Facility Type", href: "/facility-type/new"  }) }}
 
 {% endblock %}
