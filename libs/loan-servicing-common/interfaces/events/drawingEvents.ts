@@ -14,7 +14,7 @@ export type UpdateInterestEvent = EventBase<
 >
 
 export type WithdrawFromDrawingEvent = EventBase<
-  'WithdrawFromDrawingEvent',
+  'WithdrawFromDrawing',
   1,
   { date: Date; amount: string }
 >

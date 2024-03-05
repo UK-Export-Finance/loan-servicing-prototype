@@ -30,12 +30,19 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Interest rate was changed to ${event.eventData.interestRate}%.`,
       }
-    case 'AddDrawing':
+    case 'WithdrawFromDrawing':
       return {
-        event: 'Drawing Added',
+        event: 'Withdrawal from drawing',
         eventDate: eventDateObj.toLocaleString('en-GB'),
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `£${event.eventData.amount} was drawn.`,
+      }
+    case 'CreateNewDrawing':
+      return {
+        event: 'Drawing Created',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: `Drawing created.`,
       }
     default:
       throw new NotImplementedException()
@@ -43,16 +50,16 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
 }
 
 export const getTransactionTableRow = (
-    transaction: DrawingTransaction,
-  ): TransactionTableRow => ({
-    date: new Date(transaction.datetime).toLocaleDateString('en-GB'),
-    reference: transaction.reference,
-    transactionAmount:
-      transaction.principalChange === '0'
-        ? transaction.interestChange
-        : transaction.principalChange,
-    balance: transaction.balanceAfterTransaction,
-    interestAccrued: transaction.interestAccrued,
-  })
+  transaction: DrawingTransaction,
+): TransactionTableRow => ({
+  date: new Date(transaction.datetime).toLocaleDateString('en-GB'),
+  reference: transaction.reference,
+  transactionAmount:
+    transaction.principalChange === '0'
+      ? transaction.interestChange
+      : transaction.principalChange,
+  balance: transaction.balanceAfterTransaction,
+  interestAccrued: transaction.interestAccrued,
+})
 
 export default getEventTableRow

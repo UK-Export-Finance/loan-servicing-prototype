@@ -9,8 +9,8 @@ import {
   UpdateInterestEvent,
   UpdateDrawingInterestRequestDto,
   AddWithdrawalToDrawingDto,
-  AddDrawingEvent,
   CreateNewDrawingEvent,
+  WithdrawFromDrawingEvent,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -78,17 +78,17 @@ class DrawingService {
   }
 
   @Transactional()
-  async addDrawing(
+  async withdrawFromDrawing(
     facilityId: string,
     drawingId: string,
     streamVersion: number,
     update: AddWithdrawalToDrawingDto,
   ): Promise<Drawing> {
-    await this.eventService.addEvent<AddDrawingEvent>(
+    await this.eventService.addEvent<WithdrawFromDrawingEvent>(
       {
         streamId: drawingId,
         effectiveDate: update.date,
-        type: 'AddDrawing',
+        type: 'WithdrawFromDrawing',
         typeVersion: 1,
         eventData: update,
       },

@@ -4,9 +4,9 @@ import { GovUkSummaryListProps } from 'types/nunjucks'
 
 // eslint-disable-next-line import/prefer-default-export
 export const drawingToDrawingSummary = (
-  facility: DrawingDto,
+  drawing: DrawingDto,
 ): GovUkSummaryListProps => {
-  const repayment = facility.drawingConfig.repaymentsStrategy
+  const repayment = drawing.drawingConfig.repaymentsStrategy
   return {
     rows: [
       {
@@ -15,7 +15,7 @@ export const drawingToDrawingSummary = (
         },
         value: {
           text: placeholderToString(
-            facility.drawingConfig.calculateInterestStrategy.name,
+            drawing.drawingConfig.calculateInterestStrategy.name,
           ),
         },
       },
@@ -24,12 +24,12 @@ export const drawingToDrawingSummary = (
           text: 'Interest Rate',
         },
         value: {
-          text: `${facility.interestRate}%`,
+          text: `${drawing.interestRate}%`,
         },
         actions: {
           items: [
             {
-              href: `/facility/${facility.streamId}/changeInterest`,
+              href: `/facility/${drawing.streamId}/changeInterest`,
               text: 'Change',
               visuallyHiddenText: 'interest rate',
             },
@@ -41,7 +41,7 @@ export const drawingToDrawingSummary = (
           text: 'Start Date',
         },
         value: {
-          text: new Date(facility.issuedEffectiveDate).toLocaleDateString(
+          text: new Date(drawing.issuedEffectiveDate).toLocaleDateString(
             'en-GB',
           ),
         },
@@ -51,7 +51,7 @@ export const drawingToDrawingSummary = (
           text: 'End Date',
         },
         value: {
-          text: new Date(facility.expiryDate).toLocaleDateString('en-GB'),
+          text: new Date(drawing.expiryDate).toLocaleDateString('en-GB'),
         },
       },
       {
@@ -67,7 +67,7 @@ export const drawingToDrawingSummary = (
       },
       {
         key: {
-          text: 'Drawings',
+          text: 'Withdrawals',
         },
         value: {
           text: 'blah',
@@ -75,9 +75,9 @@ export const drawingToDrawingSummary = (
         actions: {
           items: [
             {
-              href: `/facility/${facility.streamId}/drawing`,
+              href: `/facility/${drawing.facilityId}/drawing/${drawing.streamId}/add-withdrawal`,
               text: 'Add',
-              visuallyHiddenText: 'new drawing',
+              visuallyHiddenText: 'new withdrawal',
             },
           ],
         },

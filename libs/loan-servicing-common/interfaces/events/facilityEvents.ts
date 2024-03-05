@@ -13,13 +13,6 @@ export type AdjustFacilityAmountEvent = EventBase<
   { adjustment: string }
 >
 
-export type AddDrawingEvent = EventBase<
-  'AddDrawing',
-  1,
-  { date: Date; amount: string }
->
-
 export type FacilityEvent =
   | CreateNewFacilityEvent
   | AdjustFacilityAmountEvent
-  | AddDrawingEvent

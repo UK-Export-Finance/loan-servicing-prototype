@@ -55,7 +55,7 @@ class EditDrawingController {
     }
   }
 
-  @Post(':id/add-withdrawal')
+  @Post(':drawingId/add-withdrawal')
   async addWithdrawal(
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,

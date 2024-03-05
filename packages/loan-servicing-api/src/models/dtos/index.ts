@@ -1,7 +1,6 @@
 import { ClassConstructor } from 'class-transformer'
 import { EventTypes, LoanServicingEvent } from 'loan-servicing-common'
 import {
-  AddDrawingDtoClass,
   AdjustFacilityAmountDtoClass,
   NewFacilityRequestDtoClass,
 } from './facility'
@@ -19,8 +18,7 @@ const eventTypeToEventClassDefinition: {
   CreateNewFacility: NewFacilityRequestDtoClass,
   UpdateInterest: UpdateInterestRequestDtoClass,
   AdjustFacilityAmount: AdjustFacilityAmountDtoClass,
-  AddDrawing: AddDrawingDtoClass,
-  WithdrawFromDrawingEvent: AddWithdrawalToDrawingDtoClass,
+  WithdrawFromDrawing: AddWithdrawalToDrawingDtoClass,
   CreateNewDrawing: NewDrawingRequestDtoClass,
 }
 

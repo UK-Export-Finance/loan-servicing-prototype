@@ -130,7 +130,7 @@ class DrawingController {
     @Query('version') version: number,
     @Body() body: AddDrawingDtoClass,
   ): Promise<DrawingDtoClass> {
-    const updatedDrawing = await this.drawingService.addDrawing(
+    const updatedDrawing = await this.drawingService.withdrawFromDrawing(
       facilityId,
       drawingId,
       Number(version),

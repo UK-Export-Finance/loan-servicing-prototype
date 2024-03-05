@@ -51,7 +51,7 @@ class DrawingProjectionsService {
         YEAR([datetime]) AS 'year',
         MONTH([datetime]) AS 'month',
         SUM([interestChange]) AS 'interest'
-      FROM [LoanServicing].[dbo].[facility_transaction_entity]
+      FROM [LoanServicing].[dbo].[drawing_transaction_entity]
       WHERE [streamId] = '${streamId}'
       AND [reference] = 'interest'
       GROUP BY MONTH([datetime]), YEAR([datetime])
@@ -183,7 +183,7 @@ class DrawingProjectionsService {
         }
         drawingEntity.interestRate = updateEvent.interestRate
         return transaction
-      case 'WithdrawFromDrawingEvent':
+      case 'WithdrawFromDrawing':
         const { eventData: drawing } = event as WithdrawFromDrawingEvent
         drawingEntity.outstandingPrincipal = Big(
           drawingEntity.outstandingPrincipal,
