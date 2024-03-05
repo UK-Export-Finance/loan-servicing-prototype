@@ -1,5 +1,6 @@
 import { BadRequestException, NotImplementedException } from '@nestjs/common'
 import { RepaymentStrategyOptions } from 'loan-servicing-common'
+import { NewDrawingRequestFormDto } from 'templates/create-drawing'
 import {
   NewFacilityRequestFormDto,
   PermittedRepaymentNumbers,
@@ -7,7 +8,7 @@ import {
 import { getDateFromDateInput } from 'utils/form-helpers'
 
 const mapRepaymentOptions = (
-  createFacilityForm: NewFacilityRequestFormDto,
+  createFacilityForm: NewFacilityRequestFormDto | NewDrawingRequestFormDto,
 ): RepaymentStrategyOptions => {
   switch (createFacilityForm.repaymentStrategy) {
     case 'Regular':

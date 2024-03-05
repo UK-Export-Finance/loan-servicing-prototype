@@ -58,6 +58,7 @@ export class NewDrawingRequestDtoClass
     'interestAccrued',
     'outstandingPrincipal',
     'facilityStreamId',
+    'facility',
   ])
   implements NewDrawingRequestDto
 {
