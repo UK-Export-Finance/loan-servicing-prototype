@@ -5,6 +5,12 @@ export type NunjuckSelectInputOption<T extends string> = {
   value: T
 }
 
+export type GovUkAction = {
+  href: string
+  text: string
+  visuallyHiddenText?: string
+}
+
 export type GovUkSummaryListRow = {
   key: {
     text: string
@@ -14,14 +20,16 @@ export type GovUkSummaryListRow = {
     html?: string
   }
   actions?: {
-    items: {
-      href: string
-      text: string
-      visuallyHiddenText?: string
-    }[]
+    items: GovUkAction[]
   }
 }
 
 export type GovUkSummaryListProps = {
+  card?: {
+    title: {
+      text: string
+    }
+    actions?: { items: GovUkAction[] }
+  }
   rows: GovUkSummaryListRow[]
 }

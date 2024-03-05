@@ -82,7 +82,10 @@ class DrawingProjectionsService {
   }
 
   @Transactional()
-  async buildProjections(facilityId: string, drawingStreamId: string): Promise<{
+  async buildProjections(
+    facilityId: string,
+    drawingStreamId: string,
+  ): Promise<{
     drawing: DrawingEntity
     transactions: DrawingTransaction[]
   }> {
@@ -110,6 +113,7 @@ class DrawingProjectionsService {
 
     drawing.streamVersion =
       drawingEvents[drawingEvents.length - 1].streamVersion
+    drawing.facilityStreamId = facilityId
 
     const transactionEntities = await this.drawingTransactionRepo.save(
       transactions,
@@ -120,9 +124,11 @@ class DrawingProjectionsService {
     return { drawing, transactions: transactionEntities }
   }
 
-  getDrawingAtCreation = (drawingEvents: DrawingEvent[], facilityId: string): DrawingEntity => {
-    const creationEvent =
-      drawingEvents[0] as EventEntity<CreateNewDrawingEvent>
+  getDrawingAtCreation = (
+    drawingEvents: DrawingEvent[],
+    facilityId: string,
+  ): DrawingEntity => {
+    const creationEvent = drawingEvents[0] as EventEntity<CreateNewDrawingEvent>
 
     if (creationEvent.type !== 'CreateNewDrawing') {
       throw new Error('First created event is not drawing creation')
@@ -131,7 +137,7 @@ class DrawingProjectionsService {
     return this.drawingRepo.create({
       streamId: creationEvent.streamId,
       streamVersion: 1,
-      facilityId,
+      facilityStreamId: facilityId,
       outstandingPrincipal: '0',
       ...creationEvent.eventData,
     })

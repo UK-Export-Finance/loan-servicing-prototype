@@ -22,7 +22,7 @@ export class DrawingDtoClass implements Drawing {
   streamVersion!: number
 
   @ApiProperty()
-  facilityId!: string 
+  facilityStreamId!: string 
 
   @ApiProperty()
   facility!: Facility
@@ -61,7 +61,7 @@ export class NewDrawingRequestDtoClass
     'streamVersion',
     'interestAccrued',
     'outstandingPrincipal',
-    'facilityId'
+    'facilityStreamId'
   ])
   implements NewDrawingRequestDto
 {

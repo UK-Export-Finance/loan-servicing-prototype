@@ -41,7 +41,7 @@ import {
 import { FacilityListNjkInput } from 'templates/facility-list'
 import { ConfigureFacilityStrategiesNjkInput } from 'templates/new-facility-strategies'
 import { getDateFromDateInput } from 'utils/form-helpers'
-import { facilityToFacilitySummaryProps } from 'mappers/nunjuck-mappers/facilitySummary'
+import { facilityToDrawingSummaries, facilityToFacilitySummaryProps } from 'mappers/nunjuck-mappers/facilitySummary'
 import { FacilityInterestRateUpdateFormDto } from 'templates/facility-edit/change-interest'
 import DrawingService from 'modules/drawing/drawing.service'
 
@@ -134,6 +134,7 @@ class FacilityController {
       facilityCreated,
       transactionRows: transactionRows!,
       facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
+      drawingSummaries: facilityToDrawingSummaries(facility)
     }
   }
 

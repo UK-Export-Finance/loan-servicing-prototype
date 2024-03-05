@@ -7,4 +7,5 @@ export type FacilityNjkInput = {
   eventRows: object
   transactionRows: object
   facilitySummaryListProps: GovUkSummaryListProps
+  drawingSummaries: GovUkSummaryListProps[]
 }

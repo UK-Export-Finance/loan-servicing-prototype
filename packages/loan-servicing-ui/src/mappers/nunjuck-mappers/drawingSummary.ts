@@ -75,7 +75,7 @@ export const drawingToDrawingSummary = (
         actions: {
           items: [
             {
-              href: `/facility/${drawing.facilityId}/drawing/${drawing.streamId}/add-withdrawal`,
+              href: `/facility/${drawing.facilityStreamId}/drawing/${drawing.streamId}/add-withdrawal`,
               text: 'Add',
               visuallyHiddenText: 'new withdrawal',
             },

@@ -30,6 +30,10 @@
 
   {{ govukSummaryList(facilitySummaryListProps) }}
 
+  {% for summary in drawingSummaries %}
+    {{ govukSummaryList(summary) }}
+  {% endfor %}
+
   {{ transactionTables(transactionRows, eventRows) }}
 
 {% endblock %}

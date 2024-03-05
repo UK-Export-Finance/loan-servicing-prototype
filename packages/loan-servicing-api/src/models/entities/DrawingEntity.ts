@@ -17,7 +17,7 @@ class DrawingEntity implements Drawing {
 
   // Computed column by TypeORM
   @Column()
-  facilityId!: string
+  facilityStreamId!: string
 
   @ClassAsJsonColumn(DrawingConfigurationDtoClass)
   drawingConfig!: DrawingConfiguration
