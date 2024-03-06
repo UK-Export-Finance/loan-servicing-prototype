@@ -1,11 +1,12 @@
 import { Facility } from 'loan-servicing-common'
+import {
+  EventTableProps,
+} from 'templates/macros/transaction-tables'
 import { MandatoryDateInputFormData } from 'utils/form-helpers'
 
 export type AmendPrincipalNjkInput = {
   facility: Facility
-  eventRows: object
-  transactionRows: object
-}
+} & EventTableProps
 
 export type FacilityPrincipalAdjustmentFormDto = {
   adjustment: string

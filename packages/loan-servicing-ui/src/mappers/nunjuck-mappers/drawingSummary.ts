@@ -29,7 +29,7 @@ export const drawingToDrawingSummary = (
         actions: {
           items: [
             {
-              href: `/facility/${drawing.streamId}/changeInterest`,
+              href: `/facility/${drawing.facilityStreamId}/drawing/${drawing.streamId}/changeInterest`,
               text: 'Change',
               visuallyHiddenText: 'interest rate',
             },
@@ -63,23 +63,6 @@ export const drawingToDrawingSummary = (
             repayment.name === 'Regular'
               ? `<b>${repayment.name}</b><br/>First payment: ${new Date(repayment.startDate).toLocaleDateString('en-GB')}<br/>Months between payments: ${repayment.monthsBetweenRepayments}`
               : `<b>${repayment.name}</b> - ${repayment.repayments.length} payments`,
-        },
-      },
-      {
-        key: {
-          text: 'Withdrawals',
-        },
-        value: {
-          text: '',
-        },
-        actions: {
-          items: [
-            {
-              href: `/facility/${drawing.facilityStreamId}/drawing/${drawing.streamId}/add-withdrawal`,
-              text: 'Add',
-              visuallyHiddenText: 'new withdrawal',
-            },
-          ],
         },
       },
     ],

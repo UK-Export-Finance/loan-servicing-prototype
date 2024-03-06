@@ -108,8 +108,9 @@ class DrawingProjectionsService {
       ...repaymentEvents,
     ].sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime())
 
-    const transactions = projectedEvents.map((e, index, allEvents) =>
-      this.applyEventToFacilityAsTransaction(e, index, allEvents, drawing),
+    const transactions = projectedEvents.reduce(
+      this.eventsToTransactionsReducer(drawing),
+      [],
     )
 
     drawing.streamVersion =
@@ -160,98 +161,108 @@ class DrawingProjectionsService {
     })
   }
 
-  applyEventToFacilityAsTransaction = (
-    sourceEvent: DrawingProjectionEvent,
-    eventIndex: number,
-    allEvents: DrawingProjectionEvent[],
-    drawingEntity: Drawing,
-  ): DrawingTransaction => {
-    switch (sourceEvent.type) {
-      case 'CreateNewDrawing':
-        return {
-          streamId: drawingEntity.streamId,
-          sourceEvent,
-          datetime: drawingEntity.issuedEffectiveDate,
-          reference: 'Drawing Created',
-          principalChange: drawingEntity.outstandingPrincipal,
-          interestChange: '0',
-          balanceAfterTransaction: drawingEntity.outstandingPrincipal,
-          interestAccrued: drawingEntity.interestAccrued,
-        }
-      case 'UpdateInterest':
-        const { eventData: updateEvent } = sourceEvent as UpdateInterestEvent
-        const transaction: DrawingTransaction = {
-          streamId: drawingEntity.streamId,
-          sourceEvent,
-          datetime: sourceEvent.effectiveDate,
-          reference: `interest changed from ${drawingEntity.interestRate} to ${updateEvent.interestRate}`,
-          principalChange: '0',
-          interestChange: '0',
-          balanceAfterTransaction: drawingEntity.outstandingPrincipal,
-          interestAccrued: drawingEntity.interestAccrued,
-        }
-        drawingEntity.interestRate = updateEvent.interestRate
-        return transaction
-      case 'WithdrawFromDrawing':
-        const { eventData: drawing } = sourceEvent as WithdrawFromDrawingEvent
-        drawingEntity.outstandingPrincipal = Big(
-          drawingEntity.outstandingPrincipal,
-        )
-          .add(drawing.amount)
-          .toFixed(2)
-        return {
-          streamId: drawingEntity.streamId,
-          sourceEvent,
-          datetime: sourceEvent.effectiveDate,
-          reference: `£${drawing.amount} drawn`,
-          principalChange: drawing.amount,
-          interestChange: '0',
-          balanceAfterTransaction: drawingEntity.outstandingPrincipal,
-          interestAccrued: drawingEntity.interestAccrued,
-        }
-      case 'CalculateInterest':
-        const transactionAmount =
-          this.strategyService.calculateInterest(drawingEntity)
-        const totalInterestAfterTransaction = Big(drawingEntity.interestAccrued)
-          .add(transactionAmount)
-          .toFixed(2)
-        drawingEntity.interestAccrued = totalInterestAfterTransaction
-        return {
-          streamId: drawingEntity.streamId,
-          sourceEvent,
-          datetime: sourceEvent.effectiveDate,
-          reference: 'interest',
-          principalChange: '0',
-          interestChange: transactionAmount.toString(),
-          balanceAfterTransaction: drawingEntity.outstandingPrincipal,
-          interestAccrued: drawingEntity.interestAccrued,
-        }
-      case 'Repayment':
-      case 'FinalRepayment':
-        const paymentAmount = this.strategyService.calculateRepayment(
-          drawingEntity,
-          sourceEvent,
-          allEvents.slice(eventIndex),
-        )
-        drawingEntity.outstandingPrincipal = Big(
-          drawingEntity.outstandingPrincipal,
-        )
-          .minus(paymentAmount)
-          .toString()
-        return {
-          streamId: drawingEntity.streamId,
-          sourceEvent,
-          datetime: sourceEvent.effectiveDate,
-          reference: 'repayment',
-          principalChange: Big(paymentAmount).times(-1).toString(),
-          interestChange: '0',
-          balanceAfterTransaction: drawingEntity.outstandingPrincipal,
-          interestAccrued: drawingEntity.interestAccrued,
-        }
-      default:
-        throw new NotImplementedException()
+  eventsToTransactionsReducer =
+    (drawingEntity: Drawing) =>
+    (
+      transactions: DrawingTransaction[],
+      sourceEvent: DrawingProjectionEvent,
+      eventIndex: number,
+      allEvents: DrawingProjectionEvent[],
+    ): DrawingTransaction[] => {
+      const updatedTransactions = [...transactions]
+      switch (sourceEvent.type) {
+        case 'CreateNewDrawing':
+          updatedTransactions.push({
+            streamId: drawingEntity.streamId,
+            sourceEvent,
+            datetime: drawingEntity.issuedEffectiveDate,
+            reference: 'Drawing Created',
+            principalChange: drawingEntity.outstandingPrincipal,
+            interestChange: '0',
+            balanceAfterTransaction: drawingEntity.outstandingPrincipal,
+            interestAccrued: drawingEntity.interestAccrued,
+          })
+          break
+        case 'UpdateInterest':
+          const { eventData: updateEvent } = sourceEvent as UpdateInterestEvent
+          updatedTransactions.push({
+            streamId: drawingEntity.streamId,
+            sourceEvent,
+            datetime: sourceEvent.effectiveDate,
+            reference: `interest changed from ${drawingEntity.interestRate} to ${updateEvent.interestRate}`,
+            principalChange: '0',
+            interestChange: '0',
+            balanceAfterTransaction: drawingEntity.outstandingPrincipal,
+            interestAccrued: drawingEntity.interestAccrued,
+          })
+          drawingEntity.interestRate = updateEvent.interestRate
+          break
+        case 'WithdrawFromDrawing':
+          const { eventData: drawing } = sourceEvent as WithdrawFromDrawingEvent
+          drawingEntity.outstandingPrincipal = Big(
+            drawingEntity.outstandingPrincipal,
+          )
+            .add(drawing.amount)
+            .toFixed(2)
+          updatedTransactions.push({
+            streamId: drawingEntity.streamId,
+            sourceEvent,
+            datetime: sourceEvent.effectiveDate,
+            reference: `£${drawing.amount} drawn`,
+            principalChange: drawing.amount,
+            interestChange: '0',
+            balanceAfterTransaction: drawingEntity.outstandingPrincipal,
+            interestAccrued: drawingEntity.interestAccrued,
+          })
+          break
+        case 'CalculateInterest':
+          const transactionAmount =
+            this.strategyService.calculateInterest(drawingEntity)
+          const totalInterestAfterTransaction = Big(
+            drawingEntity.interestAccrued,
+          )
+            .add(transactionAmount)
+            .toFixed(2)
+          drawingEntity.interestAccrued = totalInterestAfterTransaction
+          updatedTransactions.push({
+            streamId: drawingEntity.streamId,
+            sourceEvent,
+            datetime: sourceEvent.effectiveDate,
+            reference: 'interest',
+            principalChange: '0',
+            interestChange: transactionAmount.toString(),
+            balanceAfterTransaction: drawingEntity.outstandingPrincipal,
+            interestAccrued: drawingEntity.interestAccrued,
+          })
+          break
+        case 'Repayment':
+        case 'FinalRepayment':
+          const paymentAmount = this.strategyService.calculateRepayment(
+            drawingEntity,
+            sourceEvent,
+            allEvents.slice(eventIndex),
+          )
+          drawingEntity.outstandingPrincipal = Big(
+            drawingEntity.outstandingPrincipal,
+          )
+            .minus(paymentAmount)
+            .toString()
+          updatedTransactions.push({
+            streamId: drawingEntity.streamId,
+            sourceEvent,
+            datetime: sourceEvent.effectiveDate,
+            reference: 'repayment',
+            principalChange: Big(paymentAmount).times(-1).toString(),
+            interestChange: '0',
+            balanceAfterTransaction: drawingEntity.outstandingPrincipal,
+            interestAccrued: drawingEntity.interestAccrued,
+          })
+          break
+        default:
+          throw new NotImplementedException()
+      }
+      return updatedTransactions
     }
-  }
 }
 
 export default DrawingProjectionsService

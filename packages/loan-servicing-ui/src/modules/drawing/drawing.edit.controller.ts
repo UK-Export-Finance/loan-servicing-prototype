@@ -23,6 +23,8 @@ import {
   AddWithdrawalToDrawingFormDto,
   AddWithdrawalToDrawingNjkInput,
 } from 'templates/facility-edit/add-withdrawal'
+import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
+import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
@@ -39,19 +41,8 @@ class EditDrawingController {
     if (!drawing) {
       throw new NotFoundException()
     }
-    const events = await this.drawingService.getDrawingEventTableRows(
-      facilityId,
-      drawingId,
-    )
-    const transactionRows = await this.drawingService.getDrawingTransactionRows(
-      facilityId,
-      drawingId,
-    )
-
     return {
       drawing,
-      eventRows: events!,
-      transactionRows: transactionRows!,
     }
   }
 
@@ -77,7 +68,7 @@ class EditDrawingController {
     response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
   }
 
-  @Get(':id/changeInterest')
+  @Get(':drawingId/changeInterest')
   @Render('facility-edit/change-interest')
   async renderInterestChangePage(
     @Param('facilityId') facilityId: string,
@@ -98,12 +89,12 @@ class EditDrawingController {
 
     return {
       drawing,
-      eventRows: events!,
-      transactionRows: transactionRows!,
+      eventRows: mapEventsToTable(events!),
+      transactionRows: mapTransactionsToTable(transactionRows!),
     }
   }
 
-  @Post(':id/changeInterest')
+  @Post(':drawingId/changeInterest')
   async updateInterest(
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,

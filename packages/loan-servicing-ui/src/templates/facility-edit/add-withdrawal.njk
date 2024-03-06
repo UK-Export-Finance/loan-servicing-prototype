@@ -3,16 +3,13 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 
-{% from "macros/transaction-tables.njk" import transactionTable %}
-{% from "macros/transaction-tables.njk" import eventTable %}
-
 {% block pageTitle -%}
   Facility
   {{ facility.streamId }}
 {%- endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-l">Facility - Add Drawing
+  <h1 class="govuk-heading-l">Drawing - Add Withdrawal
     {{ facility.streamId }}</h1>
     <form action="/facility/{{drawing.facilityStreamId}}/drawing/{{drawing.streamId}}/add-withdrawal?version={{drawing.streamVersion}}" method="post">
     {{ govukInput({
@@ -35,6 +32,4 @@
     {{ govukButton({  text: "Add drawing"}) }}
   </form>
 
-  {{ transactionTable(transactionRows) }}
-  {{ eventTable(eventRows) }}
 {% endblock %}

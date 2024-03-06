@@ -139,6 +139,23 @@ class DrawingController {
     )
     return updatedDrawing
   }
+
+  @Post(':drawingId/withdrawal/:withdrawalId/revert')
+  @ApiOkResponse({ type: DrawingDtoClass })
+  async revertWithdrawal(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Param('withdrawalId') withdrawalId: string,
+    @Query('version') version: number,
+  ): Promise<DrawingDtoClass> {
+    const updatedDrawing = await this.drawingService.revertWithdrawal(
+      facilityId,
+      drawingId,
+      withdrawalId,
+      Number(version),
+    )
+    return updatedDrawing
+  }
 }
 
 export default DrawingController

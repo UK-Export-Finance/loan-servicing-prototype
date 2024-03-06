@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 import { AdjustFacilityAmountDto } from 'loan-servicing-common'
+import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 import FacilityService from 'modules/facility/facility.service'
 import {
   AmendPrincipalNjkInput,
@@ -32,13 +33,10 @@ class EditFacilityController {
       throw new NotFoundException()
     }
     const events = await this.facilityService.getFacilityEventTableRows(id)
-    const transactionRows =
-      await this.facilityService.getFacilityTransactionRows(id)
 
     return {
       facility,
-      eventRows: events!,
-      transactionRows: transactionRows!,
+      eventRows: mapEventsToTable(events!),
     }
   }
 

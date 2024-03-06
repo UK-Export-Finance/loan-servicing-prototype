@@ -5,6 +5,7 @@ import {
   Drawing,
   Facility,
   NewDrawingRequestDto,
+  RevertWithdrawlDto,
   UpdateDrawingInterestRequestDto,
 } from 'loan-servicing-common'
 import { Type } from 'class-transformer'
@@ -86,4 +87,10 @@ export class AddWithdrawalToDrawingDtoClass
 
   @ApiProperty()
   amount!: string
+}
+
+export class RevertWithdrawalDtoClass
+implements RevertWithdrawlDto {
+  @ApiProperty()
+  withdrawalEventId!: string;
 }

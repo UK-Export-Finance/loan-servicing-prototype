@@ -7,6 +7,7 @@ import {
 import {
   AddWithdrawalToDrawingDtoClass,
   NewDrawingRequestDtoClass,
+  RevertWithdrawalDtoClass,
   UpdateInterestRequestDtoClass,
 } from './drawing'
 
@@ -20,6 +21,7 @@ const eventTypeToEventClassDefinition: {
   AdjustFacilityAmount: AdjustFacilityAmountDtoClass,
   WithdrawFromDrawing: AddWithdrawalToDrawingDtoClass,
   CreateNewDrawing: NewDrawingRequestDtoClass,
+  RevertWithdrawal: RevertWithdrawalDtoClass
 }
 
 export default eventTypeToEventClassDefinition

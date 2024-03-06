@@ -55,3 +55,7 @@ export type AddWithdrawalToDrawingDto = {
   date: Date
   amount: string
 }
+
+export type RevertWithdrawlDto = {
+  withdrawalEventId: string
+}

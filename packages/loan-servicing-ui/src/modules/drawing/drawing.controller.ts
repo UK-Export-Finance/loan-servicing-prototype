@@ -33,6 +33,7 @@ import {
 } from 'controls/strategyControlsOptions'
 import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
+import mapTransactionsToWithdrawalsSummary from 'mappers/nunjuck-mappers/transactionsToWithdrawals'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
@@ -65,6 +66,11 @@ class DrawingController {
       drawingCreated,
       transactionRows: mapTransactionsToTable(transactions!),
       drawingSummaryListProps: drawingToDrawingSummary(drawing),
+      withdrawalsSummaryProps: mapTransactionsToWithdrawalsSummary(
+        facilityId,
+        drawingId,
+        transactions!,
+      ),
     }
   }
 

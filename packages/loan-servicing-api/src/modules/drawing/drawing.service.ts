@@ -11,6 +11,7 @@ import {
   AddWithdrawalToDrawingDto,
   CreateNewDrawingEvent,
   WithdrawFromDrawingEvent,
+  RevertWithdrawalEvent,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -100,6 +101,29 @@ class DrawingService {
     const { drawing: facility } =
       await this.projectionsService.buildProjections(facilityId, drawingId)
     return facility
+  }
+
+  @Transactional()
+  async revertWithdrawal(
+    facilityId: string,
+    drawingId: string,
+    withdrawalEventId: string,
+    streamVersion: number,
+  ): Promise<Drawing> {
+    await this.eventService.addEvent<RevertWithdrawalEvent>(
+      {
+        streamId: drawingId,
+        effectiveDate: new Date(),
+        type: 'RevertWithdrawal',
+        typeVersion: 1,
+        eventData: { withdrawalEventId },
+      },
+      streamVersion,
+    )
+
+    const { drawing } =
+      await this.projectionsService.buildProjections(facilityId, drawingId)
+    return drawing
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })

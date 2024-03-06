@@ -1,11 +1,14 @@
 import { DrawingDto } from 'loan-servicing-common'
 import { GovUkSummaryListProps } from 'types/nunjucks'
+import {
+  EventTableProps,
+  TransactionTableProps,
+} from './macros/transaction-tables'
 
 export type DrawingNjkInput = {
   drawing: DrawingDto
   drawingCreated?: boolean
-  eventRows: object
-  transactionRows: object
   drawingSummaryListProps: GovUkSummaryListProps
-  // withdrawalsSummaryProps: GovUkSummaryListProps
-}
+  withdrawalsSummaryProps: GovUkSummaryListProps
+} & EventTableProps &
+  TransactionTableProps

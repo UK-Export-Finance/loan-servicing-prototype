@@ -1,5 +1,7 @@
 import {
+  AddWithdrawalToDrawingDto,
   NewDrawingRequestDto,
+  RevertWithdrawlDto,
   UpdateDrawingInterestRequestDto,
 } from '../drawing'
 import { EventBase } from './eventBase'
@@ -19,10 +21,17 @@ export type UpdateInterestEvent = EventBase<
 export type WithdrawFromDrawingEvent = EventBase<
   'WithdrawFromDrawing',
   1,
-  { date: Date; amount: string }
+  AddWithdrawalToDrawingDto
+>
+
+export type RevertWithdrawalEvent = EventBase<
+  'RevertWithdrawal',
+  1,
+  RevertWithdrawlDto
 >
 
 export type DrawingEvent =
   | CreateNewDrawingEvent
   | UpdateInterestEvent
   | WithdrawFromDrawingEvent
+  | RevertWithdrawalEvent
