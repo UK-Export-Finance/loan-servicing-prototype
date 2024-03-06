@@ -89,8 +89,15 @@ export class AddWithdrawalToDrawingDtoClass
   amount!: string
 }
 
-export class RevertWithdrawalDtoClass
-implements RevertWithdrawlDto {
+export class RevertWithdrawalDtoClass implements RevertWithdrawlDto {
   @ApiProperty()
-  withdrawalEventId!: string;
+  drawingStreamId!: string
+
+  @ApiProperty()
+  withdrawalEventStreamVersion!: number
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  dateOfWithdrawal!: Date
 }

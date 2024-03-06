@@ -3,7 +3,7 @@ import { DrawingProjectionEvent } from './projectedEvents'
 
 export type DrawingTransaction = {
   streamId: string
-  sourceEvent: DrawingProjectionEvent
+  sourceEvent?: DrawingProjectionEvent
   datetime: Date
   reference: string
   principalChange: string

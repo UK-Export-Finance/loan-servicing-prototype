@@ -1,5 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { Injectable, Inject, NotImplementedException } from '@nestjs/common'
+import {
+  Injectable,
+  Inject,
+  NotImplementedException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
@@ -12,6 +17,7 @@ import {
   DrawingEvent,
   CreateNewDrawingEvent,
   SummarisedTransaction,
+  RevertWithdrawalEvent,
 } from 'loan-servicing-common'
 import EventEntity from 'models/entities/EventEntity'
 import DrawingTransactionEntity from 'models/entities/FacilityTransactionEntity'
@@ -169,7 +175,7 @@ class DrawingProjectionsService {
       eventIndex: number,
       allEvents: DrawingProjectionEvent[],
     ): DrawingTransaction[] => {
-      const updatedTransactions = [...transactions]
+      let updatedTransactions = [...transactions]
       switch (sourceEvent.type) {
         case 'CreateNewDrawing':
           updatedTransactions.push({
@@ -214,6 +220,30 @@ class DrawingProjectionsService {
             balanceAfterTransaction: drawingEntity.outstandingPrincipal,
             interestAccrued: drawingEntity.interestAccrued,
           })
+          break
+        case 'RevertWithdrawal':
+          const {
+            eventData: { withdrawalEventStreamVersion },
+          } = sourceEvent as RevertWithdrawalEvent
+          const withdrawalToRevert = transactions.find(
+            (t) => t.sourceEvent?.streamVersion === withdrawalEventStreamVersion,
+          )
+          if (
+            !withdrawalToRevert ||
+            withdrawalToRevert.sourceEvent?.type !== 'WithdrawFromDrawing'
+          ) {
+            throw new NotFoundException(
+              `Withdrawal not found for at stream version ${withdrawalEventStreamVersion}`,
+            )
+          }
+          drawingEntity.outstandingPrincipal = Big(
+            drawingEntity.outstandingPrincipal,
+          )
+            .sub(withdrawalToRevert.principalChange)
+            .toFixed(2)
+          updatedTransactions = updatedTransactions.filter(
+            (t) => t.sourceEvent?.streamVersion !== withdrawalEventStreamVersion,
+          )
           break
         case 'CalculateInterest':
           const transactionAmount =

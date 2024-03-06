@@ -7,6 +7,7 @@ import {
   AddWithdrawalToDrawingDto,
   NewDrawingRequestDto,
   DrawingTransaction,
+  RevertWithdrawlDto,
 } from 'loan-servicing-common'
 
 @Injectable()
@@ -42,6 +43,18 @@ class DrawingService {
   ): Promise<void> {
     await postApiData(
       `facility/${facilityStreamId}/drawing/${drawingStreamId}/updateInterestRate?version=${streamVersion}`,
+      update,
+    )
+  }
+
+  async revertWithdrawal(
+    facilityStreamId: string,
+    drawingStreamId: string,
+    streamVersion: string,
+    update: RevertWithdrawlDto,
+  ): Promise<void> {
+    await postApiData(
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}/withdrawal/revert?version=${streamVersion}`,
       update,
     )
   }

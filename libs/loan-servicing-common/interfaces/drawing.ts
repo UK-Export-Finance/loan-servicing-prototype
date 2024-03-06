@@ -57,5 +57,7 @@ export type AddWithdrawalToDrawingDto = {
 }
 
 export type RevertWithdrawlDto = {
-  withdrawalEventId: string
+  drawingStreamId: string
+  withdrawalEventStreamVersion: number
+  dateOfWithdrawal: Date
 }

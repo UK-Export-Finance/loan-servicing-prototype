@@ -1,0 +1,22 @@
+{% extends "index.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+{% block pageTitle -%}
+  Facility
+  {{ facility.streamId }}
+{%- endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">Drawing - Confirm Revert Withdrawal
+    {{ facility.streamId }}</h1>
+    <form action="/facility/{{drawing.facilityStreamId}}/drawing/{{drawing.streamId}}/withdrawal/revert?version={{drawing.streamVersion}}" method="post">
+    <input name="drawingStreamId" type="hidden" value="{{revertWithdrawalDto.drawingStreamId}}">
+    <input name="withdrawalEventStreamVersion" type="hidden" value="{{revertWithdrawalDto.withdrawalEventStreamVersion}}">
+    <input name="dateOfWithdrawal" type="hidden" value="{{revertWithdrawalDto.dateOfWithdrawal}}">
+    
+    {{ govukButton({  text: "Revert Withdrawal"}) }}
+  </form>
+
+{% endblock %}

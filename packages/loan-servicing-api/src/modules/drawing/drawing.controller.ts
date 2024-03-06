@@ -22,6 +22,7 @@ import {
 import {
   DrawingDtoClass,
   NewDrawingRequestDtoClass,
+  RevertWithdrawalDtoClass,
   UpdateInterestRequestDtoClass,
 } from 'models/dtos/drawing'
 import { UntypedEvent } from 'models/dtos/event'
@@ -140,19 +141,19 @@ class DrawingController {
     return updatedDrawing
   }
 
-  @Post(':drawingId/withdrawal/:withdrawalId/revert')
+  @Post(':drawingId/withdrawal/revert')
   @ApiOkResponse({ type: DrawingDtoClass })
   async revertWithdrawal(
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
-    @Param('withdrawalId') withdrawalId: string,
+    @Body() body: RevertWithdrawalDtoClass,
     @Query('version') version: number,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.revertWithdrawal(
       facilityId,
       drawingId,
-      withdrawalId,
       Number(version),
+      body,
     )
     return updatedDrawing
   }

@@ -2,8 +2,8 @@ import { SummarisedTransaction } from 'loan-servicing-common'
 import { GovUkSummaryListProps } from 'types/nunjucks'
 
 const mapTransactionsToWithdrawalsSummary = (
-    facilityId: string,
-    drawingId: string,
+  facilityId: string,
+  drawingId: string,
   transactions: SummarisedTransaction[],
 ): GovUkSummaryListProps => {
   const withdrawalTransactions = transactions.filter(
@@ -26,6 +26,15 @@ const mapTransactionsToWithdrawalsSummary = (
       key: { text: new Date(withdrawal.datetime).toLocaleDateString('en-GB') },
       value: {
         text: `£${withdrawal.principalChange}`,
+      },
+      actions: {
+        items: [
+          {
+            href: `/facility/${facilityId}/drawing/${drawingId}/withdrawal/${withdrawal.sourceEvent?.streamVersion}/revert/`,
+            text: 'Revert',
+            visuallyHiddenText: 'withdrawal',
+          },
+        ],
       },
     })),
   }

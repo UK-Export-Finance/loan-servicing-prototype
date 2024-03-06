@@ -46,8 +46,15 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Drawing created.`,
       }
+    case 'RevertWithdrawal':
+      return {
+        event: 'Withdrawal Reverted',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: `Withdrawl ${event.eventData.withdrawalEventStreamVersion} was reverted.`,
+      }
     default:
-      throw new NotImplementedException()
+      throw new NotImplementedException('Event to event table')
   }
 }
 
@@ -64,9 +71,7 @@ export const getTransactionTableRow = (
   interestAccrued: transaction.interestAccrued,
 })
 
-const mapEventsToTable = (
-  events: LoanServicingEvent[],
-): NunjuckTableRow[] =>
+const mapEventsToTable = (events: LoanServicingEvent[]): NunjuckTableRow[] =>
   events
     ?.map(getEventTableRow)
     .map((e) =>

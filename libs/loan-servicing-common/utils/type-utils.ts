@@ -8,6 +8,12 @@ export type MapAllTypeAtoTypeB<Subject, A, B> = {
 
 export type ConvertToDtoType<T> = MapAllTypeAtoTypeB<T, Date, string>
 
+export type ConvertToFormType<T> = MapAllTypeAtoTypeB<
+  ConvertToDtoType<T>,
+  number,
+  string
+>
+
 export type ReplaceProperty<
   Object extends object,
   KeyToReplace extends keyof Object,
