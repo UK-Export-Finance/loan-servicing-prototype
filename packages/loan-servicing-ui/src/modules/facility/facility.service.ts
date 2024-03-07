@@ -5,7 +5,7 @@ import {
   NewFacilityRequestDto,
   DrawingDto,
   AdjustFacilityAmountDto,
-  DrawingTransaction,
+  Transaction,
   Facility,
 } from 'loan-servicing-common'
 import {
@@ -51,7 +51,7 @@ class FacilityService {
   async getFacilityTransactionRows(
     streamId: string,
   ): Promise<NunjuckTableRow[] | null> {
-    const transactions = await tryGetApiData<DrawingTransaction[]>(
+    const transactions = await tryGetApiData<Transaction[]>(
       `facility/${streamId}/transactions?interestResolution=monthly`,
     )
     return (

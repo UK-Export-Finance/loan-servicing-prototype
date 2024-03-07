@@ -6,7 +6,7 @@ import {
   UpdateDrawingInterestRequestDto,
   AddWithdrawalToDrawingDto,
   NewDrawingRequestDto,
-  DrawingTransaction,
+  Transaction,
   RevertWithdrawlDto,
 } from 'loan-servicing-common'
 
@@ -82,8 +82,8 @@ class DrawingService {
   async getDrawingTransactionRows(
     facilityStreamId: string,
     drawingStreamId: string,
-  ): Promise<DrawingTransaction[] | null> {
-    const transactions = await tryGetApiData<DrawingTransaction[]>(
+  ): Promise<Transaction[] | null> {
+    const transactions = await tryGetApiData<Transaction[]>(
       `facility/${facilityStreamId}/drawing/${drawingStreamId}/transactions?interestResolution=monthly`,
     )
     return transactions

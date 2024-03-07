@@ -1,9 +1,7 @@
-import { DrawingEvent } from '../events/drawingEvents'
-import { InterestEvent } from './interest'
-import { RepaymentsEvent } from './repayment'
+import { DrawingProjectedEvent } from './drawing'
+import { FacilityProjectedEvent } from './facility'
 
-export type DrawingProjectionEvent = (
-  | InterestEvent
-  | RepaymentsEvent
-  | Pick<DrawingEvent, 'effectiveDate' | 'eventData' | 'type'>
+export type ProjectedEvent = (
+  | FacilityProjectedEvent
+  | DrawingProjectedEvent
 ) & { streamVersion?: number }

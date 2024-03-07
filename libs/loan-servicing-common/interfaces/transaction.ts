@@ -1,9 +1,9 @@
 import { PartialByKey } from '../utils/type-utils'
-import { DrawingProjectionEvent } from './projectedEvents'
+import { DrawingProjectedEvent } from './projectedEvents/drawing'
 
-export type DrawingTransaction = {
+export type Transaction = {
   streamId: string
-  sourceEvent?: DrawingProjectionEvent
+  sourceEvent?: DrawingProjectedEvent
   datetime: Date
   reference: string
   principalChange: string
@@ -13,7 +13,7 @@ export type DrawingTransaction = {
 }
 
 export type SummarisedTransaction = PartialByKey<
-  DrawingTransaction,
+  Transaction,
   'sourceEvent'
 >
 

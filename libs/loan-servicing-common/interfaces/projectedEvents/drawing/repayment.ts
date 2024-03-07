@@ -1,4 +1,4 @@
-import { ProjectedEventBase } from './projectedEventBase'
+import { ProjectedEventBase } from '../projectedEventBase'
 
 export type StandardRepaymentEvent = ProjectedEventBase<
   'Repayment',

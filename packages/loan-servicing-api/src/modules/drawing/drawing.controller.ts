@@ -15,7 +15,7 @@ import {
 } from '@nestjs/swagger'
 import {
   LoanServicingEvent,
-  DrawingTransaction,
+  Transaction,
   TransactionResolution,
   SummarisedTransaction,
 } from 'loan-servicing-common'
@@ -72,7 +72,7 @@ class DrawingController {
     @Param('drawingId') drawingStreamId: string,
     @Query('interestResolution')
     interestResolution: TransactionResolution = 'daily',
-  ): Promise<DrawingTransaction[] | SummarisedTransaction[]> {
+  ): Promise<Transaction[] | SummarisedTransaction[]> {
     await this.transactionService.buildProjections(facilityId, drawingStreamId)
     const facilityEvents =
       interestResolution === 'daily'

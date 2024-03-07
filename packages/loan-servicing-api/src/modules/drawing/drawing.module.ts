@@ -8,6 +8,7 @@ import FacilityEntity from 'models/entities/FacilityEntity'
 import DrawingController from './drawing.controller'
 import DrawingProjectionsService from './drawing.service.projections'
 import DrawingService from './drawing.service'
+import DrawingEventHandlingService from './drawing.service.events'
 
 @Module({
   controllers: [DrawingController],
@@ -20,7 +21,11 @@ import DrawingService from './drawing.service'
     ]),
     StrategyModule,
   ],
-  providers: [DrawingProjectionsService, DrawingService],
+  providers: [
+    DrawingProjectionsService,
+    DrawingService,
+    DrawingEventHandlingService,
+  ],
   exports: [],
 })
 class DrawingModule {}

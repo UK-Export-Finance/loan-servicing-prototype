@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   CalculateInterestStrategyName,
   Drawing,
-  DrawingProjectionEvent,
+  DrawingProjectedEvent,
   DrawingWithSpecifiedConfig,
 } from 'loan-servicing-common'
 import calculateInterestStrategies from './strategies'
@@ -17,10 +17,10 @@ class CalculateInterestService {
     return calculateInterestStrategies[strategyName](drawing)
   }
 
-  generateInterestEvents = (drawing: Drawing): DrawingProjectionEvent[] => {
+  generateInterestEvents = (drawing: Drawing): DrawingProjectedEvent[] => {
     const expiryDate = new Date(drawing.expiryDate)
     let dateToProcess = new Date(drawing.issuedEffectiveDate)
-    const interestEvents: DrawingProjectionEvent[] = []
+    const interestEvents: DrawingProjectedEvent[] = []
     while (dateToProcess <= expiryDate) {
       interestEvents.push({
         effectiveDate: dateToProcess,

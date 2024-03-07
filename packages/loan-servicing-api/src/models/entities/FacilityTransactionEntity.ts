@@ -1,11 +1,11 @@
 import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
-import { DrawingProjectionEvent, DrawingTransaction } from 'loan-servicing-common'
+import { DrawingProjectedEvent, Transaction } from 'loan-servicing-common'
 import DrawingProjectionEventDtoClass from 'models/dtos/DrawingProjectedEventDto'
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 @Index(['streamId', 'datetime'])
-class DrawingTransactionEntity implements DrawingTransaction {
+class DrawingTransactionEntity implements Transaction {
   @PrimaryGeneratedColumn()
   id!: number
 
@@ -13,7 +13,7 @@ class DrawingTransactionEntity implements DrawingTransaction {
   streamId!: string
 
   @ClassAsJsonColumn(DrawingProjectionEventDtoClass)
-  sourceEvent!: DrawingProjectionEvent;
+  sourceEvent!: DrawingProjectedEvent;
 
   @Column()
   datetime!: Date

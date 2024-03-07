@@ -1,5 +1,5 @@
 import { NotImplementedException } from '@nestjs/common'
-import { DrawingTransaction, LoanServicingEvent } from 'loan-servicing-common'
+import { Transaction, LoanServicingEvent } from 'loan-servicing-common'
 import { EventTableRow } from 'types/events'
 import { NunjuckTableRow } from 'types/nunjucks'
 import { TransactionTableRow } from 'types/transactions'
@@ -59,7 +59,7 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
 }
 
 export const getTransactionTableRow = (
-  transaction: DrawingTransaction,
+  transaction: Transaction,
 ): TransactionTableRow => ({
   date: new Date(transaction.datetime).toLocaleDateString('en-GB'),
   reference: transaction.reference,

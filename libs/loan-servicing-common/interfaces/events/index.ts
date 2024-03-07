@@ -1,6 +1,9 @@
-import { DrawingEvent } from './drawingEvents'
-import { FacilityEvent } from './facilityEvents'
+import { DrawingEvent, drawingEventNames } from './drawingEvents'
+import { FacilityEvent, facilityEventNames } from './facilityEvents'
 
 export type LoanServicingEvent = FacilityEvent | DrawingEvent
 
-export type EventTypes = LoanServicingEvent['type']
+export const eventTypeNames = [
+  ...facilityEventNames,
+  ...drawingEventNames,
+] as const

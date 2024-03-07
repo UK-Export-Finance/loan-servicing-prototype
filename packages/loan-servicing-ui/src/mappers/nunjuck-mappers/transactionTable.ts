@@ -1,10 +1,10 @@
-import { DrawingTransaction } from 'loan-servicing-common'
+import { Transaction } from 'loan-servicing-common'
 import { NunjuckTableRow } from 'types/nunjucks'
 import { TransactionTableRow } from 'types/transactions'
 import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 const getTransactionTableRow = (
-  transaction: DrawingTransaction,
+  transaction: Transaction,
 ): TransactionTableRow => ({
   date: new Date(transaction.datetime).toLocaleDateString('en-GB'),
   reference: transaction.reference,
@@ -17,7 +17,7 @@ const getTransactionTableRow = (
 })
 
 const mapTransactionsToTable = (
-  events: DrawingTransaction[],
+  events: Transaction[],
 ): NunjuckTableRow[] =>
   events
     ?.map(getTransactionTableRow)
