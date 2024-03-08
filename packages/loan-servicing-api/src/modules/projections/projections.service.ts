@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable, Inject, NotImplementedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Transactional } from 'typeorm-transactional'
@@ -75,7 +75,6 @@ class ProjectionsService {
     const { facility, facilityProjectedEvents, facilityStreamVersion } =
       await this.intialiseFacility(facilityId)
 
-
     const projectedEvents = [
       ...drawingProjectedEvents,
       ...facilityProjectedEvents,
@@ -114,22 +113,31 @@ class ProjectionsService {
         eventIndex: number,
         allEvents: ProjectedEvent[],
       ) => {
-        if (sourceEvent.entityType === 'drawing' && drawing) {
-          return this.drawingEventHandler.applyEvent({
-            entity: drawing,
-            transactions,
-            sourceEvent: sourceEvent as DrawingProjectedEvent,
-            eventIndex,
-            allEvents,
-          })
+        switch (sourceEvent.entityType) {
+          case 'drawing':
+            if (!drawing) {
+              throw new Error(
+                'Event is for drawing but no drawing entity provided',
+              )
+            }
+            return this.drawingEventHandler.applyEvent({
+              entity: drawing,
+              transactions,
+              sourceEvent: sourceEvent as DrawingProjectedEvent,
+              eventIndex,
+              allEvents,
+            })
+          case 'facility':
+            return this.facilityEventHandler.applyEvent({
+              entity: facility,
+              transactions,
+              sourceEvent: sourceEvent as FacilityProjectedEvent,
+              eventIndex,
+              allEvents,
+            })
+          default:
+            throw new NotImplementedException()
         }
-        return this.facilityEventHandler.applyEvent({
-          entity: facility,
-          transactions,
-          sourceEvent: sourceEvent as FacilityProjectedEvent,
-          eventIndex,
-          allEvents,
-        })
       },
       [],
     )

@@ -1,7 +1,5 @@
 /* eslint-disable no-param-reassign */
 import { Injectable, Inject, NotImplementedException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import {
   CreateNewFacilityEvent,
   AdjustFacilityAmountEvent,
@@ -14,21 +12,18 @@ import {
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
-import FacilityEntity from 'models/entities/FacilityEntity'
 import {
   EventHandler,
   EventHandlerProps,
-  IEventHandler,
+  IEventHandlerService,
 } from 'types/eventHandler'
 
 @Injectable()
 class FacilityEventHandlingService
-  implements IEventHandler<Facility, FacilityProjectedEvent>
+  implements IEventHandlerService<Facility, FacilityProjectedEvent>
 {
   constructor(
     @Inject(EventService) private eventService: EventService,
-    @InjectRepository(FacilityEntity)
-    private facilityRepo: Repository<FacilityEntity>,
   ) {}
 
   getProjectedEvents = async (

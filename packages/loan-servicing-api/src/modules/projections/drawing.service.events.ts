@@ -21,12 +21,12 @@ import StrategyService from 'modules/strategy/strategy.service'
 import {
   EventHandler,
   EventHandlerProps,
-  IEventHandler,
+  IEventHandlerService,
 } from 'types/eventHandler'
 
 @Injectable()
 class DrawingEventHandlingService
-  implements IEventHandler<Drawing, DrawingProjectedEvent>
+  implements IEventHandlerService<Drawing, DrawingProjectedEvent>
 {
   constructor(
     @Inject(EventService) private eventService: EventService,

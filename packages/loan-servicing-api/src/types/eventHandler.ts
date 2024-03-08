@@ -24,7 +24,7 @@ export type EventHandler<
   mutableTransactions: Transaction[],
 ) => Transaction[]
 
-export type IEventHandler<
+export type IEventHandlerService<
   E extends Facility | Drawing,
   T extends ProjectedEvent,
 > = {
