@@ -11,12 +11,12 @@ import Big from 'big.js'
 class DrawingTransactionService {
   constructor(
     @InjectRepository(TransactionEntity)
-    private drawingTransactionRepo: Repository<TransactionEntity>,
+    private transactionRepo: Repository<TransactionEntity>,
   ) {}
 
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getDailyTransactions(streamId: string): Promise<Transaction[] | null> {
-    return this.drawingTransactionRepo
+    return this.transactionRepo
       .createQueryBuilder('t')
       .where({ streamId })
       .orderBy({ 't.datetime': 'ASC' })
@@ -28,16 +28,19 @@ class DrawingTransactionService {
     streamId: string,
   ): Promise<SummarisedTransaction[] | null> {
     // BEWARE: SQL Injection risk - not for production
-    const monthlyInterestAmounts = (await this.drawingTransactionRepo.query(`
-      SELECT
-        YEAR([datetime]) AS 'year',
-        MONTH([datetime]) AS 'month',
-        SUM([interestChange]) AS 'interest'
-      FROM [LoanServicing].[dbo].[drawing_transaction_entity]
-      WHERE [streamId] = '${streamId}'
-      AND [reference] = 'interest'
-      GROUP BY MONTH([datetime]), YEAR([datetime])
-    `)) as { year: number; month: number; interest: number }[]
+    const query = `
+    SELECT
+      YEAR([datetime]) AS 'year',
+      MONTH([datetime]) AS 'month',
+      SUM([interestChange]) AS 'interest'
+    FROM [LoanServicing].[dbo].[transaction_entity]
+    WHERE [streamId] = '${streamId}'
+    AND [reference] = 'interest'
+    GROUP BY MONTH([datetime]), YEAR([datetime])
+  `
+    const monthlyInterestAmounts = (await this.transactionRepo.query(
+      query,
+    )) as { year: number; month: number; interest: number }[]
     const monthlyInterestTransactions =
       monthlyInterestAmounts.map<SummarisedTransaction>((a) => ({
         streamId,
@@ -50,7 +53,7 @@ class DrawingTransactionService {
         balanceAfterTransaction: '0',
         interestAccrued: '0',
       }))
-    const nonInterestTransactions = await this.drawingTransactionRepo
+    const nonInterestTransactions = await this.transactionRepo
       .createQueryBuilder('t')
       .where({ streamId })
       .andWhere('t.reference != :ref', { ref: 'interest' })
