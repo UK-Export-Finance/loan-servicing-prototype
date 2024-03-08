@@ -1,13 +1,13 @@
-import { DrawingProjectedEvent, EventBase } from 'loan-servicing-common'
+import { ProjectedEvent } from 'loan-servicing-common'
 
 class DrawingProjectionEventDtoClass
-  implements Pick<EventBase<string, number, object>,  'effectiveDate' | 'eventData' | 'type'>
+  implements Pick<ProjectedEvent, 'effectiveDate' | 'eventData' | 'type'>
 {
   effectiveDate!: Date
 
-  type!: string
+  type!: ProjectedEvent['type']
 
-  eventData!: DrawingProjectedEvent['eventData']
+  eventData!: ProjectedEvent['eventData']
 }
 
 export default DrawingProjectionEventDtoClass

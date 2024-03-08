@@ -25,11 +25,11 @@ import {
   RevertWithdrawalDtoClass,
   UpdateInterestRequestDtoClass,
 } from 'models/dtos/drawing'
-import { UntypedEvent } from 'models/dtos/event'
+import { UntypedEventClass } from 'models/dtos/event'
 import { AddDrawingDtoClass } from 'models/dtos/facility'
-import DrawingTransactionEntity from 'models/entities/FacilityTransactionEntity'
+import TransactionEntity from 'models/entities/TransactionEntity'
 import DrawingService from './drawing.service'
-import DrawingProjectionsService from './drawing.service.projections'
+import DrawingTransactionService from './drawing.service.transactions'
 
 @ApiTags('Drawing')
 @Controller('/facility/:facilityId/drawing')
@@ -37,7 +37,7 @@ import DrawingProjectionsService from './drawing.service.projections'
 class DrawingController {
   constructor(
     private drawingService: DrawingService,
-    private transactionService: DrawingProjectionsService,
+    private transactionService: DrawingTransactionService,
   ) {}
 
   @Get(':drawingId')
@@ -53,7 +53,7 @@ class DrawingController {
   }
 
   @Get(':drawingId/events')
-  @ApiOkResponse({ type: UntypedEvent })
+  @ApiOkResponse({ type: UntypedEventClass })
   async getDrawingEvents(
     @Param('drawingId') drawingStreamId: string,
   ): Promise<LoanServicingEvent[]> {
@@ -66,14 +66,13 @@ class DrawingController {
   }
 
   @Get(':drawingId/transactions')
-  @ApiOkResponse({ type: DrawingTransactionEntity })
+  @ApiOkResponse({ type: TransactionEntity })
   async getDrawingTransactions(
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingStreamId: string,
     @Query('interestResolution')
     interestResolution: TransactionResolution = 'daily',
   ): Promise<Transaction[] | SummarisedTransaction[]> {
-    await this.transactionService.buildProjections(facilityId, drawingStreamId)
     const facilityEvents =
       interestResolution === 'daily'
         ? await this.transactionService.getDailyTransactions(drawingStreamId)

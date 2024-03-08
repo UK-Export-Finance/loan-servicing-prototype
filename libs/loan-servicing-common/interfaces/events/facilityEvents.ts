@@ -1,16 +1,11 @@
 import { NewFacilityRequestDto } from '../facility'
 import { EventBase } from './eventBase'
 
-export const facilityEventNames = [
-  'CreateNewFacility',
-  'AdjustFacilityAmount',
-] as const
-
 type FacilityEventBase<
-  Type extends (typeof facilityEventNames)[number],
+  Type extends string,
   Version extends number,
   Data extends object,
-> = EventBase<Type, Version, Data>
+> = EventBase<Type, Version, Data, 'facility'>
 
 export type CreateNewFacilityEvent = FacilityEventBase<
   'CreateNewFacility',

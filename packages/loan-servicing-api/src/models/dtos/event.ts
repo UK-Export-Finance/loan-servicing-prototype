@@ -1,7 +1,7 @@
-import { EventBase } from 'loan-servicing-common'
+import { EntityWithEvents, UntypedEvent } from 'loan-servicing-common'
 
 // eslint-disable-next-line import/prefer-default-export
-export class UntypedEvent implements EventBase<string, number, object> {
+export class UntypedEventClass implements UntypedEvent {
   streamId!: string
 
   streamVersion!: number
@@ -9,6 +9,8 @@ export class UntypedEvent implements EventBase<string, number, object> {
   eventDate!: Date
 
   effectiveDate!: Date
+
+  entityType!: EntityWithEvents
 
   type!: string
 

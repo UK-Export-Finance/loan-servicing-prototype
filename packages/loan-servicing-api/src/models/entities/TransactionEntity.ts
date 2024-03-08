@@ -5,7 +5,7 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 @Index(['streamId', 'datetime'])
-class DrawingTransactionEntity implements Transaction {
+class TransactionEntity implements Transaction {
   @PrimaryGeneratedColumn()
   id!: number
 
@@ -34,4 +34,4 @@ class DrawingTransactionEntity implements Transaction {
   balanceAfterTransaction!: string
 }
 
-export default DrawingTransactionEntity
+export default TransactionEntity

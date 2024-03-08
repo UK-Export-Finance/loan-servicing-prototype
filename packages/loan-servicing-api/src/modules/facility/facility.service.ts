@@ -12,7 +12,7 @@ import {
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import FacilityEntity from 'models/entities/FacilityEntity'
-import FacilityProjectionsService from './facility.service.projections'
+import ProjectionsService from 'modules/projections/projections.service'
 
 @Injectable()
 class FacilityService {
@@ -20,8 +20,8 @@ class FacilityService {
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(FacilityEntity)
     private facilityRepo: Repository<FacilityEntity>,
-    @Inject(FacilityProjectionsService)
-    private projectionsService: FacilityProjectionsService,
+    @Inject(ProjectionsService)
+    private projectionsService: ProjectionsService,
   ) {}
 
   @Transactional()
@@ -32,14 +32,17 @@ class FacilityService {
       {
         streamId: crypto.randomUUID(),
         effectiveDate: facilityRequest.issuedEffectiveDate,
+        entityType: 'facility',
         type: 'CreateNewFacility',
         typeVersion: 1,
         eventData: facilityRequest,
       },
     )
-    const facility = await this.projectionsService.buildProjections(
-      savedEvent.streamId,
-    )
+    const { facility } =
+      await this.projectionsService.buildProjectionsForFacility(
+        savedEvent.streamId,
+      )
+
     return facility
   }
 
@@ -53,13 +56,15 @@ class FacilityService {
       {
         streamId,
         effectiveDate: new Date(effectiveDate),
+        entityType: 'facility',
         type: 'AdjustFacilityAmount',
         typeVersion: 1,
         eventData: { adjustment },
       },
       streamVersion,
     )
-    const facility = await this.projectionsService.buildProjections(streamId)
+    const {facility} =
+      await this.projectionsService.buildProjectionsForFacility(streamId)
     return facility
   }
 
@@ -80,14 +85,6 @@ class FacilityService {
 
   async getAllFacilities(): Promise<Facility[] | null> {
     return this.facilityRepo.find()
-  }
-
-  async recalculateFacilitiesOfType(facilityType: string): Promise<void> {
-    const facilities = await this.facilityRepo.find({ where: { facilityType } })
-    const updates = facilities.map((f) =>
-      this.projectionsService.buildProjections(f.streamId),
-    )
-    await Promise.all(updates)
   }
 }
 

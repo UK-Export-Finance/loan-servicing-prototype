@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { LoanServicingEvent } from 'loan-servicing-common'
-import { UntypedEvent } from 'models/dtos/event'
+import { UntypedEventClass } from 'models/dtos/event'
 import {
   AdjustFacilityAmountDtoClass,
   FacilityResponseDtoClass,
@@ -35,7 +35,7 @@ class FacilityController {
   }
 
   @Get(':facilityId/events')
-  @ApiOkResponse({ type: UntypedEvent })
+  @ApiOkResponse({ type: UntypedEventClass })
   async getFacilityEvents(
     @Param('facilityId') facilityStreamId: string,
   ): Promise<LoanServicingEvent[]> {

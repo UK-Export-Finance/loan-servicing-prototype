@@ -1,7 +1,7 @@
-import { ProjectedEventBase } from "../projectedEventBase";
+import { ProjectedFacilityEventBase } from '../projectedEventBase'
 
-export type CalculateFacilityFeeEvent = ProjectedEventBase<
+export type CalculateFacilityFeeEvent = ProjectedFacilityEventBase<
   'CalculateFacilityFee',
   1,
-  { totalRepayments: number; repaymentNumber: number }
+  { facilityValue: string; accrualRate: string }
 >

@@ -24,6 +24,8 @@ class CalculateInterestService {
     while (dateToProcess <= expiryDate) {
       interestEvents.push({
         effectiveDate: dateToProcess,
+        streamId: drawing.streamId,
+        entityType: 'drawing',
         type: 'CalculateInterest',
         eventData: {},
       })

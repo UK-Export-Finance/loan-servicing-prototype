@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 import EventEntity from 'models/entities/EventEntity'
 import DrawingEntity from 'models/entities/DrawingEntity'
-import DrawingTransactionEntity from 'models/entities/FacilityTransactionEntity'
+import TransactionEntity from 'models/entities/TransactionEntity'
 import FacilityType from 'models/entities/FacilityTypeEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 
@@ -17,7 +17,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   entities: [
     EventEntity,
     DrawingEntity,
-    DrawingTransactionEntity,
+    TransactionEntity,
     FacilityType,
     FacilityEntity,
   ],

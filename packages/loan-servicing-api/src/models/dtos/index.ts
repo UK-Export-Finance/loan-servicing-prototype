@@ -1,5 +1,5 @@
 import { ClassConstructor } from 'class-transformer'
-import { LoanServicingEvent, eventTypeNames } from 'loan-servicing-common'
+import { LoanServicingEvent } from 'loan-servicing-common'
 import {
   AdjustFacilityAmountDtoClass,
   NewFacilityRequestDtoClass,
@@ -12,7 +12,7 @@ import {
 } from './drawing'
 
 const eventTypeToEventClassDefinition: {
-  [key in typeof eventTypeNames[number]]: ClassConstructor<
+  [key in LoanServicingEvent['type']]: ClassConstructor<
     Extract<LoanServicingEvent, { type: key }>['eventData']
   >
 } = {

@@ -1,7 +1,7 @@
 import Big, { roundDown } from 'big.js'
 import {
-  DrawingProjectedEvent,
   DrawingWithSpecifiedConfig,
+  ProjectedEvent,
   RepaymentStrategyName,
   RepaymentsEvent,
 } from 'loan-servicing-common'
@@ -9,7 +9,7 @@ import {
 export type CalculateRepaymentsStrategy<T extends RepaymentStrategyName> = (
   facility: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
   event: RepaymentsEvent,
-  remainingEvents: DrawingProjectedEvent[],
+  remainingEvents: ProjectedEvent[],
 ) => string
 
 export const calculateRegularRepayment: CalculateRepaymentsStrategy<

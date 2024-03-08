@@ -1,23 +1,35 @@
 import {
   Drawing,
   Transaction,
-  DrawingProjectedEvent,
   ProjectedEvent,
+  Facility,
 } from 'loan-servicing-common'
 
-export type EventHandlerProps<T extends ProjectedEvent> = {
-  drawingEntity: Drawing
+export type EventHandlerProps<
+  E extends Facility | Drawing,
+  T extends ProjectedEvent,
+> = {
+  entity: E
   sourceEvent: T
   transactions: Transaction[]
   eventIndex: number
-  allEvents: DrawingProjectedEvent[]
+  allEvents: ProjectedEvent[]
 }
 
-export type EventHandler<T extends ProjectedEvent> = (
-  eventProps: EventHandlerProps<T>,
-  mutableTransactions: Transaction[]
+export type EventHandler<
+  E extends Facility | Drawing,
+  T extends ProjectedEvent,
+> = (
+  eventProps: EventHandlerProps<E, T>,
+  mutableTransactions: Transaction[],
 ) => Transaction[]
 
-export type IHasEventHandlers<T extends ProjectedEvent> = {
-  [key in T['type']]: EventHandler<Extract<T, { type: key }>>
+export type IEventHandler<
+  E extends Facility | Drawing,
+  T extends ProjectedEvent,
+> = {
+  [key in T['type']]: EventHandler<E, Extract<T, { type: key }>>
+} & {
+  applyEvent: (eventProps: EventHandlerProps<E, T>) => Transaction[]
+  getProjectedEvents: (entity: E) => Promise<T[]>
 }

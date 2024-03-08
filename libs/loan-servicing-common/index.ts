@@ -16,3 +16,4 @@ export * from './interfaces/projectedEvents/facility/fees'
 export * from './interfaces/projectedEvents'
 
 export * from './utils/type-utils'
+export * from './utils/event-utils'

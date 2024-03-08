@@ -13,6 +13,7 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
   'Regular'
 > = ({
   expiryDate,
+  streamId,
   drawingConfig: {
     repaymentsStrategy: { startDate, monthsBetweenRepayments },
   },
@@ -29,6 +30,8 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
   const repaymentEvents = repaymentDates.map<RepaymentsEvent>((date, i) => ({
     effectiveDate: date,
     type: 'Repayment',
+    streamId,
+    entityType: 'drawing',
     eventData: {
       totalRepayments: repaymentDates.length,
       repaymentNumber: i + 1,
@@ -44,10 +47,13 @@ export const getManualRepaymentEvents: GetRepaymentEventsStrategy<'Manual'> = ({
   drawingConfig: {
     repaymentsStrategy: { repayments },
   },
+  streamId,
 }) => {
   const repaymentEvents = repayments.map<RepaymentsEvent>((r, i) => ({
     effectiveDate: r.date,
     type: 'Repayment',
+    streamId,
+    entityType: 'drawing',
     eventData: { totalRepayments: repayments.length, repaymentNumber: i + 1 },
   }))
   repaymentEvents[repaymentEvents.length - 1].type = 'FinalRepayment'

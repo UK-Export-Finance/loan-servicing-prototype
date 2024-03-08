@@ -6,18 +6,11 @@ import {
 } from '../drawing'
 import { EventBase } from './eventBase'
 
-export const drawingEventNames = [
-  'CreateNewDrawing',
-  'UpdateInterest',
-  'WithdrawFromDrawing',
-  'RevertWithdrawal',
-] as const
-
 type DrawingEventBase<
-  Type extends (typeof drawingEventNames)[number],
+  Type extends string,
   Version extends number,
   Data extends object,
-> = EventBase<Type, Version, Data>
+> = EventBase<Type, Version, Data, 'drawing'>
 
 export type CreateNewDrawingEvent = DrawingEventBase<
   'CreateNewDrawing',

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
-  DrawingProjectedEvent,
   DrawingWithSpecifiedConfig,
+  ProjectedEvent,
   RepaymentsEvent,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
@@ -21,7 +21,7 @@ class RepaymentsService {
   calculateRepayment<T extends RepaymentStrategyName>(
     drawing: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
     event: RepaymentsEvent,
-    remainingEvents: DrawingProjectedEvent[],
+    remainingEvents: ProjectedEvent[],
   ): string {
     const options = drawing.drawingConfig.repaymentsStrategy
     const strategyName: T = options.name
