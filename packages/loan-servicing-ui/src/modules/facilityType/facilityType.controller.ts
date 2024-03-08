@@ -16,6 +16,7 @@ import {
 } from 'templates/edit-facility-type'
 import {
   calculateInterestSelectOptions,
+  facilityFeeSelectOptions,
   repaymentsSelectOptions,
 } from 'controls/strategyControlsOptions'
 import { FacilityTypeNjkInput } from 'templates/facility-type'
@@ -31,6 +32,7 @@ class FacilityTypeController {
     return {
       calculateInterestSelectOptions,
       repaymentsSelectOptions,
+      facilityFeeSelectOptions,
     }
   }
 

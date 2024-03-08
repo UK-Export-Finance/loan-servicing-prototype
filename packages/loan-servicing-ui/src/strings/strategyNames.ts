@@ -1,5 +1,6 @@
 import {
   CalculateInterestStrategyName,
+  FacilityFeeStrategyName,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
 
@@ -15,6 +16,11 @@ export const interestStrategyNames: Record<
 export const repaymentsStrategyNames: Record<RepaymentStrategyName, string> = {
   Regular: 'Regular Repayments',
   Manual: 'Manual Repayments',
+}
+
+export const facilityFeeStrategyNames: Record<FacilityFeeStrategyName, string> = {
+  AccruingFacilityFee: 'Accruing Facility Fees',
+  FixedFacilityFee: 'Fixed Facility Fees',
 }
 
 export const allPlaceholders: { [key: string]: string } = {

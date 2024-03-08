@@ -9,7 +9,7 @@ import {
   UpdateDrawingInterestRequestDto,
 } from 'loan-servicing-common'
 import { Type } from 'class-transformer'
-import { DrawingConfigurationDtoClass } from './facilityConfiguration'
+import { DrawingConfigurationDtoClass } from './drawingConfiguration'
 
 export class DrawingDtoClass implements Drawing {
   @ApiProperty()

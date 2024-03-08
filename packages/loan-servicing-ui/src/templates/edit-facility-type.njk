@@ -49,6 +49,20 @@
       items: repaymentsSelectOptions
     }) }}
 
+    {{ govukCheckboxes({
+      name: "facilityFeeStrategies",
+      fieldset: {
+        legend: {
+          text: "Supported Facility Fee Types",
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: "Select all that apply."
+      },
+      items: facilityFeeSelectOptions
+    }) }}
+
     {{ govukButton({  text: "Save facility type"}) }}
   </form>
 

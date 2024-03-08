@@ -7,8 +7,8 @@ import {
   FacilityEvent,
   FacilityProjectedEvent,
   Transaction,
-  CalculateFacilityFeeEvent,
   sortEventByEffectiveDate,
+  CalculateFacilityFeeEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -102,6 +102,10 @@ class FacilityEventHandlingService
     })
     return transactions
   }
+
+  CalculateFixedFacilityFee = this.CalculateFacilityFee
+
+  CalculateAccruingFacilityFee = this.CalculateFacilityFee
 
   applyEventToFacility = (
     event: FacilityEvent,

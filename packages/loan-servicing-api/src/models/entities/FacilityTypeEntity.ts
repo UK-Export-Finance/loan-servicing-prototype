@@ -1,5 +1,6 @@
 import {
   CalculateInterestStrategyName,
+  FacilityFeeStrategyName,
   FacilityType,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
@@ -19,6 +20,9 @@ class FacilityTypeEntity implements FacilityType {
 
   @Column({ type: 'simple-array' })
   repaymentsStrategies!: RepaymentStrategyName[]
+
+  @Column({ type: 'simple-array' })
+  facilityFeeStrategies!: FacilityFeeStrategyName[]
 }
 
 export default FacilityTypeEntity

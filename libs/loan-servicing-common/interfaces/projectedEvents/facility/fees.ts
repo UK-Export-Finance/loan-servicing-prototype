@@ -1,7 +1,18 @@
+import { AccruingFacilityFeeStrategyOption, FixedFacilityFeeStrategyOption } from '../../strategies/facilityFee'
 import { ProjectedFacilityEventBase } from '../projectedEventBase'
 
-export type CalculateFacilityFeeEvent = ProjectedFacilityEventBase<
-  'CalculateFacilityFee',
+export type CalculateAccruingFacilityFeeEvent = ProjectedFacilityEventBase<
+  'CalculateAccruingFacilityFee',
   1,
-  { facilityValue: string; accrualRate: string }
+  AccruingFacilityFeeStrategyOption
 >
+
+export type CalculateFixedFacilityFeeEvent = ProjectedFacilityEventBase<
+  'CalculateFixedFacilityFee',
+  1,
+  FixedFacilityFeeStrategyOption
+>
+
+export type CalculateFacilityFeeEvent =
+  | CalculateAccruingFacilityFeeEvent
+  | CalculateFixedFacilityFeeEvent

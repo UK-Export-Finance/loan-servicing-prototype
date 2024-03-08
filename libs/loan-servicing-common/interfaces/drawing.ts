@@ -3,7 +3,7 @@ import { ConvertToDtoType, ReplaceProperty } from '../utils/type-utils'
 import {
   DrawingConfiguration,
   SpecifiedDrawingConfig,
-} from './facilityConfiguration'
+} from './strategies'
 
 export type Drawing = {
   streamId: string

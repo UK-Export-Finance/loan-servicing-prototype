@@ -15,6 +15,7 @@ import {
 } from 'loan-servicing-common'
 import { Type } from 'class-transformer'
 import { DrawingDtoClass } from './drawing'
+import { FacilityConfigurationDtoClass } from './facilityConfiguration'
 
 export class FacilityResponseDtoClass implements FacilityResponseDto {
   @ApiProperty()
@@ -26,6 +27,11 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   @ApiProperty()
   @IsNotEmpty()
   facilityType!: string
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => FacilityConfigurationDtoClass)
+  facilityConfig!: FacilityConfigurationDtoClass
 
   @ApiProperty({ type: () => [DrawingDtoClass] })
   @ArrayNotEmpty()

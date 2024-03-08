@@ -1,9 +1,26 @@
 import { ReplaceProperty } from '../../utils/type-utils'
 import {
+  FacilityFeeStrategyName,
+  FacilityFeeStrategyOption,
+} from './facilityFee'
+import {
   CalculateInterestStrategyName,
   CalculateInterestStrategyOption,
 } from './interest'
 import { RepaymentStrategyName, RepaymentStrategyOptions } from './repayment'
+
+export type FacilityConfiguration = {
+  facilityFeeStrategy: FacilityFeeStrategyOption
+}
+
+export type SpecifiedFacilityConfig<
+  StrategyGroup extends keyof FacilityConfiguration,
+  StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
+> = ReplaceProperty<
+  FacilityConfiguration,
+  StrategyGroup,
+  Extract<FacilityConfiguration[StrategyGroup], { name: StrategyName }>
+>
 
 export type DrawingConfiguration = {
   calculateInterestStrategy: CalculateInterestStrategyOption
@@ -23,4 +40,5 @@ export type FacilityType = {
   name: string
   interestStrategies: CalculateInterestStrategyName[]
   repaymentsStrategies: RepaymentStrategyName[]
+  facilityFeeStrategies: FacilityFeeStrategyName[]
 }

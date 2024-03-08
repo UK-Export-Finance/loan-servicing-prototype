@@ -1,95 +1,62 @@
 import { ApiExtraModels, ApiProperty, refs } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
-  ArrayNotEmpty,
-  IsArray,
-  IsDate,
-  IsNotEmpty,
-  ValidateNested,
-} from 'class-validator'
-import {
-  CalculateInterestStrategyName,
-  DrawingConfiguration,
-  ManualRepaymentStrategyOptions,
-  RegularRepaymentStrategyOptions,
-  Repayment,
+  AccruingFacilityFeeStrategyOption,
+  FacilityConfiguration,
+  FacilityFeeStrategyName,
+  FixedFacilityFeeStrategyOption,
 } from 'loan-servicing-common'
+import { IsDate, ValidateNested } from 'class-validator'
+import StrategyOptionDtoClass from './strategy-option'
 
-const interestStrategyNames: CalculateInterestStrategyName[] = [
-  'Compounding',
-  'NoInterest',
-  'PrincipalOnly',
-]
+const interestStrategyNames: FacilityFeeStrategyName[] = ['AccruingFacilityFee']
 
-class StrategyOptionDtoClass {
-  name!: string
-}
-
-export class CalculateInterestStrategyOptionDtoClass {
+export class FacilityFeeStrategyOptionDtoClass {
   @ApiProperty({
     enum: interestStrategyNames,
   })
-  name!: CalculateInterestStrategyName
+  name!: FacilityFeeStrategyName
 }
 
-export class RegularRepaymentStrategyOptionsDtoClass
+export class FixedFacilityFeeStrategyOptionDtoClass
   extends StrategyOptionDtoClass
-  implements RegularRepaymentStrategyOptions
+  implements FixedFacilityFeeStrategyOption
 {
-  @ApiProperty({ enum: ['Regular'] })
-  name: 'Regular' = 'Regular'
+  @ApiProperty({ enum: ['FixedFacilityFee'] })
+  name: 'FixedFacilityFee' = 'FixedFacilityFee'
 
   @ApiProperty()
   @IsDate()
-  @Type(() => Date)
-  startDate!: Date
-
-  @ApiProperty()
-  monthsBetweenRepayments!: string
-}
-
-export class RepaymentDtoClass implements Repayment {
-  @ApiProperty()
-  @IsDate()
-  @IsNotEmpty()
   @Type(() => Date)
   date!: Date
 
   @ApiProperty()
-  @IsNotEmpty()
-  amount!: string
+  feeAmount!: string
 }
-@ApiExtraModels(RepaymentDtoClass)
-export class ManualRepaymentStrategyOptionsDtoClass
-  extends StrategyOptionDtoClass
-  implements ManualRepaymentStrategyOptions
-{
-  @ApiProperty({ enum: ['Manual'] })
-  @IsNotEmpty()
-  name: 'Manual' = 'Manual'
 
-  @ApiProperty({ type: () => [RepaymentDtoClass] })
-  @ArrayNotEmpty()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => RepaymentDtoClass)
-  @IsNotEmpty()
-  repayments!: RepaymentDtoClass[]
+export class AccruingFacilityFeeStrategyOptionDtoClass
+  extends StrategyOptionDtoClass
+  implements AccruingFacilityFeeStrategyOption
+{
+  @ApiProperty({ enum: ['AccruingFacilityFee'] })
+  name: 'AccruingFacilityFee' = 'AccruingFacilityFee'
+
+  @ApiProperty()
+  accrualRate!: string
+
+  @ApiProperty({ enum: ['facilityAmount', 'drawnAmount', 'undrawnAmount'] })
+  accruesOn!: AccruingFacilityFeeStrategyOption['accruesOn']
 }
 
 @ApiExtraModels(
-  RegularRepaymentStrategyOptionsDtoClass,
-  ManualRepaymentStrategyOptionsDtoClass,
+  AccruingFacilityFeeStrategyOptionDtoClass,
+  FixedFacilityFeeStrategyOptionDtoClass,
 )
-export class DrawingConfigurationDtoClass implements DrawingConfiguration {
-  @ApiProperty()
-  @Type(() => CalculateInterestStrategyOptionDtoClass)
-  calculateInterestStrategy!: CalculateInterestStrategyOptionDtoClass
-
+export class FacilityConfigurationDtoClass implements FacilityConfiguration {
   @ApiProperty({
     oneOf: refs(
-      RegularRepaymentStrategyOptionsDtoClass,
-      ManualRepaymentStrategyOptionsDtoClass,
+      AccruingFacilityFeeStrategyOptionDtoClass,
+      FixedFacilityFeeStrategyOptionDtoClass,
     ),
   })
   @Type(() => StrategyOptionDtoClass, {
@@ -97,13 +64,13 @@ export class DrawingConfigurationDtoClass implements DrawingConfiguration {
     discriminator: {
       property: 'name',
       subTypes: [
-        { value: RegularRepaymentStrategyOptionsDtoClass, name: 'Regular' },
-        { value: ManualRepaymentStrategyOptionsDtoClass, name: 'Manual' },
+        { value: AccruingFacilityFeeStrategyOptionDtoClass, name: 'Regular' },
+        { value: FixedFacilityFeeStrategyOptionDtoClass, name: 'Manual' },
       ],
     },
   })
   @ValidateNested()
-  repaymentsStrategy!:
-    | RegularRepaymentStrategyOptionsDtoClass
-    | ManualRepaymentStrategyOptionsDtoClass
+  facilityFeeStrategy!:
+    | AccruingFacilityFeeStrategyOptionDtoClass
+    | FixedFacilityFeeStrategyOptionDtoClass
 }

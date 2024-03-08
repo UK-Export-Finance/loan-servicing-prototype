@@ -1,6 +1,6 @@
 import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
 import { Drawing, DrawingConfiguration } from 'loan-servicing-common'
-import { DrawingConfigurationDtoClass } from 'models/dtos/facilityConfiguration'
+import { DrawingConfigurationDtoClass } from 'models/dtos/drawingConfiguration'
 import { Column, Entity, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
 import type FacilityEntity from './FacilityEntity'
 
