@@ -41,6 +41,22 @@ export const facilityToFacilitySummaryProps = (
     },
     {
       key: {
+        text: 'Undrawn Amount',
+      },
+      value: {
+        text: `£${facility.undrawnAmount}`,
+      },
+    },
+    {
+      key: {
+        text: 'Drawn Amount',
+      },
+      value: {
+        text: `£${facility.drawnAmount}`,
+      },
+    },
+    {
+      key: {
         text: 'Start Date',
       },
       value: {
@@ -56,7 +72,7 @@ export const facilityToFacilitySummaryProps = (
       value: {
         text: new Date(facility.expiryDate).toLocaleDateString('en-GB'),
       },
-    }
+    },
   ],
 })
 

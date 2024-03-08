@@ -8,6 +8,8 @@ export type Facility = {
   facilityType: string
   drawings: Drawing[]
   facilityAmount: string
+  drawnAmount: string
+  undrawnAmount: string
   issuedEffectiveDate: Date
   expiryDate: Date
 }
@@ -25,5 +27,5 @@ export type AdjustFacilityAmountDto = {
 
 export type NewFacilityRequestDto = Omit<
   Facility,
-  'streamId' | 'streamVersion' | 'drawings'
+  'streamId' | 'streamVersion' | 'drawings' | 'drawnAmount' | 'undrawnAmount'
 >

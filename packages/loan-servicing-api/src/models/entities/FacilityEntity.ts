@@ -25,6 +25,12 @@ class FacilityEntity implements Facility {
   @CurrencyColumn()
   facilityAmount!: string
 
+  @CurrencyColumn()
+  drawnAmount!: string
+
+  @CurrencyColumn()
+  undrawnAmount!: string
+
   @Column()
   issuedEffectiveDate!: Date
 

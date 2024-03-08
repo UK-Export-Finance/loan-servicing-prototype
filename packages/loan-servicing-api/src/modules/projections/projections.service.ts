@@ -202,11 +202,15 @@ class ProjectionsService {
       throw new Error('First created event is not facility creation')
     }
 
-    return this.facilityRepo.create({
+    const entity: Omit<Facility, 'drawings'> = {
       streamId: creationEvent.streamId,
       streamVersion: 1,
+      drawnAmount: '0',
+      undrawnAmount: creationEvent.eventData.facilityAmount,
       ...creationEvent.eventData,
-    })
+    }
+
+    return this.facilityRepo.create(entity)
   }
 
   getDrawingAtCreation = (

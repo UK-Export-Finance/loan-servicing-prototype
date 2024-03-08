@@ -31,13 +31,12 @@ import {
   facilityToDrawingSummaries,
   facilityToFacilitySummaryProps,
 } from 'mappers/nunjuck-mappers/facilitySummary'
-import DrawingService from 'modules/drawing/drawing.service'
+import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 
 @Controller('')
 class FacilityController {
   constructor(
     private facilityService: FacilityService,
-    private drawingService: DrawingService,
   ) {}
 
   @Get('facility/new')
@@ -92,7 +91,7 @@ class FacilityController {
 
     return {
       facility,
-      eventRows: events!,
+      eventRows: mapEventsToTable(events!),
       facilityCreated,
       facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
       drawingSummaries: facilityToDrawingSummaries(facility),
