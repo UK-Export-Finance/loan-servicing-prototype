@@ -8,11 +8,6 @@ import {
   Transaction,
   Facility,
 } from 'loan-servicing-common'
-import {
-  getTransactionTableRow,
-} from 'mappers/nunjuck-mappers/eventTable'
-import { NunjuckTableRow } from 'types/nunjucks'
-import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 @Injectable()
 class FacilityService {
@@ -50,23 +45,11 @@ class FacilityService {
 
   async getFacilityTransactionRows(
     streamId: string,
-  ): Promise<NunjuckTableRow[] | null> {
+  ): Promise<Transaction[] | null> {
     const transactions = await tryGetApiData<Transaction[]>(
-      `facility/${streamId}/transactions?interestResolution=monthly`,
+      `facility/${streamId}/transactions?resolution=monthly`,
     )
-    return (
-      transactions
-        ?.map(getTransactionTableRow)
-        .map((e) =>
-          buildNunjucksTableRow(e, [
-            'date',
-            'reference',
-            'transactionAmount',
-            'balance',
-            'interestAccrued',
-          ]),
-        ) || null
-    )
+    return transactions
   }
 }
 

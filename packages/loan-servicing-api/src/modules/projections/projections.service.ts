@@ -157,6 +157,7 @@ class ProjectionsService {
       facilityId,
     )) as FacilityEvent[]
     const facility = this.getFacilityAtCreation(facilityEvents)
+    
     const facilityProjectedEvents =
       await this.facilityEventHandler.getProjectedEvents(facility)
 
@@ -208,6 +209,7 @@ class ProjectionsService {
       streamId: creationEvent.streamId,
       streamVersion: 1,
       drawnAmount: '0',
+      facilityFeeBalance: '0',
       undrawnAmount: creationEvent.eventData.facilityAmount,
       ...creationEvent.eventData,
     }

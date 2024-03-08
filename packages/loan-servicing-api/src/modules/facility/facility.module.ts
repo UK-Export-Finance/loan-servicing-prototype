@@ -6,16 +6,18 @@ import EventModule from 'modules/event/event.module'
 import StrategyModule from 'modules/strategy/strategy.module'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsModule from 'modules/projections/projections.module'
+import TransactionEntity from 'models/entities/TransactionEntity'
+import FacilityTransactionService from './facility.service.transactions'
 
 @Module({
   controllers: [FacilityController],
   imports: [
     EventModule,
-    TypeOrmModule.forFeature([FacilityEntity]),
+    TypeOrmModule.forFeature([FacilityEntity, TransactionEntity]),
     StrategyModule,
-    ProjectionsModule
+    ProjectionsModule,
   ],
-  providers: [FacilityService],
+  providers: [FacilityService, FacilityTransactionService],
   exports: [FacilityService],
 })
 class FacilityModule {}

@@ -57,6 +57,14 @@ export const facilityToFacilitySummaryProps = (
     },
     {
       key: {
+        text: 'Facility Fee Balance',
+      },
+      value: {
+        text: `£${facility.facilityFeeBalance}`,
+      },
+    },
+    {
+      key: {
         text: 'Start Date',
       },
       value: {

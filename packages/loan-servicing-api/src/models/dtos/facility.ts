@@ -58,6 +58,10 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   undrawnAmount!: string
 
   @ApiProperty()
+  @IsNotEmpty()
+  facilityFeeBalance!: string
+
+  @ApiProperty()
   @IsDate()
   @Type(() => Date)
   issuedEffectiveDate!: Date
@@ -74,7 +78,8 @@ export class NewFacilityRequestDtoClass
     'streamVersion',
     'drawings',
     'drawnAmount',
-    'undrawnAmount'
+    'undrawnAmount',
+    'facilityFeeBalance',
   ])
   implements NewFacilityRequestDto {}
 

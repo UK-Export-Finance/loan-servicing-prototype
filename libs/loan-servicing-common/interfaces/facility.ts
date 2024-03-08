@@ -7,6 +7,7 @@ export type Facility = {
   obligor: string
   streamVersion: number
   facilityType: string
+  facilityFeeBalance: string
   facilityConfig: FacilityConfiguration
   drawings: Drawing[]
   facilityAmount: string
@@ -38,5 +39,10 @@ export type AdjustFacilityAmountDto = {
 
 export type NewFacilityRequestDto = Omit<
   Facility,
-  'streamId' | 'streamVersion' | 'drawings' | 'drawnAmount' | 'undrawnAmount'
+  | 'streamId'
+  | 'streamVersion'
+  | 'drawings'
+  | 'drawnAmount'
+  | 'undrawnAmount'
+  | 'facilityFeeBalance'
 >

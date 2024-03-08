@@ -32,6 +32,7 @@ import {
   facilityToFacilitySummaryProps,
 } from 'mappers/nunjuck-mappers/facilitySummary'
 import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
+import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 
 @Controller('')
 class FacilityController {
@@ -88,10 +89,12 @@ class FacilityController {
       throw new NotFoundException()
     }
     const events = await this.facilityService.getFacilityEventTableRows(id)
+    const transactions = await this.facilityService.getFacilityTransactionRows(id)
 
     return {
       facility,
       eventRows: mapEventsToTable(events!),
+      transactionRows: mapTransactionsToTable(transactions!),
       facilityCreated,
       facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
       drawingSummaries: facilityToDrawingSummaries(facility),

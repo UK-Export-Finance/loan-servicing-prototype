@@ -12,7 +12,7 @@ import calculateFacilityFeeStrategies, {
 
 @Injectable()
 class FacilityFeeService {
-  calculate<T extends CalculateFacilityFeeEvent>(
+  calculateFee<T extends CalculateFacilityFeeEvent>(
     facility: Facility,
     event: T,
   ): string {

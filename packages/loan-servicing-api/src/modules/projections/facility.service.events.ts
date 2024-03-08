@@ -17,12 +17,16 @@ import {
   EventHandlerProps,
   IEventHandlerService,
 } from 'types/eventHandler'
+import StrategyService from 'modules/strategy/strategy.service'
 
 @Injectable()
 class FacilityEventHandlingService
   implements IEventHandlerService<Facility, FacilityProjectedEvent>
 {
-  constructor(@Inject(EventService) private eventService: EventService) {}
+  constructor(
+    @Inject(EventService) private eventService: EventService,
+    @Inject(StrategyService) private strategyService: StrategyService,
+  ) {}
 
   getProjectedEvents = async (
     facility: Facility,
@@ -30,8 +34,12 @@ class FacilityEventHandlingService
     const facilityEvents = (await this.eventService.getEventsInCreationOrder(
       facility.streamId,
     )) as FacilityEvent[]
+    const facilityFeeEvents =
+      await this.strategyService.getFacilityFeeEvents(facility)
 
-    return facilityEvents.sort(sortEventByEffectiveDate)
+    return [...facilityEvents, ...facilityFeeEvents].sort(
+      sortEventByEffectiveDate,
+    )
   }
 
   applyEvent = <T extends FacilityProjectedEvent>(
@@ -90,15 +98,22 @@ class FacilityEventHandlingService
     { entity, sourceEvent },
     transactions,
   ) => {
+    const feeAmount = this.strategyService.calculateFacilityFee(
+      entity,
+      sourceEvent,
+    )
+    entity.facilityFeeBalance = Big(entity.facilityFeeBalance)
+      .add(feeAmount)
+      .toFixed(2)
     transactions.push({
       streamId: entity.streamId,
       sourceEvent,
-      datetime: entity.issuedEffectiveDate,
+      datetime: sourceEvent.effectiveDate,
       reference: 'Facility fees',
-      principalChange: 'TBC',
-      interestChange: '0',
+      principalChange: '0',
+      interestChange: feeAmount,
       balanceAfterTransaction: entity.facilityAmount,
-      interestAccrued: '0',
+      interestAccrued: entity.facilityFeeBalance,
     })
     return transactions
   }

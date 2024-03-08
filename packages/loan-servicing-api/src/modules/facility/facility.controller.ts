@@ -8,19 +8,29 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { LoanServicingEvent } from 'loan-servicing-common'
+import {
+  LoanServicingEvent,
+  SummarisedTransaction,
+  Transaction,
+  TransactionResolution,
+} from 'loan-servicing-common'
 import { UntypedEventClass } from 'models/dtos/event'
 import {
   AdjustFacilityAmountDtoClass,
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
 } from 'models/dtos/facility'
+import TransactionEntity from 'models/entities/TransactionEntity'
 import FacilityService from 'modules/facility/facility.service'
+import FacilityTransactionService from './facility.service.transactions'
 
 @ApiTags('Facility')
 @Controller('/facility')
 class FacilityController {
-  constructor(private facilityService: FacilityService) {}
+  constructor(
+    private facilityService: FacilityService,
+    private transactionService: FacilityTransactionService,
+  ) {}
 
   @Get(':facilityId')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
@@ -41,6 +51,23 @@ class FacilityController {
   ): Promise<LoanServicingEvent[]> {
     const facilityEvents =
       await this.facilityService.getFacilityEvents(facilityStreamId)
+    if (facilityEvents === null) {
+      throw new NotFoundException()
+    }
+    return facilityEvents
+  }
+
+  @Get(':facilityId/transactions')
+  @ApiOkResponse({ type: TransactionEntity })
+  async getDrawingTransactions(
+    @Param('facilityId') facilityId: string,
+    @Query('resolution')
+    resolution: TransactionResolution = 'daily',
+  ): Promise<Transaction[] | SummarisedTransaction[]> {
+    const facilityEvents =
+      resolution === 'daily'
+        ? await this.transactionService.getDailyTransactions(facilityId)
+        : await this.transactionService.getMonthlyTransactions(facilityId)
     if (facilityEvents === null) {
       throw new NotFoundException()
     }
