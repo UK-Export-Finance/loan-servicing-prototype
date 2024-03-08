@@ -150,6 +150,12 @@ class DrawingEventHandlingService
     entity.outstandingPrincipal = Big(entity.outstandingPrincipal)
       .add(drawing.amount)
       .toFixed(2)
+    entity.facility.drawnAmount = Big(entity.facility.drawnAmount)
+      .add(drawing.amount)
+      .toFixed(2)
+    entity.facility.undrawnAmount = Big(entity.facility.undrawnAmount)
+      .sub(drawing.amount)
+      .toFixed(2)
     transactions.push({
       streamId: entity.streamId,
       sourceEvent,

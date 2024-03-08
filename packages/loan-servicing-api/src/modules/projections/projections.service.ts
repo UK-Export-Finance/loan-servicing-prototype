@@ -75,6 +75,8 @@ class ProjectionsService {
     const { facility, facilityProjectedEvents, facilityStreamVersion } =
       await this.intialiseFacility(facilityId)
 
+    drawing.facility = facility
+
     const projectedEvents = [
       ...drawingProjectedEvents,
       ...facilityProjectedEvents,

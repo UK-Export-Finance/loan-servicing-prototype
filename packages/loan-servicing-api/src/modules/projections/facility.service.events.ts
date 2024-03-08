@@ -22,9 +22,7 @@ import {
 class FacilityEventHandlingService
   implements IEventHandlerService<Facility, FacilityProjectedEvent>
 {
-  constructor(
-    @Inject(EventService) private eventService: EventService,
-  ) {}
+  constructor(@Inject(EventService) private eventService: EventService) {}
 
   getProjectedEvents = async (
     facility: Facility,
@@ -70,6 +68,9 @@ class FacilityEventHandlingService
   ) => {
     const { eventData: incrementEvent } = sourceEvent
     entity.facilityAmount = Big(entity.facilityAmount)
+      .add(incrementEvent.adjustment)
+      .toFixed(2)
+    entity.undrawnAmount = Big(entity.undrawnAmount)
       .add(incrementEvent.adjustment)
       .toFixed(2)
     transactions.push({
