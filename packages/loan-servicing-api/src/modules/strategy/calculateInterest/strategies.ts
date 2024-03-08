@@ -2,7 +2,8 @@ import {
   CalculateInterestStrategyName,
   DrawingWithSpecifiedConfig,
 } from 'loan-servicing-common'
-import Big, { roundHalfEven as ROUND_MODE_HALF_EVEN } from 'big.js'
+import Big from 'big.js'
+import { calculateAccrual } from 'maths/accrualCalculations'
 
 export type CalculateInterestStrategy<T extends CalculateInterestStrategyName> =
   (
@@ -15,15 +16,8 @@ export const calculateNoInterest: CalculateInterestStrategy<
 
 export const calculatePrincipalOnlyInterest: CalculateInterestStrategy<
   'PrincipalOnly'
-> = ({ outstandingPrincipal: facilityAmount, interestRate }) => {
-  const dailyInterestRate = Big(interestRate).div(100).div(365)
-  const interestAccrued = Big(facilityAmount)
-    .times(dailyInterestRate)
-    .round(2, ROUND_MODE_HALF_EVEN)
-    .toFixed(2)
-
-  return interestAccrued
-}
+> = ({ outstandingPrincipal, interestRate }) =>
+  calculateAccrual(outstandingPrincipal, interestRate)
 
 export const calculateCompoundingInterest: CalculateInterestStrategy<
   'Compounding'
@@ -32,14 +26,8 @@ export const calculateCompoundingInterest: CalculateInterestStrategy<
   interestRate,
   interestAccrued,
 }) => {
-  const dailyInterestRate = Big(interestRate).div(100).div(365)
   const accruableTotal = Big(facilityAmount).add(interestAccrued)
-  const newInterestAccrued = Big(accruableTotal)
-    .times(dailyInterestRate)
-    .round(2, ROUND_MODE_HALF_EVEN)
-    .toFixed(2)
-
-  return newInterestAccrued
+  return calculateAccrual(accruableTotal, interestRate)
 }
 
 type CalculateInterestStrategies = {
