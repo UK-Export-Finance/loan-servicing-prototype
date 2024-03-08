@@ -152,12 +152,11 @@ class ProjectionsService {
     facilityStreamVersion: number
   }> => {
     await this.transactionRepo.delete({ streamId: facilityId })
-    await this.facilityRepo.delete({ streamId: facilityId })
     const facilityEvents = (await this.eventService.getEventsInCreationOrder(
       facilityId,
     )) as FacilityEvent[]
     const facility = this.getFacilityAtCreation(facilityEvents)
-    
+
     const facilityProjectedEvents =
       await this.facilityEventHandler.getProjectedEvents(facility)
 
@@ -178,7 +177,6 @@ class ProjectionsService {
     drawingStreamVersion: number
   }> => {
     await this.transactionRepo.delete({ streamId: drawingId })
-    await this.drawingRepo.delete({ streamId: drawingId })
     // Need to handle events which change config affecting projected event generation
 
     const drawingEvents = (await this.eventService.getEventsInCreationOrder(

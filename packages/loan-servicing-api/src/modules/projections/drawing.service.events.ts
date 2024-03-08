@@ -166,6 +166,16 @@ class DrawingEventHandlingService
       balanceAfterTransaction: entity.outstandingPrincipal,
       interestAccrued: entity.interestAccrued,
     })
+    transactions.push({
+      streamId: entity.facilityStreamId,
+      sourceEvent,
+      datetime: sourceEvent.effectiveDate,
+      reference: `£${drawing.amount} drawn on drawing ${entity.streamId}`,
+      principalChange: drawing.amount,
+      interestChange: '0',
+      balanceAfterTransaction: entity.facility.drawnAmount,
+      interestAccrued: entity.facility.facilityFeeBalance,
+    })
     return transactions
   }
 
