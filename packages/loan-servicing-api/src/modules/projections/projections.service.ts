@@ -144,10 +144,6 @@ class ProjectionsService {
       facilityId,
     )) as FacilityEvent[]
     const facility = this.getFacilityAtCreation(facilityEvents)
-    // this.applyAllEvents(
-    //   facilityEvents.filter((e) => e.isConfigEvent),
-    //   facility,
-    // )
 
     const facilityProjectedEvents =
       await this.facilityEventHandler.getProjectedEvents(facility)

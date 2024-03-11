@@ -35,7 +35,6 @@ class FacilityService {
         entityType: 'facility',
         type: 'CreateNewFacility',
         typeVersion: 1,
-        isConfigEvent: true,
         eventData: facilityRequest,
       },
     )
@@ -60,7 +59,6 @@ class FacilityService {
         entityType: 'facility',
         type: 'AdjustFacilityAmount',
         typeVersion: 1,
-        isConfigEvent: false,
         eventData: { adjustment },
       },
       streamVersion,
