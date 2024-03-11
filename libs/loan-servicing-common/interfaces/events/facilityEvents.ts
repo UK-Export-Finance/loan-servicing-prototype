@@ -1,3 +1,4 @@
+import { NewDrawingRequestDto } from '../drawing'
 import { NewFacilityRequestDto } from '../facility'
 import { EventBase } from './eventBase'
 
@@ -22,7 +23,7 @@ export type AdjustFacilityAmountEvent = FacilityEventBase<
 export type AddDrawingToFacilityEvent = FacilityEventBase<
   'AddDrawingToFacility',
   1,
-  { drawingId: string }
+  NewDrawingRequestDto & { streamId: string }
 >
 
 export type FacilityEvent =

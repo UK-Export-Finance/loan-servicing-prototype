@@ -98,9 +98,11 @@ class DrawingController {
   async newDrawing(
     @Body() body: NewDrawingRequestDtoClass,
     @Param('facilityId') facilityId: string,
-  ): Promise<DrawingDtoClass> {
+    @Query('facilityVersion') facilityVersion: number,
+    ): Promise<DrawingDtoClass> {
     const newDrawing = await this.drawingService.createNewDrawing(
       facilityId,
+      facilityVersion,
       body,
     )
     return newDrawing

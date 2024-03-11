@@ -11,7 +11,7 @@
 {% block content %}
   <h1 class="govuk-heading-l">Drawing - Add Withdrawal
     {{ facility.streamId }}</h1>
-    <form action="/facility/{{drawing.facilityStreamId}}/drawing/{{drawing.streamId}}/add-withdrawal?version={{drawing.streamVersion}}" method="post">
+    <form action="/facility/{{drawing.facility.streamId}}/drawing/{{drawing.streamId}}/add-withdrawal?version={{drawing.streamVersion}}" method="post">
     {{ govukInput({
         label: {
           text: "Amount Drawn"

@@ -123,12 +123,14 @@ class DrawingController {
   async createDrawing(
     @Param('facilityId') facilityId: string,
     @Body() requestDto: NewDrawingRequestFormDto,
+    @Query('facilityVersion') facilityVersion: number, 
     @Res() response: Response,
   ): Promise<void> {
     const newDrawingRequest: NewDrawingRequestDto =
       mapCreateDrawingFormToRequest(requestDto)
     const drawing = await this.drawingService.createDrawing(
       facilityId,
+      facilityVersion,
       newDrawingRequest,
     )
     response.redirect(

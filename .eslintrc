@@ -20,7 +20,8 @@
       "warn",
       { "allowSameFolder": true }
     ],
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    "@typescript-eslint/no-floating-promises": "error"
   },
   "settings": {
     "import/resolver": {

@@ -13,6 +13,7 @@ export type EventBase<
   entityType: Entity
   type: Type
   typeVersion: Version
+  isConfigEvent: boolean
   eventData: Data
 }
 

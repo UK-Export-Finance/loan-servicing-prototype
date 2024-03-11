@@ -19,9 +19,6 @@ export class DrawingDtoClass implements Drawing {
   streamVersion!: number
 
   @ApiProperty()
-  facilityStreamId!: string
-
-  @ApiProperty()
   facility!: Facility
 
   @ApiProperty()
@@ -54,11 +51,9 @@ export class DrawingDtoClass implements Drawing {
 
 export class NewDrawingRequestDtoClass
   extends OmitType(DrawingDtoClass, [
-    'streamId',
     'streamVersion',
     'interestAccrued',
     'outstandingPrincipal',
-    'facilityStreamId',
     'facility',
   ])
   implements NewDrawingRequestDto

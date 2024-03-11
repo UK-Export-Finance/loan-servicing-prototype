@@ -29,6 +29,9 @@ class EventEntity<T extends LoanServicingEvent> implements UntypedEventClass {
   @Column({ type: 'int' })
   typeVersion!: T['typeVersion']
 
+  @Column()
+  isConfigEvent!: boolean
+
   @Column({
     type: 'simple-json',
   })

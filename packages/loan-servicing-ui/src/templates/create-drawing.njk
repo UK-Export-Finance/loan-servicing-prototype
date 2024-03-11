@@ -13,7 +13,8 @@
 
   <p class="govuk-body govuk-!-margin-bottom-6">Add a new drawing to facility {{facility.obligorId}}</p>
 
-  <form action="/facility/{{facility.streamId}}/drawing" method="post">
+  <form action="/facility/{{facility.streamId}}/drawing?facilityVersion={{facility.streamVersion}}" method="post">
+    <input name="facilityId" type="hidden" value="{{facility.streamId}}" />
 
     {{ govukInput({
       label: {
@@ -105,7 +106,7 @@
     <h3 class="govuk-heading-s">Interest Strategy -
       {{ calculateInterestStrategy | enumToNameString }}</h3>
 
-    <input name="calculateInterestStrategy" type="hidden" value="{{calculateInterestStrategy}}">
+    <input name="calculateInterestStrategy" type="hidden" value="{{calculateInterestStrategy}}" />
 
     {{ govukButton({  text: "Create Drawing"}) }}
   </form>

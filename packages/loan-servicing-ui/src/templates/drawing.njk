@@ -17,7 +17,7 @@
 
   {{ govukBackLink({
     text: "Back to Facility",
-    href: "/facility/" + drawing.facilityStreamId
+    href: "/facility/" + drawing.facility.streamId
   }) }}
   {% if drawingCreated %}
     {% set html %}

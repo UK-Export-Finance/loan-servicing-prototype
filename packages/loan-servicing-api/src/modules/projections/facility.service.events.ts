@@ -1,24 +1,27 @@
 /* eslint-disable no-param-reassign */
-import { Injectable, Inject, NotImplementedException } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import {
   CreateNewFacilityEvent,
   AdjustFacilityAmountEvent,
   Facility,
   FacilityEvent,
   FacilityProjectedEvent,
-  Transaction,
   sortEventByEffectiveDate,
   CalculateFacilityFeeEvent,
   AddDrawingToFacilityEvent,
+  Drawing,
+  DrawingProjectedEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
-import {
-  EventHandler,
-  EventContext,
-  IEventHandlerService,
-} from 'types/eventHandler'
+import { EventHandler, IEventHandlerService } from 'types/eventHandler'
 import StrategyService from 'modules/strategy/strategy.service'
+import DrawingEntity from 'models/entities/DrawingEntity'
+import { InjectRepository } from '@nestjs/typeorm'
+import TransactionEntity from 'models/entities/TransactionEntity'
+import { Repository } from 'typeorm'
+import FacilityProjection from './projection'
+import DrawingEventHandlingService from './drawing.service.events'
 
 @Injectable()
 class FacilityEventHandlingService
@@ -27,6 +30,12 @@ class FacilityEventHandlingService
   constructor(
     @Inject(EventService) private eventService: EventService,
     @Inject(StrategyService) private strategyService: StrategyService,
+    @Inject(DrawingEventHandlingService)
+    private drawingEventService: DrawingEventHandlingService,
+    @InjectRepository(TransactionEntity)
+    private transactionRepo: Repository<TransactionEntity>,
+    @InjectRepository(DrawingEntity)
+    private drawingRepo: Repository<DrawingEntity>,
   ) {}
 
   getProjectedEvents = async (
@@ -43,116 +52,136 @@ class FacilityEventHandlingService
     )
   }
 
-  applyEvent = <T extends FacilityProjectedEvent>(
-    eventProps: EventContext<Facility, T>,
-  ): Transaction[] => {
-    const mutableTransactions = [...eventProps.transactions]
-    const handler = this[eventProps.sourceEvent.type] as EventHandler<
-      Facility,
-      T
-    >
-    return handler(eventProps, mutableTransactions)
+  applyEvent = async <T extends FacilityProjectedEvent>(
+    event: T,
+    projection: FacilityProjection,
+  ): Promise<void> => {
+    const handler = this[event.type] as EventHandler<T>
+    await handler(event, projection)
   }
 
-  CreateNewFacility: EventHandler<Facility, CreateNewFacilityEvent> = (
-    { entity, sourceEvent },
-    transactions,
+  CreateNewFacility: EventHandler<CreateNewFacilityEvent> = async (
+    sourceEvent,
+    projections,
   ) => {
-    transactions.push({
-      streamId: entity.streamId,
+    projections.transactions.push({
+      streamId: projections.facility.streamId,
       sourceEvent,
-      datetime: entity.issuedEffectiveDate,
+      datetime: projections.facility.issuedEffectiveDate,
       reference: 'Facility Created',
       valueChanged: 'N/A',
       changeInValue: '0',
       valueAfterTransaction: '0',
     })
-    return transactions
   }
 
-  AddDrawingToFacility: EventHandler<Facility, AddDrawingToFacilityEvent> = (
-    { entity, sourceEvent },
-    transactions,
+  AddDrawingToFacility: EventHandler<AddDrawingToFacilityEvent> = async (
+    event,
+    projection,
   ) => {
-    transactions.push({
-      streamId: entity.streamId,
-      sourceEvent,
-      datetime: entity.issuedEffectiveDate,
-      reference: `Drawing ${sourceEvent.eventData.drawingId} added to facility`,
+    // Create drawing entity
+    const { drawing, drawingProjectedEvents } =
+      await this.intialiseDrawing(event)
+    // Setup entity relations
+    drawing.facility = projection.facility
+    projection.facility.drawings.push(drawing)
+
+    // Add drawing events to processing
+    projection.addEvents(drawingProjectedEvents)
+
+    projection.transactions.push({
+      streamId: event.streamId,
+      sourceEvent: event,
+      datetime: projection.facility.issuedEffectiveDate,
+      reference: 'Drawing Created',
       valueChanged: 'N/A',
       changeInValue: '0',
       valueAfterTransaction: '0',
     })
-    return transactions
   }
 
-  AdjustFacilityAmount: EventHandler<Facility, AdjustFacilityAmountEvent> = (
-    { entity, sourceEvent },
-    transactions,
+  intialiseDrawing = async (
+    event: AddDrawingToFacilityEvent,
+  ): Promise<{
+    drawing: Drawing
+    drawingProjectedEvents: DrawingProjectedEvent[]
+    drawingStreamVersion: number
+  }> => {
+    await this.transactionRepo.delete({ streamId: event.eventData.streamId })
+
+    const drawing = this.getDrawingAtCreation(event)
+    const drawingProjectedEvents =
+      await this.drawingEventService.getProjectedEvents(drawing)
+
+    return {
+      drawing,
+      drawingProjectedEvents,
+      drawingStreamVersion:
+        event.streamVersion,
+    }
+  }
+
+  getDrawingAtCreation = (creationEvent: AddDrawingToFacilityEvent): DrawingEntity => {
+    if (creationEvent.type !== 'AddDrawingToFacility') {
+      throw new Error('First created event is not drawing creation')
+    }
+
+    return this.drawingRepo.create({
+      streamVersion: 1,
+      outstandingPrincipal: '0',
+      ...creationEvent.eventData,
+    })
+  }
+
+  AdjustFacilityAmount: EventHandler<AdjustFacilityAmountEvent> = async (
+    sourceEvent,
+    projection,
   ) => {
     const { eventData: incrementEvent } = sourceEvent
-    entity.facilityAmount = Big(entity.facilityAmount)
+    projection.facility.facilityAmount = Big(projection.facility.facilityAmount)
       .add(incrementEvent.adjustment)
       .toFixed(2)
-    entity.undrawnAmount = Big(entity.undrawnAmount)
+    projection.facility.undrawnAmount = Big(projection.facility.undrawnAmount)
       .add(incrementEvent.adjustment)
       .toFixed(2)
-    transactions.push({
-      streamId: entity.streamId,
+    projection.transactions.push({
+      streamId: projection.facility.streamId,
       sourceEvent,
-      datetime: entity.issuedEffectiveDate,
+      datetime: projection.facility.issuedEffectiveDate,
       reference: 'Facility Amount Updated',
       valueChanged: 'Facility Amount',
       changeInValue: incrementEvent.adjustment,
-      valueAfterTransaction: entity.facilityAmount,
+      valueAfterTransaction: projection.facility.facilityAmount,
     })
-    return transactions
   }
 
-  CalculateFacilityFee: EventHandler<Facility, CalculateFacilityFeeEvent> = (
-    { entity, sourceEvent },
-    transactions,
+  CalculateFacilityFee: EventHandler<CalculateFacilityFeeEvent> = async (
+    sourceEvent,
+    projection,
   ) => {
     const feeAmount = this.strategyService.calculateFacilityFee(
-      entity,
+      projection.facility,
       sourceEvent,
     )
-    entity.facilityFeeBalance = Big(entity.facilityFeeBalance)
+    projection.facility.facilityFeeBalance = Big(
+      projection.facility.facilityFeeBalance,
+    )
       .add(feeAmount)
       .toFixed(2)
-    transactions.push({
-      streamId: entity.streamId,
+    projection.transactions.push({
+      streamId: projection.facility.streamId,
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: 'Facility fees',
       valueChanged: 'totalFeeBalance',
       changeInValue: feeAmount,
-      valueAfterTransaction: entity.facilityFeeBalance,
+      valueAfterTransaction: projection.facility.facilityFeeBalance,
     })
-    return transactions
   }
 
   CalculateFixedFacilityFee = this.CalculateFacilityFee
 
   CalculateAccruingFacilityFee = this.CalculateFacilityFee
-
-  applyEventToFacility = (
-    event: FacilityEvent,
-    facilityEntity: Facility,
-  ): void => {
-    switch (event.type) {
-      case 'CreateNewFacility':
-        return
-      case 'AdjustFacilityAmount':
-        const { eventData: incrementEvent } = event as AdjustFacilityAmountEvent
-        facilityEntity.facilityAmount = Big(facilityEntity.facilityAmount)
-          .add(incrementEvent.adjustment)
-          .toFixed(2)
-        return
-      default:
-        throw new NotImplementedException()
-    }
-  }
 }
 
 export default FacilityEventHandlingService

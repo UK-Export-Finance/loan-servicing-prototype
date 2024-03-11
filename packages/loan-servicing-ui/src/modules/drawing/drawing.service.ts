@@ -14,10 +14,11 @@ import {
 class DrawingService {
   async createDrawing(
     facilityId: string,
+    facilityVersion: number,
     drawingRequest: NewDrawingRequestDto,
   ): Promise<DrawingDto | null> {
     const newDrawing = await postApiData<DrawingDto>(
-      `facility/${facilityId}/drawing`,
+      `facility/${facilityId}/drawing?facilityVersion=${facilityVersion}`,
       drawingRequest,
     )
     return newDrawing

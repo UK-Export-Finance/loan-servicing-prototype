@@ -29,7 +29,7 @@ export const drawingToDrawingSummary = (
         actions: {
           items: [
             {
-              href: `/facility/${drawing.facilityStreamId}/drawing/${drawing.streamId}/changeInterest`,
+              href: `/facility/${drawing.facility.streamId}/drawing/${drawing.streamId}/changeInterest`,
               text: 'Change',
               visuallyHiddenText: 'interest rate',
             },

@@ -5,17 +5,13 @@ import { Repository } from 'typeorm'
 import { Transactional } from 'typeorm-transactional'
 import {
   Transaction,
-  DrawingEvent,
   DrawingProjectedEvent,
   FacilityEvent,
   LoanServicingEvent,
-  sortEventByEffectiveDate,
   ProjectedEvent,
   CreateNewFacilityEvent,
-  Drawing,
   Facility,
   FacilityProjectedEvent,
-  CreateNewDrawingEvent,
 } from 'loan-servicing-common'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import DrawingEntity from 'models/entities/DrawingEntity'
@@ -24,6 +20,7 @@ import DrawingEventHandlingService from 'modules/projections/drawing.service.eve
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityEventHandlingService from './facility.service.events'
+import FacilityProjection from './projection'
 
 @Injectable()
 class ProjectionsService {
@@ -48,16 +45,22 @@ class ProjectionsService {
   }> {
     const { facility, facilityProjectedEvents, facilityStreamVersion } =
       await this.intialiseFacility(facilityId)
-    const transactions = this.applyEvents(facilityProjectedEvents, facility)
+    const projection = await this.applyAllEvents(
+      facilityProjectedEvents,
+      facility,
+    )
 
-    facility.streamVersion = facilityStreamVersion
+    projection.facility.streamVersion = facilityStreamVersion
 
     const transactionEntities = await this.transactionRepo.save(
-      transactions as TransactionEntity[],
+      projection.transactions as TransactionEntity[],
       { chunk: 100 },
     )
-    const facilityEntity = await this.facilityRepo.save(facility)
-
+    // TODO work out how relations work properly
+    const storedRelation = projection.facility.drawings
+    projection.facility.drawings.forEach(d => delete d.facility)
+    const facilityEntity = await this.facilityRepo.save(projection.facility)
+    facilityEntity.drawings = storedRelation
     return { facility: facilityEntity, transactions: transactionEntities }
   }
 
@@ -70,79 +73,64 @@ class ProjectionsService {
     drawing: DrawingEntity
     transactions: Transaction[]
   }> {
-    const { drawing, drawingProjectedEvents, drawingStreamVersion } =
-      await this.intialiseDrawing(facilityId, drawingId)
-    const { facility, facilityProjectedEvents, facilityStreamVersion } =
-      await this.intialiseFacility(facilityId)
-
-    drawing.facility = facility
-
-    const projectedEvents = [
-      ...drawingProjectedEvents,
-      ...facilityProjectedEvents,
-    ].sort(sortEventByEffectiveDate)
-
-    const transactions = this.applyEvents(projectedEvents, facility, drawing)
-
-    drawing.streamVersion = drawingStreamVersion
-    drawing.facilityStreamId = facilityId
-
-    facility.streamVersion = facilityStreamVersion
-
-    const transactionEntities = await this.transactionRepo.save(
-      transactions as TransactionEntity[],
-      { chunk: 100 },
-    )
-    const facilityEntity = await this.facilityRepo.save(facility)
-    const drawingEntity = await this.drawingRepo.save(drawing)
-
+    const { facility, transactions } =
+      await this.buildProjectionsForFacility(facilityId)
+    const drawing = facility.drawings.find((d) => d.streamId === drawingId)
+    if (!drawing) {
+      throw new Error(`Facility did not contain expected drawing`)
+    }
     return {
-      facility: facilityEntity,
-      drawing: drawingEntity,
-      transactions: transactionEntities,
+      facility,
+      drawing,
+      transactions,
     }
   }
 
-  applyEvents = (
+  applyAllEvents = async (
     events: ProjectedEvent[],
     facility: Facility,
-    drawing?: Drawing,
-  ): Transaction[] =>
-    events.reduce(
-      (
-        transactions: Transaction[],
-        sourceEvent: ProjectedEvent,
-        eventIndex: number,
-        allEvents: ProjectedEvent[],
-      ) => {
-        switch (sourceEvent.entityType) {
-          case 'drawing':
-            if (!drawing) {
-              throw new Error(
-                'Event is for drawing but no drawing entity provided',
-              )
-            }
-            return this.drawingEventHandler.applyEvent({
-              entity: drawing,
-              transactions,
-              sourceEvent: sourceEvent as DrawingProjectedEvent,
-              eventIndex,
-              allEvents,
-            })
-          case 'facility':
-            return this.facilityEventHandler.applyEvent({
-              entity: facility,
-              transactions,
-              sourceEvent: sourceEvent as FacilityProjectedEvent,
-              eventIndex,
-              allEvents,
-            })
-          default:
-            throw new NotImplementedException()
+  ): Promise<FacilityProjection> => {
+    const projection = new FacilityProjection(facility, [...events])
+    let curr = projection.consumeNextEvent()
+    while (curr) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.applyEvent(curr, projection)
+      curr = projection.consumeNextEvent()
+    }
+    return projection
+  }
+
+  applyEvent = async (
+    event: ProjectedEvent,
+    projection: FacilityProjection,
+  ): Promise<void> => {
+    switch (event.entityType) {
+      case 'drawing':
+        if (event.streamVersion) {
+          projection.setDrawingProperty(
+            event.streamId,
+            'streamVersion',
+            event.streamVersion,
+          )
         }
-      },
-      [],
-    )
+        await this.drawingEventHandler.applyEvent(
+          event as DrawingProjectedEvent,
+          projection,
+        )
+        return
+      case 'facility':
+        if (event.streamVersion) {
+          projection.facility.streamVersion = event.streamVersion
+        }
+        await this.facilityEventHandler.applyEvent(
+          event as FacilityProjectedEvent,
+          projection,
+        )
+        return
+      default:
+        throw new NotImplementedException()
+    }
+  }
 
   intialiseFacility = async (
     facilityId: string,
@@ -156,6 +144,10 @@ class ProjectionsService {
       facilityId,
     )) as FacilityEvent[]
     const facility = this.getFacilityAtCreation(facilityEvents)
+    // this.applyAllEvents(
+    //   facilityEvents.filter((e) => e.isConfigEvent),
+    //   facility,
+    // )
 
     const facilityProjectedEvents =
       await this.facilityEventHandler.getProjectedEvents(facility)
@@ -168,33 +160,6 @@ class ProjectionsService {
     }
   }
 
-  intialiseDrawing = async (
-    facilityId: string,
-    drawingId: string,
-  ): Promise<{
-    drawing: Drawing
-    drawingProjectedEvents: DrawingProjectedEvent[]
-    drawingStreamVersion: number
-  }> => {
-    await this.transactionRepo.delete({ streamId: drawingId })
-    // Need to handle events which change config affecting projected event generation
-
-    const drawingEvents = (await this.eventService.getEventsInCreationOrder(
-      drawingId,
-    )) as DrawingEvent[]
-
-    const drawing = this.getDrawingAtCreation(drawingEvents, facilityId)
-    const drawingProjectedEvents =
-      await this.drawingEventHandler.getProjectedEvents(drawing)
-
-    return {
-      drawing,
-      drawingProjectedEvents,
-      drawingStreamVersion:
-        drawingEvents[drawingEvents.length - 1].streamVersion,
-    }
-  }
-
   getFacilityAtCreation = (facilityEvents: LoanServicingEvent[]): Facility => {
     const creationEvent =
       facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
@@ -203,35 +168,17 @@ class ProjectionsService {
       throw new Error('First created event is not facility creation')
     }
 
-    const entity: Omit<Facility, 'drawings'> = {
+    const entity: Facility = {
       streamId: creationEvent.streamId,
       streamVersion: 1,
       drawnAmount: '0',
       facilityFeeBalance: '0',
       undrawnAmount: creationEvent.eventData.facilityAmount,
       ...creationEvent.eventData,
+      drawings: [],
     }
 
     return this.facilityRepo.create(entity)
-  }
-
-  getDrawingAtCreation = (
-    drawingEvents: DrawingEvent[],
-    facilityId: string,
-  ): DrawingEntity => {
-    const creationEvent = drawingEvents[0] as EventEntity<CreateNewDrawingEvent>
-
-    if (creationEvent.type !== 'CreateNewDrawing') {
-      throw new Error('First created event is not drawing creation')
-    }
-
-    return this.drawingRepo.create({
-      streamId: creationEvent.streamId,
-      streamVersion: 1,
-      facilityStreamId: facilityId,
-      outstandingPrincipal: '0',
-      ...creationEvent.eventData,
-    })
   }
 }
 

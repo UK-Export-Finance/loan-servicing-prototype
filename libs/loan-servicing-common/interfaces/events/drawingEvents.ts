@@ -6,17 +6,11 @@ import {
 } from '../drawing'
 import { EventBase } from './eventBase'
 
-type DrawingEventBase<
+export type DrawingEventBase<
   Type extends string,
   Version extends number,
   Data extends object,
 > = EventBase<Type, Version, Data, 'drawing'>
-
-export type CreateNewDrawingEvent = DrawingEventBase<
-  'CreateNewDrawing',
-  1,
-  NewDrawingRequestDto
->
 
 export type UpdateInterestEvent = DrawingEventBase<
   'UpdateInterest',
@@ -36,8 +30,14 @@ export type RevertWithdrawalEvent = DrawingEventBase<
   RevertWithdrawlDto
 >
 
+export type CreateNewDrawingEvent = DrawingEventBase<
+  'CreateNewDrawing',
+  1,
+  NewDrawingRequestDto
+>
+
 export type DrawingEvent =
-  | CreateNewDrawingEvent
   | UpdateInterestEvent
   | WithdrawFromDrawingEvent
   | RevertWithdrawalEvent
+  | CreateNewDrawingEvent

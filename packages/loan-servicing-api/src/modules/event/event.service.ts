@@ -42,7 +42,7 @@ class EventService {
 
     if (currentStreamVersion !== lastSeenStreamVersion) {
       throw new BadRequestException(
-        `Stream ${event.streamId} has an updated version, please refresh your data`,
+        `Stream ${event.streamId} is on version ${currentStreamVersion}, the last version you saw was ${lastSeenStreamVersion}. Update your data`,
       )
     }
 

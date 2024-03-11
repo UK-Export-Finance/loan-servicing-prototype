@@ -46,6 +46,13 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Drawing created.`,
       }
+      case 'AddDrawingToFacility':
+      return {
+        event: 'Drawing Added',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: `Drawing ${event.eventData.streamId} added to facility.`,
+      }
     case 'RevertWithdrawal':
       return {
         event: 'Withdrawal Reverted',

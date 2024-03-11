@@ -15,10 +15,6 @@ class DrawingEntity implements Drawing {
   @ManyToOne('FacilityEntity', 'drawings')
   facility!: Relation<FacilityEntity>
 
-  // Computed column by TypeORM
-  @Column()
-  facilityStreamId!: string
-
   @ClassAsJsonColumn(DrawingConfigurationDtoClass)
   drawingConfig!: DrawingConfiguration
 

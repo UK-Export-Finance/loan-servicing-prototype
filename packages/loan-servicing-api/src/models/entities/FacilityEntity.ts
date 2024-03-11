@@ -1,11 +1,9 @@
 import {
-  ArrayOfClassAsJsonColumn,
   ClassAsJsonColumn,
   CurrencyColumn,
 } from 'database/decorators'
 import { Facility, FacilityConfiguration } from 'loan-servicing-common'
 import { Column, Entity, OneToMany, PrimaryColumn, Relation } from 'typeorm'
-import { DrawingDtoClass } from 'models/dtos/drawing'
 import { FacilityConfigurationDtoClass } from 'models/dtos/facilityConfiguration'
 import type DrawingEntity from './DrawingEntity'
 
@@ -23,7 +21,6 @@ class FacilityEntity implements Facility {
   @ClassAsJsonColumn(FacilityConfigurationDtoClass)
   facilityConfig!: FacilityConfiguration
 
-  @ArrayOfClassAsJsonColumn(DrawingDtoClass)
   @OneToMany('DrawingEntity', 'facility', { cascade: true, eager: true })
   drawings!: Relation<DrawingEntity>[]
 

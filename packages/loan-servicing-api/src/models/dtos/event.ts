@@ -16,5 +16,7 @@ export class UntypedEventClass implements UntypedEvent {
 
   typeVersion!: number
 
+  isConfigEvent!: boolean
+
   eventData!: object
 }

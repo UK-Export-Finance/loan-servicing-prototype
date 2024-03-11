@@ -1,6 +1,4 @@
-import {
-  NewDrawingRequestDto,
-} from 'loan-servicing-common'
+import { NewDrawingRequestDto } from 'loan-servicing-common'
 import { getDateFromDateInput } from 'utils/form-helpers'
 import { NewDrawingRequestFormDto } from 'templates/create-drawing'
 import mapRepaymentOptions from './repaymentOptionMappers'

@@ -8,7 +8,6 @@ import {
 export type Drawing = {
   streamId: string
   streamVersion: number
-  facilityStreamId: string
   facility: Facility
   drawingConfig: DrawingConfiguration
   //   description: string
@@ -41,7 +40,6 @@ export type NewDrawingRequestDto = Omit<
   | 'interestAccrued'
   | 'outstandingPrincipal'
   | 'facility'
-  | 'facilityStreamId'
 >
 
 export type DrawingDto = ConvertToDtoType<Drawing>
