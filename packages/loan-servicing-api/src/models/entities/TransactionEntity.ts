@@ -21,17 +21,14 @@ class TransactionEntity implements Transaction {
   @Column()
   reference!: string
 
-  @CurrencyColumn()
-  principalChange!: string
+  @Column()
+  valueChanged!: string
 
   @CurrencyColumn()
-  interestChange!: string
+  changeInValue!: string
 
   @CurrencyColumn()
-  interestAccrued!: string
-
-  @CurrencyColumn()
-  balanceAfterTransaction!: string
+  valueAfterTransaction!: string
 }
 
 export default TransactionEntity

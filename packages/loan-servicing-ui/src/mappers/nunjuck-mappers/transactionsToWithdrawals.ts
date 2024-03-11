@@ -25,7 +25,7 @@ const mapTransactionsToWithdrawalsSummary = (
     rows: withdrawalTransactions.map((withdrawal) => ({
       key: { text: new Date(withdrawal.datetime).toLocaleDateString('en-GB') },
       value: {
-        text: `£${withdrawal.principalChange}`,
+        text: `£${withdrawal.changeInValue}`,
       },
       actions: {
         items: [

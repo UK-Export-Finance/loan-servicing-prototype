@@ -8,26 +8,24 @@ const getTransactionTableRow = (
 ): TransactionTableRow => ({
   date: new Date(transaction.datetime).toLocaleDateString('en-GB'),
   reference: transaction.reference,
+  valueChanged: transaction.valueChanged,
   transactionAmount:
-    transaction.principalChange === '0'
-      ? transaction.interestChange
-      : transaction.principalChange,
-  balance: transaction.balanceAfterTransaction,
-  interestAccrued: transaction.interestAccrued,
+    transaction.changeInValue === '0'
+      ? transaction.changeInValue
+      : transaction.changeInValue,
+  newValue: transaction.valueAfterTransaction,
 })
 
-const mapTransactionsToTable = (
-  events: Transaction[],
-): NunjuckTableRow[] =>
+const mapTransactionsToTable = (events: Transaction[]): NunjuckTableRow[] =>
   events
     ?.map(getTransactionTableRow)
     .map((e) =>
       buildNunjucksTableRow(e, [
         'date',
         'reference',
+        'valueChanged',
         'transactionAmount',
-        'balance',
-        'interestAccrued',
+        'newValue',
       ]),
     ) || null
 

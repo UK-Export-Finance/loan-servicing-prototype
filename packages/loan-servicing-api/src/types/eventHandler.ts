@@ -5,7 +5,7 @@ import {
   Facility,
 } from 'loan-servicing-common'
 
-export type EventHandlerProps<
+export type EventContext<
   E extends Facility | Drawing,
   T extends ProjectedEvent,
 > = {
@@ -20,7 +20,7 @@ export type EventHandler<
   E extends Facility | Drawing,
   T extends ProjectedEvent,
 > = (
-  eventProps: EventHandlerProps<E, T>,
+  eventProps: EventContext<E, T>,
   mutableTransactions: Transaction[],
 ) => Transaction[]
 
@@ -30,6 +30,6 @@ export type IEventHandlerService<
 > = {
   [key in T['type']]: EventHandler<E, Extract<T, { type: key }>>
 } & {
-  applyEvent: (eventProps: EventHandlerProps<E, T>) => Transaction[]
+  applyEvent: (eventProps: EventContext<E, T>) => Transaction[]
   getProjectedEvents: (entity: E) => Promise<T[]>
 }

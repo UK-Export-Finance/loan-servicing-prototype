@@ -32,10 +32,10 @@ class DrawingTransactionService {
     SELECT
       YEAR([datetime]) AS 'year',
       MONTH([datetime]) AS 'month',
-      SUM([interestChange]) AS 'interest'
+      SUM([changeInValue]) AS 'interest'
     FROM [LoanServicing].[dbo].[transaction_entity]
     WHERE [streamId] = '${streamId}'
-    AND [reference] = 'interest'
+    AND [valueChanged] = 'interestAccrued'
     GROUP BY MONTH([datetime]), YEAR([datetime])
   `
     const monthlyInterestAmounts = (await this.transactionRepo.query(
@@ -48,10 +48,9 @@ class DrawingTransactionService {
         // But JS dates are zero indexed so we also subtract 1
         datetime: new Date(a.year, a.month + 1 - 1),
         reference: `accrued interest for ${a.month}/${a.year}`,
-        interestChange: Big(a.interest).toFixed(2),
-        principalChange: '0',
-        balanceAfterTransaction: '0',
-        interestAccrued: '0',
+        valueChanged: 'interestAccrued',
+        changeInValue: Big(a.interest).toFixed(2),
+        valueAfterTransaction: 'TBC',
       }))
     const nonInterestTransactions = await this.transactionRepo
       .createQueryBuilder('t')
@@ -72,8 +71,8 @@ class DrawingTransactionService {
     let principal = Big(0)
     let interest = Big(0)
     return transactions.map((t) => {
-      principal = principal.add(t.principalChange)
-      interest = interest.add(t.interestChange)
+      principal = principal.add(t.changeInValue)
+      interest = interest.add(t.changeInValue)
       return {
         ...t,
         balanceAfterTransaction: principal.toString(),

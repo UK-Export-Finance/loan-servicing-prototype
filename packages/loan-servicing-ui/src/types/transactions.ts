@@ -1,7 +1,7 @@
 export type TransactionTableRow = {
   date: string
   reference: string
+  valueChanged: string
   transactionAmount: string
-  balance: string
-  interestAccrued: string
+  newValue: string
 }

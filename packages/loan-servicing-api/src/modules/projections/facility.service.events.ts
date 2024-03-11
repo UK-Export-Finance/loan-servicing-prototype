@@ -14,7 +14,7 @@ import EventService from 'modules/event/event.service'
 import Big from 'big.js'
 import {
   EventHandler,
-  EventHandlerProps,
+  EventContext,
   IEventHandlerService,
 } from 'types/eventHandler'
 import StrategyService from 'modules/strategy/strategy.service'
@@ -43,7 +43,7 @@ class FacilityEventHandlingService
   }
 
   applyEvent = <T extends FacilityProjectedEvent>(
-    eventProps: EventHandlerProps<Facility, T>,
+    eventProps: EventContext<Facility, T>,
   ): Transaction[] => {
     const mutableTransactions = [...eventProps.transactions]
     const handler = this[eventProps.sourceEvent.type] as EventHandler<
@@ -62,10 +62,9 @@ class FacilityEventHandlingService
       sourceEvent,
       datetime: entity.issuedEffectiveDate,
       reference: 'Facility Created',
-      principalChange: '0',
-      interestChange: '0',
-      balanceAfterTransaction: entity.facilityAmount,
-      interestAccrued: '0',
+      valueChanged: 'N/A',
+      changeInValue: '0',
+      valueAfterTransaction: '0',
     })
     return transactions
   }
@@ -86,10 +85,9 @@ class FacilityEventHandlingService
       sourceEvent,
       datetime: entity.issuedEffectiveDate,
       reference: 'Facility Amount Updated',
-      principalChange: incrementEvent.adjustment,
-      interestChange: '0',
-      balanceAfterTransaction: entity.facilityAmount,
-      interestAccrued: '0',
+      valueChanged: 'Facility Amount',
+      changeInValue: incrementEvent.adjustment,
+      valueAfterTransaction: entity.facilityAmount,
     })
     return transactions
   }
@@ -110,10 +108,9 @@ class FacilityEventHandlingService
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: 'Facility fees',
-      principalChange: '0',
-      interestChange: feeAmount,
-      balanceAfterTransaction: entity.facilityAmount,
-      interestAccrued: entity.facilityFeeBalance,
+      valueChanged: 'totalFeeBalance',
+      changeInValue: feeAmount,
+      valueAfterTransaction: entity.facilityFeeBalance,
     })
     return transactions
   }

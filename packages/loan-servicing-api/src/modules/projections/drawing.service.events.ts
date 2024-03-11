@@ -20,7 +20,7 @@ import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
 import {
   EventHandler,
-  EventHandlerProps,
+  EventContext,
   IEventHandlerService,
 } from 'types/eventHandler'
 
@@ -74,7 +74,7 @@ class DrawingEventHandlingService
     )
 
   applyEvent = <T extends DrawingProjectedEvent>(
-    eventProps: EventHandlerProps<Drawing, T>,
+    eventProps: EventContext<Drawing, T>,
   ): Transaction[] => {
     const mutableTransactions = [...eventProps.transactions]
     const handler = this[eventProps.sourceEvent.type] as EventHandler<
@@ -98,10 +98,9 @@ class DrawingEventHandlingService
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: 'interest',
-      principalChange: '0',
-      interestChange: transactionAmount.toString(),
-      balanceAfterTransaction: entity.outstandingPrincipal,
-      interestAccrued: entity.interestAccrued,
+      valueChanged: 'interestAccrued',
+      changeInValue: transactionAmount.toString(),
+      valueAfterTransaction: entity.interestAccrued,
     })
     return transactions
   }
@@ -116,10 +115,9 @@ class DrawingEventHandlingService
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: `interest changed from ${entity.interestRate} to ${updateEvent.interestRate}`,
-      principalChange: '0',
-      interestChange: '0',
-      balanceAfterTransaction: entity.outstandingPrincipal,
-      interestAccrued: entity.interestAccrued,
+      valueChanged: 'interestRate',
+      changeInValue: 'N/A',
+      valueAfterTransaction: '0',
     })
     entity.interestRate = updateEvent.interestRate
     return transactions
@@ -134,10 +132,9 @@ class DrawingEventHandlingService
       sourceEvent,
       datetime: entity.issuedEffectiveDate,
       reference: 'Drawing Created',
-      principalChange: entity.outstandingPrincipal,
-      interestChange: '0',
-      balanceAfterTransaction: entity.outstandingPrincipal,
-      interestAccrued: entity.interestAccrued,
+      valueChanged: 'N/A',
+      changeInValue: '0',
+      valueAfterTransaction: '0',
     })
     return transactions
   }
@@ -161,20 +158,18 @@ class DrawingEventHandlingService
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: `£${drawing.amount} drawn`,
-      principalChange: drawing.amount,
-      interestChange: '0',
-      balanceAfterTransaction: entity.outstandingPrincipal,
-      interestAccrued: entity.interestAccrued,
+      valueChanged: 'outstandingPrincipal',
+      changeInValue: drawing.amount,
+      valueAfterTransaction: entity.outstandingPrincipal,
     })
     transactions.push({
       streamId: entity.facilityStreamId,
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: `£${drawing.amount} drawn on drawing ${entity.streamId}`,
-      principalChange: drawing.amount,
-      interestChange: '0',
-      balanceAfterTransaction: entity.facility.drawnAmount,
-      interestAccrued: entity.facility.facilityFeeBalance,
+      valueChanged: 'drawnAmount',
+      changeInValue: drawing.amount,
+      valueAfterTransaction: entity.facility.drawnAmount,
     })
     return transactions
   }
@@ -198,7 +193,7 @@ class DrawingEventHandlingService
       )
     }
     entity.outstandingPrincipal = Big(entity.outstandingPrincipal)
-      .sub(withdrawalToRevert.principalChange)
+      .sub(withdrawalToRevert.changeInValue)
       .toFixed(2)
 
     return transactions.filter(
@@ -223,10 +218,9 @@ class DrawingEventHandlingService
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: 'repayment',
-      principalChange: Big(paymentAmount).times(-1).toString(),
-      interestChange: '0',
-      balanceAfterTransaction: entity.outstandingPrincipal,
-      interestAccrued: entity.interestAccrued,
+      valueChanged: 'outstandingPrincipal',
+      changeInValue: Big(paymentAmount).times(-1).toString(),
+      valueAfterTransaction: entity.outstandingPrincipal,
     })
     return transactions
   }

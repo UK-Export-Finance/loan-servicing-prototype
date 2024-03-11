@@ -32,10 +32,10 @@ class FacilityTransactionService {
       `SELECT
         YEAR([datetime]) AS 'year',
         MONTH([datetime]) AS 'month',
-        SUM([interestChange]) AS 'facilityFeeChange'
+        SUM([changeInValue]) AS 'facilityFeeChange'
       FROM [LoanServicing].[dbo].[transaction_entity]
       WHERE [streamId] = '${streamId}'
-      AND [reference] = 'Facility fees'
+      AND [valueChanged] = 'totalFeeBalance'
       GROUP BY MONTH([datetime]), YEAR([datetime])`,
     )) as { year: number; month: number; facilityFeeChange: number }[]
     const monthlyFeeTransactions =
@@ -45,10 +45,9 @@ class FacilityTransactionService {
         // But JS dates are zero indexed so we also subtract 1
         datetime: new Date(a.year, a.month + 1 - 1),
         reference: `Total fees for ${a.month}/${a.year}`,
-        interestChange: Big(a.facilityFeeChange).toFixed(2),
-        principalChange: '0',
-        balanceAfterTransaction: '0',
-        interestAccrued: '0',
+        valueChanged: 'feeBalance',
+        changeInValue: Big(a.facilityFeeChange).toFixed(2),
+        valueAfterTransaction: 'TBC',
       }))
     const nonFeeTransactions = await this.transactionRepo
       .createQueryBuilder('t')
@@ -69,8 +68,8 @@ class FacilityTransactionService {
     let principal = Big(0)
     let interest = Big(0)
     return transactions.map((t) => {
-      principal = principal.add(t.principalChange)
-      interest = interest.add(t.interestChange)
+      principal = principal.add(t.changeInValue)
+      interest = interest.add(t.changeInValue)
       return {
         ...t,
         balanceAfterTransaction: principal.toString(),

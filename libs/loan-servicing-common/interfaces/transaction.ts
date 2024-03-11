@@ -6,10 +6,9 @@ export type Transaction = {
   sourceEvent?: ProjectedEvent
   datetime: Date
   reference: string
-  principalChange: string
-  interestChange: string
-  balanceAfterTransaction: string
-  interestAccrued: string
+  valueChanged: string
+  changeInValue: string
+  valueAfterTransaction: string
 }
 
 export type SummarisedTransaction = PartialByKey<Transaction, 'sourceEvent'>

@@ -63,12 +63,9 @@ export const getTransactionTableRow = (
 ): TransactionTableRow => ({
   date: new Date(transaction.datetime).toLocaleDateString('en-GB'),
   reference: transaction.reference,
-  transactionAmount:
-    transaction.principalChange === '0'
-      ? transaction.interestChange
-      : transaction.principalChange,
-  balance: transaction.balanceAfterTransaction,
-  interestAccrued: transaction.interestAccrued,
+  valueChanged: transaction.valueChanged,
+  transactionAmount: transaction.changeInValue,
+  newValue: transaction.valueAfterTransaction,
 })
 
 const mapEventsToTable = (events: LoanServicingEvent[]): NunjuckTableRow[] =>
