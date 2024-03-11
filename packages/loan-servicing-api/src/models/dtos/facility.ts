@@ -7,7 +7,6 @@ import {
   ValidateNested,
 } from 'class-validator'
 import {
-  AddWithdrawalToDrawingDto,
   AdjustFacilityAmountDto,
   Drawing,
   FacilityResponseDto,
@@ -91,12 +90,7 @@ export class AdjustFacilityAmountDtoClass implements AdjustFacilityAmountDto {
   adjustment!: string
 }
 
-export class AddDrawingDtoClass implements AddWithdrawalToDrawingDto {
+export class AddDrawingToFacilityClass {
   @ApiProperty()
-  @IsDate()
-  @Type(() => Date)
-  date!: Date
-
-  @ApiProperty()
-  amount!: string
+  drawingId!: string
 }

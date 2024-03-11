@@ -20,13 +20,13 @@ import {
   SummarisedTransaction,
 } from 'loan-servicing-common'
 import {
+  AddWithdrawalToDrawingDtoClass,
   DrawingDtoClass,
   NewDrawingRequestDtoClass,
   RevertWithdrawalDtoClass,
   UpdateInterestRequestDtoClass,
 } from 'models/dtos/drawing'
 import { UntypedEventClass } from 'models/dtos/event'
-import { AddDrawingDtoClass } from 'models/dtos/facility'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import DrawingService from './drawing.service'
 import DrawingTransactionService from './drawing.service.transactions'
@@ -129,7 +129,7 @@ class DrawingController {
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
     @Query('version') version: number,
-    @Body() body: AddDrawingDtoClass,
+    @Body() body: AddWithdrawalToDrawingDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.withdrawFromDrawing(
       facilityId,

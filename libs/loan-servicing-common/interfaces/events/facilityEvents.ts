@@ -19,4 +19,13 @@ export type AdjustFacilityAmountEvent = FacilityEventBase<
   { adjustment: string }
 >
 
-export type FacilityEvent = CreateNewFacilityEvent | AdjustFacilityAmountEvent
+export type AddDrawingToFacilityEvent = FacilityEventBase<
+  'AddDrawingToFacility',
+  1,
+  { drawingId: string }
+>
+
+export type FacilityEvent =
+  | CreateNewFacilityEvent
+  | AdjustFacilityAmountEvent
+  | AddDrawingToFacilityEvent

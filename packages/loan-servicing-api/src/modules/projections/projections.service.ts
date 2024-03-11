@@ -5,7 +5,6 @@ import { Repository } from 'typeorm'
 import { Transactional } from 'typeorm-transactional'
 import {
   Transaction,
-  CreateNewDrawingEvent,
   DrawingEvent,
   DrawingProjectedEvent,
   FacilityEvent,
@@ -16,6 +15,7 @@ import {
   Drawing,
   Facility,
   FacilityProjectedEvent,
+  CreateNewDrawingEvent,
 } from 'loan-servicing-common'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import DrawingEntity from 'models/entities/DrawingEntity'

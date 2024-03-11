@@ -9,6 +9,7 @@ import {
   Transaction,
   sortEventByEffectiveDate,
   CalculateFacilityFeeEvent,
+  AddDrawingToFacilityEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -62,6 +63,22 @@ class FacilityEventHandlingService
       sourceEvent,
       datetime: entity.issuedEffectiveDate,
       reference: 'Facility Created',
+      valueChanged: 'N/A',
+      changeInValue: '0',
+      valueAfterTransaction: '0',
+    })
+    return transactions
+  }
+
+  AddDrawingToFacility: EventHandler<Facility, AddDrawingToFacilityEvent> = (
+    { entity, sourceEvent },
+    transactions,
+  ) => {
+    transactions.push({
+      streamId: entity.streamId,
+      sourceEvent,
+      datetime: entity.issuedEffectiveDate,
+      reference: `Drawing ${sourceEvent.eventData.drawingId} added to facility`,
       valueChanged: 'N/A',
       changeInValue: '0',
       valueAfterTransaction: '0',

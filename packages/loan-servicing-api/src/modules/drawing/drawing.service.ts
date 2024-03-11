@@ -9,10 +9,11 @@ import {
   UpdateInterestEvent,
   UpdateDrawingInterestRequestDto,
   AddWithdrawalToDrawingDto,
-  CreateNewDrawingEvent,
+  AddDrawingToFacilityEvent,
   WithdrawFromDrawingEvent,
   RevertWithdrawalEvent,
   RevertWithdrawlDto,
+  CreateNewDrawingEvent,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -47,6 +48,14 @@ class DrawingService {
       type: 'CreateNewDrawing',
       typeVersion: 1,
       eventData: facilityRequest,
+    })
+    await this.eventService.addEvent<AddDrawingToFacilityEvent>({
+      streamId: facilityId,
+      effectiveDate: facilityRequest.issuedEffectiveDate,
+      entityType: 'facility',
+      type: 'AddDrawingToFacility',
+      typeVersion: 1,
+      eventData: { drawingId: savedEvent.streamId },
     })
     const { drawing } =
       await this.projectionsService.buildProjectionsForDrawing(

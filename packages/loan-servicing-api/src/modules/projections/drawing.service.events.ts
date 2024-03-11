@@ -7,12 +7,12 @@ import {
   DrawingProjectedEvent,
   WithdrawFromDrawingEvent,
   DrawingEvent,
-  CreateNewDrawingEvent,
   RevertWithdrawalEvent,
   InterestEvent,
   RepaymentsEvent,
   FinalRepaymentEvent,
   sortEventByEffectiveDate,
+  CreateNewDrawingEvent,
 } from 'loan-servicing-common'
 import DrawingEntity from 'models/entities/DrawingEntity'
 import EventService from 'modules/event/event.service'
@@ -84,6 +84,22 @@ class DrawingEventHandlingService
     return handler(eventProps, mutableTransactions)
   }
 
+  CreateNewDrawing: EventHandler<Drawing, CreateNewDrawingEvent> = (
+    { entity, sourceEvent },
+    transactions,
+  ) => {
+    transactions.push({
+      streamId: entity.streamId,
+      sourceEvent,
+      datetime: entity.issuedEffectiveDate,
+      reference: 'Drawing Created',
+      valueChanged: 'N/A',
+      changeInValue: '0',
+      valueAfterTransaction: '0',
+    })
+    return transactions
+  }
+
   CalculateInterest: EventHandler<Drawing, InterestEvent> = (
     { entity, sourceEvent },
     transactions,
@@ -120,22 +136,6 @@ class DrawingEventHandlingService
       valueAfterTransaction: '0',
     })
     entity.interestRate = updateEvent.interestRate
-    return transactions
-  }
-
-  CreateNewDrawing: EventHandler<Drawing, CreateNewDrawingEvent> = (
-    { entity, sourceEvent },
-    transactions,
-  ) => {
-    transactions.push({
-      streamId: entity.streamId,
-      sourceEvent,
-      datetime: entity.issuedEffectiveDate,
-      reference: 'Drawing Created',
-      valueChanged: 'N/A',
-      changeInValue: '0',
-      valueAfterTransaction: '0',
-    })
     return transactions
   }
 
