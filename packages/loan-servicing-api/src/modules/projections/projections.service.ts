@@ -28,8 +28,6 @@ class ProjectionsService {
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(TransactionEntity)
     private transactionRepo: Repository<TransactionEntity>,
-    @InjectRepository(DrawingEntity)
-    private drawingRepo: Repository<DrawingEntity>,
     @InjectRepository(FacilityEntity)
     private facilityRepo: Repository<FacilityEntity>,
     @Inject(DrawingEventHandlingService)
@@ -56,11 +54,10 @@ class ProjectionsService {
       projection.transactions as TransactionEntity[],
       { chunk: 100 },
     )
-    // TODO work out how relations work properly
-    const storedRelation = projection.facility.drawings
+    // @ts-ignore: Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
     projection.facility.drawings.forEach(d => delete d.facility)
     const facilityEntity = await this.facilityRepo.save(projection.facility)
-    facilityEntity.drawings = storedRelation
+    facilityEntity.drawings.forEach(d => {d.facility = facilityEntity})
     return { facility: facilityEntity, transactions: transactionEntities }
   }
 
