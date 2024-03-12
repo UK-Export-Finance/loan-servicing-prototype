@@ -60,6 +60,14 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Withdrawl ${event.eventData.withdrawalEventStreamVersion} was reverted.`,
       }
+    case 'AddFixedFacilityFee':
+    case 'AddAccruingFacilityFee':
+      return {
+        event: 'New Fee added',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: `Fee ${event.eventData.feeId.slice(0, 5)} added`,
+      }
     default:
       throw new NotImplementedException('Event to event table')
   }

@@ -10,9 +10,13 @@ import {
   Res,
 } from '@nestjs/common'
 import { Response } from 'express'
-import { AdjustFacilityAmountDto } from 'loan-servicing-common'
+import {
+  AddFixedFacilityFeeDto,
+  AdjustFacilityAmountDto,
+} from 'loan-servicing-common'
 import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 import FacilityService from 'modules/facility/facility.service'
+import { AddFixedFacilityFeeFormDto } from 'templates/facility-edit/add-fee'
 import {
   AmendPrincipalNjkInput,
   FacilityPrincipalAdjustmentFormDto,
@@ -56,6 +60,40 @@ class EditFacilityController {
       adjustment: requestDto.adjustment,
     }
     await this.facilityService.adjustPrincipal(id, version, adjustmentDto)
+    response.redirect(`/facility/${id}`)
+  }
+
+  @Get(':id/fee/new')
+  @Render('facility-edit/add-fee')
+  async renderAddFacilityFeePage(
+    @Param('id') id: string,
+  ): Promise<AmendPrincipalNjkInput> {
+    const facility = await this.facilityService.getFacility(id)
+    if (!facility) {
+      throw new NotFoundException()
+    }
+    const events = await this.facilityService.getFacilityEventTableRows(id)
+
+    return {
+      facility,
+      eventRows: mapEventsToTable(events!),
+    }
+  }
+
+  @Post(':id/fixedFacilityFee')
+  async addFacilityFee(
+    @Param('id') id: string,
+    @Query('version') version: string,
+    @Body()
+    requestDto: AddFixedFacilityFeeFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const adjustmentDto: AddFixedFacilityFeeDto = {
+      name: 'FixedFacilityFee',
+      date: getDateFromDateInput(requestDto, 'date'),
+      feeAmount: requestDto.feeAmount,
+    }
+    await this.facilityService.addFixedFacilityFee(id, version, adjustmentDto)
     response.redirect(`/facility/${id}`)
   }
 }

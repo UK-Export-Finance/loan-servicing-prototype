@@ -86,6 +86,7 @@ export class NewFacilityRequestDtoClass
     'drawnAmount',
     'undrawnAmount',
     'facilityFeeBalances',
+    'facilityConfig'
   ])
   implements NewFacilityRequestDto {}
 

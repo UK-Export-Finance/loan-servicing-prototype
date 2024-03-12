@@ -64,6 +64,15 @@ export const facilityToFacilitySummaryProps = (
           .map(([id, balance]) => `Fee ${id.slice(0, 5)}: £${balance}`)
           .join('<br />'),
       },
+      actions: {
+        items: [
+          {
+            href: `/facility/${facility.streamId}/fee/new`,
+            text: 'Add new',
+            visuallyHiddenText: 'fee',
+          },
+        ],
+      },
     },
     {
       key: {

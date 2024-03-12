@@ -41,12 +41,9 @@ class ProjectionsService {
     facility: FacilityEntity
     transactions: Transaction[]
   }> {
-    const { facility, facilityProjectedEvents, facilityStreamVersion } =
+    const { facility, facilityEvents, facilityStreamVersion } =
       await this.intialiseFacility(facilityId)
-    const projection = await this.applyAllEvents(
-      facilityProjectedEvents,
-      facility,
-    )
+    const projection = await this.applyAllEvents(facilityEvents, facility)
 
     projection.facility.streamVersion = facilityStreamVersion
 
@@ -151,7 +148,7 @@ class ProjectionsService {
     facilityId: string,
   ): Promise<{
     facility: Facility
-    facilityProjectedEvents: FacilityProjectedEvent[]
+    facilityEvents: FacilityEvent[]
     facilityStreamVersion: number
   }> => {
     await this.transactionRepo.delete({ streamId: facilityId })
@@ -160,12 +157,9 @@ class ProjectionsService {
     )) as FacilityEvent[]
     const facility = this.getFacilityAtCreation(facilityEvents)
 
-    const facilityProjectedEvents =
-      await this.facilityEventHandler.getProjectedEvents(facility)
-
     return {
       facility,
-      facilityProjectedEvents,
+      facilityEvents,
       facilityStreamVersion:
         facilityEvents[facilityEvents.length - 1].streamVersion,
     }
@@ -184,6 +178,9 @@ class ProjectionsService {
       streamVersion: 1,
       drawnAmount: '0',
       facilityFeeBalances: {},
+      facilityConfig: {
+        facilityFeesStrategies: [],
+      },
       undrawnAmount: creationEvent.eventData.facilityAmount,
       ...creationEvent.eventData,
       drawings: [],

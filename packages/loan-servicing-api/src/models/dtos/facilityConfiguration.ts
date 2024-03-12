@@ -1,7 +1,9 @@
-import { ApiExtraModels, ApiProperty, refs } from '@nestjs/swagger'
+import { ApiExtraModels, ApiProperty, OmitType, refs } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   AccruingFacilityFeeStrategyOption,
+  AddAccruingFacilityFeeDto,
+  AddFixedFacilityFeeDto,
   FacilityConfiguration,
   FacilityFeeStrategyName,
   FixedFacilityFeeStrategyOption,
@@ -37,6 +39,10 @@ export class FixedFacilityFeeStrategyOptionDtoClass
   feeAmount!: string
 }
 
+export class AddFixedFacilityFeeDtoClass
+  extends OmitType(FixedFacilityFeeStrategyOptionDtoClass, ['feeId'])
+  implements AddFixedFacilityFeeDto {}
+
 export class AccruingFacilityFeeStrategyOptionDtoClass
   extends StrategyOptionDtoClass
   implements AccruingFacilityFeeStrategyOption
@@ -48,11 +54,25 @@ export class AccruingFacilityFeeStrategyOptionDtoClass
   feeId!: string
 
   @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  startsFrom!: Date
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  stopsOn!: Date
+
+  @ApiProperty()
   accrualRate!: string
 
   @ApiProperty({ enum: ['facilityAmount', 'drawnAmount', 'undrawnAmount'] })
   accruesOn!: AccruingFacilityFeeStrategyOption['accruesOn']
 }
+
+export class AddAccruingFacilityFeeDtoClass
+  extends OmitType(AccruingFacilityFeeStrategyOptionDtoClass, ['feeId'])
+  implements AddAccruingFacilityFeeDto {}
 
 @ApiExtraModels(
   AccruingFacilityFeeStrategyOptionDtoClass,

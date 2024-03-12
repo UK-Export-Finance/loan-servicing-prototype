@@ -8,11 +8,15 @@ import {
   AdjustFacilityAmountEvent,
   AdjustFacilityAmountDto,
   Facility,
+  AddFixedFacilityFeeEvent,
+  AddAccruingFacilityFeeEvent,
+  AddFixedFacilityFeeDto,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsService from 'modules/projections/projections.service'
+import { AddAccruingFacilityFeeDtoClass } from 'models/dtos/facilityConfiguration'
 
 @Injectable()
 class FacilityService {
@@ -60,6 +64,50 @@ class FacilityService {
         type: 'AdjustFacilityAmount',
         typeVersion: 1,
         eventData: { adjustment },
+      },
+      streamVersion,
+    )
+    const { facility } =
+      await this.projectionsService.buildProjectionsForFacility(streamId)
+    return facility
+  }
+
+  @Transactional()
+  async addFixedFacilityFee(
+    streamId: string,
+    streamVersion: number,
+    feeConfig: AddFixedFacilityFeeDto,
+  ): Promise<Facility> {
+    await this.eventService.addEvent<AddFixedFacilityFeeEvent>(
+      {
+        streamId,
+        effectiveDate: new Date(feeConfig.date),
+        entityType: 'facility',
+        type: 'AddFixedFacilityFee',
+        typeVersion: 1,
+        eventData: { ...feeConfig, feeId: crypto.randomUUID() },
+      },
+      streamVersion,
+    )
+    const { facility } =
+      await this.projectionsService.buildProjectionsForFacility(streamId)
+    return facility
+  }
+
+  @Transactional()
+  async addAccruingFacilityFee(
+    streamId: string,
+    streamVersion: number,
+    feeConfig: AddAccruingFacilityFeeDtoClass,
+  ): Promise<Facility> {
+    await this.eventService.addEvent<AddAccruingFacilityFeeEvent>(
+      {
+        streamId,
+        effectiveDate: new Date(feeConfig.startsFrom),
+        entityType: 'facility',
+        type: 'AddAccruingFacilityFee',
+        typeVersion: 1,
+        eventData: { ...feeConfig, feeId: crypto.randomUUID() },
       },
       streamVersion,
     )

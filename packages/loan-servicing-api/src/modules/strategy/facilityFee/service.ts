@@ -31,7 +31,7 @@ class FacilityFeeService {
       this.generateEventsForSingleFee(facility, option),
     )
 
-  private generateEventsForSingleFee = <T extends FacilityFeeStrategyOption>(
+  generateEventsForSingleFee = <T extends FacilityFeeStrategyOption>(
     facility: Facility,
     option: T,
   ): CalculateFacilityFeeEvent[] => {

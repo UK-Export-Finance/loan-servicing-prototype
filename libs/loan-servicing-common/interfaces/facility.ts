@@ -18,15 +18,6 @@ export type Facility = {
   expiryDate: Date
 }
 
-// export type FacilityWithSpecifiedConfig<
-//   StrategyGroup extends keyof FacilityConfiguration,
-//   StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
-// > = ReplaceProperty<
-//   Facility,
-//   'facilityConfig',
-//   SpecifiedFacilityConfig<StrategyGroup, StrategyName>
-// >
-
 export type FacilityResponseDto = ReplaceProperty<
   Facility,
   'drawings',
@@ -46,4 +37,5 @@ export type NewFacilityRequestDto = Omit<
   | 'drawnAmount'
   | 'undrawnAmount'
   | 'facilityFeeBalances'
+  | 'facilityConfig'
 >

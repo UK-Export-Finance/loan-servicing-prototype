@@ -1,0 +1,62 @@
+{% extends "index.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+{% from "macros/transaction-tables.njk" import transactionTable %}
+{% from "macros/transaction-tables.njk" import eventTable %}
+
+{% block pageTitle -%}
+  Facility
+  {{ facility.streamId }}
+{%- endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">Facility - Add Fee
+    {{ facility.streamId }}</h1>
+
+  <h2 class="govuk-heading-m">Add Fixed Fee</h2>
+  <form action="/facility/{{facility.streamId}}/fixedFacilityFee?version={{facility.streamVersion}}" method="post">
+    {{ govukInput({
+        label: {
+          text: "Fee amount"
+        },
+        classes: "govuk-input--width-20",
+        id: "feeAmount",
+        name: "feeAmount"
+      }) }}
+    {{ govukDateInput({
+        id: "date",
+        namePrefix: "date",
+        fieldset: {
+          legend: {
+            text: "Date of fee"
+          }
+        }
+      }) }}
+    {{ govukButton({  text: "Add Fixed Fee"}) }}
+  </form>
+
+  <h2 class="govuk-heading-m">Add Accruing Fee</h2>
+  <form action="/facility/{{facility.streamId}}/addFacilityFee/fixed?version={{facility.streamVersion}}" method="post">
+    {{ govukInput({
+        label: {
+          text: "Fee amount"
+        },
+        classes: "govuk-input--width-20",
+        id: "adjustment",
+        name: "adjustment"
+      }) }}
+    {{ govukDateInput({
+        id: "date",
+        namePrefix: "date",
+        fieldset: {
+          legend: {
+            text: "Date of fee"
+          }
+        }
+      }) }}
+    {{ govukButton({  text: "Add Fixed Fee"}) }}
+  </form>
+
+{% endblock %}

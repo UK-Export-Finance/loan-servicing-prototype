@@ -16,7 +16,6 @@ export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
 > = (facility, option) => {
   const expiryDate = new Date(facility.expiryDate)
   let dateToProcess = new Date(facility.issuedEffectiveDate)
-  const feeId = crypto.randomUUID()
 
   const facilityFeeEvents: CalculateAccruingFacilityFeeEvent[] = []
   while (dateToProcess <= expiryDate) {
@@ -25,7 +24,7 @@ export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
       streamId: facility.streamId,
       entityType: 'facility',
       type: 'CalculateAccruingFacilityFee',
-      eventData: { ...option, feeId },
+      eventData: option,
     })
     // Naive date management - not suitable for production
     dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
@@ -41,7 +40,7 @@ export const getFixedFacilityFeeEvents: GetFacilityFeeEventsStrategy<
     streamId: facility.streamId,
     entityType: 'facility',
     type: 'CalculateFixedFacilityFee',
-    eventData: { ...option, feeId: crypto.randomUUID() },
+    eventData: option,
   },
 ]
 

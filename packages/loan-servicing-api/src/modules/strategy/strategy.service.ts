@@ -21,6 +21,8 @@ class StrategyService {
 
   getFacilityFeeEvents = this.facilityFeeService.generateFacilityFeeEvents
 
+  getEventsForFacilityFee = this.facilityFeeService.generateEventsForSingleFee
+
   calculateFacilityFee = this.facilityFeeService.calculateFee
 }
 

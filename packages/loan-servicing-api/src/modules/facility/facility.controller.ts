@@ -23,6 +23,10 @@ import {
 import TransactionEntity from 'models/entities/TransactionEntity'
 import FacilityService from 'modules/facility/facility.service'
 import { plainToInstance } from 'class-transformer'
+import {
+  AddAccruingFacilityFeeDtoClass,
+  AddFixedFacilityFeeDtoClass,
+} from 'models/dtos/facilityConfiguration'
 import FacilityTransactionService from './facility.service.transactions'
 
 @ApiTags('Facility')
@@ -111,6 +115,40 @@ class FacilityController {
       facilityId,
       Number(version),
       adjustment,
+    )
+    return plainToInstance(FacilityResponseDtoClass, updatedFacility, {
+      enableCircularCheck: true,
+    })
+  }
+
+  @Post(':facilityId/addFacilityFee/fixed')
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
+  async addFixedFacilityFee(
+    @Param('facilityId') facilityId: string,
+    @Query('version') version: string,
+    @Body() feeConfig: AddFixedFacilityFeeDtoClass,
+  ): Promise<FacilityResponseDtoClass> {
+    const updatedFacility = await this.facilityService.addFixedFacilityFee(
+      facilityId,
+      Number(version),
+      feeConfig,
+    )
+    return plainToInstance(FacilityResponseDtoClass, updatedFacility, {
+      enableCircularCheck: true,
+    })
+  }
+
+  @Post(':facilityId/addFacilityFee/accruing')
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
+  async addAccruingFacilityFee(
+    @Param('facilityId') facilityId: string,
+    @Query('version') version: string,
+    @Body() feeConfig: AddAccruingFacilityFeeDtoClass,
+  ): Promise<FacilityResponseDtoClass> {
+    const updatedFacility = await this.facilityService.addAccruingFacilityFee(
+      facilityId,
+      Number(version),
+      feeConfig,
     )
     return plainToInstance(FacilityResponseDtoClass, updatedFacility, {
       enableCircularCheck: true,

@@ -10,6 +10,10 @@ import {
   RevertWithdrawalDtoClass,
   UpdateInterestRequestDtoClass,
 } from './drawing'
+import {
+  AccruingFacilityFeeStrategyOptionDtoClass,
+  FixedFacilityFeeStrategyOptionDtoClass,
+} from './facilityConfiguration'
 
 const eventTypeToEventClassDefinition: {
   [key in LoanServicingEvent['type']]: ClassConstructor<
@@ -23,6 +27,8 @@ const eventTypeToEventClassDefinition: {
   CreateNewDrawing: NewDrawingRequestDtoClass,
   AddDrawingToFacility: NewDrawingRequestDtoClass,
   RevertWithdrawal: RevertWithdrawalDtoClass,
+  AddFixedFacilityFee: FixedFacilityFeeStrategyOptionDtoClass,
+  AddAccruingFacilityFee: AccruingFacilityFeeStrategyOptionDtoClass,
 }
 
 export default eventTypeToEventClassDefinition

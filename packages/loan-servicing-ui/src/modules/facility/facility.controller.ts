@@ -37,6 +37,23 @@ import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 class FacilityController {
   constructor(private facilityService: FacilityService) {}
 
+  @Get()
+  @Render('facility-list')
+  async renderAllFacilities(): Promise<FacilityListNjkInput> {
+    const allFacilities = await tryGetApiData<DrawingDto[]>('facility')
+    const allFacilityTypes =
+      await tryGetApiData<FacilityType[]>('facility-type')
+    return {
+      allFacilities,
+      allFacilityTypes,
+      facilityTypeNames:
+        allFacilityTypes?.map((t) => ({
+          value: t.name,
+          text: t.name,
+        })) ?? [],
+    }
+  }
+
   @Get('facility/new')
   @Render('create-facility')
   async renderCreateFacilityPage(
@@ -58,21 +75,19 @@ class FacilityController {
     }
   }
 
-  @Get()
-  @Render('facility-list')
-  async renderAllFacilities(): Promise<FacilityListNjkInput> {
-    const allFacilities = await tryGetApiData<DrawingDto[]>('facility')
-    const allFacilityTypes =
-      await tryGetApiData<FacilityType[]>('facility-type')
-    return {
-      allFacilities,
-      allFacilityTypes,
-      facilityTypeNames:
-        allFacilityTypes?.map((t) => ({
-          value: t.name,
-          text: t.name,
-        })) ?? [],
+  @Post('facility')
+  async createFacility(
+    @Body() requestDto: NewFacilityRequestFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const newFacilityRequest: NewFacilityRequestDto =
+      mapCreateFacilityFormToRequest(requestDto)
+    const newFacility =
+      await this.facilityService.createFacility(newFacilityRequest)
+    if (!newFacility) {
+      throw new Error('Failed to create facility')
     }
+    response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
 
   @Get('facility/:id')
@@ -97,21 +112,6 @@ class FacilityController {
       facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
       drawingSummaries: facilityToDrawingSummaries(facility),
     }
-  }
-
-  @Post('facility')
-  async createFacility(
-    @Body() requestDto: NewFacilityRequestFormDto,
-    @Res() response: Response,
-  ): Promise<void> {
-    const newFacilityRequest: NewFacilityRequestDto =
-      mapCreateFacilityFormToRequest(requestDto)
-    const newFacility =
-      await this.facilityService.createFacility(newFacilityRequest)
-    if (!newFacility) {
-      throw new Error('Failed to create facility')
-    }
-    response.redirect(`/facility/${newFacility?.streamId}?facilityCreated=true`)
   }
 }
 
