@@ -6,7 +6,7 @@ import {
   FacilityFeeStrategyName,
   FixedFacilityFeeStrategyOption,
 } from 'loan-servicing-common'
-import { IsDate, ValidateNested } from 'class-validator'
+import { IsArray, IsDate, ValidateNested } from 'class-validator'
 import StrategyOptionDtoClass from './strategy-option'
 
 const interestStrategyNames: FacilityFeeStrategyName[] = ['AccruingFacilityFee']
@@ -69,8 +69,10 @@ export class FacilityConfigurationDtoClass implements FacilityConfiguration {
       ],
     },
   })
-  @ValidateNested()
-  facilityFeeStrategy!:
+  @ValidateNested({ each: true })
+  @IsArray()
+  facilityFeesStrategies!: (
     | AccruingFacilityFeeStrategyOptionDtoClass
     | FixedFacilityFeeStrategyOptionDtoClass
+  )[]
 }

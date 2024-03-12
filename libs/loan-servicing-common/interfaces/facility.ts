@@ -1,6 +1,6 @@
 import { ReplaceProperty } from '../utils/type-utils'
 import type { Drawing } from './drawing'
-import { FacilityConfiguration, SpecifiedFacilityConfig } from './strategies'
+import { FacilityConfiguration } from './strategies'
 
 export type Facility = {
   streamId: string
@@ -17,14 +17,14 @@ export type Facility = {
   expiryDate: Date
 }
 
-export type FacilityWithSpecifiedConfig<
-  StrategyGroup extends keyof FacilityConfiguration,
-  StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
-> = ReplaceProperty<
-  Facility,
-  'facilityConfig',
-  SpecifiedFacilityConfig<StrategyGroup, StrategyName>
->
+// export type FacilityWithSpecifiedConfig<
+//   StrategyGroup extends keyof FacilityConfiguration,
+//   StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
+// > = ReplaceProperty<
+//   Facility,
+//   'facilityConfig',
+//   SpecifiedFacilityConfig<StrategyGroup, StrategyName>
+// >
 
 export type FacilityResponseDto = ReplaceProperty<
   Facility,

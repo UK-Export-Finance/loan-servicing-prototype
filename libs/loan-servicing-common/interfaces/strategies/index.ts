@@ -10,17 +10,17 @@ import {
 import { RepaymentStrategyName, RepaymentStrategyOptions } from './repayment'
 
 export type FacilityConfiguration = {
-  facilityFeeStrategy: FacilityFeeStrategyOption
+  facilityFeesStrategies: FacilityFeeStrategyOption[]
 }
 
-export type SpecifiedFacilityConfig<
-  StrategyGroup extends keyof FacilityConfiguration,
-  StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
-> = ReplaceProperty<
-  FacilityConfiguration,
-  StrategyGroup,
-  Extract<FacilityConfiguration[StrategyGroup], { name: StrategyName }>
->
+// export type SpecifiedFacilityConfig<
+//   StrategyGroup extends keyof FacilityConfiguration,
+//   StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
+// > = ReplaceProperty<
+//   FacilityConfiguration,
+//   StrategyGroup,
+//   Extract<FacilityConfiguration[StrategyGroup], { name: StrategyName }>
+// >
 
 export type DrawingConfiguration = {
   calculateInterestStrategy: CalculateInterestStrategyOption

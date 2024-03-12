@@ -1,17 +1,19 @@
 import {
+  AccruingFacilityFeeStrategyOption,
   CalculateAccruingFacilityFeeEvent,
   CalculateFacilityFeeEvent,
+  Facility,
   FacilityFeeStrategyName,
-  FacilityWithSpecifiedConfig,
+  FacilityFeeStrategyOption,
+  FixedFacilityFeeStrategyOption,
 } from 'loan-servicing-common'
 
-export type GetFacilityFeeEventsStrategy<T extends FacilityFeeStrategyName> = (
-  facility: FacilityWithSpecifiedConfig<'facilityFeeStrategy', T>,
-) => CalculateFacilityFeeEvent[]
+export type GetFacilityFeeEventsStrategy<T extends FacilityFeeStrategyOption> =
+  (facility: Facility, option: T) => CalculateFacilityFeeEvent[]
 
 export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
-  'AccruingFacilityFee'
-> = (facility) => {
+  AccruingFacilityFeeStrategyOption
+> = (facility, option) => {
   const expiryDate = new Date(facility.expiryDate)
   let dateToProcess = new Date(facility.issuedEffectiveDate)
   const facilityFeeEvents: CalculateAccruingFacilityFeeEvent[] = []
@@ -21,7 +23,7 @@ export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
       streamId: facility.streamId,
       entityType: 'facility',
       type: 'CalculateAccruingFacilityFee',
-      eventData: facility.facilityConfig.facilityFeeStrategy,
+      eventData: option,
     })
     // Naive date management - not suitable for production
     dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
@@ -30,19 +32,21 @@ export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
 }
 
 export const getFixedFacilityFeeEvents: GetFacilityFeeEventsStrategy<
-  'FixedFacilityFee'
-> = (facility) => [
+  FixedFacilityFeeStrategyOption
+> = (facility, option) => [
   {
-    effectiveDate: facility.facilityConfig.facilityFeeStrategy.date,
+    effectiveDate: option.date,
     streamId: facility.streamId,
     entityType: 'facility',
     type: 'CalculateFixedFacilityFee',
-    eventData: facility.facilityConfig.facilityFeeStrategy,
+    eventData: option,
   },
 ]
 
 type FacilityFeeEventStrategies = {
-  [K in FacilityFeeStrategyName]: GetFacilityFeeEventsStrategy<K>
+  [K in FacilityFeeStrategyName]: GetFacilityFeeEventsStrategy<
+    Extract<FacilityFeeStrategyOption, { name: K }>
+  >
 }
 
 export const facilityFeeEventStrategies: FacilityFeeEventStrategies = {

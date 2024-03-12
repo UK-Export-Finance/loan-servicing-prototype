@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common'
 import {
   CalculateFacilityFeeEvent,
   Facility,
-  FacilityFeeStrategyName,
-  FacilityWithSpecifiedConfig,
+  FacilityFeeStrategyOption,
 } from 'loan-servicing-common'
-import { facilityFeeEventStrategies } from './generate-events.strategies'
+import {
+  GetFacilityFeeEventsStrategy,
+  facilityFeeEventStrategies,
+} from './generate-events.strategies'
 import calculateFacilityFeeStrategies, {
   CalculateFacilityFeeStrategy,
 } from './calculateFee.strategies'
@@ -22,12 +24,22 @@ class FacilityFeeService {
     return handler(facility, event)
   }
 
-  generateFacilityFeeEvents = <T extends FacilityFeeStrategyName>(
-    facility: FacilityWithSpecifiedConfig<'facilityFeeStrategy', T>,
+  generateFacilityFeeEvents = (
+    facility: Facility,
+  ): CalculateFacilityFeeEvent[] =>
+    facility.facilityConfig.facilityFeesStrategies.flatMap((option) =>
+      this.generateEventsForSingleFee(facility, option),
+    )
+
+  private generateEventsForSingleFee = <T extends FacilityFeeStrategyOption>(
+    facility: Facility,
+    option: T,
   ): CalculateFacilityFeeEvent[] => {
-    const option = facility.facilityConfig.facilityFeeStrategy
-    const strategyName: T = option.name
-    return facilityFeeEventStrategies[strategyName](facility)
+    const strategyName = option.name
+    const eventGenerator = facilityFeeEventStrategies[
+      strategyName
+    ] as GetFacilityFeeEventsStrategy<T>
+    return eventGenerator(facility, option)
   }
 }
 
