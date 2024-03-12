@@ -60,7 +60,9 @@ export const facilityToFacilitySummaryProps = (
         text: 'Facility Fee Balance',
       },
       value: {
-        text: `£${facility.facilityFeeBalances}`,
+        html: Object.entries(facility.facilityFeeBalances)
+          .map(([id, balance]) => `Fee ${id.slice(0, 5)}: £${balance}`)
+          .join('<br />'),
       },
     },
     {
@@ -90,7 +92,7 @@ export const facilityToDrawingSummaries = (
   facility.drawings.map((drawing) => ({
     card: {
       title: {
-        text: `Drawing ${drawing.streamId}`,
+        text: `Drawing ${drawing.streamId.slice(0, 5)}`,
       },
       actions: {
         items: [

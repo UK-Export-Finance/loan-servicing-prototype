@@ -8,11 +8,18 @@ const mapCreateFacilityFormToRequest = (
   ...request,
   facilityAmount: request.maxPrincipal,
   facilityConfig: {
-    facilityFeesStrategies: [{
-      name: 'AccruingFacilityFee',
-      accruesOn: 'undrawnAmount',
-      accrualRate: '2',
-    }],
+    facilityFeesStrategies: [
+      {
+        name: 'AccruingFacilityFee',
+        accruesOn: 'undrawnAmount',
+        accrualRate: '2',
+      },
+      {
+        name: 'AccruingFacilityFee',
+        accruesOn: 'drawnAmount',
+        accrualRate: '1',
+      },
+    ],
   },
   expiryDate: getDateFromDateInput(request, 'expiryDate'),
   issuedEffectiveDate: getDateFromDateInput(request, 'issuedEffectiveDate'),
