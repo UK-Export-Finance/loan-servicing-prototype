@@ -11,8 +11,7 @@ import {
 } from '@nestjs/common'
 import { tryGetApiData } from 'api/base-client'
 import { Response } from 'express'
-import mapCreateFacilityFormToRequest, {
-} from 'mappers/form-mappers/createFacilityMapper'
+import mapCreateFacilityFormToRequest from 'mappers/form-mappers/createFacilityMapper'
 import {
   CalculateInterestStrategyName,
   DrawingDto,
@@ -36,9 +35,7 @@ import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 
 @Controller('')
 class FacilityController {
-  constructor(
-    private facilityService: FacilityService,
-  ) {}
+  constructor(private facilityService: FacilityService) {}
 
   @Get('facility/new')
   @Render('create-facility')
@@ -89,7 +86,8 @@ class FacilityController {
       throw new NotFoundException()
     }
     const events = await this.facilityService.getFacilityEventTableRows(id)
-    const transactions = await this.facilityService.getFacilityTransactionRows(id)
+    const transactions =
+      await this.facilityService.getFacilityTransactionRows(id)
 
     return {
       facility,

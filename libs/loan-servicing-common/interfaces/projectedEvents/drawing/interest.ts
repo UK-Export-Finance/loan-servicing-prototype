@@ -1,3 +1,7 @@
-import { ProjectedDrawingEventBase, } from '../projectedEventBase'
+import { ProjectedDrawingEventBase } from '../projectedEventBase'
 
-export type InterestEvent = ProjectedDrawingEventBase<'CalculateInterest', 1, {}>
+export type InterestEvent = ProjectedDrawingEventBase<
+  'CalculateInterest',
+  1,
+  {}
+>

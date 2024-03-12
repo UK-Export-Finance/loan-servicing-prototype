@@ -4,7 +4,7 @@ export type EventBase<
   Type extends string,
   Version extends number,
   Data extends object,
-  Entity extends EntityWithEvents
+  Entity extends EntityWithEvents,
 > = {
   streamId: string
   streamVersion: number

@@ -28,4 +28,5 @@ const bootstrap = async (): Promise<void> => {
   await app.listen(port ?? 3000)
 }
 
-bootstrap()
+// eslint-disable-next-line no-void
+void bootstrap()

@@ -1,9 +1,6 @@
 import type { Facility } from './facility'
 import { ConvertToDtoType, ReplaceProperty } from '../utils/type-utils'
-import {
-  DrawingConfiguration,
-  SpecifiedDrawingConfig,
-} from './strategies'
+import { DrawingConfiguration, SpecifiedDrawingConfig } from './strategies'
 
 export type Drawing = {
   streamId: string

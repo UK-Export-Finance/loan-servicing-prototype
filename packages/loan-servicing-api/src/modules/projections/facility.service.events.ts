@@ -116,12 +116,13 @@ class FacilityEventHandlingService
     return {
       drawing,
       drawingProjectedEvents,
-      drawingStreamVersion:
-        event.streamVersion,
+      drawingStreamVersion: event.streamVersion,
     }
   }
 
-  getDrawingAtCreation = (creationEvent: AddDrawingToFacilityEvent): DrawingEntity => {
+  getDrawingAtCreation = (
+    creationEvent: AddDrawingToFacilityEvent,
+  ): DrawingEntity => {
     if (creationEvent.type !== 'AddDrawingToFacility') {
       throw new Error('First created event is not drawing creation')
     }

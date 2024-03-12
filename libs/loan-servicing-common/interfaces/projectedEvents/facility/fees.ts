@@ -1,4 +1,7 @@
-import { AccruingFacilityFeeStrategyOption, FixedFacilityFeeStrategyOption } from '../../strategies/facilityFee'
+import {
+  AccruingFacilityFeeStrategyOption,
+  FixedFacilityFeeStrategyOption,
+} from '../../strategies/facilityFee'
 import { ProjectedFacilityEventBase } from '../projectedEventBase'
 
 export type CalculateAccruingFacilityFeeEvent = ProjectedFacilityEventBase<

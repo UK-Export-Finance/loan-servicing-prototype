@@ -13,7 +13,7 @@ class TransactionEntity implements Transaction {
   streamId!: string
 
   @ClassAsJsonColumn(DrawingProjectionEventDtoClass)
-  sourceEvent!: DrawingProjectedEvent;
+  sourceEvent!: DrawingProjectedEvent
 
   @Column()
   datetime!: Date

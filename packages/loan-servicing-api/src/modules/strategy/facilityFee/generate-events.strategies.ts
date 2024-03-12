@@ -32,14 +32,14 @@ export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
 export const getFixedFacilityFeeEvents: GetFacilityFeeEventsStrategy<
   'FixedFacilityFee'
 > = (facility) => [
-    {
-      effectiveDate: facility.facilityConfig.facilityFeeStrategy.date,
-      streamId: facility.streamId,
-      entityType: 'facility',
-      type: 'CalculateFixedFacilityFee',
-      eventData: facility.facilityConfig.facilityFeeStrategy,
-    },
-  ]
+  {
+    effectiveDate: facility.facilityConfig.facilityFeeStrategy.date,
+    streamId: facility.streamId,
+    entityType: 'facility',
+    type: 'CalculateFixedFacilityFee',
+    eventData: facility.facilityConfig.facilityFeeStrategy,
+  },
+]
 
 type FacilityFeeEventStrategies = {
   [K in FacilityFeeStrategyName]: GetFacilityFeeEventsStrategy<K>

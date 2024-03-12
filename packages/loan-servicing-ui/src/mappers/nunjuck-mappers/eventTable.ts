@@ -46,7 +46,7 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Drawing created.`,
       }
-      case 'AddDrawingToFacility':
+    case 'AddDrawingToFacility':
       return {
         event: 'Drawing Added',
         eventDate: eventDateObj.toLocaleString('en-GB'),

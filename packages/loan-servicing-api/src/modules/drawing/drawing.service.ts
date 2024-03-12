@@ -17,7 +17,6 @@ import {
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
-import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsService from 'modules/projections/projections.service'
 
 @Injectable()
@@ -26,8 +25,6 @@ class DrawingService {
     @Inject(EventService) private eventService: EventService,
     @InjectRepository(DrawingEntity)
     private drawingRepo: Repository<DrawingEntity>,
-    @InjectRepository(FacilityEntity)
-    private facilityRepo: Repository<FacilityEntity>,
     @Inject(ProjectionsService)
     private projectionsService: ProjectionsService,
   ) {}
@@ -38,10 +35,6 @@ class DrawingService {
     facilityVersion: number,
     drawingRequest: NewDrawingRequestDto,
   ): Promise<Drawing> {
-    const facility = await this.facilityRepo.findOneOrFail({
-      where: { streamId: facilityId },
-    })
-
     const savedEvent =
       await this.eventService.addEvent<AddDrawingToFacilityEvent>(
         {
@@ -68,8 +61,6 @@ class DrawingService {
         facilityId,
         savedEvent.eventData.streamId,
       )
-    drawing.facility = facility
-    await this.drawingRepo.save(drawing)
     return drawing
   }
 

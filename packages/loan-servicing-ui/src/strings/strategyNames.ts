@@ -18,10 +18,11 @@ export const repaymentsStrategyNames: Record<RepaymentStrategyName, string> = {
   Manual: 'Manual Repayments',
 }
 
-export const facilityFeeStrategyNames: Record<FacilityFeeStrategyName, string> = {
-  AccruingFacilityFee: 'Accruing Facility Fees',
-  FixedFacilityFee: 'Fixed Facility Fees',
-}
+export const facilityFeeStrategyNames: Record<FacilityFeeStrategyName, string> =
+  {
+    AccruingFacilityFee: 'Accruing Facility Fees',
+    FixedFacilityFee: 'Fixed Facility Fees',
+  }
 
 export const allPlaceholders: { [key: string]: string } = {
   ...interestStrategyNames,

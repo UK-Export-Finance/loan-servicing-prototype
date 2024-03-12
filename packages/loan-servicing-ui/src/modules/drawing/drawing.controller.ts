@@ -123,7 +123,7 @@ class DrawingController {
   async createDrawing(
     @Param('facilityId') facilityId: string,
     @Body() requestDto: NewDrawingRequestFormDto,
-    @Query('facilityVersion') facilityVersion: number, 
+    @Query('facilityVersion') facilityVersion: number,
     @Res() response: Response,
   ): Promise<void> {
     const newDrawingRequest: NewDrawingRequestDto =

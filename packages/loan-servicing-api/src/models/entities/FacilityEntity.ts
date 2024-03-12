@@ -1,7 +1,4 @@
-import {
-  ClassAsJsonColumn,
-  CurrencyColumn,
-} from 'database/decorators'
+import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
 import { Facility, FacilityConfiguration } from 'loan-servicing-common'
 import { Column, Entity, OneToMany, PrimaryColumn, Relation } from 'typeorm'
 import { FacilityConfigurationDtoClass } from 'models/dtos/facilityConfiguration'

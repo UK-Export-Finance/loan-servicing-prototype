@@ -54,10 +54,12 @@ class ProjectionsService {
       projection.transactions as TransactionEntity[],
       { chunk: 100 },
     )
-    // @ts-ignore: Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
-    projection.facility.drawings.forEach(d => delete d.facility)
+    // Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
+    projection.facility.drawings.forEach((d) => delete (d as any).facility)
     const facilityEntity = await this.facilityRepo.save(projection.facility)
-    facilityEntity.drawings.forEach(d => {d.facility = facilityEntity})
+    facilityEntity.drawings.forEach((d) => {
+      d.facility = facilityEntity
+    })
     return { facility: facilityEntity, transactions: transactionEntities }
   }
 

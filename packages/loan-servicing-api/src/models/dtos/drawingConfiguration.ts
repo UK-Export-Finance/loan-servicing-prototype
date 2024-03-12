@@ -14,7 +14,7 @@ import {
   RegularRepaymentStrategyOptions,
   Repayment,
 } from 'loan-servicing-common'
-import StrategyOptionDtoClass  from './strategy-option'
+import StrategyOptionDtoClass from './strategy-option'
 
 const interestStrategyNames: CalculateInterestStrategyName[] = [
   'Compounding',

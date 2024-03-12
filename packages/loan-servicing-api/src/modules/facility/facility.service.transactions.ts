@@ -38,8 +38,8 @@ class FacilityTransactionService {
       AND [valueChanged] = 'totalFeeBalance'
       GROUP BY MONTH([datetime]), YEAR([datetime])`,
     )) as { year: number; month: number; facilityFeeChange: number }[]
-    const monthlyFeeTransactions =
-      monthlyFees.map<SummarisedTransaction>((a) => ({
+    const monthlyFeeTransactions = monthlyFees.map<SummarisedTransaction>(
+      (a) => ({
         streamId,
         // We use the first day of the next month for the interest transaction
         // But JS dates are zero indexed so we also subtract 1
@@ -48,7 +48,8 @@ class FacilityTransactionService {
         valueChanged: 'feeBalance',
         changeInValue: Big(a.facilityFeeChange).toFixed(2),
         valueAfterTransaction: 'TBC',
-      }))
+      }),
+    )
     const nonFeeTransactions = await this.transactionRepo
       .createQueryBuilder('t')
       .where({ streamId })
