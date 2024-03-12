@@ -12,11 +12,13 @@ import {
   FacilityResponseDto,
   NewFacilityRequestDto,
 } from 'loan-servicing-common'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import { DrawingDtoClass } from './drawing'
 import { FacilityConfigurationDtoClass } from './facilityConfiguration'
 
 export class FacilityResponseDtoClass implements FacilityResponseDto {
+  private readonly _type = 'FacilityDto'
+
   @ApiProperty()
   streamId!: string
 
@@ -38,6 +40,9 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   @ValidateNested({ each: true })
   @Type(() => DrawingDtoClass)
   @IsNotEmpty()
+  @Transform(({ value }) =>
+    value.map((d: Drawing) => ({ ...d, facility: undefined })),
+  )
   drawings!: Drawing[]
 
   @ApiProperty()

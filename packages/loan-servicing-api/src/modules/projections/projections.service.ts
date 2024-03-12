@@ -50,9 +50,22 @@ class ProjectionsService {
 
     projection.facility.streamVersion = facilityStreamVersion
 
-    const transactionEntities = await this.transactionRepo.save(
-      projection.transactions as TransactionEntity[],
-      { chunk: 100 },
+    const CHUNK_SIZE = 50
+    const chunkedTransactions = []
+    for (let i = 0; i < projection.transactions.length; i += CHUNK_SIZE) {
+      chunkedTransactions.push(projection.transactions.slice(i, i + CHUNK_SIZE))
+    }
+    const transactionSaveResults = await Promise.all(
+      chunkedTransactions.map((chunk) =>
+        this.transactionRepo.insert(chunk as TransactionEntity[]),
+      ),
+    )
+    const transactionEntities = transactionSaveResults.reduce(
+      (res: TransactionEntity[], curr) => {
+        res.push(...(curr.generatedMaps as TransactionEntity[]))
+        return res
+      },
+      [] as TransactionEntity[],
     )
     // Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
     projection.facility.drawings.forEach((d) => delete (d as any).facility)
@@ -60,7 +73,10 @@ class ProjectionsService {
     facilityEntity.drawings.forEach((d) => {
       d.facility = facilityEntity
     })
-    return { facility: facilityEntity, transactions: transactionEntities }
+    return {
+      facility: facilityEntity,
+      transactions: transactionEntities,
+    }
   }
 
   @Transactional()

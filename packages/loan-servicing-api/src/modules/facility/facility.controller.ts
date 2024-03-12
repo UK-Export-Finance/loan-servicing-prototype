@@ -22,6 +22,7 @@ import {
 } from 'models/dtos/facility'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import FacilityService from 'modules/facility/facility.service'
+import { plainToInstance } from 'class-transformer'
 import FacilityTransactionService from './facility.service.transactions'
 
 @ApiTags('Facility')
@@ -41,7 +42,9 @@ class FacilityController {
     if (facility === null) {
       throw new NotFoundException()
     }
-    return facility
+    return plainToInstance(FacilityResponseDtoClass, facility, {
+      enableCircularCheck: true,
+    })
   }
 
   @Get(':facilityId/events')
@@ -81,7 +84,9 @@ class FacilityController {
     if (allEvents === null) {
       throw new NotFoundException()
     }
-    return allEvents
+    return plainToInstance(FacilityResponseDtoClass, allEvents, {
+      enableCircularCheck: true,
+    })
   }
 
   @Post('new')
@@ -90,7 +95,9 @@ class FacilityController {
     @Body() body: NewFacilityRequestDtoClass,
   ): Promise<FacilityResponseDtoClass> {
     const newFacility = await this.facilityService.createNewFacility(body)
-    return newFacility
+    return plainToInstance(FacilityResponseDtoClass, newFacility, {
+      enableCircularCheck: true,
+    })
   }
 
   @Post(':facilityId/adjustPrincipal')
@@ -105,7 +112,9 @@ class FacilityController {
       Number(version),
       adjustment,
     )
-    return updatedFacility
+    return plainToInstance(FacilityResponseDtoClass, updatedFacility, {
+      enableCircularCheck: true,
+    })
   }
 }
 

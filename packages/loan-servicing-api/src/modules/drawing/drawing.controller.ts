@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Query,
+  SerializeOptions,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -28,6 +29,7 @@ import {
 } from 'models/dtos/drawing'
 import { UntypedEventClass } from 'models/dtos/event'
 import TransactionEntity from 'models/entities/TransactionEntity'
+import { plainToInstance } from 'class-transformer'
 import DrawingService from './drawing.service'
 import DrawingTransactionService from './drawing.service.transactions'
 
@@ -45,11 +47,13 @@ class DrawingController {
   async getDrawing(
     @Param('drawingId') drawingStreamId: string,
   ): Promise<DrawingDtoClass> {
-    const facility = await this.drawingService.getDrawing(drawingStreamId)
-    if (facility === null) {
+    const drawing = await this.drawingService.getDrawing(drawingStreamId)
+    if (drawing === null) {
       throw new NotFoundException()
     }
-    return facility
+    return plainToInstance(DrawingDtoClass, drawing, {
+      enableCircularCheck: true,
+    })
   }
 
   @Get(':drawingId/events')
@@ -90,11 +94,14 @@ class DrawingController {
     if (allEvents === null) {
       throw new NotFoundException()
     }
-    return allEvents
+    return plainToInstance(DrawingDtoClass, allEvents, {
+      enableCircularCheck: true,
+    })
   }
 
   @Post('')
   @ApiCreatedResponse({ type: DrawingDtoClass })
+  @SerializeOptions({ enableCircularCheck: true })
   async newDrawing(
     @Body() body: NewDrawingRequestDtoClass,
     @Param('facilityId') facilityId: string,
@@ -105,7 +112,9 @@ class DrawingController {
       facilityVersion,
       body,
     )
-    return newDrawing
+    return plainToInstance(DrawingDtoClass, newDrawing, {
+      enableCircularCheck: true,
+    })
   }
 
   @Post(':drawingId/updateInterestRate')
@@ -122,7 +131,9 @@ class DrawingController {
       Number(version),
       body,
     )
-    return updatedDrawing
+    return plainToInstance(DrawingDtoClass, updatedDrawing, {
+      enableCircularCheck: true,
+    })
   }
 
   @Post(':drawingId/withdrawal')
@@ -139,7 +150,9 @@ class DrawingController {
       Number(version),
       body,
     )
-    return updatedDrawing
+    return plainToInstance(DrawingDtoClass, updatedDrawing, {
+      enableCircularCheck: true,
+    })
   }
 
   @Post(':drawingId/withdrawal/revert')
@@ -156,7 +169,9 @@ class DrawingController {
       Number(version),
       body,
     )
-    return updatedDrawing
+    return plainToInstance(DrawingDtoClass, updatedDrawing, {
+      enableCircularCheck: true,
+    })
   }
 }
 

@@ -8,10 +8,12 @@ import {
   RevertWithdrawlDto,
   UpdateDrawingInterestRequestDto,
 } from 'loan-servicing-common'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import { DrawingConfigurationDtoClass } from './drawingConfiguration'
 
 export class DrawingDtoClass implements Drawing {
+  private readonly _type = 'DrawingDto'
+
   @ApiProperty()
   streamId!: string
 
@@ -19,6 +21,7 @@ export class DrawingDtoClass implements Drawing {
   streamVersion!: number
 
   @ApiProperty()
+  @Transform(({ value }) => ({ ...value, drawings: undefined }))
   facility!: Facility
 
   @ApiProperty()
