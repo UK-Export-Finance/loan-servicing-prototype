@@ -26,6 +26,9 @@ export class FixedFacilityFeeStrategyOptionDtoClass
   name: 'FixedFacilityFee' = 'FixedFacilityFee'
 
   @ApiProperty()
+  feeId!: string
+
+  @ApiProperty()
   @IsDate()
   @Type(() => Date)
   date!: Date
@@ -40,6 +43,9 @@ export class AccruingFacilityFeeStrategyOptionDtoClass
 {
   @ApiProperty({ enum: ['AccruingFacilityFee'] })
   name: 'AccruingFacilityFee' = 'AccruingFacilityFee'
+
+  @ApiProperty()
+  feeId!: string
 
   @ApiProperty()
   accrualRate!: string

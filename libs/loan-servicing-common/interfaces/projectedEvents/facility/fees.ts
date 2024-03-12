@@ -4,13 +4,19 @@ import {
 } from '../../strategies/facilityFee'
 import { ProjectedFacilityEventBase } from '../projectedEventBase'
 
-export type CalculateAccruingFacilityFeeEvent = ProjectedFacilityEventBase<
+type CalculateFacilityFeeEventBase<
+  Type extends string,
+  Version extends number,
+  Data extends object,
+> = ProjectedFacilityEventBase<Type, Version, Data & { feeId: string }>
+
+export type CalculateAccruingFacilityFeeEvent = CalculateFacilityFeeEventBase<
   'CalculateAccruingFacilityFee',
   1,
   AccruingFacilityFeeStrategyOption
 >
 
-export type CalculateFixedFacilityFeeEvent = ProjectedFacilityEventBase<
+export type CalculateFixedFacilityFeeEvent = CalculateFacilityFeeEventBase<
   'CalculateFixedFacilityFee',
   1,
   FixedFacilityFeeStrategyOption

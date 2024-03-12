@@ -60,7 +60,7 @@ export const facilityToFacilitySummaryProps = (
         text: 'Facility Fee Balance',
       },
       value: {
-        text: `£${facility.facilityFeeBalance}`,
+        text: `£${facility.facilityFeeBalances}`,
       },
     },
     {

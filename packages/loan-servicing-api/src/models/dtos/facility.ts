@@ -8,6 +8,7 @@ import {
 } from 'class-validator'
 import {
   AdjustFacilityAmountDto,
+  BalancesLookup,
   Drawing,
   FacilityResponseDto,
   NewFacilityRequestDto,
@@ -63,7 +64,8 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  facilityFeeBalance!: string
+  @IsArray()
+  facilityFeeBalances!: BalancesLookup
 
   @ApiProperty()
   @IsDate()
@@ -83,7 +85,7 @@ export class NewFacilityRequestDtoClass
     'drawings',
     'drawnAmount',
     'undrawnAmount',
-    'facilityFeeBalance',
+    'facilityFeeBalances',
   ])
   implements NewFacilityRequestDto {}
 

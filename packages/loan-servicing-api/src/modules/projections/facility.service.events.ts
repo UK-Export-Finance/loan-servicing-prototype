@@ -164,8 +164,9 @@ class FacilityEventHandlingService
       projection.facility,
       sourceEvent,
     )
-    projection.facility.facilityFeeBalance = Big(
-      projection.facility.facilityFeeBalance,
+    const { feeId } = sourceEvent.eventData
+    projection.facility.facilityFeeBalances[feeId] = Big(
+      projection.facility.facilityFeeBalances[feeId] ?? '0',
     )
       .add(feeAmount)
       .toFixed(2)
@@ -176,7 +177,7 @@ class FacilityEventHandlingService
       reference: 'Facility fees',
       valueChanged: 'totalFeeBalance',
       changeInValue: feeAmount,
-      valueAfterTransaction: projection.facility.facilityFeeBalance,
+      valueAfterTransaction: projection.facility.facilityFeeBalances[feeId],
     })
   }
 

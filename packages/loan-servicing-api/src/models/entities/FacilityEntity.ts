@@ -1,5 +1,9 @@
 import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
-import { Facility, FacilityConfiguration } from 'loan-servicing-common'
+import {
+  BalancesLookup,
+  Facility,
+  FacilityConfiguration,
+} from 'loan-servicing-common'
 import { Column, Entity, OneToMany, PrimaryColumn, Relation } from 'typeorm'
 import { FacilityConfigurationDtoClass } from 'models/dtos/facilityConfiguration'
 import type DrawingEntity from './DrawingEntity'
@@ -33,8 +37,8 @@ class FacilityEntity implements Facility {
   @CurrencyColumn()
   undrawnAmount!: string
 
-  @CurrencyColumn()
-  facilityFeeBalance!: string
+  @Column({ type: 'simple-json' })
+  facilityFeeBalances!: BalancesLookup
 
   @Column()
   issuedEffectiveDate!: Date
