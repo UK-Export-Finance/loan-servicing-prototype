@@ -1,4 +1,5 @@
 import {
+  AccruingFacilityFeeStrategyOption,
   CalculateInterestStrategyName,
   FacilityFeeStrategyName,
   RepaymentStrategyName,
@@ -23,6 +24,15 @@ export const facilityFeeStrategyNames: Record<FacilityFeeStrategyName, string> =
     AccruingFacilityFee: 'Accruing Facility Fees',
     FixedFacilityFee: 'Fixed Facility Fees',
   }
+
+export const accruingFacilityFeeTypes: Record<
+  AccruingFacilityFeeStrategyOption['accruesOn'],
+  string
+> = {
+  drawnAmount: 'Drawn amount',
+  facilityAmount: 'Facility amount',
+  undrawnAmount: 'Undrawn amount',
+}
 
 export const allPlaceholders: { [key: string]: string } = {
   ...interestStrategyNames,

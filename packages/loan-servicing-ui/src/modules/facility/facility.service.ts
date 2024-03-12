@@ -8,6 +8,7 @@ import {
   Transaction,
   Facility,
   AddFixedFacilityFeeDto,
+  AddAccruingFacilityFeeDto,
 } from 'loan-servicing-common'
 
 @Injectable()
@@ -60,6 +61,17 @@ class FacilityService {
   ): Promise<void> {
     await postApiData(
       `facility/${streamId}/addFacilityFee/fixed?version=${streamVersion}`,
+      dto,
+    )
+  }
+
+  async addAccruingFacilityFee(
+    streamId: string,
+    streamVersion: string,
+    dto: AddAccruingFacilityFeeDto,
+  ): Promise<void> {
+    await postApiData(
+      `facility/${streamId}/addFacilityFee/accruing?version=${streamVersion}`,
       dto,
     )
   }

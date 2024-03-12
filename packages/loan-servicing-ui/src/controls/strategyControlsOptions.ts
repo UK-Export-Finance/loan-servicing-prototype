@@ -16,7 +16,7 @@ export const filterSelectOptions = <T extends string>(
 ): NunjuckSelectInputOption<T>[] =>
   availableOptions.filter((opt) => permittedValues.includes(opt.value))
 
-const buildSelectOptionsFromStrings = <T extends string>(
+export const buildSelectOptionsFromStrings = <T extends string>(
   stringRecord: Record<T, string>,
 ): NunjuckSelectInputOption<T>[] => {
   const entries = Object.entries(stringRecord) as [T, string][]
@@ -31,3 +31,4 @@ export const repaymentsSelectOptions: NunjuckSelectInputOption<RepaymentStrategy
 
 export const facilityFeeSelectOptions: NunjuckSelectInputOption<FacilityFeeStrategyName>[] =
   buildSelectOptionsFromStrings(facilityFeeStrategyNames)
+

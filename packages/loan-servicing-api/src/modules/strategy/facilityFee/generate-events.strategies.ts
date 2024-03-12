@@ -14,8 +14,8 @@ export type GetFacilityFeeEventsStrategy<T extends FacilityFeeStrategyOption> =
 export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
   AccruingFacilityFeeStrategyOption
 > = (facility, option) => {
-  const expiryDate = new Date(facility.expiryDate)
-  let dateToProcess = new Date(facility.issuedEffectiveDate)
+  const expiryDate = new Date(option.stopsOn)
+  let dateToProcess = new Date(option.startsFrom)
 
   const facilityFeeEvents: CalculateAccruingFacilityFeeEvent[] = []
   while (dateToProcess <= expiryDate) {

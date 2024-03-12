@@ -9,14 +9,22 @@ import {
   Render,
   Res,
 } from '@nestjs/common'
+import { buildSelectOptionsFromStrings } from 'controls/strategyControlsOptions'
 import { Response } from 'express'
 import {
+  AccruingFacilityFeeStrategyOption,
+  AddAccruingFacilityFeeDto,
   AddFixedFacilityFeeDto,
   AdjustFacilityAmountDto,
 } from 'loan-servicing-common'
 import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 import FacilityService from 'modules/facility/facility.service'
-import { AddFixedFacilityFeeFormDto } from 'templates/facility-edit/add-fee'
+import { accruingFacilityFeeTypes } from 'strings/strategyNames'
+import {
+  AddAccruingFacilityFeeFormDto,
+  AddFacilityFeeNjkInput,
+  AddFixedFacilityFeeFormDto,
+} from 'templates/facility-edit/add-fee'
 import {
   AmendPrincipalNjkInput,
   FacilityPrincipalAdjustmentFormDto,
@@ -67,21 +75,22 @@ class EditFacilityController {
   @Render('facility-edit/add-fee')
   async renderAddFacilityFeePage(
     @Param('id') id: string,
-  ): Promise<AmendPrincipalNjkInput> {
+  ): Promise<AddFacilityFeeNjkInput> {
     const facility = await this.facilityService.getFacility(id)
     if (!facility) {
       throw new NotFoundException()
     }
-    const events = await this.facilityService.getFacilityEventTableRows(id)
 
     return {
       facility,
-      eventRows: mapEventsToTable(events!),
+      accruesOnOptions: buildSelectOptionsFromStrings<
+        AccruingFacilityFeeStrategyOption['accruesOn']
+      >(accruingFacilityFeeTypes),
     }
   }
 
   @Post(':id/fixedFacilityFee')
-  async addFacilityFee(
+  async addFixedFacilityFee(
     @Param('id') id: string,
     @Query('version') version: string,
     @Body()
@@ -94,6 +103,29 @@ class EditFacilityController {
       feeAmount: requestDto.feeAmount,
     }
     await this.facilityService.addFixedFacilityFee(id, version, adjustmentDto)
+    response.redirect(`/facility/${id}`)
+  }
+
+  @Post(':id/accruingFacilityFee')
+  async addAccruingFacilityFee(
+    @Param('id') id: string,
+    @Query('version') version: string,
+    @Body()
+    requestDto: AddAccruingFacilityFeeFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const adjustmentDto: AddAccruingFacilityFeeDto = {
+      name: 'AccruingFacilityFee',
+      startsFrom: getDateFromDateInput(requestDto, 'startsFrom'),
+      stopsOn: getDateFromDateInput(requestDto, 'stopsOn'),
+      accrualRate: requestDto.accrualRate,
+      accruesOn: requestDto.accruesOn,
+    }
+    await this.facilityService.addAccruingFacilityFee(
+      id,
+      version,
+      adjustmentDto,
+    )
     response.redirect(`/facility/${id}`)
   }
 }
