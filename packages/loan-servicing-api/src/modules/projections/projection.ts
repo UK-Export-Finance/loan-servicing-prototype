@@ -11,6 +11,8 @@ class FacilityProjection {
 
   facility: Facility
 
+  processedEvents: ProjectedEvent[] = []
+
   constructor(
     initialEntity: Facility,
     private projectionEvents: ProjectedEvent[],
@@ -25,8 +27,13 @@ class FacilityProjection {
     return this.projectionEvents
   }
 
-  consumeNextEvent = (): ProjectedEvent | undefined =>
-    this.projectionEvents.shift()
+  consumeNextEvent = (): ProjectedEvent | undefined => {
+    const event = this.projectionEvents.shift()
+    if (event) {
+      this.processedEvents.push(event)
+    }
+    return event
+  }
 
   peekNextEvent = (): ProjectedEvent => this.projectionEvents[0]
 

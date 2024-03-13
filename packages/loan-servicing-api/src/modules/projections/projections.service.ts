@@ -58,15 +58,28 @@ class ProjectionsService {
       ),
     )
     const transactionEntities = transactionSaveResults.reduce(
-      (res: TransactionEntity[], curr) => res.concat(curr.generatedMaps as TransactionEntity[]),
+      (res: TransactionEntity[], curr) =>
+        res.concat(curr.generatedMaps as TransactionEntity[]),
       [] as TransactionEntity[],
+    )
+    projection.facility.drawings.forEach((d) => {
+      d.facility = projection.facility
+      const streamIds = projection.processedEvents
+        .filter((e) => e.streamId === d.streamId)
+        .map((e) => e.streamVersion)
+        .filter((e) => e !== undefined) as number[]
+      d.streamVersion = Math.max(...streamIds)
+    })
+    projection.facility.streamVersion = Math.max(
+      ...(projection.processedEvents
+        .filter((e) => e.streamId === projection.facility.streamId)
+        .map((e) => e.streamVersion)
+        .filter((e) => e !== undefined) as number[]),
     )
     // Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
     projection.facility.drawings.forEach((d) => delete (d as any).facility)
     const facilityEntity = await this.facilityRepo.save(projection.facility)
-    facilityEntity.drawings.forEach((d) => {
-      d.facility = facilityEntity
-    })
+
     return {
       facility: facilityEntity,
       transactions: transactionEntities,
@@ -115,22 +128,12 @@ class ProjectionsService {
   ): Promise<void> => {
     switch (event.entityType) {
       case 'drawing':
-        if (event.streamVersion) {
-          projection.setDrawingProperty(
-            event.streamId,
-            'streamVersion',
-            event.streamVersion,
-          )
-        }
         await this.drawingEventHandler.applyEvent(
           event as DrawingProjectedEvent,
           projection,
         )
         return
       case 'facility':
-        if (event.streamVersion) {
-          projection.facility.streamVersion = event.streamVersion
-        }
         await this.facilityEventHandler.applyEvent(
           event as FacilityProjectedEvent,
           projection,
@@ -149,9 +152,10 @@ class ProjectionsService {
     facilityStreamVersion: number
   }> => {
     await this.transactionRepo.delete({ streamId: facilityId })
-    const facilityEvents = (await this.eventService.getActiveEventsInCreationOrder(
-      facilityId,
-    )) as FacilityEvent[]
+    const facilityEvents =
+      (await this.eventService.getActiveEventsInCreationOrder(
+        facilityId,
+      )) as FacilityEvent[]
     const facility = this.getFacilityAtCreation(facilityEvents)
 
     return {

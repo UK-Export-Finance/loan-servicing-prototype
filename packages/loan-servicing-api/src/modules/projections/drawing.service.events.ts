@@ -31,9 +31,10 @@ class DrawingEventHandlingService
   getProjectedEvents = async (
     drawing: Drawing,
   ): Promise<DrawingProjectedEvent[]> => {
-    const drawingEvents = (await this.eventService.getActiveEventsInCreationOrder(
-      drawing.streamId,
-    )) as DrawingEvent[]
+    const drawingEvents =
+      (await this.eventService.getActiveEventsInCreationOrder(
+        drawing.streamId,
+      )) as DrawingEvent[]
 
     const interestEvents = this.strategyService.getInterestEvents(drawing)
 
@@ -164,8 +165,13 @@ class DrawingEventHandlingService
     drawing.outstandingPrincipal = Big(drawing.outstandingPrincipal)
       .sub(withdrawalToRevert.changeInValue)
       .toFixed(2)
-
-    projection.transactions.filter(
+    drawing.facility.drawnAmount = Big(drawing.facility.drawnAmount)
+      .sub(withdrawalToRevert.changeInValue)
+      .toFixed(2)
+    drawing.facility.undrawnAmount = Big(drawing.facility.undrawnAmount)
+      .add(withdrawalToRevert.changeInValue)
+      .toFixed(2)
+    projection.transactions = projection.transactions.filter(
       (t) => t.sourceEvent?.streamVersion !== withdrawalEventStreamVersion,
     )
   }
