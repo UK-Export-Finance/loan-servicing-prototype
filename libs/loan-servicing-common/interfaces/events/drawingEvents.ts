@@ -48,3 +48,4 @@ export type DrawingEvent =
   | WithdrawFromDrawingEvent
   | RevertWithdrawalEvent
   | CreateNewDrawingEvent
+  | SetDrawingRepaymentsEvent

@@ -9,9 +9,9 @@ import {
   RevertWithdrawalEvent,
   InterestEvent,
   RepaymentsEvent,
-  FinalRepaymentEvent,
   sortEventByEffectiveDate,
   CreateNewDrawingEvent,
+  SetDrawingRepaymentsEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -31,34 +31,19 @@ class DrawingEventHandlingService
   getProjectedEvents = async (
     drawing: Drawing,
   ): Promise<DrawingProjectedEvent[]> => {
-    const drawingEvents = (await this.eventService.getEventsInCreationOrder(
+    const drawingEvents = (await this.eventService.getActiveEventsInCreationOrder(
       drawing.streamId,
     )) as DrawingEvent[]
 
     const interestEvents = this.strategyService.getInterestEvents(drawing)
-    const repaymentEvents = this.strategyService.getRepaymentEvents(drawing)
 
     const projectedEvents: DrawingProjectedEvent[] = [
       ...drawingEvents,
       ...interestEvents,
-      ...repaymentEvents,
     ].sort(sortEventByEffectiveDate)
 
     return projectedEvents
   }
-
-  // eventsToTransactions = (
-  //   entity: DrawingEntity,
-  //   events: DrawingProjectedEvent[],
-  // ): Transaction[] => {
-  //   const projection = new FacilityProjection(entity, events)
-  //   let curr = projection.consumeNextEvent()
-  //   while (curr) {
-  //     this.applyEvent(curr, projection)
-  //     curr = projection.consumeNextEvent()
-  //   }
-  //   return projection.transactions
-  // }
 
   applyEvent = async <T extends DrawingProjectedEvent>(
     event: T,
@@ -72,9 +57,8 @@ class DrawingEventHandlingService
     sourceEvent,
     projection,
   ) => {
-    const drawing = projection.getDrawing(sourceEvent.streamId)
     projection.transactions.push({
-      streamId: drawing.streamId,
+      streamId: sourceEvent.streamId,
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: 'Drawing created',
@@ -186,11 +170,22 @@ class DrawingEventHandlingService
     )
   }
 
-  Repayment: EventHandler<RepaymentsEvent | FinalRepaymentEvent> = async (
+  SetDrawingRepayments: EventHandler<SetDrawingRepaymentsEvent> = async (
+    event,
+    projection,
+  ) => {
+    const drawing = projection.getDrawing(event.streamId)
+    const repaymentEvents = this.strategyService.getRepaymentEvents(
+      drawing,
+      event.eventData,
+    )
+    projection.addEvents(repaymentEvents)
+    drawing.drawingConfig.repaymentsStrategy = event.eventData
+  }
+
+  Repayment: EventHandler<RepaymentsEvent> = async (
     sourceEvent,
     projection,
-    // { drawing, sourceEvent, allEvents, eventIndex },
-    // transactions,
   ) => {
     const drawing = projection.getDrawing(sourceEvent.streamId)
     const paymentAmount = this.strategyService.calculateRepayment(
@@ -212,7 +207,9 @@ class DrawingEventHandlingService
     })
   }
 
-  FinalRepayment = this.Repayment
+  ManualRepayment = this.Repayment
+
+  RegularRepayment = this.Repayment
 }
 
 export default DrawingEventHandlingService

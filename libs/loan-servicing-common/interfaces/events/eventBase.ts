@@ -11,6 +11,7 @@ export type EventBase<
   eventDate: Date
   effectiveDate: Date
   entityType: Entity
+  isSoftDeleted: boolean
   type: Type
   typeVersion: Version
   eventData: Data

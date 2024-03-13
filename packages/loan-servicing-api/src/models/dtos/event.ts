@@ -12,6 +12,8 @@ export class UntypedEventClass implements UntypedEvent {
 
   entityType!: EntityWithEvents
 
+  isSoftDeleted!: boolean;
+
   type!: string
 
   typeVersion!: number

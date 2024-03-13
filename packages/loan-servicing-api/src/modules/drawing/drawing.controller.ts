@@ -30,6 +30,10 @@ import {
 import { UntypedEventClass } from 'models/dtos/event'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import { plainToInstance } from 'class-transformer'
+import {
+  ManualRepaymentStrategyOptionsDtoClass,
+  RegularRepaymentStrategyOptionsDtoClass,
+} from 'models/dtos/drawingConfiguration'
 import DrawingService from './drawing.service'
 import DrawingTransactionService from './drawing.service.transactions'
 
@@ -164,6 +168,44 @@ class DrawingController {
     @Query('version') version: number,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.revertWithdrawal(
+      facilityId,
+      drawingId,
+      Number(version),
+      body,
+    )
+    return plainToInstance(DrawingDtoClass, updatedDrawing, {
+      enableCircularCheck: true,
+    })
+  }
+
+  @Post(':drawingId/repayments/regular')
+  @ApiOkResponse({ type: DrawingDtoClass })
+  async setRegularRepaymentsOnDrawing(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('version') version: number,
+    @Body() body: RegularRepaymentStrategyOptionsDtoClass,
+  ): Promise<DrawingDtoClass> {
+    const updatedDrawing = await this.drawingService.setRepayments(
+      facilityId,
+      drawingId,
+      Number(version),
+      body,
+    )
+    return plainToInstance(DrawingDtoClass, updatedDrawing, {
+      enableCircularCheck: true,
+    })
+  }
+
+  @Post(':drawingId/repayments/manual')
+  @ApiOkResponse({ type: DrawingDtoClass })
+  async setManualRepaymentsOnDrawing(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('version') version: number,
+    @Body() body: ManualRepaymentStrategyOptionsDtoClass,
+  ): Promise<DrawingDtoClass> {
+    const updatedDrawing = await this.drawingService.setRepayments(
       facilityId,
       drawingId,
       Number(version),

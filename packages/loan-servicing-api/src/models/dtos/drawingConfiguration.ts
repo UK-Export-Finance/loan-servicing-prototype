@@ -56,6 +56,7 @@ export class RepaymentDtoClass implements Repayment {
   @IsNotEmpty()
   amount!: string
 }
+
 @ApiExtraModels(RepaymentDtoClass)
 export class ManualRepaymentStrategyOptionsDtoClass
   extends StrategyOptionDtoClass

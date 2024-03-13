@@ -9,12 +9,12 @@ import eventTypeToEventClassDefinition, {
   GetClassConstructorForEventData,
 } from 'models/dtos'
 import EventEntity from 'models/entities/EventEntity'
-import { DataSource } from 'typeorm'
+import { DataSource, FindOptionsWhere } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
 
 export type NewEvent<T extends LoanServicingEvent> = Omit<
   EventEntity<T>,
-  'id' | 'eventDate' | 'streamVersion'
+  'id' | 'eventDate' | 'streamVersion' | 'isSoftDeleted'
 >
 
 @Injectable()
@@ -48,23 +48,26 @@ class EventService {
       )
     }
 
-    const createdEvent = await repo.create({
+    const eventToCreate: Omit<EventEntity<T>, 'id'> = {
       ...event,
+      isSoftDeleted: false,
       streamVersion: currentStreamVersion + 1,
       eventDate: new Date(),
-    })
+    }
+
+    const createdEvent = await repo.create(eventToCreate)
 
     return repo.save(createdEvent)
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getEventsInCreationOrder(
+  async getActiveEventsInCreationOrder(
     streamId: string,
   ): Promise<LoanServicingEvent[]> {
     const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
     const result = await repo
       .createQueryBuilder('e')
-      .where({ streamId })
+      .where({ streamId, isSoftDeleted: false })
       .orderBy({ 'e.streamVersion': 'ASC' })
       .getMany()
     const transformed = result.map(this.parseEvent)
@@ -72,7 +75,7 @@ class EventService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getEventsInEffectiveOrder(
+  async getActiveEventsInEffectiveOrder(
     streamId: string,
   ): Promise<LoanServicingEvent[]> {
     const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
@@ -82,6 +85,18 @@ class EventService {
       .orderBy({ 'e.effectiveDate': 'ASC' })
       .getMany()
     return result.map(this.parseEvent)
+  }
+
+  @Transactional()
+  async softDeleteEventsWhere(
+    findOptions: FindOptionsWhere<EventEntity<LoanServicingEvent>>,
+  ): Promise<void> {
+    const repo = this.dataSource.getRepository(EventEntity<LoanServicingEvent>)
+    const event = await repo.findBy(findOptions)
+    event.forEach((e) => {
+      e.isSoftDeleted = true
+    })
+    await repo.save(event)
   }
 
   async getFacilityTypeOfEventStream(streamId: string): Promise<string> {

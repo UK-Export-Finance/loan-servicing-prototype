@@ -1,23 +1,23 @@
 import { add } from 'date-fns'
 import {
-  DrawingWithSpecifiedConfig,
+  Drawing,
+  ManualRepaymentEvent,
+  ManualRepaymentStrategyOptions,
+  RegularRepaymentEvent,
+  RegularRepaymentStrategyOptions,
   RepaymentsEvent,
   RepaymentStrategyName,
+  RepaymentStrategyOptions,
 } from 'loan-servicing-common'
 
-export type GetRepaymentEventsStrategy<T extends RepaymentStrategyName> = (
-  facility: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
-) => RepaymentsEvent[]
+export type GetRepaymentEventsStrategy<T extends RepaymentStrategyOptions> = (
+  drawing: Drawing,
+  options: T,
+) => Extract<RepaymentsEvent, { type: `${T['name']}Repayment` }>[]
 
 export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
-  'Regular'
-> = ({
-  expiryDate,
-  streamId,
-  drawingConfig: {
-    repaymentsStrategy: { startDate, monthsBetweenRepayments },
-  },
-}) => {
+  RegularRepaymentStrategyOptions
+> = ({ expiryDate, streamId }, { startDate, monthsBetweenRepayments }) => {
   let dateToProcess = new Date(startDate)
   const repaymentDates: Date[] = []
 
@@ -27,41 +27,39 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
       months: Number(monthsBetweenRepayments),
     })
   }
-  const repaymentEvents = repaymentDates.map<RepaymentsEvent>((date, i) => ({
-    effectiveDate: date,
-    type: 'Repayment',
-    streamId,
-    entityType: 'drawing',
-    eventData: {
-      totalRepayments: repaymentDates.length,
-      repaymentNumber: i + 1,
-    },
-  }))
-
-  repaymentEvents[repaymentEvents.length - 1].type = 'FinalRepayment'
+  const repaymentEvents = repaymentDates.map<RegularRepaymentEvent>(
+    (date, i) => ({
+      effectiveDate: date,
+      type: 'RegularRepayment',
+      streamId,
+      entityType: 'drawing',
+      eventData: {
+        totalRepayments: repaymentDates.length,
+        repaymentNumber: i + 1,
+      },
+    }),
+  )
 
   return repaymentEvents
 }
 
-export const getManualRepaymentEvents: GetRepaymentEventsStrategy<'Manual'> = ({
-  drawingConfig: {
-    repaymentsStrategy: { repayments },
-  },
-  streamId,
-}) => {
-  const repaymentEvents = repayments.map<RepaymentsEvent>((r, i) => ({
+export const getManualRepaymentEvents: GetRepaymentEventsStrategy<
+  ManualRepaymentStrategyOptions
+> = ({ streamId }, { repayments }) => {
+  const repaymentEvents = repayments.map<ManualRepaymentEvent>((r) => ({
     effectiveDate: r.date,
-    type: 'Repayment',
+    type: 'ManualRepayment',
     streamId,
     entityType: 'drawing',
-    eventData: { totalRepayments: repayments.length, repaymentNumber: i + 1 },
+    eventData: { amount: r.amount },
   }))
-  repaymentEvents[repaymentEvents.length - 1].type = 'FinalRepayment'
   return repaymentEvents
 }
 
 type RepaymentEventStrategies = {
-  [K in RepaymentStrategyName]: GetRepaymentEventsStrategy<K>
+  [K in RepaymentStrategyName]: GetRepaymentEventsStrategy<
+    Extract<RepaymentStrategyOptions, { name: K }>
+  >
 }
 
 export const repaymentEventStrategies: RepaymentEventStrategies = {

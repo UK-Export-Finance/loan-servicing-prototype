@@ -14,10 +14,16 @@ import {
   RevertWithdrawlDto,
   AddDrawingToFacilityEvent,
   CreateNewDrawingEvent,
+  SetDrawingRepaymentsEvent,
+  sortByDateOnKey,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import ProjectionsService from 'modules/projections/projections.service'
+import {
+  ManualRepaymentStrategyOptionsDtoClass,
+  RegularRepaymentStrategyOptionsDtoClass,
+} from 'models/dtos/drawingConfiguration'
 
 @Injectable()
 class DrawingService {
@@ -56,11 +62,20 @@ class DrawingService {
       typeVersion: 1,
       eventData: { ...drawingRequest },
     })
+    if (drawingRequest.drawingConfig.repaymentsStrategy) {
+      await this.setRepayments(
+        facilityId,
+        savedEvent.eventData.streamId,
+        1,
+        drawingRequest.drawingConfig.repaymentsStrategy,
+      )
+    }
     const { drawing } =
       await this.projectionsService.buildProjectionsForDrawing(
         facilityId,
         savedEvent.eventData.streamId,
       )
+
     return drawing
   }
 
@@ -145,9 +160,46 @@ class DrawingService {
     return drawing
   }
 
+  @Transactional()
+  async setRepayments(
+    facilityId: string,
+    drawingId: string,
+    streamVersion: number,
+    eventData:
+      | RegularRepaymentStrategyOptionsDtoClass
+      | ManualRepaymentStrategyOptionsDtoClass,
+  ): Promise<Drawing> {
+    await this.eventService.softDeleteEventsWhere({
+      streamId: drawingId,
+      type: 'SetDrawingRepayments',
+    })
+    await this.eventService.addEvent<SetDrawingRepaymentsEvent>(
+      {
+        streamId: drawingId,
+        effectiveDate:
+          eventData.name === 'Manual'
+            ? eventData.repayments.sort(sortByDateOnKey('date'))[0].date
+            : eventData.startDate,
+        entityType: 'drawing',
+        type: 'SetDrawingRepayments',
+        typeVersion: 1,
+        eventData,
+      },
+      streamVersion,
+    )
+
+    const { drawing } =
+      await this.projectionsService.buildProjectionsForDrawing(
+        facilityId,
+        drawingId,
+      )
+    return drawing
+  }
+
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getDrawingEvents(streamId: string): Promise<LoanServicingEvent[]> {
-    const events = await this.eventService.getEventsInCreationOrder(streamId)
+    const events =
+      await this.eventService.getActiveEventsInCreationOrder(streamId)
     return events
   }
 

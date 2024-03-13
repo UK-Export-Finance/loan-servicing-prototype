@@ -35,11 +35,10 @@ class FacilityFeeService {
     facility: Facility,
     option: T,
   ): CalculateFacilityFeeEvent[] => {
-    const strategyName = option.name
-    const eventGenerator = facilityFeeEventStrategies[
-      strategyName
+    const generateEvents = facilityFeeEventStrategies[
+      option.name
     ] as GetFacilityFeeEventsStrategy<T>
-    return eventGenerator(facility, option)
+    return generateEvents(facility, option)
   }
 }
 

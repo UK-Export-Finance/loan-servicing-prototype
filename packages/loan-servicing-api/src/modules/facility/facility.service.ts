@@ -95,7 +95,7 @@ class FacilityService {
 
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacilityEvents(streamId: string): Promise<LoanServicingEvent[]> {
-    const events = await this.eventService.getEventsInCreationOrder(streamId)
+    const events = await this.eventService.getActiveEventsInCreationOrder(streamId)
     return events
   }
 

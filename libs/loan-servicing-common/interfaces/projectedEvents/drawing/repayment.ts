@@ -1,14 +1,14 @@
 import { ProjectedDrawingEventBase } from '../projectedEventBase'
 
-export type StandardRepaymentEvent = ProjectedDrawingEventBase<
-  'Repayment',
+export type ManualRepaymentEvent = ProjectedDrawingEventBase<
+  'ManualRepayment',
   1,
-  { totalRepayments: number; repaymentNumber: number }
+  { amount: string }
 >
-export type FinalRepaymentEvent = ProjectedDrawingEventBase<
-  'FinalRepayment',
+export type RegularRepaymentEvent = ProjectedDrawingEventBase<
+  'RegularRepayment',
   1,
   { totalRepayments: number; repaymentNumber: number }
 >
 
-export type RepaymentsEvent = StandardRepaymentEvent | FinalRepaymentEvent
+export type RepaymentsEvent = ManualRepaymentEvent | RegularRepaymentEvent

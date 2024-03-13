@@ -42,7 +42,7 @@ class FacilityEventHandlingService
   getProjectedEvents = async (
     facility: Facility,
   ): Promise<FacilityProjectedEvent[]> => {
-    const facilityEvents = (await this.eventService.getEventsInCreationOrder(
+    const facilityEvents = (await this.eventService.getActiveEventsInCreationOrder(
       facility.streamId,
     )) as FacilityEvent[]
     const facilityFeeEvents =

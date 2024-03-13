@@ -58,10 +58,7 @@ class ProjectionsService {
       ),
     )
     const transactionEntities = transactionSaveResults.reduce(
-      (res: TransactionEntity[], curr) => {
-        res.push(...(curr.generatedMaps as TransactionEntity[]))
-        return res
-      },
+      (res: TransactionEntity[], curr) => res.concat(curr.generatedMaps as TransactionEntity[]),
       [] as TransactionEntity[],
     )
     // Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
@@ -152,7 +149,7 @@ class ProjectionsService {
     facilityStreamVersion: number
   }> => {
     await this.transactionRepo.delete({ streamId: facilityId })
-    const facilityEvents = (await this.eventService.getEventsInCreationOrder(
+    const facilityEvents = (await this.eventService.getActiveEventsInCreationOrder(
       facilityId,
     )) as FacilityEvent[]
     const facility = this.getFacilityAtCreation(facilityEvents)

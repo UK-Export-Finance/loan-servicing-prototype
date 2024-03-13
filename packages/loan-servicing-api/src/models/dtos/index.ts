@@ -1,5 +1,9 @@
 import { ClassConstructor } from 'class-transformer'
-import { AddFacilityFeeEvent, LoanServicingEvent } from 'loan-servicing-common'
+import {
+  AddFacilityFeeEvent,
+  LoanServicingEvent,
+  SetDrawingRepaymentsEvent,
+} from 'loan-servicing-common'
 import { NotImplementedException } from '@nestjs/common'
 import EventEntity from 'models/entities/EventEntity'
 import {
@@ -16,6 +20,10 @@ import {
   AccruingFacilityFeeStrategyOptionDtoClass,
   FixedFacilityFeeStrategyOptionDtoClass,
 } from './facilityConfiguration'
+import {
+  ManualRepaymentStrategyOptionsDtoClass,
+  RegularRepaymentStrategyOptionsDtoClass,
+} from './drawingConfiguration'
 
 export type GetClassConstructorForEventData<T extends LoanServicingEvent> = (
   event: EventEntity<T>,
@@ -41,6 +49,18 @@ const eventTypeToEventClassDefinition: {
         return FixedFacilityFeeStrategyOptionDtoClass
       default:
         throw new NotImplementedException('Add facility event not supported')
+    }
+  },
+  SetDrawingRepayments: (event: SetDrawingRepaymentsEvent) => {
+    switch (event.eventData.name) {
+      case 'Regular':
+        return RegularRepaymentStrategyOptionsDtoClass
+      case 'Manual':
+        return ManualRepaymentStrategyOptionsDtoClass
+      default:
+        throw new NotImplementedException(
+          'Set drawing repayment schedule not supported',
+        )
     }
   },
 }

@@ -1,35 +1,40 @@
 import { Injectable } from '@nestjs/common'
 import {
-  DrawingWithSpecifiedConfig,
+  Drawing,
   ProjectedEvent,
   RepaymentsEvent,
-  RepaymentStrategyName,
+  RepaymentStrategyOptions,
 } from 'loan-servicing-common'
-import { repaymentEventStrategies } from './repayment-events.strategies'
-import { calculateRepaymentStrategies } from './calculate-repayment.strategies'
+import {
+  GetRepaymentEventsStrategy,
+  repaymentEventStrategies,
+} from './repayment-events.strategies'
+import {
+  CalculateRepaymentsStrategy,
+  calculateRepaymentStrategies,
+} from './calculate-repayment.strategies'
 
 @Injectable()
 class RepaymentsService {
-  createRepaymentEvents<T extends RepaymentStrategyName>(
-    drawing: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
+  createRepaymentEvents<T extends RepaymentStrategyOptions>(
+    drawing: Drawing,
+    options: T,
   ): RepaymentsEvent[] {
-    const options = drawing.drawingConfig.repaymentsStrategy
-    const strategyName: T = options.name
-    return repaymentEventStrategies[strategyName](drawing)
+    const generateEvents = repaymentEventStrategies[
+      options.name
+    ] as unknown as GetRepaymentEventsStrategy<T>
+    return generateEvents(drawing, options)
   }
 
-  calculateRepayment<T extends RepaymentStrategyName>(
-    drawing: DrawingWithSpecifiedConfig<'repaymentsStrategy', T>,
-    event: RepaymentsEvent,
+  calculateRepayment<T extends RepaymentsEvent>(
+    drawing: Drawing,
+    event: T,
     remainingEvents: ProjectedEvent[],
   ): string {
-    const options = drawing.drawingConfig.repaymentsStrategy
-    const strategyName: T = options.name
-    return calculateRepaymentStrategies[strategyName](
-      drawing,
-      event,
-      remainingEvents,
-    )
+    const calculate = calculateRepaymentStrategies[
+      event.type
+    ] as CalculateRepaymentsStrategy<T>
+    return calculate(drawing, event, remainingEvents)
   }
 }
 
