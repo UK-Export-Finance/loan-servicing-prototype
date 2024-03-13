@@ -14,10 +14,10 @@ export type AddFacilityFeeNjkInput = {
 
 export type AddFixedFacilityFeeFormDto = {
   feeAmount: string
-} & MandatoryDateInputFormData<'date'>
+} & MandatoryDateInputFormData<'effectiveDate'>
 
 export type AddAccruingFacilityFeeFormDto = {
   accruesOn: AccruingFacilityFeeStrategyOption['accruesOn']
   accrualRate: string
-} & MandatoryDateInputFormData<'startsFrom'> &
-  MandatoryDateInputFormData<'stopsOn'>
+} & MandatoryDateInputFormData<'effectiveDate'> &
+  MandatoryDateInputFormData<'expiryDate'>

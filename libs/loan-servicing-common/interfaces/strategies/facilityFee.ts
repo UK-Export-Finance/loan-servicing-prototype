@@ -8,8 +8,8 @@ export type AccruingFacilityFeeStrategyOption = StrategyOptionsBase<
     feeId: string
     accruesOn: 'drawnAmount' | 'facilityAmount' | 'undrawnAmount'
     accrualRate: string
-    startsFrom: Date
-    stopsOn: Date
+    effectiveDate: Date
+    expiryDate: Date
   }
 >
 
@@ -23,7 +23,7 @@ export type FixedFacilityFeeStrategyOption = StrategyOptionsBase<
   {
     feeId: string
     feeAmount: string
-    date: Date
+    effectiveDate: Date
   }
 >
 
@@ -35,5 +35,7 @@ export type AddFixedFacilityFeeDto = Omit<
 export type FacilityFeeStrategyOption =
   | AccruingFacilityFeeStrategyOption
   | FixedFacilityFeeStrategyOption
+
+export type AddFacilityFeeDto = Omit<FacilityFeeStrategyOption, 'feeId'>
 
 export type FacilityFeeStrategyName = FacilityFeeStrategyOption['name']

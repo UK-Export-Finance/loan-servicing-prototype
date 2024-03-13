@@ -11,8 +11,7 @@ import {
   AddDrawingToFacilityEvent,
   Drawing,
   DrawingProjectedEvent,
-  AddFixedFacilityFeeEvent,
-  AddAccruingFacilityFeeEvent,
+  AddFacilityFeeEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -159,7 +158,7 @@ class FacilityEventHandlingService
   }
 
   AddFacilityFee: EventHandler<
-    AddFixedFacilityFeeEvent | AddAccruingFacilityFeeEvent
+    AddFacilityFeeEvent
   > = async (event, projection) => {
     const calculationEvents = this.strategyService.getEventsForFacilityFee(
       projection.facility,
@@ -168,10 +167,6 @@ class FacilityEventHandlingService
     projection.addEvents(calculationEvents)
     projection.facility.facilityConfig.facilityFeesStrategies.push(event.eventData)
   }
-
-  AddFixedFacilityFee = this.AddFacilityFee
-
-  AddAccruingFacilityFee = this.AddFacilityFee
 
   CalculateFacilityFee: EventHandler<CalculateFacilityFeeEvent> = async (
     sourceEvent,

@@ -1,8 +1,7 @@
 import { NewDrawingRequestDto } from '../drawing'
 import { NewFacilityRequestDto } from '../facility'
 import {
-  AccruingFacilityFeeStrategyOption,
-  FixedFacilityFeeStrategyOption,
+  FacilityFeeStrategyOption,
 } from '../strategies/facilityFee'
 import { EventBase } from './eventBase'
 
@@ -30,21 +29,14 @@ export type AddDrawingToFacilityEvent = FacilityEventBase<
   NewDrawingRequestDto & { streamId: string }
 >
 
-export type AddFixedFacilityFeeEvent = FacilityEventBase<
-  'AddFixedFacilityFee',
-  1,
-  FixedFacilityFeeStrategyOption
->
-
-export type AddAccruingFacilityFeeEvent = FacilityEventBase<
-  'AddAccruingFacilityFee',
-  1,
-  AccruingFacilityFeeStrategyOption
+export type AddFacilityFeeEvent = FacilityEventBase<
+'AddFacilityFee',
+1,
+FacilityFeeStrategyOption
 >
 
 export type FacilityEvent =
   | CreateNewFacilityEvent
   | AdjustFacilityAmountEvent
   | AddDrawingToFacilityEvent
-  | AddFixedFacilityFeeEvent
-  | AddAccruingFacilityFeeEvent
+  | AddFacilityFeeEvent

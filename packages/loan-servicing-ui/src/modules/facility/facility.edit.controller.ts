@@ -99,7 +99,7 @@ class EditFacilityController {
   ): Promise<void> {
     const adjustmentDto: AddFixedFacilityFeeDto = {
       name: 'FixedFacilityFee',
-      date: getDateFromDateInput(requestDto, 'date'),
+      effectiveDate: getDateFromDateInput(requestDto, 'effectiveDate'),
       feeAmount: requestDto.feeAmount,
     }
     await this.facilityService.addFixedFacilityFee(id, version, adjustmentDto)
@@ -116,8 +116,8 @@ class EditFacilityController {
   ): Promise<void> {
     const adjustmentDto: AddAccruingFacilityFeeDto = {
       name: 'AccruingFacilityFee',
-      startsFrom: getDateFromDateInput(requestDto, 'startsFrom'),
-      stopsOn: getDateFromDateInput(requestDto, 'stopsOn'),
+      effectiveDate: getDateFromDateInput(requestDto, 'effectiveDate'),
+      expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
       accrualRate: requestDto.accrualRate,
       accruesOn: requestDto.accruesOn,
     }

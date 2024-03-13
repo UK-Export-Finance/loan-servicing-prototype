@@ -5,7 +5,9 @@ import {
   CreateNewFacilityEvent,
   LoanServicingEvent,
 } from 'loan-servicing-common'
-import eventTypeToEventClassDefinition from 'models/dtos'
+import eventTypeToEventClassDefinition, {
+  GetClassConstructorForEventData,
+} from 'models/dtos'
 import EventEntity from 'models/entities/EventEntity'
 import { DataSource } from 'typeorm'
 import { Propagation, Transactional } from 'typeorm-transactional'
@@ -95,10 +97,12 @@ class EventService {
   }
 
   parseEvent<T extends LoanServicingEvent>(rawEvent: EventEntity<T>): T {
-    const eventData = plainToInstance(
-      eventTypeToEventClassDefinition[rawEvent.type],
-      rawEvent.eventData,
-    )
+    const getClassConstructor = eventTypeToEventClassDefinition[
+      rawEvent.type
+    ] as unknown as GetClassConstructorForEventData<T>
+    const classConstructor = getClassConstructor(rawEvent)
+
+    const eventData = plainToInstance(classConstructor, rawEvent.eventData)
     return {
       ...instanceToPlain(rawEvent),
       eventData,

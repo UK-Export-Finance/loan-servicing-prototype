@@ -13,15 +13,6 @@ export type FacilityConfiguration = {
   facilityFeesStrategies: FacilityFeeStrategyOption[]
 }
 
-// export type SpecifiedFacilityConfig<
-//   StrategyGroup extends keyof FacilityConfiguration,
-//   StrategyName extends FacilityConfiguration[StrategyGroup]['name'],
-// > = ReplaceProperty<
-//   FacilityConfiguration,
-//   StrategyGroup,
-//   Extract<FacilityConfiguration[StrategyGroup], { name: StrategyName }>
-// >
-
 export type DrawingConfiguration = {
   calculateInterestStrategy: CalculateInterestStrategyOption
   repaymentsStrategy: RepaymentStrategyOptions

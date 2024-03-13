@@ -128,7 +128,7 @@ class FacilityController {
     @Query('version') version: string,
     @Body() feeConfig: AddFixedFacilityFeeDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.addFixedFacilityFee(
+    const updatedFacility = await this.facilityService.addFacilityFee(
       facilityId,
       Number(version),
       feeConfig,
@@ -145,7 +145,7 @@ class FacilityController {
     @Query('version') version: string,
     @Body() feeConfig: AddAccruingFacilityFeeDtoClass,
   ): Promise<FacilityResponseDtoClass> {
-    const updatedFacility = await this.facilityService.addAccruingFacilityFee(
+    const updatedFacility = await this.facilityService.addFacilityFee(
       facilityId,
       Number(version),
       feeConfig,

@@ -33,7 +33,7 @@ export class FixedFacilityFeeStrategyOptionDtoClass
   @ApiProperty()
   @IsDate()
   @Type(() => Date)
-  date!: Date
+  effectiveDate!: Date
 
   @ApiProperty()
   feeAmount!: string
@@ -56,12 +56,12 @@ export class AccruingFacilityFeeStrategyOptionDtoClass
   @ApiProperty()
   @IsDate()
   @Type(() => Date)
-  startsFrom!: Date
+  effectiveDate!: Date
 
   @ApiProperty()
   @IsDate()
   @Type(() => Date)
-  stopsOn!: Date
+  expiryDate!: Date
 
   @ApiProperty()
   accrualRate!: string

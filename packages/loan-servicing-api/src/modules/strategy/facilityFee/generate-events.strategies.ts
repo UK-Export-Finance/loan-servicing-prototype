@@ -14,8 +14,8 @@ export type GetFacilityFeeEventsStrategy<T extends FacilityFeeStrategyOption> =
 export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
   AccruingFacilityFeeStrategyOption
 > = (facility, option) => {
-  const expiryDate = new Date(option.stopsOn)
-  let dateToProcess = new Date(option.startsFrom)
+  const expiryDate = new Date(option.expiryDate)
+  let dateToProcess = new Date(option.effectiveDate)
 
   const facilityFeeEvents: CalculateAccruingFacilityFeeEvent[] = []
   while (dateToProcess <= expiryDate) {
@@ -36,7 +36,7 @@ export const getFixedFacilityFeeEvents: GetFacilityFeeEventsStrategy<
   FixedFacilityFeeStrategyOption
 > = (facility, option) => [
   {
-    effectiveDate: option.date,
+    effectiveDate: option.effectiveDate,
     streamId: facility.streamId,
     entityType: 'facility',
     type: 'CalculateFixedFacilityFee',

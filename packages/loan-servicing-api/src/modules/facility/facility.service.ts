@@ -8,15 +8,14 @@ import {
   AdjustFacilityAmountEvent,
   AdjustFacilityAmountDto,
   Facility,
-  AddFixedFacilityFeeEvent,
-  AddAccruingFacilityFeeEvent,
   AddFixedFacilityFeeDto,
+  AddFacilityFeeEvent,
+  AddAccruingFacilityFeeDto,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsService from 'modules/projections/projections.service'
-import { AddAccruingFacilityFeeDtoClass } from 'models/dtos/facilityConfiguration'
 
 @Injectable()
 class FacilityService {
@@ -73,39 +72,17 @@ class FacilityService {
   }
 
   @Transactional()
-  async addFixedFacilityFee(
+  async addFacilityFee(
     streamId: string,
     streamVersion: number,
-    feeConfig: AddFixedFacilityFeeDto,
+    feeConfig: AddFixedFacilityFeeDto | AddAccruingFacilityFeeDto,
   ): Promise<Facility> {
-    await this.eventService.addEvent<AddFixedFacilityFeeEvent>(
+    await this.eventService.addEvent<AddFacilityFeeEvent>(
       {
         streamId,
-        effectiveDate: new Date(feeConfig.date),
+        effectiveDate: feeConfig.effectiveDate,
         entityType: 'facility',
-        type: 'AddFixedFacilityFee',
-        typeVersion: 1,
-        eventData: { ...feeConfig, feeId: crypto.randomUUID() },
-      },
-      streamVersion,
-    )
-    const { facility } =
-      await this.projectionsService.buildProjectionsForFacility(streamId)
-    return facility
-  }
-
-  @Transactional()
-  async addAccruingFacilityFee(
-    streamId: string,
-    streamVersion: number,
-    feeConfig: AddAccruingFacilityFeeDtoClass,
-  ): Promise<Facility> {
-    await this.eventService.addEvent<AddAccruingFacilityFeeEvent>(
-      {
-        streamId,
-        effectiveDate: new Date(feeConfig.startsFrom),
-        entityType: 'facility',
-        type: 'AddAccruingFacilityFee',
+        type: 'AddFacilityFee',
         typeVersion: 1,
         eventData: { ...feeConfig, feeId: crypto.randomUUID() },
       },

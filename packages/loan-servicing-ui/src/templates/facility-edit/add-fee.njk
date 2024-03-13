@@ -24,8 +24,8 @@
         name: "feeAmount"
       }) }}
     {{ govukDateInput({
-        id: "date",
-        namePrefix: "date",
+        id: "effectiveDate",
+        namePrefix: "effectiveDate",
         fieldset: {
           legend: {
             text: "Date of fee"
@@ -54,8 +54,8 @@
         name: "accrualRate"
       }) }}
     {{ govukDateInput({
-      id: "startsFrom",
-      namePrefix: "startsFrom",
+      id: "effectiveDate",
+      namePrefix: "effectiveDate",
       fieldset: {
         legend: {
           text: "Starts On"
@@ -63,8 +63,8 @@
       }
     }) }}
     {{ govukDateInput({
-      id: "stopsOn",
-      namePrefix: "stopsOn",
+      id: "expiryDate",
+      namePrefix: "expiryDate",
       fieldset: {
         legend: {
           text: "Ends on"
