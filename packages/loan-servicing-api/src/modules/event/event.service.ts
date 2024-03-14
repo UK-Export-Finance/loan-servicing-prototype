@@ -25,6 +25,21 @@ class EventService {
   ) {}
 
   @Transactional()
+  async addEvents(
+    events: NewEvent<LoanServicingEvent>[],
+    lastSeenStreamVersion: number = 0, // Default to 0 when creating new streams
+  ): Promise<EventEntity<LoanServicingEvent>[]> {
+    let streamVersion = lastSeenStreamVersion
+    const eventEntities: EventEntity<LoanServicingEvent>[] = []
+    events.forEach(async (e) => {
+      const entity = await this.addEvent(e, streamVersion)
+      eventEntities.push(entity)
+      streamVersion += 1
+    })
+    return eventEntities
+  }
+
+  @Transactional()
   // Default to never to enforce passing a type to T in all cases
   async addEvent<T extends LoanServicingEvent = never>(
     event: NewEvent<T>,

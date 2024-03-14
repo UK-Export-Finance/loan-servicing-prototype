@@ -64,7 +64,6 @@ export class NewDrawingRequestDtoClass
   extends OmitType(DrawingDtoClass, [
     'streamVersion',
     'interestAccrued',
-    'outstandingPrincipal',
     'facility',
   ])
   implements NewDrawingRequestDto

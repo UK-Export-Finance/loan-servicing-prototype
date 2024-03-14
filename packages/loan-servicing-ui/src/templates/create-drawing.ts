@@ -24,6 +24,7 @@ export type NewDrawingRequestFormDto = {
   repaymentStrategy: RepaymentStrategyName
   repaymentInterval?: string
   interestRate: string
+  initialDrawnAmount: string
   facilityId: string
 } & MandatoryDateInputFormData<'expiryDate'> &
   MandatoryDateInputFormData<'issuedEffectiveDate'> &

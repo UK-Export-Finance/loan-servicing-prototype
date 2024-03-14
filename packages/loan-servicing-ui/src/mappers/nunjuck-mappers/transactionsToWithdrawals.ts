@@ -11,7 +11,7 @@ const mapTransactionsToWithdrawalsSummary = (
   )
   return {
     card: {
-      title: { text: 'Withdrawals' },
+      title: { text: 'Amounts' },
       actions: {
         items: [
           {

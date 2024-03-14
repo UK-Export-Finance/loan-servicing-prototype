@@ -37,7 +37,6 @@ export type NewDrawingRequestDto = Omit<
   | 'streamId'
   | 'streamVersion'
   | 'interestAccrued'
-  | 'outstandingPrincipal'
   | 'facility'
 >
 

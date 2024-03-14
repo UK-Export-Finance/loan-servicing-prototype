@@ -57,9 +57,10 @@ class DrawingService {
         },
         facilityVersion,
       )
+    const drawingId = savedEvent.eventData.streamId
 
     await this.eventService.addEvent<CreateNewDrawingEvent>({
-      streamId: savedEvent.eventData.streamId,
+      streamId: drawingId,
       effectiveDate: drawingRequest.issuedEffectiveDate,
       entityType: 'drawing',
       type: 'CreateNewDrawing',
@@ -68,18 +69,18 @@ class DrawingService {
     })
     let streamVersion = 1
     if (drawingRequest.drawingConfig.repaymentsStrategy) {
-      await this.setRepayments(
+      const repaymentResult = await this.setRepayments(
         facilityId,
-        savedEvent.eventData.streamId,
+        drawingId,
         streamVersion,
         drawingRequest.drawingConfig.repaymentsStrategy,
       )
-      streamVersion += 1
+      streamVersion = repaymentResult.streamVersion
     }
 
-    await this.addDrawingAccrual(
+    const drawingAccrualResult = await this.addDrawingAccrual(
       facilityId,
-      savedEvent.eventData.streamId,
+      drawingId,
       streamVersion,
       {
         name: 'FixedDrawingAccrual',
@@ -87,6 +88,22 @@ class DrawingService {
         effectiveDate: drawingRequest.issuedEffectiveDate,
         expiryDate: drawingRequest.expiryDate,
       },
+    )
+    streamVersion = drawingAccrualResult.streamVersion
+
+    await this.eventService.addEvent<WithdrawFromDrawingEvent>(
+      {
+        streamId: drawingId,
+        effectiveDate: drawingRequest.issuedEffectiveDate,
+        entityType: 'drawing',
+        type: 'WithdrawFromDrawing',
+        typeVersion: 1,
+        eventData: {
+          date: drawingRequest.issuedEffectiveDate,
+          amount: drawingRequest.outstandingPrincipal,
+        },
+      },
+      streamVersion,
     )
 
     const { drawing } =
@@ -220,10 +237,9 @@ class DrawingService {
     facilityId: string,
     streamId: string,
     streamVersion: number,
-    feeConfig: (
-      | AddFixedDrawingAccrualDto
-      | AddMarketDrawingAccrualDto
-    ) & { name: DrawingAccrualStrategyName },
+    feeConfig: (AddFixedDrawingAccrualDto | AddMarketDrawingAccrualDto) & {
+      name: DrawingAccrualStrategyName
+    },
   ): Promise<Drawing> {
     await this.eventService.addEvent<AddDrawingAccrualEvent>(
       {
