@@ -1,6 +1,7 @@
 import type { Facility } from './facility'
 import { ConvertToDtoType, ReplaceProperty } from '../utils/type-utils'
 import { DrawingConfiguration, SpecifiedDrawingConfig } from './strategies'
+import { DrawingAccrual } from './strategies/drawingAccruals'
 
 export type Drawing = {
   streamId: string
@@ -12,6 +13,7 @@ export type Drawing = {
   outstandingPrincipal: string
   interestAccrued: string
   interestRate: string
+  accruals: DrawingAccrual[]
   //   commitmentDate: Date
   //   issuedNotEffectiveDate: Date
   issuedEffectiveDate: Date

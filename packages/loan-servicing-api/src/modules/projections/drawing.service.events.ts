@@ -12,6 +12,8 @@ import {
   sortEventByEffectiveDate,
   CreateNewDrawingEvent,
   SetDrawingRepaymentsEvent,
+  AddDrawingAccrualEvent,
+  CalculateDrawingAccrualEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -142,6 +144,52 @@ class DrawingEventHandlingService
       valueAfterTransaction: drawing.facility.drawnAmount,
     })
   }
+
+  AddDrawingAccrual: EventHandler<AddDrawingAccrualEvent> = async (
+    event,
+    projection,
+  ) => {
+    const drawing = projection.getDrawing(event.streamId)
+    const calculationEvents = this.strategyService.getEventsForDrawingAccrual(
+      drawing,
+      event.eventData,
+    )
+    projection.addEvents(calculationEvents)
+    drawing.accruals.push({
+      id: event.eventData.accrualId,
+      balance: '0',
+      config: event.eventData,
+    })
+  }
+
+  CalculateFacilityFee: EventHandler<CalculateDrawingAccrualEvent> = async (
+    sourceEvent,
+    projection,
+  ) => {
+    const drawing = projection.getDrawing(sourceEvent.streamId)
+    const accruedAmount = this.strategyService.calculateDrawingAccrual(
+      drawing,
+      sourceEvent,
+    )
+    const { accrualId } = sourceEvent.eventData
+    const accrual = drawing.accruals.find((f) => f.id === accrualId)!
+    accrual.balance = Big(accrual.balance ?? '0')
+      .add(accruedAmount)
+      .toFixed(2)
+    projection.transactions.push({
+      streamId: drawing.streamId,
+      sourceEvent,
+      datetime: sourceEvent.effectiveDate,
+      reference: 'Drawing Accrual',
+      valueChanged: `accrualBalance:${accrual.id}`,
+      changeInValue: accruedAmount,
+      valueAfterTransaction: accrual.balance,
+    })
+  }
+
+  CalculateFixedDrawingAccrual = this.CalculateFacilityFee
+
+  CalculateMarketDrawingAccrual = this.CalculateFacilityFee
 
   RevertWithdrawal: EventHandler<RevertWithdrawalEvent> = async (
     sourceEvent,

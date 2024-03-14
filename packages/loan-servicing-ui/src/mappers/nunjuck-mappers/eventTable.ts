@@ -67,13 +67,20 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Fee ${event.eventData.feeId.slice(0, 5)} added`,
       }
-      case 'SetDrawingRepayments':
-        return {
-          event: 'Repayments updated',
-          eventDate: eventDateObj.toLocaleString('en-GB'),
-          effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
-          description: `Repayments set to ${event.eventData.name}`,
-        }
+    case 'SetDrawingRepayments':
+      return {
+        event: 'Repayments updated',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: `Repayments set to ${event.eventData.name}`,
+      }
+    case 'AddDrawingAccrual':
+      return {
+        event: 'Accrual Added',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: `${event.eventData.name} added to drawing`,
+      }
     default:
       throw new NotImplementedException('Event to event table')
   }

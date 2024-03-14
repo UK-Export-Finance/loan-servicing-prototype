@@ -6,6 +6,7 @@ import CalculateInterestService from './calculateInterest/service'
 import StrategyService from './strategy.service'
 import RepaymentsService from './repayments/service'
 import FacilityFeeService from './facilityFee/service'
+import DrawingAccrualService from './drawingAccrual/service'
 
 @Module({
   imports: [EventModule, TypeOrmModule.forFeature([FacilityTypeEntity])],
@@ -14,6 +15,7 @@ import FacilityFeeService from './facilityFee/service'
     StrategyService,
     RepaymentsService,
     FacilityFeeService,
+    DrawingAccrualService
   ],
   exports: [StrategyService],
 })

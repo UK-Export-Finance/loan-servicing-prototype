@@ -4,6 +4,7 @@ import {
   RevertWithdrawlDto,
   UpdateDrawingInterestRequestDto,
 } from '../drawing'
+import { DrawingAccrualStrategyOption } from '../strategies/drawingAccruals'
 import { RepaymentStrategyOptions } from '../strategies/repayment'
 import { EventBase } from './eventBase'
 
@@ -43,9 +44,16 @@ export type SetDrawingRepaymentsEvent = DrawingEventBase<
   RepaymentStrategyOptions
 >
 
+export type AddDrawingAccrualEvent = DrawingEventBase<
+  'AddDrawingAccrual',
+  1,
+  DrawingAccrualStrategyOption
+>
+
 export type DrawingEvent =
   | UpdateInterestEvent
   | WithdrawFromDrawingEvent
   | RevertWithdrawalEvent
   | CreateNewDrawingEvent
   | SetDrawingRepaymentsEvent
+  | AddDrawingAccrualEvent

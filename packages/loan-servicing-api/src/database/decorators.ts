@@ -56,7 +56,10 @@ class ArrayOfClassTransformer<T> {
     return data?.map?.((x) => plainToInstance(this.targetClass, x)) ?? []
   }
 
-  from(data: T[]): object[] {
+  from(data: T[] | null): object[] {
+    if (!data) {
+      return []
+    }
     return data.map((d) => instanceToPlain(d))
   }
 }

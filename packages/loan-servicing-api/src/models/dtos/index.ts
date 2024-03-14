@@ -1,5 +1,6 @@
 import { ClassConstructor } from 'class-transformer'
 import {
+  AddDrawingAccrualEvent,
   AddFacilityFeeEvent,
   LoanServicingEvent,
   SetDrawingRepaymentsEvent,
@@ -24,6 +25,10 @@ import {
   ManualRepaymentStrategyOptionsDtoClass,
   RegularRepaymentStrategyOptionsDtoClass,
 } from './drawingConfiguration'
+import {
+  FixedLoanInterestAccrualStrategyOptionDtoClass,
+  MarketLoanInterestAccrualStrategyOptionDtoClass,
+} from './drawingAccrual'
 
 export type GetClassConstructorForEventData<T extends LoanServicingEvent> = (
   event: EventEntity<T>,
@@ -47,6 +52,16 @@ const eventTypeToEventClassDefinition: {
         return AccruingFacilityFeeStrategyOptionDtoClass
       case 'FixedFacilityFee':
         return FixedFacilityFeeStrategyOptionDtoClass
+      default:
+        throw new NotImplementedException('Add facility event not supported')
+    }
+  },
+  AddDrawingAccrual: (event: AddDrawingAccrualEvent) => {
+    switch (event.eventData.name) {
+      case 'FixedLoanInterestAccrual':
+        return FixedLoanInterestAccrualStrategyOptionDtoClass
+      case 'MarketLoanInterestAccrual':
+        return MarketLoanInterestAccrualStrategyOptionDtoClass
       default:
         throw new NotImplementedException('Add facility event not supported')
     }

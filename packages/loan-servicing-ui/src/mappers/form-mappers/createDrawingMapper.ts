@@ -13,6 +13,7 @@ const mapCreateDrawingFormToRequest = (
     },
     repaymentsStrategy: mapRepaymentOptions(request),
   },
+  accruals: [],
   expiryDate: getDateFromDateInput(request, 'expiryDate'),
   issuedEffectiveDate: getDateFromDateInput(request, 'issuedEffectiveDate'),
 })

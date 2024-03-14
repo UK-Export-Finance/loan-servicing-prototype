@@ -28,18 +28,16 @@ class DrawingTransactionService {
     streamId: string,
   ): Promise<SummarisedTransaction[] | null> {
     // BEWARE: SQL Injection risk - not for production
-    const query = `
-    SELECT
-      YEAR([datetime]) AS 'year',
-      MONTH([datetime]) AS 'month',
-      SUM([changeInValue]) AS 'interest'
-    FROM [LoanServicing].[dbo].[transaction_entity]
-    WHERE [streamId] = '${streamId}'
-    AND [valueChanged] = 'interestAccrued'
-    GROUP BY MONTH([datetime]), YEAR([datetime])
-  `
     const monthlyInterestAmounts = (await this.transactionRepo.query(
-      query,
+      ` SELECT
+          YEAR([datetime]) AS 'year',
+          MONTH([datetime]) AS 'month',
+          SUM([changeInValue]) AS 'interest'
+        FROM [LoanServicing].[dbo].[transaction_entity]
+        WHERE [streamId] = '${streamId}'
+        AND [valueChanged] = 'interestAccrued'
+        GROUP BY MONTH([datetime]), YEAR([datetime])
+      `,
     )) as { year: number; month: number; interest: number }[]
     const monthlyInterestTransactions =
       monthlyInterestAmounts.map<SummarisedTransaction>((a) => ({
@@ -52,15 +50,39 @@ class DrawingTransactionService {
         changeInValue: Big(a.interest).toFixed(2),
         valueAfterTransaction: 'TBC',
       }))
-    const nonInterestTransactions = await this.transactionRepo
+    const monthlyAccrualAmounts = (await this.transactionRepo.query(
+      ` SELECT
+            YEAR([datetime]) AS 'year',
+            MONTH([datetime]) AS 'month',
+            SUM([changeInValue]) AS 'accrued'
+          FROM [LoanServicing].[dbo].[transaction_entity]
+          WHERE [streamId] = '${streamId}'
+          AND [reference] = 'Drawing Accrual'
+          GROUP BY MONTH([datetime]), YEAR([datetime])
+        `,
+    )) as { year: number; month: number; accrued: number }[]
+    const monthlyAccrualTransactions =
+      monthlyAccrualAmounts.map<SummarisedTransaction>((a) => ({
+        streamId,
+        // We use the first day of the next month for the interest transaction
+        // But JS dates are zero indexed so we also subtract 1
+        datetime: new Date(a.year, a.month + 1 - 1),
+        reference: `total accruals for ${a.month}/${a.year}`,
+        valueChanged: 'accrualTotal',
+        changeInValue: Big(a.accrued).toFixed(2),
+        valueAfterTransaction: 'TBC',
+      }))
+    const nonSummarisedTransactions = await this.transactionRepo
       .createQueryBuilder('t')
       .where({ streamId })
-      .andWhere('t.reference != :ref', { ref: 'interest' })
+      .andWhere("t.reference != 'interest'")
+      .andWhere("t.reference != 'Drawing Accrual'")
       .orderBy({ 't.datetime': 'ASC' })
       .getMany()
     const summarisedTransactions = [
       ...monthlyInterestTransactions,
-      ...nonInterestTransactions,
+      ...monthlyAccrualTransactions,
+      ...nonSummarisedTransactions,
     ].sort((a, b) => a.datetime.getTime() - b.datetime.getTime())
     return this.setBalancesForSummarisedTransactions(summarisedTransactions)
   }

@@ -33,14 +33,12 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   facilityType!: string
 
   @ApiProperty({ type: () => [FacilityFeeDtoClass] })
-  @ArrayNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => FacilityFeeDtoClass)
-  @IsNotEmpty()
   facilityFees!: FacilityFee[]
 
-  @ApiProperty({ type: () => [DrawingDtoClass] })
+  @ApiProperty()
   @ArrayNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })

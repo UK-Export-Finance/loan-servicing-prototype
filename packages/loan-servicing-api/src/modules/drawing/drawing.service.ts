@@ -16,6 +16,9 @@ import {
   CreateNewDrawingEvent,
   SetDrawingRepaymentsEvent,
   sortByDateOnKey,
+  AddFixedLoanInterestAccrualDto,
+  AddMarketLoanInterestAccrualDto,
+  AddDrawingAccrualEvent,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -62,14 +65,29 @@ class DrawingService {
       typeVersion: 1,
       eventData: { ...drawingRequest },
     })
+    let streamVersion = 1
     if (drawingRequest.drawingConfig.repaymentsStrategy) {
       await this.setRepayments(
         facilityId,
         savedEvent.eventData.streamId,
-        1,
+        streamVersion,
         drawingRequest.drawingConfig.repaymentsStrategy,
       )
+      streamVersion += 1
     }
+
+    await this.addDrawingAccrual(
+      facilityId,
+      savedEvent.eventData.streamId,
+      streamVersion,
+      {
+        name: 'FixedLoanInterestAccrual',
+        accrualRate: '3',
+        effectiveDate: drawingRequest.issuedEffectiveDate,
+        expiryDate: drawingRequest.expiryDate,
+      },
+    )
+
     const { drawing } =
       await this.projectionsService.buildProjectionsForDrawing(
         facilityId,
@@ -192,6 +210,35 @@ class DrawingService {
       await this.projectionsService.buildProjectionsForDrawing(
         facilityId,
         drawingId,
+      )
+    return drawing
+  }
+
+  @Transactional()
+  async addDrawingAccrual(
+    facilityId: string,
+    streamId: string,
+    streamVersion: number,
+    feeConfig: AddFixedLoanInterestAccrualDto | AddMarketLoanInterestAccrualDto,
+  ): Promise<Drawing> {
+    await this.eventService.addEvent<AddDrawingAccrualEvent>(
+      {
+        streamId,
+        effectiveDate: feeConfig.effectiveDate,
+        entityType: 'drawing',
+        type: 'AddDrawingAccrual',
+        typeVersion: 1,
+        eventData: {
+          ...feeConfig,
+          accrualId: crypto.randomUUID(),
+        },
+      },
+      streamVersion,
+    )
+    const { drawing } =
+      await this.projectionsService.buildProjectionsForDrawing(
+        facilityId,
+        streamId,
       )
     return drawing
   }

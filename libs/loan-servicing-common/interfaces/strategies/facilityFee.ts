@@ -34,8 +34,6 @@ export type FacilityFeeStrategyOption =
   | AccruingFacilityFeeStrategyOption
   | FixedFacilityFeeStrategyOption
 
-export type AddFacilityFeeDto = Omit<FacilityFeeStrategyOption, 'feeId'>
-
 export type FacilityFeeStrategyName = FacilityFeeStrategyOption['name']
 
 export type FacilityFee = {

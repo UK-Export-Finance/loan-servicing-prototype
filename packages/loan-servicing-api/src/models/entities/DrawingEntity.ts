@@ -1,7 +1,16 @@
-import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
-import { Drawing, DrawingConfiguration } from 'loan-servicing-common'
+import {
+  ArrayOfClassAsJsonColumn,
+  ClassAsJsonColumn,
+  CurrencyColumn,
+} from 'database/decorators'
+import {
+  Drawing,
+  DrawingAccrual,
+  DrawingConfiguration,
+} from 'loan-servicing-common'
 import { DrawingConfigurationDtoClass } from 'models/dtos/drawingConfiguration'
 import { Column, Entity, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
+import { DrawingAccrualDtoClass } from 'models/dtos/drawingAccrual'
 import type FacilityEntity from './FacilityEntity'
 
 @Entity()
@@ -14,6 +23,9 @@ class DrawingEntity implements Drawing {
 
   @ManyToOne('FacilityEntity', 'drawings')
   facility!: Relation<FacilityEntity>
+
+  @ArrayOfClassAsJsonColumn(DrawingAccrualDtoClass)
+  accruals!: DrawingAccrual[]
 
   @ClassAsJsonColumn(DrawingConfigurationDtoClass)
   drawingConfig!: DrawingConfiguration

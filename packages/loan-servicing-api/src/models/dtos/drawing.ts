@@ -1,8 +1,9 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
+import { IsArray, IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
 import {
   AddWithdrawalToDrawingDto,
   Drawing,
+  DrawingAccrual,
   Facility,
   NewDrawingRequestDto,
   RevertWithdrawlDto,
@@ -10,6 +11,7 @@ import {
 } from 'loan-servicing-common'
 import { Transform, Type } from 'class-transformer'
 import { DrawingConfigurationDtoClass } from './drawingConfiguration'
+import { DrawingAccrualDtoClass } from './drawingAccrual'
 
 export class DrawingDtoClass implements Drawing {
   private readonly _type = 'DrawingDto'
@@ -23,6 +25,12 @@ export class DrawingDtoClass implements Drawing {
   @ApiProperty()
   @Transform(({ value }) => ({ ...value, drawings: undefined }))
   facility!: Facility
+
+  @ApiProperty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DrawingAccrualDtoClass)
+  accruals!: DrawingAccrual[]
 
   @ApiProperty()
   @ValidateNested()
