@@ -178,10 +178,7 @@ class ProjectionsService {
       streamId: creationEvent.streamId,
       streamVersion: 1,
       drawnAmount: '0',
-      facilityFeeBalances: {},
-      facilityConfig: {
-        facilityFeesStrategies: [],
-      },
+      facilityFees: [],
       undrawnAmount: creationEvent.eventData.facilityAmount,
       ...creationEvent.eventData,
       drawings: [],

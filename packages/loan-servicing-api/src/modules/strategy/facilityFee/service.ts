@@ -24,13 +24,6 @@ class FacilityFeeService {
     return handler(facility, event)
   }
 
-  generateFacilityFeeEvents = (
-    facility: Facility,
-  ): CalculateFacilityFeeEvent[] =>
-    facility.facilityConfig.facilityFeesStrategies.flatMap((option) =>
-      this.generateEventsForSingleFee(facility, option),
-    )
-
   generateEventsForSingleFee = <T extends FacilityFeeStrategyOption>(
     facility: Facility,
     option: T,

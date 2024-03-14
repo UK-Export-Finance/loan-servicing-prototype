@@ -3,10 +3,7 @@ import { Injectable, Inject } from '@nestjs/common'
 import {
   CreateNewFacilityEvent,
   AdjustFacilityAmountEvent,
-  Facility,
-  FacilityEvent,
   FacilityProjectedEvent,
-  sortEventByEffectiveDate,
   CalculateFacilityFeeEvent,
   AddDrawingToFacilityEvent,
   Drawing,
@@ -26,7 +23,7 @@ import DrawingEventHandlingService from './drawing.service.events'
 
 @Injectable()
 class FacilityEventHandlingService
-  implements IEventHandlerService<Facility, FacilityProjectedEvent>
+  implements IEventHandlerService<FacilityProjectedEvent>
 {
   constructor(
     @Inject(EventService) private eventService: EventService,
@@ -38,20 +35,6 @@ class FacilityEventHandlingService
     @InjectRepository(DrawingEntity)
     private drawingRepo: Repository<DrawingEntity>,
   ) {}
-
-  getProjectedEvents = async (
-    facility: Facility,
-  ): Promise<FacilityProjectedEvent[]> => {
-    const facilityEvents = (await this.eventService.getActiveEventsInCreationOrder(
-      facility.streamId,
-    )) as FacilityEvent[]
-    const facilityFeeEvents =
-      await this.strategyService.getFacilityFeeEvents(facility)
-
-    return [...facilityEvents, ...facilityFeeEvents].sort(
-      sortEventByEffectiveDate,
-    )
-  }
 
   applyEvent = async <T extends FacilityProjectedEvent>(
     event: T,
@@ -157,15 +140,20 @@ class FacilityEventHandlingService
     })
   }
 
-  AddFacilityFee: EventHandler<
-    AddFacilityFeeEvent
-  > = async (event, projection) => {
+  AddFacilityFee: EventHandler<AddFacilityFeeEvent> = async (
+    event,
+    projection,
+  ) => {
     const calculationEvents = this.strategyService.getEventsForFacilityFee(
       projection.facility,
       event.eventData,
     )
     projection.addEvents(calculationEvents)
-    projection.facility.facilityConfig.facilityFeesStrategies.push(event.eventData)
+    projection.facility.facilityFees.push({
+      id: event.eventData.feeId,
+      balance: '0',
+      config: event.eventData,
+    })
   }
 
   CalculateFacilityFee: EventHandler<CalculateFacilityFeeEvent> = async (
@@ -177,8 +165,9 @@ class FacilityEventHandlingService
       sourceEvent,
     )
     const { feeId } = sourceEvent.eventData
-    projection.facility.facilityFeeBalances[feeId] = Big(
-      projection.facility.facilityFeeBalances[feeId] ?? '0',
+    projection.facility.facilityFees.find((f) => f.id === feeId)!.balance = Big(
+      projection.facility.facilityFees.find((f) => f.id === feeId)!.balance ??
+        '0',
     )
       .add(feeAmount)
       .toFixed(2)
@@ -189,7 +178,9 @@ class FacilityEventHandlingService
       reference: 'Facility fees',
       valueChanged: 'totalFeeBalance',
       changeInValue: feeAmount,
-      valueAfterTransaction: projection.facility.facilityFeeBalances[feeId],
+      valueAfterTransaction: projection.facility.facilityFees.find(
+        (f) => f.id === feeId,
+      )!.balance,
     })
   }
 

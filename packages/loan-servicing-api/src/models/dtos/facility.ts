@@ -8,14 +8,16 @@ import {
 } from 'class-validator'
 import {
   AdjustFacilityAmountDto,
-  BalancesLookup,
   Drawing,
+  FacilityFee,
   FacilityResponseDto,
   NewFacilityRequestDto,
 } from 'loan-servicing-common'
 import { Transform, Type } from 'class-transformer'
 import { DrawingDtoClass } from './drawing'
-import { FacilityConfigurationDtoClass } from './facilityConfiguration'
+import {
+  FacilityFeeDtoClass,
+} from './facilityConfiguration'
 
 export class FacilityResponseDtoClass implements FacilityResponseDto {
   private readonly _type = 'FacilityDto'
@@ -30,10 +32,13 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   @IsNotEmpty()
   facilityType!: string
 
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => FacilityConfigurationDtoClass)
-  facilityConfig!: FacilityConfigurationDtoClass
+  @ApiProperty({ type: () => [FacilityFeeDtoClass] })
+  @ArrayNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FacilityFeeDtoClass)
+  @IsNotEmpty()
+  facilityFees!: FacilityFee[]
 
   @ApiProperty({ type: () => [DrawingDtoClass] })
   @ArrayNotEmpty()
@@ -63,11 +68,6 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   undrawnAmount!: string
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsArray()
-  facilityFeeBalances!: BalancesLookup
-
-  @ApiProperty()
   @IsDate()
   @Type(() => Date)
   issuedEffectiveDate!: Date
@@ -85,8 +85,7 @@ export class NewFacilityRequestDtoClass
     'drawings',
     'drawnAmount',
     'undrawnAmount',
-    'facilityFeeBalances',
-    'facilityConfig'
+    'facilityFees',
   ])
   implements NewFacilityRequestDto {}
 

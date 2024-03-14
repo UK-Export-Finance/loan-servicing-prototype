@@ -1,17 +1,12 @@
 import { ReplaceProperty } from '../../utils/type-utils'
 import {
   FacilityFeeStrategyName,
-  FacilityFeeStrategyOption,
 } from './facilityFee'
 import {
   CalculateInterestStrategyName,
   CalculateInterestStrategyOption,
 } from './interest'
 import { RepaymentStrategyName, RepaymentStrategyOptions } from './repayment'
-
-export type FacilityConfiguration = {
-  facilityFeesStrategies: FacilityFeeStrategyOption[]
-}
 
 export type DrawingConfiguration = {
   calculateInterestStrategy: CalculateInterestStrategyOption

@@ -4,7 +4,7 @@ import {
   AccruingFacilityFeeStrategyOption,
   AddAccruingFacilityFeeDto,
   AddFixedFacilityFeeDto,
-  FacilityConfiguration,
+  FacilityFee,
   FacilityFeeStrategyName,
   FixedFacilityFeeStrategyOption,
 } from 'loan-servicing-common'
@@ -78,7 +78,13 @@ export class AddAccruingFacilityFeeDtoClass
   AccruingFacilityFeeStrategyOptionDtoClass,
   FixedFacilityFeeStrategyOptionDtoClass,
 )
-export class FacilityConfigurationDtoClass implements FacilityConfiguration {
+export class FacilityFeeDtoClass implements FacilityFee {
+  @ApiProperty()
+  id!: string
+
+  @ApiProperty()
+  balance!: string
+
   @ApiProperty({
     oneOf: refs(
       AccruingFacilityFeeStrategyOptionDtoClass,
@@ -97,8 +103,8 @@ export class FacilityConfigurationDtoClass implements FacilityConfiguration {
   })
   @ValidateNested({ each: true })
   @IsArray()
-  facilityFeesStrategies!: (
+  config!: (
     | AccruingFacilityFeeStrategyOptionDtoClass
     | FixedFacilityFeeStrategyOptionDtoClass
-  )[]
+  )
 }

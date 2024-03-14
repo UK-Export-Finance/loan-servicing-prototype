@@ -21,7 +21,7 @@ import FacilityProjection from './projection'
 
 @Injectable()
 class DrawingEventHandlingService
-  implements IEventHandlerService<Drawing, DrawingProjectedEvent>
+  implements IEventHandlerService<DrawingProjectedEvent>
 {
   constructor(
     @Inject(EventService) private eventService: EventService,

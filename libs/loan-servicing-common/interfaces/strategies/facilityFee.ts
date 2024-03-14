@@ -1,7 +1,5 @@
 import { StrategyOptionsBase } from './strategyOptionsBase'
 
-export type BalancesLookup = { [key: string]: string }
-
 export type AccruingFacilityFeeStrategyOption = StrategyOptionsBase<
   'AccruingFacilityFee',
   {
@@ -39,3 +37,9 @@ export type FacilityFeeStrategyOption =
 export type AddFacilityFeeDto = Omit<FacilityFeeStrategyOption, 'feeId'>
 
 export type FacilityFeeStrategyName = FacilityFeeStrategyOption['name']
+
+export type FacilityFee = {
+  id: string
+  balance: string
+  config: FacilityFeeStrategyOption
+}

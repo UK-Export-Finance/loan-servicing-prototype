@@ -23,11 +23,9 @@ export type EventHandler<T extends ProjectedEvent> = (
 ) => Promise<void>
 
 export type IEventHandlerService<
-  E extends Facility | Drawing,
   T extends ProjectedEvent,
 > = {
   [key in T['type']]: EventHandler<Extract<T, { type: key }>>
 } & {
   applyEvent: (event: T, projection: FacilityProjection) => Promise<void>
-  getProjectedEvents: (entity: E) => Promise<T[]>
 }

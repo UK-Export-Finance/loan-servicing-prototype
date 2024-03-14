@@ -1,15 +1,13 @@
 import { ReplaceProperty } from '../utils/type-utils'
 import type { Drawing } from './drawing'
-import { FacilityConfiguration } from './strategies'
-import { BalancesLookup } from './strategies/facilityFee'
+import { FacilityFee } from './strategies/facilityFee'
 
 export type Facility = {
   streamId: string
   obligor: string
   streamVersion: number
   facilityType: string
-  facilityFeeBalances: BalancesLookup
-  facilityConfig: FacilityConfiguration
+  facilityFees: FacilityFee[]
   drawings: Drawing[]
   facilityAmount: string
   drawnAmount: string
@@ -36,6 +34,5 @@ export type NewFacilityRequestDto = Omit<
   | 'drawings'
   | 'drawnAmount'
   | 'undrawnAmount'
-  | 'facilityFeeBalances'
-  | 'facilityConfig'
+  | 'facilityFees'
 >

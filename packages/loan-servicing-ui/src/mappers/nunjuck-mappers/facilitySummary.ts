@@ -60,8 +60,8 @@ export const facilityToFacilitySummaryProps = (
         text: 'Facility Fee Balance',
       },
       value: {
-        html: Object.entries(facility.facilityFeeBalances)
-          .map(([id, balance]) => `Fee ${id.slice(0, 5)}: £${balance}`)
+        html: facility.facilityFees
+          .map(({ id, balance }) => `Fee ${id.slice(0, 5)}: £${balance}`)
           .join('<br />'),
       },
       actions: {
