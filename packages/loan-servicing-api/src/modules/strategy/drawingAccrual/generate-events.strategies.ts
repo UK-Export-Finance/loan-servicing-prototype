@@ -3,15 +3,15 @@ import {
   Drawing,
   DrawingAccrualStrategyName,
   DrawingAccrualStrategyOption,
-  FixedLoanInterestAccrualStrategyOption,
-  MarketLoanInterestAccrualStrategyOption,
+  FixedDrawingAccrualStrategyOption,
+  MarketDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
 
 export type GetDrawingAccrualEventsStrategy<T extends DrawingAccrualStrategyOption> =
   (facility: Drawing, option: T) => CalculateDrawingAccrualEvent[]
 
 export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
-  FixedLoanInterestAccrualStrategyOption
+  FixedDrawingAccrualStrategyOption
 > = (facility, option) => {
   const expiryDate = new Date(option.expiryDate)
   let dateToProcess = new Date(option.effectiveDate)
@@ -32,7 +32,7 @@ export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
 }
 
 export const getMarketDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
-  MarketLoanInterestAccrualStrategyOption
+  MarketDrawingAccrualStrategyOption
 > = (facility, option) => {
   const expiryDate = new Date(option.expiryDate)
   let dateToProcess = new Date(option.effectiveDate)
@@ -59,6 +59,6 @@ type DrawingAccrualEventStrategies = {
 }
 
 export const drawingAccrualEventStrategies: DrawingAccrualEventStrategies = {
-  FixedLoanInterestAccrual: getFixedDrawingAccrualEvents,
-  MarketLoanInterestAccrual: getMarketDrawingAccrualEvents,
+  FixedDrawingAccrual: getFixedDrawingAccrualEvents,
+  MarketDrawingAccrual: getMarketDrawingAccrualEvents,
 }

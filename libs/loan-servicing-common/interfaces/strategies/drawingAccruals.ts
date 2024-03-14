@@ -12,33 +12,33 @@ type AccrualStrategyOptionBase<
   }
 >
 
-export type FixedLoanInterestAccrualStrategyOption = AccrualStrategyOptionBase<
-  'FixedLoanInterestAccrual',
+export type FixedDrawingAccrualStrategyOption = AccrualStrategyOptionBase<
+  'FixedDrawingAccrual',
   {
     accrualRate: string
   }
 >
 
-export type AddFixedLoanInterestAccrualDto = Omit<
-  FixedLoanInterestAccrualStrategyOption,
-  'accrualId' | 'isNotional'
+export type AddFixedDrawingAccrualDto = Omit<
+  FixedDrawingAccrualStrategyOption,
+  'accrualId' | 'isNotional' | 'name'
 >
 
-export type MarketLoanInterestAccrualStrategyOption = AccrualStrategyOptionBase<
-  'MarketLoanInterestAccrual',
+export type MarketDrawingAccrualStrategyOption = AccrualStrategyOptionBase<
+  'MarketDrawingAccrual',
   {
     accrualRate: string
   }
 >
 
-export type AddMarketLoanInterestAccrualDto = Omit<
-  MarketLoanInterestAccrualStrategyOption,
-  'accrualId' | 'isNotional'
+export type AddMarketDrawingAccrualDto = Omit<
+  MarketDrawingAccrualStrategyOption,
+  'accrualId' | 'isNotional' | 'name'
 >
 
 export type DrawingAccrualStrategyOption =
-  | FixedLoanInterestAccrualStrategyOption
-  | MarketLoanInterestAccrualStrategyOption
+  | FixedDrawingAccrualStrategyOption
+  | MarketDrawingAccrualStrategyOption
 
 export type DrawingAccrualStrategyName = DrawingAccrualStrategyOption['name']
 

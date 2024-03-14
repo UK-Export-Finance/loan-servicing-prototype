@@ -57,7 +57,7 @@ export const facilityToFacilitySummaryProps = (
     },
     {
       key: {
-        text: 'Facility Fee Balance',
+        text: 'Facility Fees',
       },
       value: {
         html: facility.facilityFees

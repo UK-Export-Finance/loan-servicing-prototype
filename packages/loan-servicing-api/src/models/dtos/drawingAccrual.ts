@@ -1,19 +1,19 @@
 import { ApiExtraModels, ApiProperty, OmitType, refs } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
-  AddFixedLoanInterestAccrualDto,
-  AddMarketLoanInterestAccrualDto,
+  AddFixedDrawingAccrualDto,
+  AddMarketDrawingAccrualDto,
   DrawingAccrual,
   DrawingAccrualStrategyName,
-  FixedLoanInterestAccrualStrategyOption,
-  MarketLoanInterestAccrualStrategyOption,
+  FixedDrawingAccrualStrategyOption,
+  MarketDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
 import { IsArray, IsDate, ValidateNested } from 'class-validator'
 import StrategyOptionDtoClass from './strategy-option'
 
 const interestStrategyNames: DrawingAccrualStrategyName[] = [
-  'FixedLoanInterestAccrual',
-  'MarketLoanInterestAccrual',
+  'FixedDrawingAccrual',
+  'MarketDrawingAccrual',
 ]
 
 export class DrawingAccrualStrategyOptionDtoClass {
@@ -23,12 +23,12 @@ export class DrawingAccrualStrategyOptionDtoClass {
   name!: DrawingAccrualStrategyName
 }
 
-export class FixedLoanInterestAccrualStrategyOptionDtoClass
+export class FixedDrawingAccrualStrategyOptionDtoClass
   extends StrategyOptionDtoClass
-  implements FixedLoanInterestAccrualStrategyOption
+  implements FixedDrawingAccrualStrategyOption
 {
-  @ApiProperty({ enum: ['FixedLoanInterestAccrual'] })
-  name: 'FixedLoanInterestAccrual' = 'FixedLoanInterestAccrual'
+  @ApiProperty({ enum: ['FixedDrawingAccrual'] })
+  name: 'FixedDrawingAccrual' = 'FixedDrawingAccrual'
 
   @ApiProperty()
   accrualId!: string
@@ -47,18 +47,19 @@ export class FixedLoanInterestAccrualStrategyOptionDtoClass
   accrualRate!: string
 }
 
-export class AddFixedLoanInterestAccrualDtoClass
-  extends OmitType(FixedLoanInterestAccrualStrategyOptionDtoClass, [
+export class AddFixedDrawingAccrualDtoClass
+  extends OmitType(FixedDrawingAccrualStrategyOptionDtoClass, [
     'accrualId',
+    'name',
   ])
-  implements AddFixedLoanInterestAccrualDto {}
+  implements AddFixedDrawingAccrualDto {}
 
-export class MarketLoanInterestAccrualStrategyOptionDtoClass
+export class MarketDrawingAccrualStrategyOptionDtoClass
   extends StrategyOptionDtoClass
-  implements MarketLoanInterestAccrualStrategyOption
+  implements MarketDrawingAccrualStrategyOption
 {
-  @ApiProperty({ enum: ['MarketLoanInterestAccrual'] })
-  name: 'MarketLoanInterestAccrual' = 'MarketLoanInterestAccrual'
+  @ApiProperty({ enum: ['MarketDrawingAccrual'] })
+  name: 'MarketDrawingAccrual' = 'MarketDrawingAccrual'
 
   @ApiProperty()
   accrualId!: string
@@ -80,16 +81,16 @@ export class MarketLoanInterestAccrualStrategyOptionDtoClass
   accrualRate!: string
 }
 
-export class AddMarketLoanInterestAccrualDtoClass
-  extends OmitType(MarketLoanInterestAccrualStrategyOptionDtoClass, [
+export class AddMarketDrawingAccrualDtoClass
+  extends OmitType(MarketDrawingAccrualStrategyOptionDtoClass, [
     'accrualId',
-    'isNotional',
+    'name',
   ])
-  implements AddMarketLoanInterestAccrualDto {}
+  implements AddMarketDrawingAccrualDto {}
 
 @ApiExtraModels(
-  MarketLoanInterestAccrualStrategyOptionDtoClass,
-  FixedLoanInterestAccrualStrategyOptionDtoClass,
+  MarketDrawingAccrualStrategyOptionDtoClass,
+  FixedDrawingAccrualStrategyOptionDtoClass,
 )
 export class DrawingAccrualDtoClass implements DrawingAccrual {
   @ApiProperty()
@@ -100,8 +101,8 @@ export class DrawingAccrualDtoClass implements DrawingAccrual {
 
   @ApiProperty({
     oneOf: refs(
-      MarketLoanInterestAccrualStrategyOptionDtoClass,
-      FixedLoanInterestAccrualStrategyOptionDtoClass,
+      MarketDrawingAccrualStrategyOptionDtoClass,
+      FixedDrawingAccrualStrategyOptionDtoClass,
     ),
   })
   @Type(() => StrategyOptionDtoClass, {
@@ -110,11 +111,11 @@ export class DrawingAccrualDtoClass implements DrawingAccrual {
       property: 'name',
       subTypes: [
         {
-          value: MarketLoanInterestAccrualStrategyOptionDtoClass,
+          value: MarketDrawingAccrualStrategyOptionDtoClass,
           name: 'Regular',
         },
         {
-          value: FixedLoanInterestAccrualStrategyOptionDtoClass,
+          value: FixedDrawingAccrualStrategyOptionDtoClass,
           name: 'Manual',
         },
       ],
@@ -123,6 +124,6 @@ export class DrawingAccrualDtoClass implements DrawingAccrual {
   @ValidateNested({ each: true })
   @IsArray()
   config!:
-    | MarketLoanInterestAccrualStrategyOptionDtoClass
-    | FixedLoanInterestAccrualStrategyOptionDtoClass
+    | MarketDrawingAccrualStrategyOptionDtoClass
+    | FixedDrawingAccrualStrategyOptionDtoClass
 }

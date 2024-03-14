@@ -26,8 +26,8 @@ import {
   RegularRepaymentStrategyOptionsDtoClass,
 } from './drawingConfiguration'
 import {
-  FixedLoanInterestAccrualStrategyOptionDtoClass,
-  MarketLoanInterestAccrualStrategyOptionDtoClass,
+  FixedDrawingAccrualStrategyOptionDtoClass,
+  MarketDrawingAccrualStrategyOptionDtoClass,
 } from './drawingAccrual'
 
 export type GetClassConstructorForEventData<T extends LoanServicingEvent> = (
@@ -58,10 +58,10 @@ const eventTypeToEventClassDefinition: {
   },
   AddDrawingAccrual: (event: AddDrawingAccrualEvent) => {
     switch (event.eventData.name) {
-      case 'FixedLoanInterestAccrual':
-        return FixedLoanInterestAccrualStrategyOptionDtoClass
-      case 'MarketLoanInterestAccrual':
-        return MarketLoanInterestAccrualStrategyOptionDtoClass
+      case 'FixedDrawingAccrual':
+        return FixedDrawingAccrualStrategyOptionDtoClass
+      case 'MarketDrawingAccrual':
+        return MarketDrawingAccrualStrategyOptionDtoClass
       default:
         throw new NotImplementedException('Add facility event not supported')
     }

@@ -1,6 +1,6 @@
 import {
-  FixedLoanInterestAccrualStrategyOption,
-  MarketLoanInterestAccrualStrategyOption,
+  FixedDrawingAccrualStrategyOption,
+  MarketDrawingAccrualStrategyOption,
 } from '../../strategies/drawingAccruals'
 import {
   ProjectedDrawingEventBase,
@@ -9,13 +9,13 @@ import {
 export type CalculateFixedDrawingAccrualEvent = ProjectedDrawingEventBase<
   'CalculateFixedDrawingAccrual',
   1,
-  FixedLoanInterestAccrualStrategyOption
+  FixedDrawingAccrualStrategyOption
 >
 
 export type CalculateMarketDrawingAccrualEvent = ProjectedDrawingEventBase<
   'CalculateMarketDrawingAccrual',
   1,
-  MarketLoanInterestAccrualStrategyOption
+  MarketDrawingAccrualStrategyOption
 >
 
 export type CalculateDrawingAccrualEvent =

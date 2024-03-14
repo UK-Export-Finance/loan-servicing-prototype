@@ -38,6 +38,25 @@ export const drawingToDrawingSummary = (
       },
       {
         key: {
+          text: 'Drawing Accruals',
+        },
+        value: {
+          html: drawing.accruals
+            .map(({ id, balance }) => `Fee ${id.slice(0, 5)}: £${balance}`)
+            .join('<br />'),
+        },
+        actions: {
+          items: [
+            {
+              href: `/facility/${drawing.facility.streamId}/drawing/${drawing.streamId}/addAccrual`,
+              text: 'Add new',
+              visuallyHiddenText: 'fee',
+            },
+          ],
+        },
+      },
+      {
+        key: {
           text: 'Start Date',
         },
         value: {

@@ -16,9 +16,10 @@ import {
   CreateNewDrawingEvent,
   SetDrawingRepaymentsEvent,
   sortByDateOnKey,
-  AddFixedLoanInterestAccrualDto,
-  AddMarketLoanInterestAccrualDto,
+  AddFixedDrawingAccrualDto,
+  AddMarketDrawingAccrualDto,
   AddDrawingAccrualEvent,
+  DrawingAccrualStrategyName,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -81,7 +82,7 @@ class DrawingService {
       savedEvent.eventData.streamId,
       streamVersion,
       {
-        name: 'FixedLoanInterestAccrual',
+        name: 'FixedDrawingAccrual',
         accrualRate: '3',
         effectiveDate: drawingRequest.issuedEffectiveDate,
         expiryDate: drawingRequest.expiryDate,
@@ -219,7 +220,10 @@ class DrawingService {
     facilityId: string,
     streamId: string,
     streamVersion: number,
-    feeConfig: AddFixedLoanInterestAccrualDto | AddMarketLoanInterestAccrualDto,
+    feeConfig: (
+      | AddFixedDrawingAccrualDto
+      | AddMarketDrawingAccrualDto
+    ) & { name: DrawingAccrualStrategyName },
   ): Promise<Drawing> {
     await this.eventService.addEvent<AddDrawingAccrualEvent>(
       {

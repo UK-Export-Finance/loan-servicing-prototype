@@ -11,6 +11,8 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 import {
+  AddFixedDrawingAccrualDto,
+  AddMarketDrawingAccrualDto,
   AddWithdrawalToDrawingDto,
   ConvertToDtoType,
   RevertWithdrawlDto,
@@ -28,6 +30,11 @@ import {
 import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 import { RevertWithdrawalNjkInput } from 'templates/facility-edit/revert-withdrawal'
+import {
+  AddDrawingAccrualNjkInput,
+  AddFixedDrawingAccrualFormDto,
+  AddMarketDrawingAccrualFormDto,
+} from 'templates/drawing-edit/add-accrual'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
@@ -172,6 +179,68 @@ class EditDrawingController {
         requestDto.withdrawalEventStreamVersion,
       ),
     })
+    response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
+  }
+
+  @Get(':drawingId/addAccrual')
+  @Render('drawing-edit/add-accrual')
+  async renderAddAccrualPage(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+  ): Promise<AddDrawingAccrualNjkInput> {
+    const drawing = await this.drawingService.getDrawing(facilityId, drawingId)
+    if (!drawing) {
+      throw new NotFoundException()
+    }
+
+    return {
+      drawing,
+    }
+  }
+
+  @Post(':drawingId/accrual/fixed')
+  async addFixedAccrual(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('version') version: string,
+    @Body()
+    requestDto: AddFixedDrawingAccrualFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const updateDto: AddFixedDrawingAccrualDto = {
+      effectiveDate: getDateFromDateInput(requestDto, 'effectiveDate'),
+      expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
+      accrualRate: requestDto.accrualRate,
+    }
+    await this.drawingService.addFixedDrawingAccrual(
+      facilityId,
+      drawingId,
+      version,
+      updateDto,
+    )
+    response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
+  }
+
+  @Post(':drawingId/accrual/market')
+  async addMarketAccrual(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('version') version: string,
+    @Body()
+    requestDto: AddMarketDrawingAccrualFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const updateDto: AddMarketDrawingAccrualDto = {
+      effectiveDate: getDateFromDateInput(requestDto, 'effectiveDate'),
+      expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
+      accrualRate: requestDto.accrualRate,
+    }
+    await this.drawingService.addMarketDrawingAccrual(
+      facilityId,
+      drawingId,
+      version,
+      updateDto,
+    )
     response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
   }
 }
