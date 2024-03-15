@@ -8,9 +8,6 @@ const mapCreateDrawingFormToRequest = (
 ): NewDrawingRequestDto => ({
   ...request,
   drawingConfig: {
-    calculateInterestStrategy: {
-      name: request.calculateInterestStrategy,
-    },
     repaymentsStrategy: mapRepaymentOptions(request),
   },
   accruals: [],

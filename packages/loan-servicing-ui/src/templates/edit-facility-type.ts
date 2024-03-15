@@ -1,19 +1,19 @@
 import {
-  CalculateInterestStrategyName,
+  DrawingAccrualStrategyName,
   FacilityFeeStrategyName,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
 import { NunjuckSelectInputOption } from 'types/nunjucks'
 
 export type CreateFacilityTypeNjkInput = {
-  calculateInterestSelectOptions: NunjuckSelectInputOption<CalculateInterestStrategyName>[]
+  drawingAccrualSelectOptions: NunjuckSelectInputOption<DrawingAccrualStrategyName>[]
   repaymentsSelectOptions: NunjuckSelectInputOption<RepaymentStrategyName>[]
   facilityFeeSelectOptions: NunjuckSelectInputOption<FacilityFeeStrategyName>[]
 }
 
 export type CreateFacilityTypeFormOutput = {
   name: string
-  interestStrategies: CalculateInterestStrategyName[]
+  drawingAccrualStrategies: DrawingAccrualStrategyName[]
   repaymentsStrategies: RepaymentStrategyName[]
   facilityFeeStrategies: FacilityFeeStrategyName[]
 }

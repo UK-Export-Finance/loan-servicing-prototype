@@ -22,17 +22,17 @@
     }) }}
 
     {{ govukCheckboxes({
-      name: "interestStrategies",
+      name: "drawingAccrualStrategies",
       fieldset: {
         legend: {
-          text: "Supported Interest Calculation Types",
+          text: "Supported Drawing Accrual Types",
           classes: "govuk-fieldset__legend--m"
         }
       },
       hint: {
         text: "Select all that apply."
       },
-      items: calculateInterestSelectOptions
+      items: drawingAccrualSelectOptions
     }) }}
 
     {{ govukCheckboxes({

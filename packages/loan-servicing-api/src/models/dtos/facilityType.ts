@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
-  CalculateInterestStrategyName,
+  DrawingAccrualStrategyName,
   FacilityFeeStrategyName,
   FacilityType,
   RepaymentStrategyName,
@@ -11,7 +11,7 @@ class FacilityTypeDtoClass implements FacilityType {
   name!: string
 
   @ApiProperty()
-  interestStrategies!: CalculateInterestStrategyName[]
+  drawingAccrualStrategies!: DrawingAccrualStrategyName[]
 
   @ApiProperty()
   repaymentsStrategies!: RepaymentStrategyName[]

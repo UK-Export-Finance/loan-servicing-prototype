@@ -1,5 +1,4 @@
 import { DrawingDto } from 'loan-servicing-common'
-import { placeholderToString } from 'strings/strategyNames'
 import { GovUkSummaryListProps } from 'types/nunjucks'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -9,33 +8,6 @@ export const drawingToDrawingSummary = (
   const repayment = drawing.drawingConfig.repaymentsStrategy
   return {
     rows: [
-      {
-        key: {
-          text: 'Interest Strategy',
-        },
-        value: {
-          text: placeholderToString(
-            drawing.drawingConfig.calculateInterestStrategy.name,
-          ),
-        },
-      },
-      {
-        key: {
-          text: 'Interest Rate',
-        },
-        value: {
-          text: `${drawing.interestRate}%`,
-        },
-        actions: {
-          items: [
-            {
-              href: `/facility/${drawing.facility.streamId}/drawing/${drawing.streamId}/changeInterest`,
-              text: 'Change',
-              visuallyHiddenText: 'interest rate',
-            },
-          ],
-        },
-      },
       {
         key: {
           text: 'Drawing Accruals',

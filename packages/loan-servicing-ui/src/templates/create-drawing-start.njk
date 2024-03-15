@@ -15,16 +15,6 @@
 
   <form action="/facility/{{facilityId}}/drawing" >
     {{ govukSelect({
-      id: "calculateInterestStrategy",
-      name: "calculateInterestStrategy",
-      label: {
-        text: "Interest Calculation Method"
-      },
-      value: facilityType.calculateInterestStrategy,
-      items: calculateInterestStrategyNames
-    }) }}
-
-    {{ govukSelect({
       id: "repaymentStrategy",
       name: "repaymentStrategy",
       label: {

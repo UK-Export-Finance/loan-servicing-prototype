@@ -16,19 +16,12 @@ import {
   AddWithdrawalToDrawingDto,
   ConvertToDtoType,
   RevertWithdrawlDto,
-  UpdateDrawingInterestRequestDto,
 } from 'loan-servicing-common'
 import { getDateFromDateInput } from 'utils/form-helpers'
-import {
-  ChangeInterestNjkInput,
-  FacilityInterestRateUpdateFormDto,
-} from 'templates/facility-edit/change-interest'
 import {
   AddWithdrawalToDrawingFormDto,
   AddWithdrawalToDrawingNjkInput,
 } from 'templates/facility-edit/add-withdrawal'
-import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
-import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 import { RevertWithdrawalNjkInput } from 'templates/facility-edit/revert-withdrawal'
 import {
   AddDrawingAccrualNjkInput,
@@ -74,57 +67,6 @@ class EditDrawingController {
       drawingId,
       version,
       addDrawingDto,
-    )
-    response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
-  }
-
-  @Get(':drawingId/changeInterest')
-  @Render('facility-edit/change-interest')
-  async renderInterestChangePage(
-    @Param('facilityId') facilityId: string,
-    @Param('drawingId') drawingId: string,
-  ): Promise<ChangeInterestNjkInput> {
-    const drawing = await this.drawingService.getDrawing(facilityId, drawingId)
-    if (!drawing) {
-      throw new NotFoundException()
-    }
-    const events = await this.drawingService.getDrawingEventTableRows(
-      facilityId,
-      drawingId,
-    )
-    const transactionRows = await this.drawingService.getDrawingTransactionRows(
-      facilityId,
-      drawingId,
-    )
-
-    return {
-      drawing,
-      eventRows: mapEventsToTable(events!),
-      transactionRows: mapTransactionsToTable(transactionRows!),
-    }
-  }
-
-  @Post(':drawingId/changeInterest')
-  async updateInterest(
-    @Param('facilityId') facilityId: string,
-    @Param('drawingId') drawingId: string,
-    @Query('version') version: string,
-    @Body()
-    requestDto: FacilityInterestRateUpdateFormDto,
-    @Res() response: Response,
-  ): Promise<void> {
-    const updateDto: UpdateDrawingInterestRequestDto = {
-      effectiveDate: getDateFromDateInput(
-        requestDto,
-        'effectiveDate',
-      ).toISOString(),
-      interestRate: requestDto.interestRate,
-    }
-    await this.drawingService.updateInterest(
-      facilityId,
-      drawingId,
-      version,
-      updateDto,
     )
     response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
   }

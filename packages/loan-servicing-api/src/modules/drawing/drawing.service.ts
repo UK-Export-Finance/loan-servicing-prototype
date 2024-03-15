@@ -6,8 +6,6 @@ import {
   LoanServicingEvent,
   Drawing,
   NewDrawingRequestDto,
-  UpdateInterestEvent,
-  UpdateDrawingInterestRequestDto,
   AddWithdrawalToDrawingDto,
   WithdrawFromDrawingEvent,
   RevertWithdrawalEvent,
@@ -78,19 +76,6 @@ class DrawingService {
       streamVersion = repaymentResult.streamVersion
     }
 
-    const drawingAccrualResult = await this.addDrawingAccrual(
-      facilityId,
-      drawingId,
-      streamVersion,
-      {
-        name: 'FixedDrawingAccrual',
-        accrualRate: '3',
-        effectiveDate: drawingRequest.issuedEffectiveDate,
-        expiryDate: drawingRequest.expiryDate,
-      },
-    )
-    streamVersion = drawingAccrualResult.streamVersion
-
     await this.eventService.addEvent<WithdrawFromDrawingEvent>(
       {
         streamId: drawingId,
@@ -112,33 +97,6 @@ class DrawingService {
         savedEvent.eventData.streamId,
       )
 
-    return drawing
-  }
-
-  @Transactional()
-  async updateInterestRate(
-    facilityId: string,
-    drawingId: string,
-    drawingVersion: number,
-    update: UpdateDrawingInterestRequestDto,
-  ): Promise<Drawing> {
-    await this.eventService.addEvent<UpdateInterestEvent>(
-      {
-        streamId: drawingId,
-        effectiveDate: new Date(update.effectiveDate),
-        entityType: 'drawing',
-        type: 'UpdateInterest',
-        typeVersion: 1,
-        eventData: update,
-      },
-      drawingVersion,
-    )
-
-    const { drawing } =
-      await this.projectionsService.buildProjectionsForDrawing(
-        facilityId,
-        drawingId,
-      )
     return drawing
   }
 

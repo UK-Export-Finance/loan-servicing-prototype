@@ -2,7 +2,6 @@ import {
   AddWithdrawalToDrawingDto,
   NewDrawingRequestDto,
   RevertWithdrawlDto,
-  UpdateDrawingInterestRequestDto,
 } from '../drawing'
 import { DrawingAccrualStrategyOption } from '../strategies/drawingAccruals'
 import { RepaymentStrategyOptions } from '../strategies/repayment'
@@ -13,12 +12,6 @@ export type DrawingEventBase<
   Version extends number,
   Data extends object,
 > = EventBase<Type, Version, Data, 'drawing'>
-
-export type UpdateInterestEvent = DrawingEventBase<
-  'UpdateInterest',
-  1,
-  UpdateDrawingInterestRequestDto
->
 
 export type WithdrawFromDrawingEvent = DrawingEventBase<
   'WithdrawFromDrawing',
@@ -51,7 +44,6 @@ export type AddDrawingAccrualEvent = DrawingEventBase<
 >
 
 export type DrawingEvent =
-  | UpdateInterestEvent
   | WithdrawFromDrawingEvent
   | RevertWithdrawalEvent
   | CreateNewDrawingEvent

@@ -25,7 +25,6 @@ import {
   DrawingDtoClass,
   NewDrawingRequestDtoClass,
   RevertWithdrawalDtoClass,
-  UpdateInterestRequestDtoClass,
 } from 'models/dtos/drawing'
 import { UntypedEventClass } from 'models/dtos/event'
 import TransactionEntity from 'models/entities/TransactionEntity'
@@ -121,25 +120,6 @@ class DrawingController {
       body,
     )
     return plainToInstance(DrawingDtoClass, newDrawing, {
-      enableCircularCheck: true,
-    })
-  }
-
-  @Post(':drawingId/updateInterestRate')
-  @ApiOkResponse({ type: DrawingDtoClass })
-  async updateDrawingInterestRate(
-    @Param('facilityId') facilityId: string,
-    @Param('drawingId') drawingId: string,
-    @Query('version') version: number,
-    @Body() body: UpdateInterestRequestDtoClass,
-  ): Promise<DrawingDtoClass> {
-    const updatedDrawing = await this.drawingService.updateInterestRate(
-      facilityId,
-      drawingId,
-      Number(version),
-      body,
-    )
-    return plainToInstance(DrawingDtoClass, updatedDrawing, {
       enableCircularCheck: true,
     })
   }

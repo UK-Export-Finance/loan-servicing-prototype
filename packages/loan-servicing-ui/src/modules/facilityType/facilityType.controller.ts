@@ -15,11 +15,12 @@ import {
   CreateFacilityTypeNjkInput,
 } from 'templates/edit-facility-type'
 import {
-  calculateInterestSelectOptions,
+  buildSelectOptionsFromStrings,
   facilityFeeSelectOptions,
   repaymentsSelectOptions,
 } from 'controls/strategyControlsOptions'
 import { FacilityTypeNjkInput } from 'templates/facility-type'
+import { drawingAccrualStrategyNames } from 'strings/strategyNames'
 import FacilityTypeService from './facilityType.service'
 
 @Controller('facility-type')
@@ -30,7 +31,7 @@ class FacilityTypeController {
   @Render('edit-facility-type')
   renderCreateFacilityTypePage(): CreateFacilityTypeNjkInput {
     return {
-      calculateInterestSelectOptions,
+      drawingAccrualSelectOptions: buildSelectOptionsFromStrings(drawingAccrualStrategyNames),
       repaymentsSelectOptions,
       facilityFeeSelectOptions,
     }

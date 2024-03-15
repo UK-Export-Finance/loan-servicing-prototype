@@ -15,7 +15,6 @@ import {
   AddWithdrawalToDrawingDtoClass,
   NewDrawingRequestDtoClass,
   RevertWithdrawalDtoClass,
-  UpdateInterestRequestDtoClass,
 } from './drawing'
 import {
   AccruingFacilityFeeStrategyOptionDtoClass,
@@ -40,7 +39,6 @@ const eventTypeToEventClassDefinition: {
   >
 } = {
   CreateNewFacility: () => NewFacilityRequestDtoClass,
-  UpdateInterest: () => UpdateInterestRequestDtoClass,
   AdjustFacilityAmount: () => AdjustFacilityAmountDtoClass,
   WithdrawFromDrawing: () => AddWithdrawalToDrawingDtoClass,
   CreateNewDrawing: () => NewDrawingRequestDtoClass,

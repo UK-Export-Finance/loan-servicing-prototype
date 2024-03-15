@@ -1,12 +1,10 @@
 import {
-  CalculateInterestStrategyName,
   FacilityFeeStrategyName,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
 import { NunjuckSelectInputOption } from 'types/nunjucks'
 import {
   facilityFeeStrategyNames,
-  interestStrategyNames,
   repaymentsStrategyNames,
 } from 'strings/strategyNames'
 
@@ -22,9 +20,6 @@ export const buildSelectOptionsFromStrings = <T extends string>(
   const entries = Object.entries(stringRecord) as [T, string][]
   return entries.map(([value, text]) => ({ value, text }))
 }
-
-export const calculateInterestSelectOptions: NunjuckSelectInputOption<CalculateInterestStrategyName>[] =
-  buildSelectOptionsFromStrings(interestStrategyNames)
 
 export const repaymentsSelectOptions: NunjuckSelectInputOption<RepaymentStrategyName>[] =
   buildSelectOptionsFromStrings(repaymentsStrategyNames)

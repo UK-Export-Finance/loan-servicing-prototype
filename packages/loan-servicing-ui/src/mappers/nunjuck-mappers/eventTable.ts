@@ -25,13 +25,6 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `Facility principal was ${Number(adjustment) > 0 ? 'increased' : 'decreased'} by ${Math.abs(Number(adjustment))}.`,
       }
-    case 'UpdateInterest':
-      return {
-        event: 'Interest Updated',
-        eventDate: eventDateObj.toLocaleString('en-GB'),
-        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
-        description: `Interest rate was changed to ${event.eventData.interestRate}%.`,
-      }
     case 'WithdrawFromDrawing':
       return {
         event: 'Withdrawal from drawing',

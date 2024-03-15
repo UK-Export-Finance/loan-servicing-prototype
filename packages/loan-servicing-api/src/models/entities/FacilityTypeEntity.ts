@@ -1,5 +1,5 @@
 import {
-  CalculateInterestStrategyName,
+  DrawingAccrualStrategyName,
   FacilityFeeStrategyName,
   FacilityType,
   RepaymentStrategyName,
@@ -16,7 +16,7 @@ class FacilityTypeEntity implements FacilityType {
   name!: string
 
   @Column({ type: 'simple-array' })
-  interestStrategies!: CalculateInterestStrategyName[]
+  drawingAccrualStrategies!: DrawingAccrualStrategyName[]
 
   @Column({ type: 'simple-array' })
   repaymentsStrategies!: RepaymentStrategyName[]

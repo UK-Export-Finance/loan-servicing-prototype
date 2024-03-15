@@ -3,7 +3,6 @@ import { postApiData, tryGetApiData } from 'api/base-client'
 import {
   LoanServicingEvent,
   DrawingDto,
-  UpdateDrawingInterestRequestDto,
   AddWithdrawalToDrawingDto,
   NewDrawingRequestDto,
   Transaction,
@@ -35,18 +34,6 @@ class DrawingService {
     await postApiData(
       `facility/${facilityStreamId}/drawing/${drawingStreamId}/withdrawal?version=${streamVersion}`,
       drawing,
-    )
-  }
-
-  async updateInterest(
-    facilityStreamId: string,
-    drawingStreamId: string,
-    streamVersion: string,
-    update: UpdateDrawingInterestRequestDto,
-  ): Promise<void> {
-    await postApiData(
-      `facility/${facilityStreamId}/drawing/${drawingStreamId}/updateInterestRate?version=${streamVersion}`,
-      update,
     )
   }
 

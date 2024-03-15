@@ -1,5 +1,4 @@
 import {
-  CalculateInterestStrategyName,
   Facility,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
@@ -9,7 +8,6 @@ import {
 } from 'utils/form-helpers'
 
 export type CreateDrawingNjkInput = {
-  calculateInterestStrategy: CalculateInterestStrategyName
   repaymentStrategy: RepaymentStrategyName
   facility: Facility
 }
@@ -20,10 +18,8 @@ type ManualRepaymentFormData<Id extends string> = {
 } & OptionalDateFormInput<`repaymentDate${Id}`>
 
 export type NewDrawingRequestFormDto = {
-  calculateInterestStrategy: CalculateInterestStrategyName
   repaymentStrategy: RepaymentStrategyName
   repaymentInterval?: string
-  interestRate: string
   initialDrawnAmount: string
   facilityId: string
 } & MandatoryDateInputFormData<'expiryDate'> &

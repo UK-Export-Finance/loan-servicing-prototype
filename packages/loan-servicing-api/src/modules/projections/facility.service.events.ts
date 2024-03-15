@@ -7,8 +7,8 @@ import {
   CalculateFacilityFeeEvent,
   AddDrawingToFacilityEvent,
   Drawing,
-  DrawingProjectedEvent,
   AddFacilityFeeEvent,
+  DrawingEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -64,7 +64,7 @@ class FacilityEventHandlingService
     projection,
   ) => {
     // Create drawing entity
-    const { drawing, drawingProjectedEvents } =
+    const { drawing, drawingEvents: drawingProjectedEvents } =
       await this.intialiseDrawing(event)
     // Setup entity relations
     drawing.facility = projection.facility
@@ -88,18 +88,20 @@ class FacilityEventHandlingService
     event: AddDrawingToFacilityEvent,
   ): Promise<{
     drawing: Drawing
-    drawingProjectedEvents: DrawingProjectedEvent[]
+    drawingEvents: DrawingEvent[]
     drawingStreamVersion: number
   }> => {
     await this.transactionRepo.delete({ streamId: event.eventData.streamId })
 
     const drawing = this.getDrawingAtCreation(event)
-    const drawingProjectedEvents =
-      await this.drawingEventService.getProjectedEvents(drawing)
+    const drawingEvents =
+      (await this.eventService.getActiveEventsInCreationOrder(
+        drawing.streamId,
+      )) as DrawingEvent[]
 
     return {
       drawing,
-      drawingProjectedEvents,
+      drawingEvents,
       drawingStreamVersion: event.streamVersion,
     }
   }
@@ -113,7 +115,6 @@ class FacilityEventHandlingService
 
     return this.drawingRepo.create({
       streamVersion: 1,
-      outstandingPrincipal: '0',
       ...creationEvent.eventData,
     })
   }

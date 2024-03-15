@@ -1,17 +1,16 @@
 import {
   AccruingFacilityFeeStrategyOption,
-  CalculateInterestStrategyName,
+  DrawingAccrualStrategyName,
   FacilityFeeStrategyName,
   RepaymentStrategyName,
 } from 'loan-servicing-common'
 
-export const interestStrategyNames: Record<
-  CalculateInterestStrategyName,
+export const drawingAccrualStrategyNames: Record<
+  DrawingAccrualStrategyName,
   string
 > = {
-  NoInterest: 'Interest Free',
-  PrincipalOnly: 'On Principal Only',
-  Compounding: 'Compounding',
+  FixedDrawingAccrual: 'Fixed Rate Accrual',
+  MarketDrawingAccrual: 'Market linked rate accrual',
 }
 
 export const repaymentsStrategyNames: Record<RepaymentStrategyName, string> = {
@@ -35,7 +34,9 @@ export const accruingFacilityFeeTypes: Record<
 }
 
 export const allPlaceholders: { [key: string]: string } = {
-  ...interestStrategyNames,
+  ...drawingAccrualStrategyNames,
+  ...facilityFeeStrategyNames,
+  ...accruingFacilityFeeTypes,
   ...repaymentsStrategyNames,
 }
 

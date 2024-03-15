@@ -1,15 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { Injectable, Inject, NotFoundException } from '@nestjs/common'
 import {
-  UpdateInterestEvent,
-  Drawing,
   DrawingProjectedEvent,
   WithdrawFromDrawingEvent,
-  DrawingEvent,
   RevertWithdrawalEvent,
-  InterestEvent,
   RepaymentsEvent,
-  sortEventByEffectiveDate,
   CreateNewDrawingEvent,
   SetDrawingRepaymentsEvent,
   AddDrawingAccrualEvent,
@@ -29,24 +24,6 @@ class DrawingEventHandlingService
     @Inject(EventService) private eventService: EventService,
     @Inject(StrategyService) private strategyService: StrategyService,
   ) {}
-
-  getProjectedEvents = async (
-    drawing: Drawing,
-  ): Promise<DrawingProjectedEvent[]> => {
-    const drawingEvents =
-      (await this.eventService.getActiveEventsInCreationOrder(
-        drawing.streamId,
-      )) as DrawingEvent[]
-
-    const interestEvents = this.strategyService.getInterestEvents(drawing)
-
-    const projectedEvents: DrawingProjectedEvent[] = [
-      ...drawingEvents,
-      ...interestEvents,
-    ].sort(sortEventByEffectiveDate)
-
-    return projectedEvents
-  }
 
   applyEvent = async <T extends DrawingProjectedEvent>(
     event: T,
@@ -69,45 +46,6 @@ class DrawingEventHandlingService
       changeInValue: '0',
       valueAfterTransaction: '0',
     })
-  }
-
-  CalculateInterest: EventHandler<InterestEvent> = async (
-    sourceEvent,
-    projection,
-  ) => {
-    const drawing = projection.getDrawing(sourceEvent.streamId)
-    const transactionAmount = this.strategyService.calculateInterest(drawing)
-    const totalInterestAfterTransaction = Big(drawing.interestAccrued)
-      .add(transactionAmount)
-      .toFixed(2)
-    drawing.interestAccrued = totalInterestAfterTransaction
-    projection.transactions.push({
-      streamId: drawing.streamId,
-      sourceEvent,
-      datetime: sourceEvent.effectiveDate,
-      reference: 'interest',
-      valueChanged: 'interestAccrued',
-      changeInValue: transactionAmount.toString(),
-      valueAfterTransaction: drawing.interestAccrued,
-    })
-  }
-
-  UpdateInterest: EventHandler<UpdateInterestEvent> = async (
-    sourceEvent,
-    projection,
-  ) => {
-    const drawing = projection.getDrawing(sourceEvent.streamId)
-    const { eventData: updateEvent } = sourceEvent
-    projection.transactions.push({
-      streamId: drawing.streamId,
-      sourceEvent,
-      datetime: sourceEvent.effectiveDate,
-      reference: `interest changed from ${drawing.interestRate} to ${updateEvent.interestRate}`,
-      valueChanged: 'interestRate',
-      changeInValue: 'N/A',
-      valueAfterTransaction: '0',
-    })
-    drawing.interestRate = updateEvent.interestRate
   }
 
   WithdrawFromDrawing: EventHandler<WithdrawFromDrawingEvent> = async (

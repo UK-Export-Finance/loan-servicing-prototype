@@ -15,7 +15,6 @@ import { DrawingNjkInput } from 'templates/drawing'
 import { tryGetApiData } from 'api/base-client'
 import {
   RepaymentStrategyName,
-  CalculateInterestStrategyName,
   Facility,
   NewDrawingRequestDto,
   FacilityType,
@@ -27,13 +26,14 @@ import {
 import mapCreateDrawingFormToRequest from 'mappers/form-mappers/createDrawingMapper'
 import { CreateDrawingStrategySelectNjkInput } from 'templates/create-drawing-start'
 import {
+  buildSelectOptionsFromStrings,
   filterSelectOptions,
-  calculateInterestSelectOptions,
   repaymentsSelectOptions,
 } from 'controls/strategyControlsOptions'
 import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 import mapTransactionsToWithdrawalsSummary from 'mappers/nunjuck-mappers/transactionsToWithdrawals'
+import { drawingAccrualStrategyNames } from 'strings/strategyNames'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
@@ -87,9 +87,9 @@ class DrawingController {
       throw new Error('No facility type found')
     }
     return {
-      calculateInterestStrategyNames: filterSelectOptions(
-        calculateInterestSelectOptions,
-        facilityType.interestStrategies,
+      drawingAccrualStrategyNames: filterSelectOptions(
+        buildSelectOptionsFromStrings(drawingAccrualStrategyNames),
+        facilityType.drawingAccrualStrategies,
       ),
       repaymentStrategyNames: filterSelectOptions(
         repaymentsSelectOptions,
@@ -105,15 +105,12 @@ class DrawingController {
     @Param('facilityId') facilityId: string,
     @Query('repaymentStrategy')
     repaymentStrategy: RepaymentStrategyName,
-    @Query('calculateInterestStrategy')
-    calculateInterestStrategy: CalculateInterestStrategyName,
   ): Promise<CreateDrawingNjkInput> {
     const facility = await tryGetApiData<Facility>(`facility/${facilityId}`)
     if (!facility) {
       throw new Error('No facility found')
     }
     return {
-      calculateInterestStrategy,
       repaymentStrategy,
       facility,
     }

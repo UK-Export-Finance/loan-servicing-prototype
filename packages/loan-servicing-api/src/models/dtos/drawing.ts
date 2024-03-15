@@ -7,7 +7,6 @@ import {
   Facility,
   NewDrawingRequestDto,
   RevertWithdrawlDto,
-  UpdateDrawingInterestRequestDto,
 } from 'loan-servicing-common'
 import { Transform, Type } from 'class-transformer'
 import { DrawingConfigurationDtoClass } from './drawingConfiguration'
@@ -42,10 +41,6 @@ export class DrawingDtoClass implements Drawing {
   outstandingPrincipal!: string
 
   @ApiProperty()
-  @IsNotEmpty()
-  interestAccrued!: string
-
-  @ApiProperty()
   @IsDate()
   @Type(() => Date)
   issuedEffectiveDate!: Date
@@ -54,32 +49,16 @@ export class DrawingDtoClass implements Drawing {
   @IsDate()
   @Type(() => Date)
   expiryDate!: Date
-
-  @ApiProperty()
-  @IsNotEmpty()
-  interestRate!: string
 }
 
 export class NewDrawingRequestDtoClass
   extends OmitType(DrawingDtoClass, [
     'streamVersion',
-    'interestAccrued',
     'facility',
   ])
   implements NewDrawingRequestDto
 {
   facilityId!: string
-}
-
-export class UpdateInterestRequestDtoClass
-  implements UpdateDrawingInterestRequestDto
-{
-  @ApiProperty()
-  effectiveDate!: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  interestRate!: string
 }
 
 export class AddWithdrawalToDrawingDtoClass
