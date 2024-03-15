@@ -21,22 +21,41 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Build
+      - name: Install CLI tools
         run: |
-          npm install
-          npm run build --workspace=loan-servicing-ui --workspace=loan-servicing-api
-
-      - name: Zip artifact for deployment
+          npm install -g typescript
+          npm install -g @nestjs/cli
+      
+      - name: Build UI package
         working-directory: ./packages/loan-servicing-ui
-        run: zip release.zip . -r
+        run: |
+          npm install --workspaces=false --install-links
+          npm run build
+
+      - name: Build API package
+        working-directory: ./packages/loan-servicing-api
+        run: |
+          npm install --workspaces=false --install-links
+          npm run build
+
+      - name: Zip artifact for UI Server
+        working-directory: ./packages/loan-servicing-ui
+        run: zip ui-release.zip . -r
+
+      - name: Zip artifact for API Server
+        working-directory: ./packages/loan-servicing-api
+        run: zip api-release.zip . -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: frontend-app
-          path: ./packages/loan-servicing-ui/release.zip
+          name: applications
+          path: |
+           ./packages/loan-servicing-ui/ui-release.zip
+           ./packages/loan-servicing-api/api-release.zip
+          
 
-  deploy:
+  deploy-api:
     runs-on: ubuntu-latest
     needs: build
     environment:
@@ -47,13 +66,38 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: frontend-app
+          name: applications
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip loan-servicing-api/api-release.zip
+
+      - name: 'Deploy API Server'
+        id: deploy-to-api-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'ls-prototype-api'
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_56EC5F10C04A4E5D8C81807F33DF0203 }}
+
+  deploy-ui:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: applications
       
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Unzip artifact for deployment
+        run: unzip loan-servicing-ui/ui-release.zip
+      
+      - name: 'Deploy UI Server'
+        id: deploy-to-ui-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'ls-prototype-ui'
