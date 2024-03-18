@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "declaration": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./libs/loan-servicing-common"
+    },
+    {
+      "path": "./packages/loan-servicing-ui"
+    },
+    {
+      "path": "./packages/loan-servicing-api"
+    }
+  ]
+}

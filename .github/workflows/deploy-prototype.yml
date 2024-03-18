@@ -26,17 +26,20 @@ jobs:
           npm install -g typescript
           npm install -g @nestjs/cli
 
-      - name: Build API package
-        working-directory: ./packages/loan-servicing-api
+      - name: Build All Applications
         run: |
-          npm install --workspaces=false --install-links
-          npm run build
+          npm install
+          npm run build --workspaces
       
-      - name: Build UI package
+      - name: Install locally for UI package
         working-directory: ./packages/loan-servicing-ui
         run: |
           npm install --workspaces=false --install-links
-          npm run build
+
+      - name: Install locally for API package
+        working-directory: ./packages/loan-servicing-api
+        run: |
+          npm install --workspaces=false --install-links
 
       - name: Zip artifact for UI Server
         working-directory: ./packages/loan-servicing-ui

@@ -18,7 +18,7 @@
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "govuk-frontend": "^5.1.0",
-    "loan-servicing-common": "../../libs/loan-servicing-common",
+    "loan-servicing-common": "*",
     "nunjucks": "^3.2.4",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.1",

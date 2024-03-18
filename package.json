@@ -1,12 +1,13 @@
 {
   "name": "loan-servicing",
   "workspaces": [
+    "libs/loan-servicing-common",
     "packages/loan-servicing-ui",
     "packages/loan-servicing-api",
-    "packages/loan-servicing-functions",
-    "libs/loan-servicing-common"
+    "packages/loan-servicing-functions"
   ],
   "scripts": {
+    "build": "tsc --build --verbose",
     "dev": "docker-compose -f docker-compose.dev.yml up",
     "dev:build": "docker-compose -f docker-compose.dev.yml up --build",
     "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
