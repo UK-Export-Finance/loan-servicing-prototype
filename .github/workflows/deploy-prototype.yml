@@ -25,15 +25,15 @@ jobs:
         run: |
           npm install -g typescript
           npm install -g @nestjs/cli
-      
-      - name: Build UI package
-        working-directory: ./packages/loan-servicing-ui
-        run: |
-          npm install --workspaces=false --install-links
-          npm run build
 
       - name: Build API package
         working-directory: ./packages/loan-servicing-api
+        run: |
+          npm install --workspaces=false --install-links
+          npm run build
+      
+      - name: Build UI package
+        working-directory: ./packages/loan-servicing-ui
         run: |
           npm install --workspaces=false --install-links
           npm run build
@@ -60,7 +60,7 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: ${{ steps.deploy-to-api-webapp.outputs.webapp-url }}
     
     steps:
       - name: Download artifact from build job
@@ -85,7 +85,7 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      url: ${{ steps.deploy-to-ui-webapp.outputs.webapp-url }}
     
     steps:
       - name: Download artifact from build job
