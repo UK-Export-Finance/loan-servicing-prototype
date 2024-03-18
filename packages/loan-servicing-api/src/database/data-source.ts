@@ -12,7 +12,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   port: Number(process.env.SQL_DB_PORT),
   username: process.env.SQL_DB_USER,
   password: process.env.SQL_DB_PASSWORD,
-  database: 'LoanServicing',
+  database: process.env.SQL_DB_NAME,
   synchronize: true,
   entities: [
     EventEntity,

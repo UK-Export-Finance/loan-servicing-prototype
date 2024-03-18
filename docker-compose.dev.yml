@@ -52,8 +52,11 @@ services:
       - PORT=3001
       - NODE_ENV=development
       - NODE_PATH=src
-      - SQL_DB_HOST=loan-servicing-db
+      - SQL_DB_HOST=ls-prototype-sql-server.database.windows.net
       - SQL_DB_PORT=1433
+      - SQL_DB_PASSWORD=AbC!2345
+      - SQL_DB_USER=sa
+      - SQL_DB_NAME=LoanServicing
   dev-azurite:
     image: 'mcr.microsoft.com/azure-storage/azurite:latest'
     attach: false
