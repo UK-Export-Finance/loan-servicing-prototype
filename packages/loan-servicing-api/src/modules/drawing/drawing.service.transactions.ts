@@ -33,7 +33,7 @@ class DrawingTransactionService {
           YEAR([datetime]) AS 'year',
           MONTH([datetime]) AS 'month',
           SUM([changeInValue]) AS 'interest'
-        FROM [LoanServicing].[dbo].[transaction_entity]
+        FROM [dbo].[transaction_entity]
         WHERE [streamId] = '${streamId}'
         AND [valueChanged] = 'interestAccrued'
         GROUP BY MONTH([datetime]), YEAR([datetime])
@@ -55,7 +55,7 @@ class DrawingTransactionService {
             YEAR([datetime]) AS 'year',
             MONTH([datetime]) AS 'month',
             SUM([changeInValue]) AS 'accrued'
-          FROM [LoanServicing].[dbo].[transaction_entity]
+          FROM [dbo].[transaction_entity]
           WHERE [streamId] = '${streamId}'
           AND [reference] = 'Drawing Accrual'
           GROUP BY MONTH([datetime]), YEAR([datetime])

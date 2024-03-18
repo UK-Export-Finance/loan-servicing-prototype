@@ -33,7 +33,7 @@ class FacilityTransactionService {
         YEAR([datetime]) AS 'year',
         MONTH([datetime]) AS 'month',
         SUM([changeInValue]) AS 'facilityFeeChange'
-      FROM [LoanServicing].[dbo].[transaction_entity]
+      FROM [dbo].[transaction_entity]
       WHERE [streamId] = '${streamId}'
       AND [valueChanged] = 'totalFeeBalance'
       GROUP BY MONTH([datetime]), YEAR([datetime])`,
