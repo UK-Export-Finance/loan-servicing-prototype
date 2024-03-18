@@ -2,7 +2,7 @@
   "name": "loan-servicing-common",
   "version": "1.0.0",
   "exports": {
-    "compiled": "./dist/index.js",
+    "compiled": ["./dist/index.js", "./dist/index.d.ts"], 
     "default": "./index.ts"
   },
   "scripts": {

@@ -1,5 +1,6 @@
 {
   "name": "loan-servicing-ui",
+  "version": "1.0.0",
   "scripts": {
     "build": "nest build",
     "start": "node --conditions=compiled dist/app.js",
