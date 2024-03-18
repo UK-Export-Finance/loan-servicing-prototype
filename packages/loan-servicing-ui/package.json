@@ -2,7 +2,7 @@
   "name": "loan-servicing-ui",
   "scripts": {
     "build": "nest build",
-    "start": "node dist/app.js",
+    "start": "node --condition=compiled dist/app.js",
     "dev": "nodemon --legacy-watch --ext ts --watch ../../libs --watch src --exec \"node -r ts-node/register --inspect=0.0.0.0:5959 src/app.ts\"",
     "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check"

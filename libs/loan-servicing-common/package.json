@@ -1,11 +1,9 @@
 {
   "name": "loan-servicing-common",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./package.json": "./package.json"
+    "compiled": "./dist/index.js",
+    "default": "./index.ts"
   },
   "scripts": {
     "build": "npx tsc",
