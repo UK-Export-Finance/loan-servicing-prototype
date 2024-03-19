@@ -42,7 +42,7 @@ class FacilityService {
       },
     )
     const { facility } =
-      await this.projectionsService.buildProjectionsForFacility(
+      await this.projectionsService.buildProjectionsForFacilityOnDate(
         savedEvent.streamId,
       )
 
@@ -67,7 +67,7 @@ class FacilityService {
       streamVersion,
     )
     const { facility } =
-      await this.projectionsService.buildProjectionsForFacility(streamId)
+      await this.projectionsService.buildProjectionsForFacilityOnDate(streamId)
     return facility
   }
 
@@ -89,7 +89,7 @@ class FacilityService {
       streamVersion,
     )
     const { facility } =
-      await this.projectionsService.buildProjectionsForFacility(streamId)
+      await this.projectionsService.buildProjectionsForFacilityOnDate(streamId)
     return facility
   }
 

@@ -4,6 +4,7 @@ import {
   EventTableProps,
   TransactionTableProps,
 } from './macros/transaction-tables'
+import { SetDateInputProps } from './macros/dev-set-date'
 
 export type DrawingNjkInput = {
   drawing: DrawingDto
@@ -12,3 +13,4 @@ export type DrawingNjkInput = {
   withdrawalsSummaryProps: GovUkSummaryListProps
 } & EventTableProps &
   TransactionTableProps
+  & SetDateInputProps

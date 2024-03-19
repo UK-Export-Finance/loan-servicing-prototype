@@ -42,6 +42,7 @@ class DrawingService {
     facilityId: string,
     facilityVersion: number,
     drawingRequest: NewDrawingRequestDto,
+    projectionDate?: Date
   ): Promise<Drawing> {
     const savedEvent =
       await this.eventService.addEvent<AddDrawingToFacilityEvent>(
@@ -92,9 +93,10 @@ class DrawingService {
     )
 
     const { drawing } =
-      await this.projectionsService.buildProjectionsForDrawing(
+      await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         savedEvent.eventData.streamId,
+        projectionDate
       )
 
     return drawing
@@ -106,6 +108,7 @@ class DrawingService {
     drawingId: string,
     streamVersion: number,
     update: AddWithdrawalToDrawingDto,
+    projectionDate?: Date
   ): Promise<Drawing> {
     await this.eventService.addEvent<WithdrawFromDrawingEvent>(
       {
@@ -120,9 +123,10 @@ class DrawingService {
     )
 
     const { drawing: facility } =
-      await this.projectionsService.buildProjectionsForDrawing(
+      await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         drawingId,
+        projectionDate
       )
     return facility
   }
@@ -133,7 +137,8 @@ class DrawingService {
     drawingId: string,
     streamVersion: number,
     eventData: RevertWithdrawlDto,
-  ): Promise<Drawing> {
+    projectionDate?: Date
+    ): Promise<Drawing> {
     await this.eventService.addEvent<RevertWithdrawalEvent>(
       {
         streamId: drawingId,
@@ -147,9 +152,10 @@ class DrawingService {
     )
 
     const { drawing } =
-      await this.projectionsService.buildProjectionsForDrawing(
+      await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         drawingId,
+        projectionDate
       )
     return drawing
   }
@@ -162,7 +168,8 @@ class DrawingService {
     eventData:
       | RegularRepaymentStrategyOptionsDtoClass
       | ManualRepaymentStrategyOptionsDtoClass,
-  ): Promise<Drawing> {
+    projectionDate?: Date
+    ): Promise<Drawing> {
     await this.eventService.softDeleteEventsWhere({
       streamId: drawingId,
       type: 'SetDrawingRepayments',
@@ -183,9 +190,10 @@ class DrawingService {
     )
 
     const { drawing } =
-      await this.projectionsService.buildProjectionsForDrawing(
+      await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         drawingId,
+        projectionDate
       )
     return drawing
   }
@@ -198,7 +206,8 @@ class DrawingService {
     feeConfig: (AddFixedDrawingAccrualDto | AddMarketDrawingAccrualDto) & {
       name: DrawingAccrualStrategyName
     },
-  ): Promise<Drawing> {
+    projectionDate?: Date
+    ): Promise<Drawing> {
     await this.eventService.addEvent<AddDrawingAccrualEvent>(
       {
         streamId,
@@ -214,9 +223,10 @@ class DrawingService {
       streamVersion,
     )
     const { drawing } =
-      await this.projectionsService.buildProjectionsForDrawing(
+      await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         streamId,
+        projectionDate
       )
     return drawing
   }
@@ -229,7 +239,7 @@ class DrawingService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getDrawing(streamId: string): Promise<Drawing> {
+  async getDrawing(streamId: string, projectionDate?: Date): Promise<Drawing> {
     const drawing = await this.drawingRepo.findOne({
       where: { streamId },
       relations: { facility: true },
@@ -237,9 +247,10 @@ class DrawingService {
     if (!drawing) {
       throw new NotFoundException(`No facility found for id ${streamId}`)
     }
-    await this.projectionsService.buildProjectionsForDrawing(
+    await this.projectionsService.buildProjectionsForDrawingOnDate(
       drawing.facility.streamId,
       streamId,
+      projectionDate
     )
     return drawing
   }

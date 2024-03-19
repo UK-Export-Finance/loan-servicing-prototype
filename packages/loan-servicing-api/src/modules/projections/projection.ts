@@ -16,6 +16,7 @@ class FacilityProjection {
   constructor(
     initialEntity: Facility,
     private projectionEvents: ProjectedEvent[],
+    private projectionDate: Date,
   ) {
     this.facility = initialEntity
   }
@@ -28,8 +29,12 @@ class FacilityProjection {
   }
 
   consumeNextEvent = (): ProjectedEvent | undefined => {
-    const event = this.projectionEvents.shift()
+    const [event] = this.projectionEvents
     if (event) {
+      if (event.effectiveDate > this.projectionDate) {
+        return undefined
+      }
+      this.projectionEvents.shift()
       this.processedEvents.push(event)
     }
     return event

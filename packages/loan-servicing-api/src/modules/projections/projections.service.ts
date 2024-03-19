@@ -37,13 +37,20 @@ class ProjectionsService {
   ) {}
 
   @Transactional()
-  async buildProjectionsForFacility(facilityId: string): Promise<{
+  async buildProjectionsForFacilityOnDate(
+    facilityId: string,
+    date: Date = new Date(),
+  ): Promise<{
     facility: FacilityEntity
     transactions: Transaction[]
   }> {
     const { facility, facilityEvents, facilityStreamVersion } =
       await this.intialiseFacility(facilityId)
-    const projection = await this.applyAllEvents(facilityEvents, facility)
+    const projection = await this.applyEventsUntil(
+      facilityEvents,
+      facility,
+      date,
+    )
 
     projection.facility.streamVersion = facilityStreamVersion
 
@@ -87,16 +94,17 @@ class ProjectionsService {
   }
 
   @Transactional()
-  async buildProjectionsForDrawing(
+  async buildProjectionsForDrawingOnDate(
     facilityId: string,
     drawingId: string,
+    date?: Date,
   ): Promise<{
     facility: FacilityEntity
     drawing: DrawingEntity
     transactions: Transaction[]
   }> {
     const { facility, transactions } =
-      await this.buildProjectionsForFacility(facilityId)
+      await this.buildProjectionsForFacilityOnDate(facilityId, date)
     const drawing = facility.drawings.find((d) => d.streamId === drawingId)
     if (!drawing) {
       throw new Error(`Facility did not contain expected drawing`)
@@ -108,11 +116,12 @@ class ProjectionsService {
     }
   }
 
-  applyAllEvents = async (
+  applyEventsUntil = async (
     events: ProjectedEvent[],
     facility: Facility,
+    until: Date,
   ): Promise<FacilityProjection> => {
-    const projection = new FacilityProjection(facility, [...events])
+    const projection = new FacilityProjection(facility, [...events], until)
     let curr = projection.consumeNextEvent()
     while (curr) {
       // eslint-disable-next-line no-await-in-loop
@@ -121,6 +130,12 @@ class ProjectionsService {
     }
     return projection
   }
+
+  applyAllEvents = async (
+    events: ProjectedEvent[],
+    facility: Facility,
+  ): Promise<FacilityProjection> =>
+    this.applyEventsUntil(events, facility, new Date(4000, 0, 0))
 
   applyEvent = async (
     event: ProjectedEvent,

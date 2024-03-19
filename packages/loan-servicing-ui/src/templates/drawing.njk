@@ -8,6 +8,7 @@
 
 {% from "macros/transaction-tables.njk" import transactionTable %}
 {% from "macros/transaction-tables.njk" import eventTable %}
+{% from "macros/dev-set-date.njk" import setDateInput %}
 
 {% block pageTitle -%}
   Facility Drawing
@@ -40,5 +41,7 @@
 
   {{ transactionTable(transactionRows) }}
   {{ eventTable(eventRows) }}
+
+  {{ setDateInput(currentDate) }}
 
 {% endblock %}
