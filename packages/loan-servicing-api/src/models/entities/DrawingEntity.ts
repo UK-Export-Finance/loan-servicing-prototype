@@ -33,6 +33,9 @@ class DrawingEntity implements Drawing {
   @CurrencyColumn()
   outstandingPrincipal!: string
 
+  @CurrencyColumn()
+  drawnAmount!: string
+
   @Column()
   issuedEffectiveDate!: Date
 

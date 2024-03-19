@@ -9,6 +9,7 @@ export type Drawing = {
   facility: Facility
   drawingConfig: DrawingConfiguration
   outstandingPrincipal: string
+  drawnAmount: string
   accruals: DrawingAccrual[]
   issuedEffectiveDate: Date
   expiryDate: Date
@@ -19,6 +20,7 @@ export type NewDrawingRequestDto = Omit<
   | 'streamId'
   | 'streamVersion'
   | 'facility'
+  | 'drawnAmount'
 >
 
 export type DrawingDto = ConvertToDtoType<Drawing>

@@ -118,7 +118,7 @@ export const facilityToDrawingSummaries = (
           text: 'Amount Drawn',
         },
         value: {
-          text: drawing.outstandingPrincipal,
+          text: `£${drawing.drawnAmount}`,
         },
       },
       {

@@ -10,7 +10,6 @@ import {
   AddDrawingAccrualEvent,
   CalculateDrawingAccrualEvent,
 } from 'loan-servicing-common'
-import EventService from 'modules/event/event.service'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
 import { EventHandler, IEventHandlerService } from 'types/eventHandler'
@@ -21,7 +20,6 @@ class DrawingEventHandlingService
   implements IEventHandlerService<DrawingProjectedEvent>
 {
   constructor(
-    @Inject(EventService) private eventService: EventService,
     @Inject(StrategyService) private strategyService: StrategyService,
   ) {}
 
@@ -55,6 +53,9 @@ class DrawingEventHandlingService
     const drawing = projection.getDrawing(sourceEvent.streamId)
     const { amount: withdrawnAmount } = sourceEvent.eventData
     drawing.outstandingPrincipal = Big(drawing.outstandingPrincipal)
+      .add(withdrawnAmount)
+      .toFixed(2)
+    drawing.drawnAmount = Big(drawing.drawnAmount)
       .add(withdrawnAmount)
       .toFixed(2)
     drawing.facility.drawnAmount = Big(drawing.facility.drawnAmount)

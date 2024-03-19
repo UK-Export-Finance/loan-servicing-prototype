@@ -41,6 +41,10 @@ export class DrawingDtoClass implements Drawing {
   outstandingPrincipal!: string
 
   @ApiProperty()
+  @IsNotEmpty()
+  drawnAmount!: string
+
+  @ApiProperty()
   @IsDate()
   @Type(() => Date)
   issuedEffectiveDate!: Date
@@ -55,6 +59,7 @@ export class NewDrawingRequestDtoClass
   extends OmitType(DrawingDtoClass, [
     'streamVersion',
     'facility',
+    'drawnAmount'
   ])
   implements NewDrawingRequestDto
 {

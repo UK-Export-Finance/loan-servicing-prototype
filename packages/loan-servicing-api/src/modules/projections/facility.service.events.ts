@@ -113,10 +113,13 @@ class FacilityEventHandlingService
       throw new Error('First created event is not drawing creation')
     }
 
-    return this.drawingRepo.create({
+    const drawingToCreate: Omit<Drawing, 'facility'> = {
       streamVersion: 1,
       ...creationEvent.eventData,
-    })
+      drawnAmount: '0'
+    }
+
+    return this.drawingRepo.create(drawingToCreate)
   }
 
   AdjustFacilityAmount: EventHandler<AdjustFacilityAmountEvent> = async (
