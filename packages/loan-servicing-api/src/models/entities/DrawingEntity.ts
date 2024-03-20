@@ -7,10 +7,12 @@ import {
   Drawing,
   DrawingAccrual,
   DrawingConfiguration,
+  Repayment,
 } from 'loan-servicing-common'
 import { DrawingConfigurationDtoClass } from 'models/dtos/drawingConfiguration'
 import { Column, Entity, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
 import { DrawingAccrualDtoClass } from 'models/dtos/drawingAccrual'
+import { DrawingRepaymentDto } from 'models/dtos/drawingRepayment'
 import type FacilityEntity from './FacilityEntity'
 
 @Entity()
@@ -26,6 +28,9 @@ class DrawingEntity implements Drawing {
 
   @ArrayOfClassAsJsonColumn(DrawingAccrualDtoClass)
   accruals!: DrawingAccrual[]
+
+  @ArrayOfClassAsJsonColumn(DrawingRepaymentDto)
+  repayments!: Repayment[]
 
   @ClassAsJsonColumn(DrawingConfigurationDtoClass)
   drawingConfig!: DrawingConfiguration

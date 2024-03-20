@@ -2,6 +2,7 @@ import type { Facility } from './facility'
 import { ConvertToDtoType } from '../utils/type-utils'
 import { DrawingConfiguration } from './strategies'
 import { DrawingAccrual } from './strategies/drawingAccruals'
+import { Repayment } from './strategies/repayment'
 
 export type Drawing = {
   streamId: string
@@ -11,16 +12,14 @@ export type Drawing = {
   outstandingPrincipal: string
   drawnAmount: string
   accruals: DrawingAccrual[]
+  repayments: Repayment[]
   issuedEffectiveDate: Date
   expiryDate: Date
 }
 
 export type NewDrawingRequestDto = Omit<
   Drawing,
-  | 'streamId'
-  | 'streamVersion'
-  | 'facility'
-  | 'drawnAmount'
+  'streamId' | 'streamVersion' | 'facility' | 'drawnAmount' | 'repayments'
 >
 
 export type DrawingDto = ConvertToDtoType<Drawing>

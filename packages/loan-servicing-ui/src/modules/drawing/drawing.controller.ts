@@ -10,7 +10,7 @@ import {
   Res,
 } from '@nestjs/common'
 import { Response } from 'express'
-import { drawingToDrawingSummary } from 'mappers/nunjuck-mappers/drawingSummary'
+import { drawingToDrawingSummary, drawingToRepaymentsSummary } from 'mappers/nunjuck-mappers/drawingSummary'
 import { DrawingNjkInput } from 'templates/drawing'
 import { tryGetApiData } from 'api/base-client'
 import {
@@ -67,6 +67,7 @@ class DrawingController {
       drawingCreated,
       transactionRows: mapTransactionsToTable(transactions!),
       drawingSummaryListProps: drawingToDrawingSummary(drawing),
+      repaymentsSummaryListProps: drawingToRepaymentsSummary(drawing),
       withdrawalsSummaryProps: mapTransactionsToWithdrawalsSummary(
         facilityId,
         drawingId,

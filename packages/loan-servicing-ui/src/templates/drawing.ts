@@ -11,6 +11,7 @@ export type DrawingNjkInput = {
   drawingCreated?: boolean
   drawingSummaryListProps: GovUkSummaryListProps
   withdrawalsSummaryProps: GovUkSummaryListProps
+  repaymentsSummaryListProps: GovUkSummaryListProps
 } & EventTableProps &
   TransactionTableProps
   & SetDateInputProps

@@ -173,6 +173,12 @@ class DrawingEventHandlingService
       event.eventData,
     )
     projection.addEvents(repaymentEvents)
+    drawing.repayments = repaymentEvents.map((e, i) => ({
+      date: e.effectiveDate,
+      amount: e.eventData.amount,
+      id: `${event.streamId}-repayment-${i + 1}`,
+      received: false,
+    }))
     drawing.drawingConfig.repaymentsStrategy = event.eventData
   }
 

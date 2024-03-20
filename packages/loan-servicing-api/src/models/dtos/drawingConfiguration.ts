@@ -12,7 +12,7 @@ import {
   DrawingConfiguration,
   ManualRepaymentStrategyOptions,
   RegularRepaymentStrategyOptions,
-  Repayment,
+  RepaymentConfig,
 } from 'loan-servicing-common'
 import StrategyOptionDtoClass from './strategy-option'
 
@@ -45,7 +45,7 @@ export class RegularRepaymentStrategyOptionsDtoClass
   monthsBetweenRepayments!: string
 }
 
-export class RepaymentDtoClass implements Repayment {
+export class RepaymentDtoClass implements RepaymentConfig {
   @ApiProperty()
   @IsDate()
   @IsNotEmpty()

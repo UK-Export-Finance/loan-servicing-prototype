@@ -8,12 +8,17 @@ export type RegularRepaymentStrategyOptions = StrategyOptionsBase<
   }
 >
 
-export type Repayment = { date: Date; amount: string }
+export type RepaymentConfig = { date: Date; amount: string }
+
+export type Repayment = RepaymentConfig & {
+  id: string
+  received: boolean
+}
 
 export type ManualRepaymentStrategyOptions = StrategyOptionsBase<
   'Manual',
   {
-    repayments: Repayment[]
+    repayments: RepaymentConfig[]
   }
 >
 

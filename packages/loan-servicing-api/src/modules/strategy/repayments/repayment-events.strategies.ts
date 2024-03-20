@@ -1,45 +1,65 @@
+import Big from 'big.js'
 import { add } from 'date-fns'
 import {
   Drawing,
-  ManualRepaymentEvent,
   ManualRepaymentStrategyOptions,
-  RegularRepaymentEvent,
   RegularRepaymentStrategyOptions,
-  RepaymentsEvent,
   RepaymentStrategyName,
   RepaymentStrategyOptions,
+  RepaymentsEvent,
 } from 'loan-servicing-common'
 
 export type GetRepaymentEventsStrategy<T extends RepaymentStrategyOptions> = (
   drawing: Drawing,
   options: T,
-) => Extract<RepaymentsEvent, { type: `${T['name']}Repayment` }>[]
+) => RepaymentsEvent[]
+
+const calculateRegularRepaymentAmounts = (
+  drawing: Drawing,
+  numberOfRepayments: number,
+): {
+  regularPaymentAmount: string
+  finalPaymentAmount: string
+} => {
+  const principalToPay = Big(drawing.outstandingPrincipal)
+  const nonFinalPaymentAmount = principalToPay.div(numberOfRepayments).round(2)
+  const finalPaymentAmount = principalToPay.minus(
+    nonFinalPaymentAmount.times(numberOfRepayments - 1),
+  )
+  return {
+    regularPaymentAmount: nonFinalPaymentAmount.toFixed(2),
+    finalPaymentAmount: finalPaymentAmount.toFixed(2),
+  }
+}
 
 export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
   RegularRepaymentStrategyOptions
-> = ({ expiryDate, streamId }, { startDate, monthsBetweenRepayments }) => {
+> = (drawing, { startDate, monthsBetweenRepayments }) => {
   let dateToProcess = new Date(startDate)
   const repaymentDates: Date[] = []
 
-  while (dateToProcess <= new Date(expiryDate)) {
+  while (dateToProcess <= new Date(drawing.expiryDate)) {
     repaymentDates.push(dateToProcess)
     dateToProcess = add(dateToProcess, {
       months: Number(monthsBetweenRepayments),
     })
   }
-  const repaymentEvents = repaymentDates.map<RegularRepaymentEvent>(
-    (date, i) => ({
-      effectiveDate: date,
-      type: 'RegularRepayment',
-      shouldProcessIfFuture: false,
-      streamId,
-      entityType: 'drawing',
-      eventData: {
-        totalRepayments: repaymentDates.length,
-        repaymentNumber: i + 1,
-      },
-    }),
-  )
+  const { regularPaymentAmount, finalPaymentAmount } =
+    calculateRegularRepaymentAmounts(drawing, repaymentDates.length)
+
+  const repaymentEvents = repaymentDates.map<RepaymentsEvent>((date, i) => ({
+    effectiveDate: date,
+    type: 'ManualRepayment',
+    shouldProcessIfFuture: false,
+    streamId: drawing.streamId,
+    entityType: 'drawing',
+    eventData: {
+      amount:
+        i + 1 === repaymentDates.length
+          ? finalPaymentAmount
+          : regularPaymentAmount,
+    },
+  }))
 
   return repaymentEvents
 }
@@ -47,7 +67,7 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
 export const getManualRepaymentEvents: GetRepaymentEventsStrategy<
   ManualRepaymentStrategyOptions
 > = ({ streamId }, { repayments }) => {
-  const repaymentEvents = repayments.map<ManualRepaymentEvent>((r) => ({
+  const repaymentEvents = repayments.map<RepaymentsEvent>((r) => ({
     effectiveDate: r.date,
     type: 'ManualRepayment',
     shouldProcessIfFuture: false,

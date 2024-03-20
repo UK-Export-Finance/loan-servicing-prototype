@@ -42,7 +42,7 @@ class DrawingService {
     facilityId: string,
     facilityVersion: number,
     drawingRequest: NewDrawingRequestDto,
-    projectionDate?: Date
+    projectionDate?: Date,
   ): Promise<Drawing> {
     const savedEvent =
       await this.eventService.addEvent<AddDrawingToFacilityEvent>(
@@ -50,8 +50,8 @@ class DrawingService {
           streamId: facilityId,
           effectiveDate: drawingRequest.issuedEffectiveDate,
           entityType: 'facility',
-      shouldProcessIfFuture: false,
-      type: 'AddDrawingToFacility',
+          shouldProcessIfFuture: false,
+          type: 'AddDrawingToFacility',
           typeVersion: 1,
           eventData: { ...drawingRequest, streamId: crypto.randomUUID() },
         },
@@ -85,8 +85,8 @@ class DrawingService {
         effectiveDate: drawingRequest.issuedEffectiveDate,
         entityType: 'drawing',
         type: 'WithdrawFromDrawing',
-      shouldProcessIfFuture: false,
-      typeVersion: 1,
+        shouldProcessIfFuture: false,
+        typeVersion: 1,
         eventData: {
           date: drawingRequest.issuedEffectiveDate,
           amount: drawingRequest.outstandingPrincipal,
@@ -99,7 +99,7 @@ class DrawingService {
       await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         savedEvent.eventData.streamId,
-        projectionDate
+        projectionDate,
       )
 
     return drawing
@@ -111,7 +111,7 @@ class DrawingService {
     drawingId: string,
     streamVersion: number,
     update: AddWithdrawalToDrawingDto,
-    projectionDate?: Date
+    projectionDate?: Date,
   ): Promise<Drawing> {
     await this.eventService.addEvent<WithdrawFromDrawingEvent>(
       {
@@ -119,8 +119,8 @@ class DrawingService {
         effectiveDate: update.date,
         entityType: 'drawing',
         type: 'WithdrawFromDrawing',
-      shouldProcessIfFuture: false,
-      typeVersion: 1,
+        shouldProcessIfFuture: false,
+        typeVersion: 1,
         eventData: update,
       },
       streamVersion,
@@ -130,7 +130,7 @@ class DrawingService {
       await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         drawingId,
-        projectionDate
+        projectionDate,
       )
     return facility
   }
@@ -141,16 +141,16 @@ class DrawingService {
     drawingId: string,
     streamVersion: number,
     eventData: RevertWithdrawlDto,
-    projectionDate?: Date
-    ): Promise<Drawing> {
+    projectionDate?: Date,
+  ): Promise<Drawing> {
     await this.eventService.addEvent<RevertWithdrawalEvent>(
       {
         streamId: drawingId,
         effectiveDate: eventData.dateOfWithdrawal,
         entityType: 'drawing',
         type: 'RevertWithdrawal',
-      shouldProcessIfFuture: false,
-      typeVersion: 1,
+        shouldProcessIfFuture: false,
+        typeVersion: 1,
         eventData,
       },
       streamVersion,
@@ -160,7 +160,7 @@ class DrawingService {
       await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         drawingId,
-        projectionDate
+        projectionDate,
       )
     return drawing
   }
@@ -173,8 +173,8 @@ class DrawingService {
     eventData:
       | RegularRepaymentStrategyOptionsDtoClass
       | ManualRepaymentStrategyOptionsDtoClass,
-    projectionDate?: Date
-    ): Promise<Drawing> {
+    projectionDate?: Date,
+  ): Promise<Drawing> {
     await this.eventService.softDeleteEventsWhere({
       streamId: drawingId,
       type: 'SetDrawingRepayments',
@@ -187,8 +187,8 @@ class DrawingService {
             ? eventData.repayments.sort(sortByDateOnKey('date'))[0].date
             : eventData.startDate,
         entityType: 'drawing',
-      shouldProcessIfFuture: true,
-      type: 'SetDrawingRepayments',
+        shouldProcessIfFuture: true,
+        type: 'SetDrawingRepayments',
         typeVersion: 1,
         eventData,
       },
@@ -199,7 +199,7 @@ class DrawingService {
       await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         drawingId,
-        projectionDate
+        projectionDate,
       )
     return drawing
   }
@@ -212,8 +212,8 @@ class DrawingService {
     feeConfig: (AddFixedDrawingAccrualDto | AddMarketDrawingAccrualDto) & {
       name: DrawingAccrualStrategyName
     },
-    projectionDate?: Date
-    ): Promise<Drawing> {
+    projectionDate?: Date,
+  ): Promise<Drawing> {
     await this.eventService.addEvent<AddDrawingAccrualEvent>(
       {
         streamId,
@@ -221,8 +221,8 @@ class DrawingService {
         entityType: 'drawing',
         type: 'AddDrawingAccrual',
         typeVersion: 1,
-      shouldProcessIfFuture: true,
-      eventData: {
+        shouldProcessIfFuture: true,
+        eventData: {
           ...feeConfig,
           accrualId: crypto.randomUUID(),
         },
@@ -233,7 +233,7 @@ class DrawingService {
       await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         streamId,
-        projectionDate
+        projectionDate,
       )
     return drawing
   }
@@ -257,7 +257,7 @@ class DrawingService {
     await this.projectionsService.buildProjectionsForDrawingOnDate(
       drawing.facility.streamId,
       streamId,
-      projectionDate
+      projectionDate,
     )
     return drawing
   }

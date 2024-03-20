@@ -6,11 +6,13 @@ import {
   DrawingAccrual,
   Facility,
   NewDrawingRequestDto,
+  Repayment,
   RevertWithdrawlDto,
 } from 'loan-servicing-common'
 import { Transform, Type } from 'class-transformer'
 import { DrawingConfigurationDtoClass } from './drawingConfiguration'
 import { DrawingAccrualDtoClass } from './drawingAccrual'
+import { DrawingRepaymentDto } from './drawingRepayment'
 
 export class DrawingDtoClass implements Drawing {
   private readonly _type = 'DrawingDto'
@@ -30,6 +32,12 @@ export class DrawingDtoClass implements Drawing {
   @ValidateNested({ each: true })
   @Type(() => DrawingAccrualDtoClass)
   accruals!: DrawingAccrual[]
+
+  @ApiProperty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DrawingRepaymentDto)
+  repayments!: Repayment[]
 
   @ApiProperty()
   @ValidateNested()
@@ -59,7 +67,8 @@ export class NewDrawingRequestDtoClass
   extends OmitType(DrawingDtoClass, [
     'streamVersion',
     'facility',
-    'drawnAmount'
+    'drawnAmount',
+    'repayments',
   ])
   implements NewDrawingRequestDto
 {

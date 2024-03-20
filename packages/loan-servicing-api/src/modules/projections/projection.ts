@@ -2,6 +2,7 @@ import {
   Drawing,
   Facility,
   ProjectedEvent,
+  Repayment,
   Transaction,
   sortEventByEffectiveDate,
 } from 'loan-servicing-common'
@@ -12,6 +13,8 @@ class FacilityProjection {
   facility: Facility
 
   processedEvents: ProjectedEvent[] = []
+
+  repayments: Repayment[] = []
 
   constructor(
     initialEntity: Facility,

@@ -1,4 +1,4 @@
-import { DrawingDto } from 'loan-servicing-common'
+import { DrawingDto, Repayment } from 'loan-servicing-common'
 import { GovUkSummaryListProps } from 'types/nunjucks'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -59,3 +59,35 @@ export const drawingToDrawingSummary = (
     ],
   }
 }
+
+const getRepaymentSummaryText = (repayment: Repayment): string => {
+  if (repayment.date < new Date()) {
+    if (repayment.received) {
+      return 'payment received'
+    }
+    return 'payment overdue'
+  }
+  return 'payment not yet due'
+}
+
+export const drawingToRepaymentsSummary = ({
+  repayments,
+}: DrawingDto): GovUkSummaryListProps => ({
+  card: {
+    title: { text: 'Repayments' },
+  },
+  rows: repayments.map((repayment) => ({
+    key: { text: new Date(repayment.date).toLocaleDateString('en-GB') },
+    value: {
+      text: `£${repayment.amount} (${getRepaymentSummaryText(repayment)})`,
+    },
+    actions: {
+      items: [
+        {
+          href: ``,
+          text: 'Mark Received',
+        },
+      ],
+    },
+  })),
+})
