@@ -222,7 +222,7 @@ class EditDrawingController {
     @Res() response: Response,
   ): Promise<void> {
     const updateDto: RecordDrawingRepaymentDto = {
-      date: getDateFromDateInput(requestDto, 'repaymentDate'),
+      date: new Date(requestDto.repaymentDate),
       amount: requestDto.amount,
       repaymentId: requestDto.repaymentId,
     }

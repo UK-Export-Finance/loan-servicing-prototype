@@ -285,7 +285,11 @@ class DrawingService {
       streamId,
       projectionDate,
     )
-    return drawing
+    const rebuiltDrawing = await this.drawingRepo.findOne({
+      where: { streamId },
+      relations: { facility: true },
+    })
+    return rebuiltDrawing!
   }
 
   async getAllDrawings(): Promise<Drawing[] | null> {

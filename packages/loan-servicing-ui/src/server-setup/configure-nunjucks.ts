@@ -38,6 +38,10 @@ const configureNunjucks = (app: NestExpressApplication): void => {
         ? `<b>${repayment.name}</b><br/>First payment: ${new Date(repayment.startDate).toLocaleDateString('en-GB')}<br/>Months between payments: ${repayment.monthsBetweenRepayments}`
         : `<b>${repayment.name}</b> - ${repayment.repayments.length} payments`,
   )
+  nunjucksEnv.addFilter(
+    'convertToDateInput',
+    (strDate: string) => new Date(strDate).toISOString().split('T')[0],
+  )
 
   nunjucksEnv.addGlobal('env', process.env.NODE_ENV)
 }

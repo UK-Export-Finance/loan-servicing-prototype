@@ -1,5 +1,4 @@
 import { DrawingDto, Repayment } from 'loan-servicing-common'
-import { MandatoryDateInputFormData } from 'utils/form-helpers'
 
 export type RecordRepaymentNjkInput = {
   drawing: DrawingDto
@@ -9,4 +8,5 @@ export type RecordRepaymentNjkInput = {
 export type RecordRepaymentFormDto = {
   repaymentId: string
   amount: string
-} & MandatoryDateInputFormData<'repaymentDate'>
+  repaymentDate: string
+}
