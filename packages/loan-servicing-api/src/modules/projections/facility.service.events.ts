@@ -116,7 +116,8 @@ class FacilityEventHandlingService
     const drawingToCreate: Omit<Drawing, 'facility'> = {
       streamVersion: 1,
       ...creationEvent.eventData,
-      drawnAmount: '0'
+      drawnAmount: '0',
+      outstandingPrincipal: '0'
     }
 
     return this.drawingRepo.create(drawingToCreate)
