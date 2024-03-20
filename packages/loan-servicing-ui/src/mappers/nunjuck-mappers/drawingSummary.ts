@@ -64,20 +64,19 @@ const getRepaymentSummaryText = (
   repayment: Repayment,
   currentDate: string,
 ): string => {
+  if (repayment.received) {
+    return 'payment received'
+  }
   if (new Date(repayment.date) < new Date(currentDate)) {
-    if (repayment.received) {
-      return 'payment received'
-    }
     return 'payment overdue'
   }
   return 'payment not yet due'
 }
 
-export const drawingToRepaymentsSummary = (facilityId: string, {
-  currentDate,
-  repayments,
-  streamId: drawingId,
-}: DrawingDto): GovUkSummaryListProps => ({
+export const drawingToRepaymentsSummary = (
+  facilityId: string,
+  { currentDate, repayments, streamId: drawingId }: DrawingDto,
+): GovUkSummaryListProps => ({
   card: {
     title: { text: 'Repayments' },
   },
@@ -86,13 +85,15 @@ export const drawingToRepaymentsSummary = (facilityId: string, {
     value: {
       text: `£${repayment.amount} (${getRepaymentSummaryText(repayment, currentDate)})`,
     },
-    actions: {
-      items: [
-        {
-          href: `/facility/${facilityId}/drawing/${drawingId}/repayment/${repayment.id}/receive`,
-          text: 'Mark Received',
+    actions: repayment.received
+      ? undefined
+      : {
+          items: [
+            {
+              href: `/facility/${facilityId}/drawing/${drawingId}/recordRepayment?repaymentId=${repayment.id}`,
+              text: 'Mark Received',
+            },
+          ],
         },
-      ],
-    },
   })),
 })

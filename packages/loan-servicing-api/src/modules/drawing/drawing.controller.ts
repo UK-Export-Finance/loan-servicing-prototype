@@ -134,7 +134,6 @@ class DrawingController {
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
     @Query('version') version: number,
-    @Query('projectionDate') projectionDate: string,
     @Body() body: AddWithdrawalToDrawingDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.withdrawFromDrawing(
@@ -142,7 +141,6 @@ class DrawingController {
       drawingId,
       Number(version),
       body,
-      new Date(projectionDate),
     )
     return plainToInstance(DrawingDtoClass, updatedDrawing, {
       enableCircularCheck: true,
@@ -154,7 +152,6 @@ class DrawingController {
   async revertWithdrawal(
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
-    @Query('projectionDate') projectionDate: string,
     @Body() body: RevertWithdrawalDtoClass,
     @Query('version') version: number,
   ): Promise<DrawingDtoClass> {
@@ -163,7 +160,6 @@ class DrawingController {
       drawingId,
       Number(version),
       body,
-      new Date(projectionDate),
     )
     return plainToInstance(DrawingDtoClass, updatedDrawing, {
       enableCircularCheck: true,
@@ -176,7 +172,6 @@ class DrawingController {
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
     @Query('version') version: number,
-    @Query('projectionDate') projectionDate: string,
     @Body() body: RegularRepaymentStrategyOptionsDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.setRepayments(
@@ -184,7 +179,6 @@ class DrawingController {
       drawingId,
       Number(version),
       body,
-      new Date(projectionDate),
     )
     return plainToInstance(DrawingDtoClass, updatedDrawing, {
       enableCircularCheck: true,
@@ -197,7 +191,6 @@ class DrawingController {
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
     @Query('version') version: number,
-    @Query('projectionDate') projectionDate: string,
     @Body() body: ManualRepaymentStrategyOptionsDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.setRepayments(
@@ -205,7 +198,6 @@ class DrawingController {
       drawingId,
       Number(version),
       body,
-      new Date(projectionDate),
     )
     return plainToInstance(DrawingDtoClass, updatedDrawing, {
       enableCircularCheck: true,
@@ -218,7 +210,6 @@ class DrawingController {
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
     @Query('version') version: number,
-    @Query('projectionDate') projectionDate: string,
     @Body() body: AddFixedDrawingAccrualDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.addDrawingAccrual(
@@ -226,7 +217,6 @@ class DrawingController {
       drawingId,
       Number(version),
       { ...body, name: 'FixedDrawingAccrual' },
-      new Date(projectionDate),
     )
     return plainToInstance(DrawingDtoClass, updatedDrawing, {
       enableCircularCheck: true,
@@ -240,14 +230,12 @@ class DrawingController {
     @Param('drawingId') drawingId: string,
     @Query('version') version: number,
     @Body() body: AddMarketDrawingAccrualDtoClass,
-    @Query('projectionDate') projectionDate: string,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.addDrawingAccrual(
       facilityId,
       drawingId,
       Number(version),
       { ...body, name: 'MarketDrawingAccrual' },
-      new Date(projectionDate),
     )
     return plainToInstance(DrawingDtoClass, updatedDrawing, {
       enableCircularCheck: true,

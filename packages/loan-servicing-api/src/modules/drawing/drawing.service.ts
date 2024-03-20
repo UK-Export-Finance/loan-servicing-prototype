@@ -214,7 +214,6 @@ class DrawingService {
     feeConfig: (AddFixedDrawingAccrualDto | AddMarketDrawingAccrualDto) & {
       name: DrawingAccrualStrategyName
     },
-    projectionDate?: Date,
   ): Promise<Drawing> {
     await this.eventService.addEvent<AddDrawingAccrualEvent>(
       {
@@ -235,7 +234,6 @@ class DrawingService {
       await this.projectionsService.buildProjectionsForDrawingOnDate(
         facilityId,
         streamId,
-        projectionDate,
       )
     return drawing
   }

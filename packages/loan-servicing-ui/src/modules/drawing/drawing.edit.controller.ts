@@ -15,6 +15,7 @@ import {
   AddMarketDrawingAccrualDto,
   AddWithdrawalToDrawingDto,
   ConvertToDtoType,
+  RecordDrawingRepaymentDto,
   RevertWithdrawlDto,
 } from 'loan-servicing-common'
 import { getDateFromDateInput } from 'utils/form-helpers'
@@ -28,6 +29,10 @@ import {
   AddFixedDrawingAccrualFormDto,
   AddMarketDrawingAccrualFormDto,
 } from 'templates/drawing-edit/add-accrual'
+import {
+  RecordRepaymentFormDto,
+  RecordRepaymentNjkInput,
+} from 'templates/drawing-edit/record-repayment'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
@@ -178,6 +183,50 @@ class EditDrawingController {
       accrualRate: requestDto.accrualRate,
     }
     await this.drawingService.addMarketDrawingAccrual(
+      facilityId,
+      drawingId,
+      version,
+      updateDto,
+    )
+    response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
+  }
+
+  @Get(':drawingId/recordRepayment')
+  @Render('drawing-edit/record-repayment')
+  async renderRecordRepaymentPage(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('repaymentId') repaymentId: string,
+  ): Promise<RecordRepaymentNjkInput> {
+    const drawing = await this.drawingService.getDrawing(facilityId, drawingId)
+    if (!drawing) {
+      throw new NotFoundException('Drawing not found')
+    }
+    const repayment = drawing.repayments.find((r) => r.id === repaymentId)
+    if (!repayment) {
+      throw new NotFoundException('Repayment not found')
+    }
+    return {
+      drawing,
+      repayment,
+    }
+  }
+
+  @Post(':drawingId/recordRepayment')
+  async recordRepayment(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('version') version: string,
+    @Body()
+    requestDto: RecordRepaymentFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const updateDto: RecordDrawingRepaymentDto = {
+      date: getDateFromDateInput(requestDto, 'repaymentDate'),
+      amount: requestDto.amount,
+      repaymentId: requestDto.repaymentId,
+    }
+    await this.drawingService.recordRepayment(
       facilityId,
       drawingId,
       version,
