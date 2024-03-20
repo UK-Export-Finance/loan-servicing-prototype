@@ -1,21 +1,7 @@
 import {
-  Drawing,
-  Transaction,
   ProjectedEvent,
-  Facility,
 } from 'loan-servicing-common'
 import FacilityProjection from 'modules/projections/projection'
-
-export type EventContext<
-  E extends Facility | Drawing,
-  T extends ProjectedEvent,
-> = {
-  entity: E
-  sourceEvent: T
-  transactions: Transaction[]
-  eventIndex: number
-  allEvents: ProjectedEvent[]
-}
 
 export type EventHandler<T extends ProjectedEvent> = (
   event: T,

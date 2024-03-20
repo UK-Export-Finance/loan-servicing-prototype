@@ -15,34 +15,44 @@ class FacilityProjection {
 
   constructor(
     initialEntity: Facility,
-    private projectionEvents: ProjectedEvent[],
+    private unprocessedEvents: ProjectedEvent[],
     private projectionDate: Date,
   ) {
     this.facility = initialEntity
   }
 
   addEvents(newEvents: ProjectedEvent[]): ProjectedEvent[] {
-    this.projectionEvents = [...this.projectionEvents, ...newEvents].sort(
+    this.unprocessedEvents = [...this.unprocessedEvents, ...newEvents].sort(
       sortEventByEffectiveDate,
     )
-    return this.projectionEvents
+    return this.unprocessedEvents
   }
 
   consumeNextEvent = (): ProjectedEvent | undefined => {
-    const [event] = this.projectionEvents
+    const [event] = this.unprocessedEvents
     if (event) {
       if (event.effectiveDate > this.projectionDate) {
-        return undefined
+        const nextProcessableFutureEvent = this.unprocessedEvents.find(
+          (e) => e.shouldProcessIfFuture,
+        )
+        if (!nextProcessableFutureEvent) {
+          return undefined
+        }
+        this.unprocessedEvents = this.unprocessedEvents.filter(
+          (e) => e !== nextProcessableFutureEvent,
+        )
+        this.processedEvents.push(nextProcessableFutureEvent)
+        return nextProcessableFutureEvent
       }
-      this.projectionEvents.shift()
+      this.unprocessedEvents.shift()
       this.processedEvents.push(event)
     }
     return event
   }
 
-  peekNextEvent = (): ProjectedEvent => this.projectionEvents[0]
+  peekNextEvent = (): ProjectedEvent => this.unprocessedEvents[0]
 
-  getRemainingEvents = (): ProjectedEvent[] => [...this.projectionEvents]
+  getRemainingEvents = (): ProjectedEvent[] => [...this.unprocessedEvents]
 
   setDrawingProperty = <T extends keyof Drawing>(
     drawingId: string,

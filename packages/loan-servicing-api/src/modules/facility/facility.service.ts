@@ -36,6 +36,7 @@ class FacilityService {
         streamId: crypto.randomUUID(),
         effectiveDate: facilityRequest.issuedEffectiveDate,
         entityType: 'facility',
+        shouldProcessIfFuture: false,
         type: 'CreateNewFacility',
         typeVersion: 1,
         eventData: facilityRequest,
@@ -60,6 +61,7 @@ class FacilityService {
         streamId,
         effectiveDate: new Date(effectiveDate),
         entityType: 'facility',
+        shouldProcessIfFuture: false,
         type: 'AdjustFacilityAmount',
         typeVersion: 1,
         eventData: { adjustment },
@@ -83,6 +85,7 @@ class FacilityService {
         effectiveDate: feeConfig.effectiveDate,
         entityType: 'facility',
         type: 'AddFacilityFee',
+        shouldProcessIfFuture: true,
         typeVersion: 1,
         eventData: { ...feeConfig, feeId: crypto.randomUUID() },
       },
@@ -95,7 +98,8 @@ class FacilityService {
 
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacilityEvents(streamId: string): Promise<LoanServicingEvent[]> {
-    const events = await this.eventService.getActiveEventsInCreationOrder(streamId)
+    const events =
+      await this.eventService.getActiveEventsInCreationOrder(streamId)
     return events
   }
 

@@ -21,6 +21,7 @@ export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
     drawingAccrualEvents.push({
       effectiveDate: dateToProcess,
       streamId: facility.streamId,
+      shouldProcessIfFuture: false,
       entityType: 'drawing',
       type: 'CalculateFixedDrawingAccrual',
       eventData: option,
@@ -42,6 +43,7 @@ export const getMarketDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
     drawingAccrualEvents.push({
       effectiveDate: dateToProcess,
       streamId: facility.streamId,
+      shouldProcessIfFuture: false,
       entityType: 'drawing',
       type: 'CalculateMarketDrawingAccrual',
       eventData: option,

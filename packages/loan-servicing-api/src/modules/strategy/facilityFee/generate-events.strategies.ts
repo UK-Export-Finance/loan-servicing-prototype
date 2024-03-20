@@ -22,6 +22,7 @@ export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
     facilityFeeEvents.push({
       effectiveDate: dateToProcess,
       streamId: facility.streamId,
+      shouldProcessIfFuture: false,
       entityType: 'facility',
       type: 'CalculateAccruingFacilityFee',
       eventData: option,
@@ -38,6 +39,7 @@ export const getFixedFacilityFeeEvents: GetFacilityFeeEventsStrategy<
   {
     effectiveDate: option.effectiveDate,
     streamId: facility.streamId,
+    shouldProcessIfFuture: false,
     entityType: 'facility',
     type: 'CalculateFixedFacilityFee',
     eventData: option,

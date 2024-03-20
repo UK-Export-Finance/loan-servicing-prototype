@@ -15,6 +15,7 @@ export type EventBase<
   type: Type
   typeVersion: Version
   eventData: Data
+  shouldProcessIfFuture: boolean
 }
 
 export type UntypedEvent = EventBase<string, number, object, EntityWithEvents>

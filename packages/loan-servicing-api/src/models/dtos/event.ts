@@ -19,4 +19,6 @@ export class UntypedEventClass implements UntypedEvent {
   typeVersion!: number
 
   eventData!: object
+
+  shouldProcessIfFuture!: boolean
 }

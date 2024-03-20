@@ -31,6 +31,7 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
     (date, i) => ({
       effectiveDate: date,
       type: 'RegularRepayment',
+      shouldProcessIfFuture: false,
       streamId,
       entityType: 'drawing',
       eventData: {
@@ -49,6 +50,7 @@ export const getManualRepaymentEvents: GetRepaymentEventsStrategy<
   const repaymentEvents = repayments.map<ManualRepaymentEvent>((r) => ({
     effectiveDate: r.date,
     type: 'ManualRepayment',
+    shouldProcessIfFuture: false,
     streamId,
     entityType: 'drawing',
     eventData: { amount: r.amount },

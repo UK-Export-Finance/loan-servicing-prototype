@@ -36,6 +36,9 @@ class EventEntity<T extends LoanServicingEvent> implements UntypedEventClass {
     type: 'simple-json',
   })
   eventData!: T['eventData']
+
+  @Column()
+  shouldProcessIfFuture!: boolean
 }
 
 export default EventEntity
