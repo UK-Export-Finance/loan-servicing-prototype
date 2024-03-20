@@ -46,6 +46,9 @@ class DrawingEntity implements Drawing {
 
   @Column()
   expiryDate!: Date
+
+  @Column()
+  currentDate!: Date
 }
 
 export default DrawingEntity

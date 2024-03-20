@@ -76,6 +76,7 @@ class ProjectionsService {
         .map((e) => e.streamVersion)
         .filter((e) => e !== undefined) as number[]
       d.streamVersion = Math.max(...streamIds)
+      d.currentDate = date
     })
     projection.facility.streamVersion = Math.max(
       ...(projection.processedEvents
@@ -85,6 +86,7 @@ class ProjectionsService {
     )
     // Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
     projection.facility.drawings.forEach((d) => delete (d as any).facility)
+    projection.facility.currentDate = date
     const facilityEntity = await this.facilityRepo.save(projection.facility)
 
     return {
@@ -193,6 +195,7 @@ class ProjectionsService {
       streamId: creationEvent.streamId,
       streamVersion: 1,
       drawnAmount: '0',
+      currentDate: creationEvent.effectiveDate,
       undrawnAmount: creationEvent.eventData.facilityAmount,
       facilityFees: [],
       ...creationEvent.eventData,

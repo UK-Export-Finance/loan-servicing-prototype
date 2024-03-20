@@ -5,6 +5,7 @@ import { FacilityFee } from './strategies/facilityFee'
 export type Facility = {
   streamId: string
   obligor: string
+  currentDate: Date
   streamVersion: number
   facilityType: string
   facilityFees: FacilityFee[]
@@ -35,4 +36,5 @@ export type NewFacilityRequestDto = Omit<
   | 'drawnAmount'
   | 'undrawnAmount'
   | 'facilityFees'
+  | 'currentDate'
 >

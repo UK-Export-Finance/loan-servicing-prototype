@@ -60,6 +60,11 @@ export class DrawingDtoClass implements Drawing {
   @ApiProperty()
   @IsDate()
   @Type(() => Date)
+  currentDate!: Date
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
   expiryDate!: Date
 }
 
@@ -69,6 +74,7 @@ export class NewDrawingRequestDtoClass
     'facility',
     'drawnAmount',
     'repayments',
+    'currentDate',
   ])
   implements NewDrawingRequestDto
 {

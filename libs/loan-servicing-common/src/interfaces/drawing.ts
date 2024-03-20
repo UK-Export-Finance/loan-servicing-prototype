@@ -7,6 +7,7 @@ import { Repayment } from './strategies/repayment'
 export type Drawing = {
   streamId: string
   streamVersion: number
+  currentDate: Date
   facility: Facility
   drawingConfig: DrawingConfiguration
   outstandingPrincipal: string
@@ -19,7 +20,12 @@ export type Drawing = {
 
 export type NewDrawingRequestDto = Omit<
   Drawing,
-  'streamId' | 'streamVersion' | 'facility' | 'drawnAmount' | 'repayments'
+  | 'streamId'
+  | 'streamVersion'
+  | 'facility'
+  | 'drawnAmount'
+  | 'repayments'
+  | 'currentDate'
 >
 
 export type DrawingDto = ConvertToDtoType<Drawing>

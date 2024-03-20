@@ -246,7 +246,7 @@ class DrawingService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getDrawing(streamId: string, projectionDate?: Date): Promise<Drawing> {
+  async getDrawing(streamId: string, projectionDate?: Date | undefined): Promise<Drawing> {
     const drawing = await this.drawingRepo.findOne({
       where: { streamId },
       relations: { facility: true },

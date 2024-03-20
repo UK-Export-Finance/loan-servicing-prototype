@@ -57,7 +57,7 @@ class DrawingController {
   ): Promise<DrawingDtoClass> {
     const drawing = await this.drawingService.getDrawing(
       drawingStreamId,
-      new Date(projectionDate),
+      projectionDate !== 'undefined' ? new Date(projectionDate) : undefined,
     )
     if (drawing === null) {
       throw new NotFoundException()
@@ -116,13 +116,11 @@ class DrawingController {
     @Body() body: NewDrawingRequestDtoClass,
     @Param('facilityId') facilityId: string,
     @Query('facilityVersion') facilityVersion: number,
-    @Query('projectionDate') projectionDate: string,
   ): Promise<DrawingDtoClass> {
     const newDrawing = await this.drawingService.createNewDrawing(
       facilityId,
       facilityVersion,
       body,
-      new Date(projectionDate),
     )
     return plainToInstance(DrawingDtoClass, newDrawing, {
       enableCircularCheck: true,

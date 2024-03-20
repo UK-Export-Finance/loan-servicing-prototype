@@ -72,6 +72,11 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   @IsDate()
   @Type(() => Date)
   expiryDate!: Date
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  currentDate!: Date
 }
 
 export class NewFacilityRequestDtoClass
@@ -82,6 +87,7 @@ export class NewFacilityRequestDtoClass
     'drawnAmount',
     'undrawnAmount',
     'facilityFees',
+    'currentDate',
   ])
   implements NewFacilityRequestDto {}
 

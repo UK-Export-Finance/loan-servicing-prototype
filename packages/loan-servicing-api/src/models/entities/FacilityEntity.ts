@@ -38,6 +38,9 @@ class FacilityEntity implements Facility {
 
   @Column()
   expiryDate!: Date
+  
+  @Column()
+  currentDate!: Date
 }
 
 export default FacilityEntity

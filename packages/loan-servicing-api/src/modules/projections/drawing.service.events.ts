@@ -172,7 +172,7 @@ class DrawingEventHandlingService
       drawing,
       event.eventData,
     )
-    projection.addEvents(repaymentEvents)
+    // projection.addEvents(repaymentEvents)
     drawing.repayments = repaymentEvents.map((e, i) => ({
       date: e.effectiveDate,
       amount: e.eventData.amount,

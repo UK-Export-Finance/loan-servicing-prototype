@@ -60,8 +60,11 @@ export const drawingToDrawingSummary = (
   }
 }
 
-const getRepaymentSummaryText = (repayment: Repayment): string => {
-  if (repayment.date < new Date()) {
+const getRepaymentSummaryText = (
+  repayment: Repayment,
+  currentDate: string,
+): string => {
+  if (new Date(repayment.date) < new Date(currentDate)) {
     if (repayment.received) {
       return 'payment received'
     }
@@ -71,6 +74,7 @@ const getRepaymentSummaryText = (repayment: Repayment): string => {
 }
 
 export const drawingToRepaymentsSummary = ({
+  currentDate,
   repayments,
 }: DrawingDto): GovUkSummaryListProps => ({
   card: {
@@ -79,7 +83,7 @@ export const drawingToRepaymentsSummary = ({
   rows: repayments.map((repayment) => ({
     key: { text: new Date(repayment.date).toLocaleDateString('en-GB') },
     value: {
-      text: `£${repayment.amount} (${getRepaymentSummaryText(repayment)})`,
+      text: `£${repayment.amount} (${getRepaymentSummaryText(repayment, currentDate)})`,
     },
     actions: {
       items: [
