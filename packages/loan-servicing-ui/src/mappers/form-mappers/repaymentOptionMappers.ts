@@ -40,7 +40,7 @@ const mapRepaymentOptions = (
                   createFacilityForm,
                   `repaymentDate${number}`,
                 ),
-                amount: createFacilityForm[`repaymentAmount${number}`]!,
+                expectedAmount: createFacilityForm[`repaymentAmount${number}`]!,
               }
             : undefined
         })

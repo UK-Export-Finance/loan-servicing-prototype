@@ -245,11 +245,13 @@ class DrawingController {
   @Post(':drawingId/repaymentReceived')
   @ApiOkResponse({ type: DrawingDtoClass })
   async markRepaymentAsReceived(
+    @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
     @Query('version') version: number,
     @Body() recordRepaymentDto: RecordDrawingRepaymentDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.setRepaymentAsReceived(
+      facilityId,
       drawingId,
       Number(version),
       recordRepaymentDto,

@@ -240,10 +240,11 @@ class DrawingService {
 
   @Transactional()
   async setRepaymentAsReceived(
+    facilityId: string,
     drawingId: string,
     streamVersion: number,
     repaymentDto: RecordDrawingRepaymentDtoClass,
-  ): Promise<void> {
+  ): Promise<Drawing> {
     await this.eventService.addEvent<RecordDrawingRepaymentEvent>(
       {
         streamId: drawingId,
@@ -259,6 +260,12 @@ class DrawingService {
       },
       streamVersion,
     )
+    const { drawing } =
+      await this.projectionsService.buildProjectionsForDrawingOnDate(
+        facilityId,
+        drawingId,
+      )
+    return drawing
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })

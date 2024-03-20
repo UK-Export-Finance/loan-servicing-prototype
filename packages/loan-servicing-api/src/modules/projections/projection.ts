@@ -18,7 +18,7 @@ class FacilityProjection {
 
   constructor(
     initialEntity: Facility,
-    private unprocessedEvents: ProjectedEvent[],
+    public unprocessedEvents: ProjectedEvent[],
     private projectionDate: Date,
   ) {
     this.facility = initialEntity

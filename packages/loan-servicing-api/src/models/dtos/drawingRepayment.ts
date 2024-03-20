@@ -14,10 +14,13 @@ export class DrawingRepaymentDto implements Repayment {
   date!: Date
 
   @ApiProperty()
-  amount!: string
+  expectedAmount!: string
 
   @ApiProperty()
-  received!: boolean
+  paidAmount!: string
+
+  @ApiProperty()
+  settled!: boolean
 }
 
 export class RecordDrawingRepaymentDtoClass

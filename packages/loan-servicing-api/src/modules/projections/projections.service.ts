@@ -69,9 +69,13 @@ class ProjectionsService {
         res.concat(curr.generatedMaps as TransactionEntity[]),
       [] as TransactionEntity[],
     )
+    const allEvents = [
+      ...projection.processedEvents,
+      ...projection.unprocessedEvents,
+    ]
     projection.facility.drawings.forEach((d) => {
       d.facility = projection.facility
-      const streamIds = projection.processedEvents
+      const streamIds = allEvents
         .filter((e) => e.streamId === d.streamId)
         .map((e) => e.streamVersion)
         .filter((e) => e !== undefined) as number[]
@@ -79,7 +83,7 @@ class ProjectionsService {
       d.currentDate = date
     })
     projection.facility.streamVersion = Math.max(
-      ...(projection.processedEvents
+      ...(allEvents
         .filter((e) => e.streamId === projection.facility.streamId)
         .map((e) => e.streamVersion)
         .filter((e) => e !== undefined) as number[]),

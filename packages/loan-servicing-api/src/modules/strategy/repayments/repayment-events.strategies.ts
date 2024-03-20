@@ -48,13 +48,14 @@ export const getRegularRepayments: GetRepaymentEventsStrategy<
     calculateRegularRepaymentAmounts(drawing, repaymentDates.length)
 
   const repaymentEvents = repaymentDates.map<Repayment>((date, i) => ({
-    amount:
+    expectedAmount:
       i + 1 === repaymentDates.length
         ? finalPaymentAmount
         : regularPaymentAmount,
     date,
+    paidAmount: '0',
     id: `${drawing.streamId}-repayment-${i + 1}`,
-    received: false,
+    settled: false,
   }))
 
   return repaymentEvents
@@ -64,10 +65,11 @@ export const getManualRepayments: GetRepaymentEventsStrategy<
   ManualRepaymentStrategyOptions
 > = ({ streamId }, { repayments }) => {
   const repaymentEvents = repayments.map<Repayment>((r, i) => ({
-    amount: r.amount,
+    expectedAmount: r.expectedAmount,
     date: r.date,
+    paidAmount: '0',
     id: `${streamId}-repayment-${i + 1}`,
-    received: false,
+    settled: false,
   }))
   return repaymentEvents
 }

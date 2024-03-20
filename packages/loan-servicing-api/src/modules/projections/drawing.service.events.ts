@@ -194,7 +194,8 @@ class DrawingEventHandlingService
         `repayment with id ${sourceEvent.eventData.repaymentId} was not found`,
       )
     }
-    repayment.received = true
+    repayment.paidAmount = Big(repayment.paidAmount).add(paymentAmount).toFixed(2)
+    repayment.settled = Big(repayment.paidAmount).eq(repayment.expectedAmount)
     projection.transactions.push({
       streamId: drawing.streamId,
       sourceEvent,

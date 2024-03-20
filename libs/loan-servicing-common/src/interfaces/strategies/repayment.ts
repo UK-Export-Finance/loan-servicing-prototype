@@ -8,11 +8,12 @@ export type RegularRepaymentStrategyOptions = StrategyOptionsBase<
   }
 >
 
-export type RepaymentConfig = { date: Date; amount: string }
+export type RepaymentConfig = { date: Date; expectedAmount: string }
 
 export type Repayment = RepaymentConfig & {
   id: string
-  received: boolean
+  settled: boolean
+  paidAmount: string
 }
 
 export type RecordDrawingRepaymentDto = {

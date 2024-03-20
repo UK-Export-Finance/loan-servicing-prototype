@@ -54,7 +54,7 @@ export class RepaymentDtoClass implements RepaymentConfig {
 
   @ApiProperty()
   @IsNotEmpty()
-  amount!: string
+  expectedAmount!: string
 }
 
 @ApiExtraModels(RepaymentDtoClass)
