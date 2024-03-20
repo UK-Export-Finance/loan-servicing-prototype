@@ -11,9 +11,7 @@ class StrategyService {
     private drawingAccrualService: DrawingAccrualService,
   ) {}
 
-  getRepaymentEvents = this.repaymentsService.createRepaymentEvents
-
-  calculateRepayment = this.repaymentsService.calculateRepayment
+  getRepayments = this.repaymentsService.createRepayments
 
   getEventsForFacilityFee = this.facilityFeeService.generateEventsForSingleFee
 

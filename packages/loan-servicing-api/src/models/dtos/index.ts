@@ -28,6 +28,7 @@ import {
   FixedDrawingAccrualStrategyOptionDtoClass,
   MarketDrawingAccrualStrategyOptionDtoClass,
 } from './drawingAccrual'
+import { RecordDrawingRepaymentDtoClass } from './drawingRepayment'
 
 export type GetClassConstructorForEventData<T extends LoanServicingEvent> = (
   event: EventEntity<T>,
@@ -44,6 +45,7 @@ const eventTypeToEventClassDefinition: {
   CreateNewDrawing: () => NewDrawingRequestDtoClass,
   AddDrawingToFacility: () => NewDrawingRequestDtoClass,
   RevertWithdrawal: () => RevertWithdrawalDtoClass,
+  RecordDrawingRepayment: () => RecordDrawingRepaymentDtoClass,
   AddFacilityFee: (event: AddFacilityFeeEvent) => {
     switch (event.eventData.name) {
       case 'AccruingFacilityFee':

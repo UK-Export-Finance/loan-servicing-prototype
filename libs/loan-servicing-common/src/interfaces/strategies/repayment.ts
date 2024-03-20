@@ -15,6 +15,12 @@ export type Repayment = RepaymentConfig & {
   received: boolean
 }
 
+export type RecordDrawingRepaymentDto = {
+  date: Date
+  amount: string
+  repaymentId: string
+}
+
 export type ManualRepaymentStrategyOptions = StrategyOptionsBase<
   'Manual',
   {

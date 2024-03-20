@@ -37,6 +37,12 @@ export type SetDrawingRepaymentsEvent = DrawingEventBase<
   RepaymentStrategyOptions
 >
 
+export type RecordDrawingRepaymentEvent = DrawingEventBase<
+  'RecordDrawingRepayment',
+  1,
+  { repaymentId: string; amount: string }
+>
+
 export type AddDrawingAccrualEvent = DrawingEventBase<
   'AddDrawingAccrual',
   1,
@@ -49,3 +55,4 @@ export type DrawingEvent =
   | CreateNewDrawingEvent
   | SetDrawingRepaymentsEvent
   | AddDrawingAccrualEvent
+  | RecordDrawingRepaymentEvent

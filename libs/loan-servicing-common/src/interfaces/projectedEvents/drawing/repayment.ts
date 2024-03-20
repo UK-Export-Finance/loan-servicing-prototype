@@ -1,7 +1,7 @@
-import { ProjectedDrawingEventBase } from '../projectedEventBase'
+// import { ProjectedDrawingEventBase } from '../projectedEventBase'
 
-export type RepaymentsEvent = ProjectedDrawingEventBase<
-  'ManualRepayment',
-  1,
-  { amount: string }
->
+// export type RecordedRepaymentEvent = ProjectedDrawingEventBase<
+//   'RecordedRepayment',
+//   1,
+//   { amount: string }
+// >

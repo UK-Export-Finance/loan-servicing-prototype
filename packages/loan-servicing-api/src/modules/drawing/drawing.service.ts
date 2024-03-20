@@ -18,6 +18,7 @@ import {
   AddMarketDrawingAccrualDto,
   AddDrawingAccrualEvent,
   DrawingAccrualStrategyName,
+  RecordDrawingRepaymentEvent,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -26,6 +27,7 @@ import {
   ManualRepaymentStrategyOptionsDtoClass,
   RegularRepaymentStrategyOptionsDtoClass,
 } from 'models/dtos/drawingConfiguration'
+import { RecordDrawingRepaymentDtoClass } from 'models/dtos/drawingRepayment'
 
 @Injectable()
 class DrawingService {
@@ -238,6 +240,29 @@ class DrawingService {
     return drawing
   }
 
+  @Transactional()
+  async setRepaymentAsReceived(
+    drawingId: string,
+    streamVersion: number,
+    repaymentDto: RecordDrawingRepaymentDtoClass,
+  ): Promise<void> {
+    await this.eventService.addEvent<RecordDrawingRepaymentEvent>(
+      {
+        streamId: drawingId,
+        effectiveDate: repaymentDto.date,
+        entityType: 'drawing',
+        shouldProcessIfFuture: false,
+        type: 'RecordDrawingRepayment',
+        typeVersion: 1,
+        eventData: {
+          repaymentId: repaymentDto.repaymentId,
+          amount: repaymentDto.amount,
+        },
+      },
+      streamVersion,
+    )
+  }
+
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getDrawingEvents(streamId: string): Promise<LoanServicingEvent[]> {
     const events =
@@ -246,7 +271,10 @@ class DrawingService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getDrawing(streamId: string, projectionDate?: Date | undefined): Promise<Drawing> {
+  async getDrawing(
+    streamId: string,
+    projectionDate?: Date | undefined,
+  ): Promise<Drawing> {
     const drawing = await this.drawingRepo.findOne({
       where: { streamId },
       relations: { facility: true },

@@ -4,11 +4,11 @@ import {
   DrawingProjectedEvent,
   WithdrawFromDrawingEvent,
   RevertWithdrawalEvent,
-  RepaymentsEvent,
   CreateNewDrawingEvent,
   SetDrawingRepaymentsEvent,
   AddDrawingAccrualEvent,
   CalculateDrawingAccrualEvent,
+  RecordDrawingRepaymentEvent,
 } from 'loan-servicing-common'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
@@ -168,33 +168,33 @@ class DrawingEventHandlingService
     projection,
   ) => {
     const drawing = projection.getDrawing(event.streamId)
-    const repaymentEvents = this.strategyService.getRepaymentEvents(
+    const repayments = this.strategyService.getRepayments(
       drawing,
       event.eventData,
     )
     // projection.addEvents(repaymentEvents)
-    drawing.repayments = repaymentEvents.map((e, i) => ({
-      date: e.effectiveDate,
-      amount: e.eventData.amount,
-      id: `${event.streamId}-repayment-${i + 1}`,
-      received: false,
-    }))
+    drawing.repayments = repayments
     drawing.drawingConfig.repaymentsStrategy = event.eventData
   }
 
-  Repayment: EventHandler<RepaymentsEvent> = async (
+  RecordDrawingRepayment: EventHandler<RecordDrawingRepaymentEvent> = async (
     sourceEvent,
     projection,
   ) => {
     const drawing = projection.getDrawing(sourceEvent.streamId)
-    const paymentAmount = this.strategyService.calculateRepayment(
-      drawing,
-      sourceEvent,
-      projection.getRemainingEvents(),
-    )
+    const paymentAmount = sourceEvent.eventData.amount
     drawing.outstandingPrincipal = Big(drawing.outstandingPrincipal)
       .minus(paymentAmount)
       .toString()
+    const repayment = drawing.repayments.find(
+      (r) => r.id === sourceEvent.eventData.repaymentId,
+    )
+    if (!repayment) {
+      throw new Error(
+        `repayment with id ${sourceEvent.eventData.repaymentId} was not found`,
+      )
+    }
+    repayment.received = true
     projection.transactions.push({
       streamId: drawing.streamId,
       sourceEvent,
@@ -205,10 +205,6 @@ class DrawingEventHandlingService
       valueAfterTransaction: drawing.outstandingPrincipal,
     })
   }
-
-  ManualRepayment = this.Repayment
-
-  RegularRepayment = this.Repayment
 }
 
 export default DrawingEventHandlingService

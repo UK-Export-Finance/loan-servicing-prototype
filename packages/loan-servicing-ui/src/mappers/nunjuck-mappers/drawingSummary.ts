@@ -73,9 +73,10 @@ const getRepaymentSummaryText = (
   return 'payment not yet due'
 }
 
-export const drawingToRepaymentsSummary = ({
+export const drawingToRepaymentsSummary = (facilityId: string, {
   currentDate,
   repayments,
+  streamId: drawingId,
 }: DrawingDto): GovUkSummaryListProps => ({
   card: {
     title: { text: 'Repayments' },
@@ -88,7 +89,7 @@ export const drawingToRepaymentsSummary = ({
     actions: {
       items: [
         {
-          href: ``,
+          href: `/facility/${facilityId}/drawing/${drawingId}/repayment/${repayment.id}/receive`,
           text: 'Mark Received',
         },
       ],

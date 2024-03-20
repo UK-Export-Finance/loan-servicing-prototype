@@ -74,7 +74,10 @@ class DrawingController {
       drawingCreated,
       transactionRows: mapTransactionsToTable(transactions!),
       drawingSummaryListProps: drawingToDrawingSummary(drawing),
-      repaymentsSummaryListProps: drawingToRepaymentsSummary(drawing),
+      repaymentsSummaryListProps: drawingToRepaymentsSummary(
+        facilityId,
+        drawing,
+      ),
       withdrawalsSummaryProps: mapTransactionsToWithdrawalsSummary(
         facilityId,
         drawingId,

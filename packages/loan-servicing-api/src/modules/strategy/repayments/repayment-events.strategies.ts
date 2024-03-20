@@ -4,15 +4,15 @@ import {
   Drawing,
   ManualRepaymentStrategyOptions,
   RegularRepaymentStrategyOptions,
+  Repayment,
   RepaymentStrategyName,
   RepaymentStrategyOptions,
-  RepaymentsEvent,
 } from 'loan-servicing-common'
 
 export type GetRepaymentEventsStrategy<T extends RepaymentStrategyOptions> = (
   drawing: Drawing,
   options: T,
-) => RepaymentsEvent[]
+) => Repayment[]
 
 const calculateRegularRepaymentAmounts = (
   drawing: Drawing,
@@ -32,7 +32,7 @@ const calculateRegularRepaymentAmounts = (
   }
 }
 
-export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
+export const getRegularRepayments: GetRepaymentEventsStrategy<
   RegularRepaymentStrategyOptions
 > = (drawing, { startDate, monthsBetweenRepayments }) => {
   let dateToProcess = new Date(startDate)
@@ -47,33 +47,27 @@ export const getRegularRepaymentEvents: GetRepaymentEventsStrategy<
   const { regularPaymentAmount, finalPaymentAmount } =
     calculateRegularRepaymentAmounts(drawing, repaymentDates.length)
 
-  const repaymentEvents = repaymentDates.map<RepaymentsEvent>((date, i) => ({
-    effectiveDate: date,
-    type: 'ManualRepayment',
-    shouldProcessIfFuture: false,
-    streamId: drawing.streamId,
-    entityType: 'drawing',
-    eventData: {
-      amount:
-        i + 1 === repaymentDates.length
-          ? finalPaymentAmount
-          : regularPaymentAmount,
-    },
+  const repaymentEvents = repaymentDates.map<Repayment>((date, i) => ({
+    amount:
+      i + 1 === repaymentDates.length
+        ? finalPaymentAmount
+        : regularPaymentAmount,
+    date,
+    id: `${drawing.streamId}-repayment-${i + 1}`,
+    received: false,
   }))
 
   return repaymentEvents
 }
 
-export const getManualRepaymentEvents: GetRepaymentEventsStrategy<
+export const getManualRepayments: GetRepaymentEventsStrategy<
   ManualRepaymentStrategyOptions
 > = ({ streamId }, { repayments }) => {
-  const repaymentEvents = repayments.map<RepaymentsEvent>((r) => ({
-    effectiveDate: r.date,
-    type: 'ManualRepayment',
-    shouldProcessIfFuture: false,
-    streamId,
-    entityType: 'drawing',
-    eventData: { amount: r.amount },
+  const repaymentEvents = repayments.map<Repayment>((r, i) => ({
+    amount: r.amount,
+    date: r.date,
+    id: `${streamId}-repayment-${i + 1}`,
+    received: false,
   }))
   return repaymentEvents
 }
@@ -85,6 +79,6 @@ type RepaymentEventStrategies = {
 }
 
 export const repaymentEventStrategies: RepaymentEventStrategies = {
-  Regular: getRegularRepaymentEvents,
-  Manual: getManualRepaymentEvents,
+  Regular: getRegularRepayments,
+  Manual: getManualRepayments,
 }
