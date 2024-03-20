@@ -1,8 +1,4 @@
-import {
-  Drawing,
-  ProjectedEvent,
-  RepaymentsEvent,
-} from 'loan-servicing-common'
+import { Drawing, ProjectedEvent, RepaymentsEvent } from 'loan-servicing-common'
 
 export type CalculateRepaymentsStrategy<T extends RepaymentsEvent> = (
   drawing: Drawing,

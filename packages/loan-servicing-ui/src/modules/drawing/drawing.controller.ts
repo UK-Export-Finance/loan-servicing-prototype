@@ -10,7 +10,10 @@ import {
   Res,
 } from '@nestjs/common'
 import { Response } from 'express'
-import { drawingToDrawingSummary, drawingToRepaymentsSummary } from 'mappers/nunjuck-mappers/drawingSummary'
+import {
+  drawingToDrawingSummary,
+  drawingToRepaymentsSummary,
+} from 'mappers/nunjuck-mappers/drawingSummary'
 import { DrawingNjkInput } from 'templates/drawing'
 import { tryGetApiData } from 'api/base-client'
 import {
@@ -48,7 +51,11 @@ class DrawingController {
     @Query('drawingCreated') drawingCreated?: boolean,
     @Query('projectionDate') projectionDate?: string,
   ): Promise<DrawingNjkInput> {
-    const drawing = await this.drawingService.getDrawing(facilityId, drawingId, projectionDate)
+    const drawing = await this.drawingService.getDrawing(
+      facilityId,
+      drawingId,
+      projectionDate,
+    )
     if (!drawing) {
       throw new NotFoundException()
     }

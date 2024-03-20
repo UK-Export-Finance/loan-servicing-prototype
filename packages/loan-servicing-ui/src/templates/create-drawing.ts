@@ -1,7 +1,4 @@
-import {
-  Facility,
-  RepaymentStrategyName,
-} from 'loan-servicing-common'
+import { Facility, RepaymentStrategyName } from 'loan-servicing-common'
 import {
   MandatoryDateInputFormData,
   OptionalDateFormInput,

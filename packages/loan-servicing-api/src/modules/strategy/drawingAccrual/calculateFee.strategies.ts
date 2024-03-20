@@ -6,8 +6,9 @@ import {
 } from 'loan-servicing-common'
 import { calculateAccrual } from 'maths/accrualCalculations'
 
-export type CalculateDrawingAccrualStrategy<T extends CalculateDrawingAccrualEvent> =
-  (facility: Drawing, event: T) => string
+export type CalculateDrawingAccrualStrategy<
+  T extends CalculateDrawingAccrualEvent,
+> = (facility: Drawing, event: T) => string
 
 export const calculateFixedDrawingAccrual: CalculateDrawingAccrualStrategy<
   CalculateFixedDrawingAccrualEvent
@@ -17,7 +18,7 @@ export const calculateFixedDrawingAccrual: CalculateDrawingAccrualStrategy<
 export const calculateMarketDrawingAccrual: CalculateDrawingAccrualStrategy<
   CalculateMarketDrawingAccrualEvent
 > = (drawing, { eventData: { accrualRate } }) =>
-calculateAccrual(drawing.outstandingPrincipal, accrualRate)
+  calculateAccrual(drawing.outstandingPrincipal, accrualRate)
 
 type CaclulateDrawingAccrualEventHandlers = {
   [K in CalculateDrawingAccrualEvent['type']]: CalculateDrawingAccrualStrategy<
@@ -25,9 +26,10 @@ type CaclulateDrawingAccrualEventHandlers = {
   >
 }
 
-const calculateDrawingAccrualStrategies: CaclulateDrawingAccrualEventHandlers = {
-  CalculateMarketDrawingAccrual: calculateMarketDrawingAccrual,
-  CalculateFixedDrawingAccrual: calculateFixedDrawingAccrual,
-}
+const calculateDrawingAccrualStrategies: CaclulateDrawingAccrualEventHandlers =
+  {
+    CalculateMarketDrawingAccrual: calculateMarketDrawingAccrual,
+    CalculateFixedDrawingAccrual: calculateFixedDrawingAccrual,
+  }
 
 export default calculateDrawingAccrualStrategies

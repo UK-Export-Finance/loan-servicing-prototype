@@ -13,7 +13,7 @@ import DrawingAccrualService from './drawingAccrual/service'
     StrategyService,
     RepaymentsService,
     FacilityFeeService,
-    DrawingAccrualService
+    DrawingAccrualService,
   ],
   exports: [StrategyService],
 })

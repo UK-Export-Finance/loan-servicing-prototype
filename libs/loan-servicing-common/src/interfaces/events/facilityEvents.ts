@@ -1,8 +1,6 @@
 import { NewDrawingRequestDto } from '../drawing'
 import { NewFacilityRequestDto } from '../facility'
-import {
-  FacilityFeeStrategyOption,
-} from '../strategies/facilityFee'
+import { FacilityFeeStrategyOption } from '../strategies/facilityFee'
 import { EventBase } from './eventBase'
 
 type FacilityEventBase<
@@ -30,9 +28,9 @@ export type AddDrawingToFacilityEvent = FacilityEventBase<
 >
 
 export type AddFacilityFeeEvent = FacilityEventBase<
-'AddFacilityFee',
-1,
-FacilityFeeStrategyOption
+  'AddFacilityFee',
+  1,
+  FacilityFeeStrategyOption
 >
 
 export type FacilityEvent =

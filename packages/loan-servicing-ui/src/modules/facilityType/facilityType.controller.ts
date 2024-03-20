@@ -31,7 +31,9 @@ class FacilityTypeController {
   @Render('edit-facility-type')
   renderCreateFacilityTypePage(): CreateFacilityTypeNjkInput {
     return {
-      drawingAccrualSelectOptions: buildSelectOptionsFromStrings(drawingAccrualStrategyNames),
+      drawingAccrualSelectOptions: buildSelectOptionsFromStrings(
+        drawingAccrualStrategyNames,
+      ),
       repaymentsSelectOptions,
       facilityFeeSelectOptions,
     }

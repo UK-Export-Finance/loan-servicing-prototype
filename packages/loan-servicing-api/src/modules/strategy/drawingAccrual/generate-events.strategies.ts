@@ -7,8 +7,9 @@ import {
   MarketDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
 
-export type GetDrawingAccrualEventsStrategy<T extends DrawingAccrualStrategyOption> =
-  (facility: Drawing, option: T) => CalculateDrawingAccrualEvent[]
+export type GetDrawingAccrualEventsStrategy<
+  T extends DrawingAccrualStrategyOption,
+> = (facility: Drawing, option: T) => CalculateDrawingAccrualEvent[]
 
 export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
   FixedDrawingAccrualStrategyOption

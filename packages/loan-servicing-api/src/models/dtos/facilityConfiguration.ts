@@ -103,8 +103,7 @@ export class FacilityFeeDtoClass implements FacilityFee {
   })
   @ValidateNested({ each: true })
   @IsArray()
-  config!: (
+  config!:
     | AccruingFacilityFeeStrategyOptionDtoClass
     | FixedFacilityFeeStrategyOptionDtoClass
-  )
 }

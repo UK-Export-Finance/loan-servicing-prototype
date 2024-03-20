@@ -26,4 +26,3 @@ export const repaymentsSelectOptions: NunjuckSelectInputOption<RepaymentStrategy
 
 export const facilityFeeSelectOptions: NunjuckSelectInputOption<FacilityFeeStrategyName>[] =
   buildSelectOptionsFromStrings(facilityFeeStrategyNames)
-

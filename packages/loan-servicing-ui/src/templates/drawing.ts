@@ -13,5 +13,5 @@ export type DrawingNjkInput = {
   withdrawalsSummaryProps: GovUkSummaryListProps
   repaymentsSummaryListProps: GovUkSummaryListProps
 } & EventTableProps &
-  TransactionTableProps
-  & SetDateInputProps
+  TransactionTableProps &
+  SetDateInputProps

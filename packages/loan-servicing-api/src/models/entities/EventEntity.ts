@@ -24,7 +24,7 @@ class EventEntity<T extends LoanServicingEvent> implements UntypedEventClass {
   entityType!: T['entityType']
 
   @Column()
-  isSoftDeleted!: boolean;
+  isSoftDeleted!: boolean
 
   @Column({ type: 'nvarchar' })
   type!: T['type']

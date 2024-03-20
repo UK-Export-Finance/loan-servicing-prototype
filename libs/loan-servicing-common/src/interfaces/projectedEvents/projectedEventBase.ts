@@ -2,7 +2,12 @@ import { EntityWithEvents, EventBase, UntypedEvent } from '../events/eventBase'
 
 export type ProjectEvent<T extends UntypedEvent> = Pick<
   T,
-  'effectiveDate' | 'eventData' | 'type' | 'streamId' | 'entityType' | 'shouldProcessIfFuture'
+  | 'effectiveDate'
+  | 'eventData'
+  | 'type'
+  | 'streamId'
+  | 'entityType'
+  | 'shouldProcessIfFuture'
 >
 
 export type ProjectedEventBase<

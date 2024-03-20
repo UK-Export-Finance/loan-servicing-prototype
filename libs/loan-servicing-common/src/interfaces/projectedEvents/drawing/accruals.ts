@@ -2,9 +2,7 @@ import {
   FixedDrawingAccrualStrategyOption,
   MarketDrawingAccrualStrategyOption,
 } from '../../strategies/drawingAccruals'
-import {
-  ProjectedDrawingEventBase,
-} from '../projectedEventBase'
+import { ProjectedDrawingEventBase } from '../projectedEventBase'
 
 export type CalculateFixedDrawingAccrualEvent = ProjectedDrawingEventBase<
   'CalculateFixedDrawingAccrual',

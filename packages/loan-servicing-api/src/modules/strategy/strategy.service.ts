@@ -7,7 +7,8 @@ class StrategyService {
   constructor(
     @Inject(RepaymentsService) private repaymentsService: RepaymentsService,
     @Inject(FacilityFeeService) private facilityFeeService: FacilityFeeService,
-    @Inject(DrawingAccrualService) private drawingAccrualService: DrawingAccrualService,
+    @Inject(DrawingAccrualService)
+    private drawingAccrualService: DrawingAccrualService,
   ) {}
 
   getRepaymentEvents = this.repaymentsService.createRepaymentEvents
@@ -19,8 +20,9 @@ class StrategyService {
   calculateFacilityFee = this.facilityFeeService.calculateFee
 
   calculateDrawingAccrual = this.drawingAccrualService.calculateAccrual
-  
-  getEventsForDrawingAccrual = this.drawingAccrualService.generateEventsForAccrual
+
+  getEventsForDrawingAccrual =
+    this.drawingAccrualService.generateEventsForAccrual
 }
 
 export default StrategyService

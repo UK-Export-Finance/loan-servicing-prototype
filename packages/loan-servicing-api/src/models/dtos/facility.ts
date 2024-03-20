@@ -15,9 +15,7 @@ import {
 } from 'loan-servicing-common'
 import { Transform, Type } from 'class-transformer'
 import { DrawingDtoClass } from './drawing'
-import {
-  FacilityFeeDtoClass,
-} from './facilityConfiguration'
+import { FacilityFeeDtoClass } from './facilityConfiguration'
 
 export class FacilityResponseDtoClass implements FacilityResponseDto {
   private readonly _type = 'FacilityDto'

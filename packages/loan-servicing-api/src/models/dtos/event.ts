@@ -12,7 +12,7 @@ export class UntypedEventClass implements UntypedEvent {
 
   entityType!: EntityWithEvents
 
-  isSoftDeleted!: boolean;
+  isSoftDeleted!: boolean
 
   type!: string
 

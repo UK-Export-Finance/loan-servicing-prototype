@@ -118,7 +118,7 @@ class FacilityEventHandlingService
       ...creationEvent.eventData,
       repayments: [],
       drawnAmount: '0',
-      outstandingPrincipal: '0'
+      outstandingPrincipal: '0',
     }
 
     return this.drawingRepo.create(drawingToCreate)

@@ -30,7 +30,7 @@ jobs:
         run: |
           npm install
           npm run build --workspaces
-      
+
       - name: Install locally for UI package
         working-directory: ./packages/loan-servicing-ui
         run: |
@@ -54,9 +54,8 @@ jobs:
         with:
           name: applications
           path: |
-           ./packages/loan-servicing-ui/ui-release.zip
-           ./packages/loan-servicing-api/api-release.zip
-          
+            ./packages/loan-servicing-ui/ui-release.zip
+            ./packages/loan-servicing-api/api-release.zip
 
   deploy-api:
     runs-on: ubuntu-latest
@@ -64,7 +63,7 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-api-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
@@ -89,16 +88,16 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-ui-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: applications
-      
+
       - name: Unzip artifact for deployment
         run: unzip loan-servicing-ui/ui-release.zip
-      
+
       - name: 'Deploy UI Server'
         id: deploy-to-ui-webapp
         uses: azure/webapps-deploy@v2
