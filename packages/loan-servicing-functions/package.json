@@ -14,7 +14,7 @@
   "dependencies": {
     "@azure/functions": "^4.0.0",
     "axios": "^1.6.7",
-    "loan-servicing-common": "../../libs/loan-servicing-common",
+    "loan-servicing-common": "*",
     "nodemon": "^3.0.3"
   },
   "devDependencies": {

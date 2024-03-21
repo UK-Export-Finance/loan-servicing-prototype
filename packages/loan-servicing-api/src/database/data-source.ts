@@ -13,6 +13,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   username: process.env.SQL_DB_USER,
   password: process.env.SQL_DB_PASSWORD,
   database: process.env.SQL_DB_NAME,
+  schema: 'dbo',
   synchronize: true,
   entities: [
     EventEntity,
