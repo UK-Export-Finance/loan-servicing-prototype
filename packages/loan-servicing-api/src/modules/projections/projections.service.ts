@@ -64,6 +64,7 @@ class ProjectionsService {
         this.transactionRepo.insert(chunk as TransactionEntity[]),
       ),
     )
+    await this.createPendingEvents(projection)
     const transactionEntities = transactionSaveResults.reduce(
       (res: TransactionEntity[], curr) =>
         res.concat(curr.generatedMaps as TransactionEntity[]),
@@ -97,6 +98,17 @@ class ProjectionsService {
       facility: facilityEntity,
       transactions: transactionEntities,
     }
+  }
+
+  async createPendingEvents(projection: FacilityProjection): Promise<void> {
+    await Promise.all(
+      projection.facility.drawings.map((d) =>
+        this.drawingEventHandler.addPendingRepayments(
+          d.repayments.filter((r) => r.date > projection.projectionDate),
+          d,
+        ),
+      ),
+    )
   }
 
   @Transactional()

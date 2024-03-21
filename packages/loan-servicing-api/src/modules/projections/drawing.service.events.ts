@@ -199,7 +199,7 @@ class DrawingEventHandlingService
       drawing,
       event.eventData,
     )
-    await this.addPendingRepayments(repayments, drawing)
+    // await this.addPendingRepayments(repayments, drawing)
     drawing.repayments = repayments
     drawing.drawingConfig.repaymentsStrategy = event.eventData
   }
