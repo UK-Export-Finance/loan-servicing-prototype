@@ -103,12 +103,13 @@ class DrawingEventHandlingService
     projection.addEvents(calculationEvents)
     drawing.accruals.push({
       id: event.eventData.accrualId,
-      balance: '0',
+      currentValue: '0',
+      finalValue: '0',
       config: event.eventData,
     })
   }
 
-  CalculateFacilityFee: EventHandler<CalculateDrawingAccrualEvent> = async (
+  CalculateDrawingAccrual: EventHandler<CalculateDrawingAccrualEvent> = async (
     sourceEvent,
     projection,
   ) => {
@@ -119,7 +120,7 @@ class DrawingEventHandlingService
     )
     const { accrualId } = sourceEvent.eventData
     const accrual = drawing.accruals.find((f) => f.id === accrualId)!
-    accrual.balance = Big(accrual.balance ?? '0')
+    accrual.currentValue = Big(accrual.currentValue ?? '0')
       .add(accruedAmount)
       .toFixed(2)
     projection.transactions.push({
@@ -129,13 +130,13 @@ class DrawingEventHandlingService
       reference: 'Drawing Accrual',
       valueChanged: `accrualBalance:${accrual.id}`,
       changeInValue: accruedAmount,
-      valueAfterTransaction: accrual.balance,
+      valueAfterTransaction: accrual.currentValue,
     })
   }
 
-  CalculateFixedDrawingAccrual = this.CalculateFacilityFee
+  CalculateFixedDrawingAccrual = this.CalculateDrawingAccrual
 
-  CalculateMarketDrawingAccrual = this.CalculateFacilityFee
+  CalculateMarketDrawingAccrual = this.CalculateDrawingAccrual
 
   RevertWithdrawal: EventHandler<RevertWithdrawalEvent> = async (
     sourceEvent,

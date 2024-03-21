@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 import {
+  accrualsToTable,
   drawingToDrawingSummary,
   drawingToRepaymentsSummary,
 } from 'mappers/nunjuck-mappers/drawingSummary'
@@ -74,6 +75,7 @@ class DrawingController {
       drawingCreated,
       transactionRows: mapTransactionsToTable(transactions!),
       drawingSummaryListProps: drawingToDrawingSummary(drawing),
+      accrualRows: accrualsToTable(drawing),
       repaymentsSummaryListProps: drawingToRepaymentsSummary(
         facilityId,
         drawing,

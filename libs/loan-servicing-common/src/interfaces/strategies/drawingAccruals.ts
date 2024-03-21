@@ -44,6 +44,7 @@ export type DrawingAccrualStrategyName = DrawingAccrualStrategyOption['name']
 
 export type DrawingAccrual = {
   id: string
-  balance: string
+  currentValue: string
+  finalValue: string
   config: DrawingAccrualStrategyOption
 }

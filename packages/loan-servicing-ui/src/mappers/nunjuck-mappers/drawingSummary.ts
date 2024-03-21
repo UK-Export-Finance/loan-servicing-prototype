@@ -1,5 +1,6 @@
-import { DrawingDto, Repayment } from 'loan-servicing-common'
-import { GovUkSummaryListProps } from 'types/nunjucks'
+import { DrawingAccrual, DrawingDto, Repayment } from 'loan-servicing-common'
+import { GovUkSummaryListProps, NunjuckTableRow } from 'types/nunjucks'
+import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 // eslint-disable-next-line import/prefer-default-export
 export const drawingToDrawingSummary = (
@@ -14,7 +15,10 @@ export const drawingToDrawingSummary = (
         },
         value: {
           html: drawing.accruals
-            .map(({ id, balance }) => `Fee ${id.slice(0, 5)}: £${balance}`)
+            .map(
+              ({ id, currentValue }) =>
+                `Fee ${id.slice(0, 5)}: £${currentValue}`,
+            )
             .join('<br />'),
         },
         actions: {
@@ -100,3 +104,32 @@ export const drawingToRepaymentsSummary = (
         },
   })),
 })
+
+const getAccrualTableRow = (
+  a: DrawingAccrual,
+): {
+  startDate: string
+  endDate: string
+  rate: string
+  currentBalance: string
+  finalBalance: string
+} => ({
+  startDate: new Date(a.config.effectiveDate).toLocaleDateString('en-GB'),
+  endDate: new Date(a.config.expiryDate).toLocaleDateString('en-GB'),
+  rate: a.config.accrualRate,
+  currentBalance: a.currentValue,
+  finalBalance: a.finalValue,
+})
+
+export const accrualsToTable = ({ accruals }: DrawingDto): NunjuckTableRow[] =>
+  accruals
+    .map(getAccrualTableRow)
+    .map((r) =>
+      buildNunjucksTableRow(r, [
+        'startDate',
+        'endDate',
+        'rate',
+        'currentBalance',
+        'finalBalance',
+      ]),
+    )

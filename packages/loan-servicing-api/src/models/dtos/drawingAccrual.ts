@@ -97,7 +97,10 @@ export class DrawingAccrualDtoClass implements DrawingAccrual {
   id!: string
 
   @ApiProperty()
-  balance!: string
+  currentValue!: string
+
+  @ApiProperty()
+  finalValue!: string
 
   @ApiProperty({
     oneOf: refs(

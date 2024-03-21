@@ -1,5 +1,5 @@
 import { DrawingDto } from 'loan-servicing-common'
-import { GovUkSummaryListProps } from 'types/nunjucks'
+import { GovUkSummaryListProps, NunjuckTableRow } from 'types/nunjucks'
 import {
   EventTableProps,
   TransactionTableProps,
@@ -12,6 +12,7 @@ export type DrawingNjkInput = {
   drawingSummaryListProps: GovUkSummaryListProps
   withdrawalsSummaryProps: GovUkSummaryListProps
   repaymentsSummaryListProps: GovUkSummaryListProps
+  accrualRows: NunjuckTableRow[]
 } & EventTableProps &
   TransactionTableProps &
   SetDateInputProps

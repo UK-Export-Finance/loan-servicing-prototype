@@ -5,6 +5,7 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% from "macros/transaction-tables.njk" import transactionTable %}
 {% from "macros/transaction-tables.njk" import eventTable %}
@@ -40,6 +41,29 @@
   {{ govukSummaryList(withdrawalsSummaryProps) }}
 
   {{ govukSummaryList(repaymentsSummaryListProps) }}
+
+  {{ govukTable({
+        caption: "Accruals",
+        captionClasses: "govuk-table__caption--m",
+        head: [
+        {
+            text: "Start"
+        },
+        {
+            text: "End"
+        },
+        {
+            text: "Fixed Rate"
+        },
+        {
+            text: "Current Value"
+        },
+        {
+            text: "Final Fee"
+        }
+        ],
+        rows: accrualRows
+    }) }}
 
   {{ transactionTable(transactionRows) }}
   {{ eventTable(eventRows) }}
