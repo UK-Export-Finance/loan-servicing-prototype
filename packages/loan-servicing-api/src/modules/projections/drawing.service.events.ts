@@ -100,13 +100,8 @@ class DrawingEventHandlingService
       drawing,
       event.eventData,
     )
-    projection.addEvents(calculationEvents)
-    drawing.accruals.push({
-      id: event.eventData.accrualId,
-      currentValue: '0',
-      finalValue: '0',
-      config: event.eventData,
-    })
+    projection.addEvents(calculationEvents.flatMap((x) => x.events))
+    drawing.accruals.push(...calculationEvents.flatMap((x) => x.accrual))
   }
 
   CalculateDrawingAccrual: EventHandler<CalculateDrawingAccrualEvent> = async (

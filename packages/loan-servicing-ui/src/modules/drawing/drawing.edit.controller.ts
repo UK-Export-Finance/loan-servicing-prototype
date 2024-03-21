@@ -157,6 +157,7 @@ class EditDrawingController {
     const updateDto: AddFixedDrawingAccrualDto = {
       effectiveDate: getDateFromDateInput(requestDto, 'effectiveDate'),
       expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
+      monthsBetweenPayment: 2,
       accrualRate: requestDto.accrualRate,
     }
     await this.drawingService.addFixedDrawingAccrual(
@@ -180,6 +181,7 @@ class EditDrawingController {
     const updateDto: AddMarketDrawingAccrualDto = {
       effectiveDate: getDateFromDateInput(requestDto, 'effectiveDate'),
       expiryDate: getDateFromDateInput(requestDto, 'expiryDate'),
+      monthsBetweenPayment: 2,
       accrualRate: requestDto.accrualRate,
     }
     await this.drawingService.addMarketDrawingAccrual(

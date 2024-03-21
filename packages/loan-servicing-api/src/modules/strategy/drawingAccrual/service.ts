@@ -3,10 +3,11 @@ import {
   DrawingAccrualStrategyOption,
   CalculateDrawingAccrualEvent,
   Drawing,
+  FixedDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
 import {
-  GetDrawingAccrualEventsStrategy,
-  drawingAccrualEventStrategies,
+  AccrualWithEvents,
+  getFixedDrawingAccrualEvents,
 } from './generate-events.strategies'
 import calculateDrawingAccrualStrategies, {
   CalculateDrawingAccrualStrategy,
@@ -27,12 +28,12 @@ class DrawingAccrualService {
   generateEventsForAccrual = <T extends DrawingAccrualStrategyOption>(
     drawing: Drawing,
     option: T,
-  ): CalculateDrawingAccrualEvent[] => {
-    const generateEvents = drawingAccrualEventStrategies[
-      option.name
-    ] as GetDrawingAccrualEventsStrategy<T>
-    return generateEvents(drawing, option)
-  }
+  ): AccrualWithEvents[] => 
+    // const generateEvents = drawingAccrualEventStrategies[
+    //   option.name
+    // ] as GetDrawingAccrualEventsStrategy<T>
+     getFixedDrawingAccrualEvents(drawing, option as FixedDrawingAccrualStrategyOption)
+  
 }
 
 export default DrawingAccrualService

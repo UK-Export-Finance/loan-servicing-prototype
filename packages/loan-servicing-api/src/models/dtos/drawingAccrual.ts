@@ -45,6 +45,9 @@ export class FixedDrawingAccrualStrategyOptionDtoClass
 
   @ApiProperty()
   accrualRate!: string
+
+  @ApiProperty()
+  monthsBetweenPayment!: number
 }
 
 export class AddFixedDrawingAccrualDtoClass
@@ -79,6 +82,9 @@ export class MarketDrawingAccrualStrategyOptionDtoClass
 
   @ApiProperty()
   accrualRate!: string
+  
+  @ApiProperty()
+  monthsBetweenPayment!: number
 }
 
 export class AddMarketDrawingAccrualDtoClass

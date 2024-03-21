@@ -16,6 +16,7 @@ export type FixedDrawingAccrualStrategyOption = AccrualStrategyOptionBase<
   'FixedDrawingAccrual',
   {
     accrualRate: string
+    monthsBetweenPayment: number
   }
 >
 
@@ -28,6 +29,7 @@ export type MarketDrawingAccrualStrategyOption = AccrualStrategyOptionBase<
   'MarketDrawingAccrual',
   {
     accrualRate: string
+    monthsBetweenPayment: number
   }
 >
 
