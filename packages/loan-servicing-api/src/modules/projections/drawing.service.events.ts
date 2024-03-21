@@ -9,10 +9,15 @@ import {
   AddDrawingAccrualEvent,
   CalculateDrawingAccrualEvent,
   RecordDrawingRepaymentEvent,
+  Repayment,
+  Drawing,
 } from 'loan-servicing-common'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
 import { EventHandler, IEventHandlerService } from 'types/eventHandler'
+import PendingEventService, {
+  NewPendingEvent,
+} from 'modules/pendingEvents/pendingEvent.service'
 import FacilityProjection from './projection'
 
 @Injectable()
@@ -21,6 +26,8 @@ class DrawingEventHandlingService
 {
   constructor(
     @Inject(StrategyService) private strategyService: StrategyService,
+    @Inject(PendingEventService)
+    private pendingEventService: PendingEventService,
   ) {}
 
   applyEvent = async <T extends DrawingProjectedEvent>(
@@ -163,6 +170,26 @@ class DrawingEventHandlingService
     )
   }
 
+  async addPendingRepayments(
+    repayments: Repayment[],
+    drawing: Drawing,
+  ): Promise<void> {
+    const repaymentEvents = repayments.map<
+      NewPendingEvent<RecordDrawingRepaymentEvent>
+    >((r) => ({
+      effectiveDate: new Date(),
+      dueDate: r.date,
+      notificationDate: new Date(r.date.getTime() - 1000 * 60 * 60 * 24 * 7),
+      entityType: 'drawing',
+      type: 'RecordDrawingRepayment',
+      typeVersion: 1,
+      shouldProcessIfFuture: false,
+      streamId: drawing.streamId,
+      eventData: { repaymentId: r.id, amount: r.expectedAmount },
+    }))
+    await this.pendingEventService.addPendingEvents(repaymentEvents)
+  }
+
   SetDrawingRepayments: EventHandler<SetDrawingRepaymentsEvent> = async (
     event,
     projection,
@@ -172,7 +199,7 @@ class DrawingEventHandlingService
       drawing,
       event.eventData,
     )
-    // projection.addEvents(repaymentEvents)
+    await this.addPendingRepayments(repayments, drawing)
     drawing.repayments = repayments
     drawing.drawingConfig.repaymentsStrategy = event.eventData
   }
@@ -194,7 +221,9 @@ class DrawingEventHandlingService
         `repayment with id ${sourceEvent.eventData.repaymentId} was not found`,
       )
     }
-    repayment.paidAmount = Big(repayment.paidAmount).add(paymentAmount).toFixed(2)
+    repayment.paidAmount = Big(repayment.paidAmount)
+      .add(paymentAmount)
+      .toFixed(2)
     repayment.settled = Big(repayment.paidAmount).eq(repayment.expectedAmount)
     projection.transactions.push({
       streamId: drawing.streamId,

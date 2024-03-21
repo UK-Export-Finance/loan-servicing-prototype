@@ -18,8 +18,8 @@ import DrawingEntity from 'models/entities/DrawingEntity'
 import { InjectRepository } from '@nestjs/typeorm'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import { Repository } from 'typeorm'
+import PendingEventService from 'modules/pendingEvents/pendingEvent.service'
 import FacilityProjection from './projection'
-import DrawingEventHandlingService from './drawing.service.events'
 
 @Injectable()
 class FacilityEventHandlingService
@@ -28,8 +28,8 @@ class FacilityEventHandlingService
   constructor(
     @Inject(EventService) private eventService: EventService,
     @Inject(StrategyService) private strategyService: StrategyService,
-    @Inject(DrawingEventHandlingService)
-    private drawingEventService: DrawingEventHandlingService,
+    @Inject(PendingEventService)
+    private pendingEventService: PendingEventService,
     @InjectRepository(TransactionEntity)
     private transactionRepo: Repository<TransactionEntity>,
     @InjectRepository(DrawingEntity)
@@ -91,7 +91,10 @@ class FacilityEventHandlingService
     drawingEvents: DrawingEvent[]
     drawingStreamVersion: number
   }> => {
-    await this.transactionRepo.delete({ streamId: event.eventData.streamId })
+    await Promise.all([
+      this.transactionRepo.delete({ streamId: event.eventData.streamId }),
+      this.pendingEventService.clearPendingEvents(event.eventData.streamId),
+    ])
 
     const drawing = this.getDrawingAtCreation(event)
     const drawingEvents =

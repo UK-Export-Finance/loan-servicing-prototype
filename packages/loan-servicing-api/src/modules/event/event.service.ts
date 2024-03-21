@@ -129,8 +129,8 @@ class EventService {
   parseEvent<T extends LoanServicingEvent>(rawEvent: EventEntity<T>): T {
     const getClassConstructor = eventTypeToEventClassDefinition[
       rawEvent.type
-    ] as unknown as GetClassConstructorForEventData<T>
-    const classConstructor = getClassConstructor(rawEvent)
+    ] as unknown as GetClassConstructorForEventData<T['eventData']>
+    const classConstructor = getClassConstructor(rawEvent.eventData)
 
     const eventData = plainToInstance(classConstructor, rawEvent.eventData)
     return {

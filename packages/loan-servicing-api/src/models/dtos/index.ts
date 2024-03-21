@@ -1,12 +1,6 @@
 import { ClassConstructor } from 'class-transformer'
-import {
-  AddDrawingAccrualEvent,
-  AddFacilityFeeEvent,
-  LoanServicingEvent,
-  SetDrawingRepaymentsEvent,
-} from 'loan-servicing-common'
+import { LoanServicingEvent } from 'loan-servicing-common'
 import { NotImplementedException } from '@nestjs/common'
-import EventEntity from 'models/entities/EventEntity'
 import {
   AdjustFacilityAmountDtoClass,
   NewFacilityRequestDtoClass,
@@ -30,15 +24,16 @@ import {
 } from './drawingAccrual'
 import { RecordDrawingRepaymentDtoClass } from './drawingRepayment'
 
-export type GetClassConstructorForEventData<T extends LoanServicingEvent> = (
-  event: EventEntity<T>,
-) => ClassConstructor<T['eventData']>
+export type GetClassConstructorForEventData<
+  T extends LoanServicingEvent['eventData'],
+> = (event: T) => ClassConstructor<T>
 
 const eventTypeToEventClassDefinition: {
   [key in LoanServicingEvent['type']]: GetClassConstructorForEventData<
-    Extract<LoanServicingEvent, { type: key }>
+    Extract<LoanServicingEvent, { type: key }>['eventData']
   >
 } = {
+  // Events
   CreateNewFacility: () => NewFacilityRequestDtoClass,
   AdjustFacilityAmount: () => AdjustFacilityAmountDtoClass,
   WithdrawFromDrawing: () => AddWithdrawalToDrawingDtoClass,
@@ -46,8 +41,8 @@ const eventTypeToEventClassDefinition: {
   AddDrawingToFacility: () => NewDrawingRequestDtoClass,
   RevertWithdrawal: () => RevertWithdrawalDtoClass,
   RecordDrawingRepayment: () => RecordDrawingRepaymentDtoClass,
-  AddFacilityFee: (event: AddFacilityFeeEvent) => {
-    switch (event.eventData.name) {
+  AddFacilityFee: (eventData) => {
+    switch (eventData.name) {
       case 'AccruingFacilityFee':
         return AccruingFacilityFeeStrategyOptionDtoClass
       case 'FixedFacilityFee':
@@ -56,8 +51,8 @@ const eventTypeToEventClassDefinition: {
         throw new NotImplementedException('Add facility event not supported')
     }
   },
-  AddDrawingAccrual: (event: AddDrawingAccrualEvent) => {
-    switch (event.eventData.name) {
+  AddDrawingAccrual: (eventData) => {
+    switch (eventData.name) {
       case 'FixedDrawingAccrual':
         return FixedDrawingAccrualStrategyOptionDtoClass
       case 'MarketDrawingAccrual':
@@ -66,8 +61,8 @@ const eventTypeToEventClassDefinition: {
         throw new NotImplementedException('Add facility event not supported')
     }
   },
-  SetDrawingRepayments: (event: SetDrawingRepaymentsEvent) => {
-    switch (event.eventData.name) {
+  SetDrawingRepayments: (eventData) => {
+    switch (eventData.name) {
       case 'Regular':
         return RegularRepaymentStrategyOptionsDtoClass
       case 'Manual':
@@ -78,6 +73,11 @@ const eventTypeToEventClassDefinition: {
         )
     }
   },
+  // ProjectedEvents
+  // CalculateAccruingFacilityFee: () => {throw new NotImplementedException()},
+  // CalculateFixedFacilityFee: () => {throw new NotImplementedException()},
+  // CalculateFixedDrawingAccrual: () => {throw new NotImplementedException()},
+  // CalculateMarketDrawingAccrual: () => {throw new NotImplementedException()},
 }
 
 export default eventTypeToEventClassDefinition

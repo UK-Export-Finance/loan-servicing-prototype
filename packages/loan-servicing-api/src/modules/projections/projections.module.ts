@@ -5,6 +5,7 @@ import TransactionEntity from 'models/entities/TransactionEntity'
 import EventModule from 'modules/event/event.module'
 import StrategyModule from 'modules/strategy/strategy.module'
 import FacilityEntity from 'models/entities/FacilityEntity'
+import PendingEventModule from 'modules/pendingEvents/pendingEvent.module'
 import ProjectionsService from './projections.service'
 import DrawingEventHandlingService from './drawing.service.events'
 import FacilityEventHandlingService from './facility.service.events'
@@ -12,6 +13,7 @@ import FacilityEventHandlingService from './facility.service.events'
 @Module({
   imports: [
     EventModule,
+    PendingEventModule,
     TypeOrmModule.forFeature([
       DrawingEntity,
       TransactionEntity,
