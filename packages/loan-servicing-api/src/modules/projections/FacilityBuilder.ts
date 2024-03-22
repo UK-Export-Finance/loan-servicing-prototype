@@ -50,7 +50,7 @@ class DrawingBuilder {
 
   private repayments: Repayment[] = []
 
-  constructor(private _drawing: Omit<Drawing, 'facility'>) {}
+  constructor(private readonly _drawing: Omit<Drawing, 'facility'>) {}
 
   public readonly id = this._drawing.streamId
 
@@ -105,10 +105,7 @@ class DrawingBuilder {
   }
 
   updateDrawingValues = (updates: Partial<NonNestedValues<Drawing>>): this => {
-    this._drawing = {
-      ...this._drawing,
-      ...updates,
-    }
+    Object.assign(this._drawing, updates)
     return this
   }
 }
@@ -125,7 +122,7 @@ class FacilityBuilder {
   private facilityFees: FacilityFee[] = []
 
   constructor(
-    private _facility: Omit<Facility, 'drawings'>,
+    private readonly _facility: Omit<Facility, 'drawings'>,
     private _unprocessedEvents: ProjectedEvent[],
     private _projectionDate: Date,
   ) {}
@@ -220,10 +217,7 @@ class FacilityBuilder {
   updateFacilityValues = (
     updates: Partial<NonNestedValues<Facility>>,
   ): this => {
-    this._facility = {
-      ...this._facility,
-      ...updates,
-    }
+    Object.assign(this._facility, updates)
     return this
   }
 
