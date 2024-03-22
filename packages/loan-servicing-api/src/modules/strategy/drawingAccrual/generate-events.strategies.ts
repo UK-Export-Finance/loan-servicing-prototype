@@ -4,7 +4,7 @@ import {
   DrawingAccrualStrategyOption,
   FixedDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
-import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
+import { InProgressDrawing } from 'modules/projections/builders/DrawingBuilder'
 
 export type AccrualWithEvents = {
   accrual: DrawingAccrual

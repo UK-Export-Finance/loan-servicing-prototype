@@ -4,7 +4,7 @@ import {
   CalculateMarketDrawingAccrualEvent,
 } from 'loan-servicing-common'
 import { calculateAccrual } from 'maths/accrualCalculations'
-import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
+import { InProgressDrawing } from 'modules/projections/builders/DrawingBuilder'
 
 export type CalculateDrawingAccrualStrategy<
   T extends CalculateDrawingAccrualEvent,

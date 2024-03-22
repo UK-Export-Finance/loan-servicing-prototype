@@ -19,7 +19,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import { Repository } from 'typeorm'
 import PendingEventService from 'modules/pendingEvents/pendingEvent.service'
-import FacilityBuilder from './FacilityBuilder'
+import FacilityBuilder from './builders/FacilityBuilder'
 
 @Injectable()
 class FacilityEventHandlingService

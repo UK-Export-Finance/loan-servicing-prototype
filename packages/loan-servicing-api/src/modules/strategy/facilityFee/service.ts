@@ -3,7 +3,7 @@ import {
   CalculateFacilityFeeEvent,
   FacilityFeeStrategyOption,
 } from 'loan-servicing-common'
-import { InProgressFacility } from 'modules/projections/FacilityBuilder'
+import { InProgressFacility } from 'modules/projections/builders/FacilityBuilder'
 import {
   GetFacilityFeeEventsStrategy,
   facilityFeeEventStrategies,

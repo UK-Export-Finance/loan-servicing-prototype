@@ -4,7 +4,7 @@ import {
   CalculateDrawingAccrualEvent,
   FixedDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
-import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
+import { InProgressDrawing } from 'modules/projections/builders/DrawingBuilder'
 import {
   AccrualWithEvents,
   getFixedDrawingAccrualEvents,

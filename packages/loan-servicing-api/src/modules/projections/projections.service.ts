@@ -20,7 +20,7 @@ import DrawingEventHandlingService from 'modules/projections/drawing.service.eve
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityEventHandlingService from './facility.service.events'
-import FacilityBuilder from './FacilityBuilder'
+import FacilityBuilder from './builders/FacilityBuilder'
 
 @Injectable()
 class ProjectionsService {

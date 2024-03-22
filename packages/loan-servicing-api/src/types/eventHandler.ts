@@ -1,5 +1,5 @@
 import { ProjectedEvent } from 'loan-servicing-common'
-import FacilityBuilder from 'modules/projections/FacilityBuilder'
+import FacilityBuilder from 'modules/projections/builders/FacilityBuilder'
 
 export type EventHandler<T extends ProjectedEvent> = (
   event: T,
