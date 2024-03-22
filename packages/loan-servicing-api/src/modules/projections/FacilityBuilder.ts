@@ -43,21 +43,32 @@ const deepCopy = <T>(x: T): T => {
   return JSON.parse(JSON.stringify(x, to), from) as T
 }
 
-export type InProgressDrawing = DeepReadonly<Omit<Drawing, 'facility'>>
+export type InProgressDrawing = DeepReadonly<
+  Omit<Drawing, 'facility' | 'accruals' | 'repayments'>
+>
 
 class DrawingBuilder {
   private accruals: DrawingAccrual[] = []
 
   private repayments: Repayment[] = []
 
-  constructor(private readonly _drawing: Omit<Drawing, 'facility'>) {}
+  constructor(
+    private readonly _drawing: Omit<
+      Drawing,
+      'facility' | 'accruals' | 'repayments'
+    >,
+  ) {}
 
   public readonly id = this._drawing.streamId
 
   public readonly drawing: InProgressDrawing = this._drawing
 
   build = (): Omit<Drawing, 'facility'> =>
-    deepCopy({ ...this._drawing, accruals: this.accruals })
+    deepCopy({
+      ...this._drawing,
+      accruals: this.accruals,
+      repayments: this.repayments,
+    })
 
   getAccrual = (id: string): Readonly<DrawingAccrual> => {
     const accrual = this.accruals.find((a) => a.id === id)!

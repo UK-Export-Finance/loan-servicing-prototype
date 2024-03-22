@@ -238,7 +238,7 @@ class DrawingEventHandlingService
     const repayment = drawingBuilder.getRepayment(repaymentId)
 
     const paidAmount = Big(repayment.paidAmount).add(paymentAmount).toFixed(2)
-    const settled = Big(repayment.paidAmount).eq(repayment.expectedAmount)
+    const settled = Big(paidAmount).eq(repayment.expectedAmount)
     drawingBuilder.updateRepaymentValue(repaymentId, { paidAmount, settled })
 
     projection.addTransactions({
