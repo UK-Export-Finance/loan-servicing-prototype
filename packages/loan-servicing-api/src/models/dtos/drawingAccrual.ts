@@ -82,7 +82,7 @@ export class MarketDrawingAccrualStrategyOptionDtoClass
 
   @ApiProperty()
   accrualRate!: string
-  
+
   @ApiProperty()
   monthsBetweenPayment!: number
 }

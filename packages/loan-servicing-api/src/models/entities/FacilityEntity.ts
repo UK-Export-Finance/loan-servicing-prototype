@@ -38,7 +38,7 @@ class FacilityEntity implements Facility {
 
   @Column()
   expiryDate!: Date
-  
+
   @Column()
   currentDate!: Date
 }

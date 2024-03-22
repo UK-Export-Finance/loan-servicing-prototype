@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { Injectable, Inject } from '@nestjs/common'
 import {
   DrawingProjectedEvent,

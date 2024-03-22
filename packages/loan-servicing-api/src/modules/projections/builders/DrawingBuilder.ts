@@ -1,35 +1,42 @@
-import { DeepReadonly, Drawing, DrawingAccrual, Repayment, NonNestedValues } from 'loan-servicing-common';
-import { deepCopy } from './builerUtils';
-
+import {
+  DeepReadonly,
+  Drawing,
+  DrawingAccrual,
+  Repayment,
+  NonNestedValues,
+} from 'loan-servicing-common'
+import { deepCopy } from './builerUtils'
 
 export type InProgressDrawing = DeepReadonly<
   Omit<Drawing, 'facility' | 'accruals' | 'repayments'>
 >
 export class DrawingBuilder {
-  private accruals: DrawingAccrual[] = [];
+  private accruals: DrawingAccrual[] = []
 
-  private repayments: Repayment[] = [];
+  private repayments: Repayment[] = []
 
   constructor(
     private readonly _drawing: Omit<
-      Drawing, 'facility' | 'accruals' | 'repayments'
-    >
-  ) { }
+      Drawing,
+      'facility' | 'accruals' | 'repayments'
+    >,
+  ) {}
 
-  public readonly id = this._drawing.streamId;
+  public readonly id = this._drawing.streamId
 
-  public readonly drawing: InProgressDrawing = this._drawing;
+  public readonly drawing: InProgressDrawing = this._drawing
 
-  build = (): Omit<Drawing, 'facility'> => deepCopy({
-    ...this._drawing,
-    accruals: this.accruals,
-    repayments: this.repayments,
-  });
+  build = (): Omit<Drawing, 'facility'> =>
+    deepCopy({
+      ...this._drawing,
+      accruals: this.accruals,
+      repayments: this.repayments,
+    })
 
   getAccrual = (id: string): Readonly<DrawingAccrual> => {
     const accrual = this.accruals.find((a) => a.id === id)!
     return accrual
-  };
+  }
 
   addAccruals(newAccruals: DrawingAccrual[] | DrawingAccrual): this {
     if (Array.isArray(newAccruals)) {
@@ -45,7 +52,8 @@ export class DrawingBuilder {
     return this
   }
 
-  getRepayment = (id: string): DeepReadonly<Repayment> => this.getMutableRepayment(id);
+  getRepayment = (id: string): DeepReadonly<Repayment> =>
+    this.getMutableRepayment(id)
 
   private getMutableRepayment(id: string): Repayment {
     const repayment = this.repayments.find((r) => r.id === id)
@@ -57,7 +65,7 @@ export class DrawingBuilder {
 
   updateRepaymentValue(
     id: string,
-    update: Partial<NonNestedValues<Repayment>>
+    update: Partial<NonNestedValues<Repayment>>,
   ): this {
     const repayment = this.getMutableRepayment(id)
     Object.assign(repayment, update)
@@ -68,10 +76,10 @@ export class DrawingBuilder {
     const accrual = this.accruals.find((a) => a.id === id)!
     accrual.currentValue = value
     return this
-  };
+  }
 
   updateDrawingValues = (updates: Partial<NonNestedValues<Drawing>>): this => {
     Object.assign(this._drawing, updates)
     return this
-  };
+  }
 }

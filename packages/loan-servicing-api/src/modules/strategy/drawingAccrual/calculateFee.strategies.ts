@@ -8,7 +8,7 @@ import { InProgressDrawing } from 'modules/projections/builders/DrawingBuilder'
 
 export type CalculateDrawingAccrualStrategy<
   T extends CalculateDrawingAccrualEvent,
-> = (facility:InProgressDrawing, event: T) => string
+> = (facility: InProgressDrawing, event: T) => string
 
 export const calculateFixedDrawingAccrual: CalculateDrawingAccrualStrategy<
   CalculateFixedDrawingAccrualEvent
