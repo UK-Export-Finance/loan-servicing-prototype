@@ -30,7 +30,7 @@ export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
     )
     const nextPaymentDue = endOfPeriod < expiryDate ? endOfPeriod : expiryDate
     const currentPeriodEvents: CalculateDrawingAccrualEvent[] = []
-    const id = `option.accrualId-${nextPaymentDue.toISOString().split('T')[0]}`
+    const id = `${option.accrualId}-${nextPaymentDue.toISOString().split('T')[0]}`
     const accrualWithEvents: AccrualWithEvents = {
       accrual: {
         id,

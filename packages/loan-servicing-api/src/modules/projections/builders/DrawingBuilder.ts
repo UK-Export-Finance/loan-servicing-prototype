@@ -7,20 +7,13 @@ import {
 } from 'loan-servicing-common'
 import { deepCopy } from './builerUtils'
 
-export type InProgressDrawing = DeepReadonly<
-  Omit<Drawing, 'facility' | 'accruals' | 'repayments'>
->
+export type InProgressDrawing = DeepReadonly<NonNestedValues<Drawing>>
 export class DrawingBuilder {
   private accruals: DrawingAccrual[] = []
 
   private repayments: Repayment[] = []
 
-  constructor(
-    private readonly _drawing: Omit<
-      Drawing,
-      'facility' | 'accruals' | 'repayments'
-    >,
-  ) {}
+  constructor(private readonly _drawing: NonNestedValues<Drawing>) {}
 
   public readonly id = this._drawing.streamId
 

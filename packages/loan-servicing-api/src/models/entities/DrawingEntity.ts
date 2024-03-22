@@ -1,15 +1,12 @@
 import {
   ArrayOfClassAsJsonColumn,
-  ClassAsJsonColumn,
   CurrencyColumn,
 } from 'database/decorators'
 import {
   Drawing,
   DrawingAccrual,
-  DrawingConfiguration,
   Repayment,
 } from 'loan-servicing-common'
-import { DrawingConfigurationDtoClass } from 'models/dtos/drawingConfiguration'
 import { Column, Entity, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
 import { DrawingAccrualDtoClass } from 'models/dtos/drawingAccrual'
 import { DrawingRepaymentDto } from 'models/dtos/drawingRepayment'
@@ -31,9 +28,6 @@ class DrawingEntity implements Drawing {
 
   @ArrayOfClassAsJsonColumn(DrawingRepaymentDto)
   repayments!: Repayment[]
-
-  @ClassAsJsonColumn(DrawingConfigurationDtoClass)
-  drawingConfig!: DrawingConfiguration
 
   @CurrencyColumn()
   outstandingPrincipal!: string

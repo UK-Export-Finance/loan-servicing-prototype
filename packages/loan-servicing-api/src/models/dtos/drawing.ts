@@ -40,11 +40,6 @@ export class DrawingDtoClass implements Drawing {
   repayments!: Repayment[]
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => DrawingConfigurationDtoClass)
-  drawingConfig!: DrawingConfigurationDtoClass
-
-  @ApiProperty()
   @IsNotEmpty()
   outstandingPrincipal!: string
 
@@ -79,6 +74,11 @@ export class NewDrawingRequestDtoClass
   implements NewDrawingRequestDto
 {
   facilityId!: string
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => DrawingConfigurationDtoClass)
+  drawingConfig!: DrawingConfigurationDtoClass
 }
 
 export class AddWithdrawalToDrawingDtoClass
