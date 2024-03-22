@@ -16,6 +16,13 @@ import { DrawingBuilder } from './DrawingBuilder'
 
 export type InProgressFacility = DeepReadonly<Omit<Facility, 'drawings'>>
 
+export type FacilityProjectionSnapshot = {
+  facility: Facility
+  transactions: Transaction[]
+  processedEvents: ProjectedEvent[]
+  unprocessedEvents: ProjectedEvent[]
+}
+
 class FacilityBuilder {
   private _transactions: Transaction[] = []
 
@@ -43,17 +50,23 @@ class FacilityBuilder {
 
   public readonly projectionDate = this._projectionDate
 
-  build = (): Facility => {
+  takeSnapshot = (): FacilityProjectionSnapshot => {
     const drawings = this.drawingBuilders.map((b) => b.build()) as Drawing[]
     const facility: Facility = {
-      ...deepCopy(this._facility),
+      ...this._facility,
       drawings,
     }
-    facility.drawings.forEach((d) => {
-      // eslint-disable-next-line no-param-reassign
-      d.facility = facility
+    const immutableSnapshot = deepCopy({
+      facility,
+      transactions: this._transactions,
+      processedEvents: this._processedEvents,
+      unprocessedEvents: this._unprocessedEvents,
     })
-    return facility
+    immutableSnapshot.facility.drawings.forEach((d) => {
+      // eslint-disable-next-line no-param-reassign
+      d.facility = immutableSnapshot.facility
+    })
+    return immutableSnapshot
   }
 
   addDrawing(drawing: DrawingEntity, drawingEvents: DrawingEvent[]): this {
@@ -95,6 +108,15 @@ class FacilityBuilder {
   }
 
   consumeNextEvent = (): ProjectedEvent | undefined => {
+    const [event] = this._unprocessedEvents
+    if (event) {
+      this._unprocessedEvents.shift()
+      this._processedEvents.push(event)
+    }
+    return event
+  }
+
+  consumeNextCompletedEvent = (): ProjectedEvent | undefined => {
     const [event] = this._unprocessedEvents
     if (event) {
       if (event.effectiveDate > this._projectionDate) {
