@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import {
   DrawingAccrualStrategyOption,
   CalculateDrawingAccrualEvent,
-  Drawing,
   FixedDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
+import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
 import {
   AccrualWithEvents,
   getFixedDrawingAccrualEvents,
@@ -16,7 +16,7 @@ import calculateDrawingAccrualStrategies, {
 @Injectable()
 class DrawingAccrualService {
   calculateAccrual<T extends CalculateDrawingAccrualEvent>(
-    drawing: Drawing,
+    drawing: InProgressDrawing,
     event: T,
   ): string {
     const handler = calculateDrawingAccrualStrategies[
@@ -26,14 +26,16 @@ class DrawingAccrualService {
   }
 
   generateEventsForAccrual = <T extends DrawingAccrualStrategyOption>(
-    drawing: Drawing,
+    drawing: InProgressDrawing,
     option: T,
-  ): AccrualWithEvents[] => 
+  ): AccrualWithEvents[] =>
     // const generateEvents = drawingAccrualEventStrategies[
     //   option.name
     // ] as GetDrawingAccrualEventsStrategy<T>
-     getFixedDrawingAccrualEvents(drawing, option as FixedDrawingAccrualStrategyOption)
-  
+    getFixedDrawingAccrualEvents(
+      drawing,
+      option as FixedDrawingAccrualStrategyOption,
+    )
 }
 
 export default DrawingAccrualService

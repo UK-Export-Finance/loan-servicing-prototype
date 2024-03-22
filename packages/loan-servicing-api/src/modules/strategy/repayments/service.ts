@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import {
-  Drawing,
-  Repayment,
-  RepaymentStrategyOptions,
-} from 'loan-servicing-common'
+import { Repayment, RepaymentStrategyOptions } from 'loan-servicing-common'
+import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
 import {
   GetRepaymentEventsStrategy,
   repaymentEventStrategies,
@@ -12,7 +9,7 @@ import {
 @Injectable()
 class RepaymentsService {
   createRepayments<T extends RepaymentStrategyOptions>(
-    drawing: Drawing,
+    drawing: InProgressDrawing,
     options: T,
   ): Repayment[] {
     const generateEvents = repaymentEventStrategies[

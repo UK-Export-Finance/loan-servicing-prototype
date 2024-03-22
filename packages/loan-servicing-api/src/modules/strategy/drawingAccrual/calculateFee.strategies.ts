@@ -2,13 +2,13 @@ import {
   CalculateDrawingAccrualEvent,
   CalculateFixedDrawingAccrualEvent,
   CalculateMarketDrawingAccrualEvent,
-  Drawing,
 } from 'loan-servicing-common'
 import { calculateAccrual } from 'maths/accrualCalculations'
+import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
 
 export type CalculateDrawingAccrualStrategy<
   T extends CalculateDrawingAccrualEvent,
-> = (facility: Drawing, event: T) => string
+> = (facility:InProgressDrawing, event: T) => string
 
 export const calculateFixedDrawingAccrual: CalculateDrawingAccrualStrategy<
   CalculateFixedDrawingAccrualEvent

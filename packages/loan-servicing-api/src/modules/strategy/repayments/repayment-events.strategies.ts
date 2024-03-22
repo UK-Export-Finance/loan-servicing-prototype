@@ -1,21 +1,21 @@
 import Big from 'big.js'
 import { add } from 'date-fns'
 import {
-  Drawing,
   ManualRepaymentStrategyOptions,
   RegularRepaymentStrategyOptions,
   Repayment,
   RepaymentStrategyName,
   RepaymentStrategyOptions,
 } from 'loan-servicing-common'
+import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
 
 export type GetRepaymentEventsStrategy<T extends RepaymentStrategyOptions> = (
-  drawing: Drawing,
+  drawing: InProgressDrawing,
   options: T,
 ) => Repayment[]
 
 const calculateRegularRepaymentAmounts = (
-  drawing: Drawing,
+  drawing: InProgressDrawing,
   numberOfRepayments: number,
 ): {
   regularPaymentAmount: string

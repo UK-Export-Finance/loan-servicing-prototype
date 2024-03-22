@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { Injectable, Inject, NotFoundException } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import {
   DrawingProjectedEvent,
   WithdrawFromDrawingEvent,
@@ -18,7 +18,7 @@ import { EventHandler, IEventHandlerService } from 'types/eventHandler'
 import PendingEventService, {
   NewPendingEvent,
 } from 'modules/pendingEvents/pendingEvent.service'
-import FacilityProjection from './projection'
+import FacilityBuilder from './FacilityBuilder'
 
 @Injectable()
 class DrawingEventHandlingService
@@ -32,7 +32,7 @@ class DrawingEventHandlingService
 
   applyEvent = async <T extends DrawingProjectedEvent>(
     event: T,
-    projection: FacilityProjection,
+    projection: FacilityBuilder,
   ): Promise<void> => {
     const handler = this[event.type] as EventHandler<T>
     await handler(event, projection)
@@ -42,7 +42,7 @@ class DrawingEventHandlingService
     sourceEvent,
     projection,
   ) => {
-    projection.transactions.push({
+    projection.addTransactions({
       streamId: sourceEvent.streamId,
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
@@ -57,69 +57,84 @@ class DrawingEventHandlingService
     sourceEvent,
     projection,
   ) => {
-    const drawing = projection.getDrawing(sourceEvent.streamId)
+    const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
+    const { drawing } = drawingBuilder
     const { amount: withdrawnAmount } = sourceEvent.eventData
-    drawing.outstandingPrincipal = Big(drawing.outstandingPrincipal)
+
+    const drawingOutstandingPrincipal = Big(drawing.outstandingPrincipal)
       .add(withdrawnAmount)
       .toFixed(2)
-    drawing.drawnAmount = Big(drawing.drawnAmount)
+    const drawingDrawnAmount = Big(drawing.drawnAmount)
       .add(withdrawnAmount)
       .toFixed(2)
-    drawing.facility.drawnAmount = Big(drawing.facility.drawnAmount)
+    drawingBuilder.updateDrawingValues({
+      outstandingPrincipal: drawingOutstandingPrincipal,
+      drawnAmount: drawingDrawnAmount,
+    })
+
+    const facilityDrawnAmount = Big(projection.facility.drawnAmount)
       .add(withdrawnAmount)
       .toFixed(2)
-    drawing.facility.undrawnAmount = Big(drawing.facility.undrawnAmount)
+    const facilityUndrawnAmount = Big(projection.facility.undrawnAmount)
       .sub(withdrawnAmount)
       .toFixed(2)
-    projection.transactions.push({
-      streamId: drawing.streamId,
-      sourceEvent,
-      datetime: sourceEvent.effectiveDate,
-      reference: `£${withdrawnAmount} drawn`,
-      valueChanged: 'outstandingPrincipal',
-      changeInValue: withdrawnAmount,
-      valueAfterTransaction: drawing.outstandingPrincipal,
+    projection.updateFacilityValues({
+      drawnAmount: facilityDrawnAmount,
+      undrawnAmount: facilityUndrawnAmount,
     })
-    projection.transactions.push({
-      streamId: drawing.facility.streamId,
-      sourceEvent,
-      datetime: sourceEvent.effectiveDate,
-      reference: `£${withdrawnAmount} drawn on drawing ${drawing.streamId}`,
-      valueChanged: 'drawnAmount',
-      changeInValue: withdrawnAmount,
-      valueAfterTransaction: drawing.facility.drawnAmount,
-    })
+
+    projection.addTransactions([
+      {
+        streamId: drawing.streamId,
+        sourceEvent,
+        datetime: sourceEvent.effectiveDate,
+        reference: `£${withdrawnAmount} drawn`,
+        valueChanged: 'outstandingPrincipal',
+        changeInValue: withdrawnAmount,
+        valueAfterTransaction: drawing.outstandingPrincipal,
+      },
+      {
+        streamId: projection.facility.streamId,
+        sourceEvent,
+        datetime: sourceEvent.effectiveDate,
+        reference: `£${withdrawnAmount} drawn on drawing ${drawing.streamId}`,
+        valueChanged: 'drawnAmount',
+        changeInValue: withdrawnAmount,
+        valueAfterTransaction: projection.facility.drawnAmount,
+      },
+    ])
   }
 
   AddDrawingAccrual: EventHandler<AddDrawingAccrualEvent> = async (
     event,
     projection,
   ) => {
-    const drawing = projection.getDrawing(event.streamId)
+    const drawingBuilder = projection.getDrawingBuilder(event.streamId)
     const calculationEvents = this.strategyService.getEventsForDrawingAccrual(
-      drawing,
+      drawingBuilder.drawing,
       event.eventData,
     )
     projection.addEvents(calculationEvents.flatMap((x) => x.events))
-    drawing.accruals.push(...calculationEvents.flatMap((x) => x.accrual))
+    drawingBuilder.addAccruals(calculationEvents.flatMap((x) => x.accrual))
   }
 
   CalculateDrawingAccrual: EventHandler<CalculateDrawingAccrualEvent> = async (
     sourceEvent,
     projection,
   ) => {
-    const drawing = projection.getDrawing(sourceEvent.streamId)
+    const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
     const accruedAmount = this.strategyService.calculateDrawingAccrual(
-      drawing,
+      drawingBuilder.drawing,
       sourceEvent,
     )
     const { accrualId } = sourceEvent.eventData
-    const accrual = drawing.accruals.find((f) => f.id === accrualId)!
-    accrual.currentValue = Big(accrual.currentValue ?? '0')
+    const accrual = drawingBuilder.getAccrual(accrualId)
+    const newAccrualValue = Big(accrual.currentValue ?? '0')
       .add(accruedAmount)
       .toFixed(2)
-    projection.transactions.push({
-      streamId: drawing.streamId,
+    drawingBuilder.updateAccrualValue(accrualId, newAccrualValue)
+    projection.addTransactions({
+      streamId: sourceEvent.streamId,
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: 'Drawing Accrual',
@@ -133,37 +148,42 @@ class DrawingEventHandlingService
 
   CalculateMarketDrawingAccrual = this.CalculateDrawingAccrual
 
-  RevertWithdrawal: EventHandler<RevertWithdrawalEvent> = async (
-    sourceEvent,
-    projection,
-  ) => {
-    const drawing = projection.getDrawing(sourceEvent.streamId)
-    const {
-      eventData: { withdrawalEventStreamVersion },
-    } = sourceEvent
-    const withdrawalToRevert = projection.transactions.find(
-      (t) => t.sourceEvent?.streamVersion === withdrawalEventStreamVersion,
-    )
-    if (
-      !withdrawalToRevert ||
-      withdrawalToRevert.sourceEvent?.type !== 'WithdrawFromDrawing'
-    ) {
-      throw new NotFoundException(
-        `Withdrawal not found for at stream version ${withdrawalEventStreamVersion}`,
-      )
-    }
-    drawing.outstandingPrincipal = Big(drawing.outstandingPrincipal)
-      .sub(withdrawalToRevert.changeInValue)
-      .toFixed(2)
-    drawing.facility.drawnAmount = Big(drawing.facility.drawnAmount)
-      .sub(withdrawalToRevert.changeInValue)
-      .toFixed(2)
-    drawing.facility.undrawnAmount = Big(drawing.facility.undrawnAmount)
-      .add(withdrawalToRevert.changeInValue)
-      .toFixed(2)
-    projection.transactions = projection.transactions.filter(
-      (t) => t.sourceEvent?.streamVersion !== withdrawalEventStreamVersion,
-    )
+  RevertWithdrawal: EventHandler<RevertWithdrawalEvent> = async () => {
+    // const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
+    // const {
+    //   eventData: { withdrawalEventStreamVersion },
+    // } = sourceEvent
+    // const withdrawalToRevert = projection.getTransactionByStreamVersion(
+    //   withdrawalEventStreamVersion,
+    // )
+    // if (withdrawalToRevert?.sourceEvent?.type !== 'WithdrawFromDrawing') {
+    //   throw new NotFoundException(
+    //     `Withdrawal not found for at stream version ${withdrawalEventStreamVersion}`,
+    //   )
+    // }
+    // const drawingOutstandingPrincipal = Big(
+    //   drawingBuilder.drawing.outstandingPrincipal,
+    // )
+    //   .sub(withdrawalToRevert.changeInValue)
+    //   .toFixed(2)
+    // drawingBuilder.updateDrawingValues({
+    //   outstandingPrincipal: drawingOutstandingPrincipal,
+    // })
+    // const facilityDrawnAmount = Big(drawingBuilder.projection.facility.drawnAmount)
+    //   .sub(withdrawalToRevert.changeInValue)
+    //   .toFixed(2)
+    // const facilityUndrawnAmount = Big(
+    //   drawingBuilder.projection.facility.undrawnAmount,
+    // )
+    //   .add(withdrawalToRevert.changeInValue)
+    //   .toFixed(2)
+    // projection.updateFacilityValues({
+    //   drawnAmount: facilityDrawnAmount,
+    //   undrawnAmount: facilityUndrawnAmount,
+    // })
+    // projection.transactions = projection.transactions.filter(
+    //   (t) => t.sourceEvent?.streamVersion !== withdrawalEventStreamVersion,
+    // )
   }
 
   async addPendingRepayments(
@@ -190,45 +210,45 @@ class DrawingEventHandlingService
     event,
     projection,
   ) => {
-    const drawing = projection.getDrawing(event.streamId)
+    const drawingBuilder = projection.getDrawingBuilder(event.streamId)
     const repayments = this.strategyService.getRepayments(
-      drawing,
+      drawingBuilder.drawing,
       event.eventData,
     )
     // await this.addPendingRepayments(repayments, drawing)
-    drawing.repayments = repayments
-    drawing.drawingConfig.repaymentsStrategy = event.eventData
+    drawingBuilder.setRepayments(repayments)
+    // drawingBuilder.drawingConfig.repaymentsStrategy = event.eventData
   }
 
   RecordDrawingRepayment: EventHandler<RecordDrawingRepaymentEvent> = async (
     sourceEvent,
     projection,
   ) => {
-    const drawing = projection.getDrawing(sourceEvent.streamId)
+    const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
     const paymentAmount = sourceEvent.eventData.amount
-    drawing.outstandingPrincipal = Big(drawing.outstandingPrincipal)
+    const { repaymentId } = sourceEvent.eventData
+
+    const outstandingPrincipal = Big(
+      drawingBuilder.drawing.outstandingPrincipal,
+    )
       .minus(paymentAmount)
       .toString()
-    const repayment = drawing.repayments.find(
-      (r) => r.id === sourceEvent.eventData.repaymentId,
-    )
-    if (!repayment) {
-      throw new Error(
-        `repayment with id ${sourceEvent.eventData.repaymentId} was not found`,
-      )
-    }
-    repayment.paidAmount = Big(repayment.paidAmount)
-      .add(paymentAmount)
-      .toFixed(2)
-    repayment.settled = Big(repayment.paidAmount).eq(repayment.expectedAmount)
-    projection.transactions.push({
-      streamId: drawing.streamId,
+    drawingBuilder.updateDrawingValues({ outstandingPrincipal })
+
+    const repayment = drawingBuilder.getRepayment(repaymentId)
+
+    const paidAmount = Big(repayment.paidAmount).add(paymentAmount).toFixed(2)
+    const settled = Big(repayment.paidAmount).eq(repayment.expectedAmount)
+    drawingBuilder.updateRepaymentValue(repaymentId, { paidAmount, settled })
+
+    projection.addTransactions({
+      streamId: sourceEvent.streamId,
       sourceEvent,
       datetime: sourceEvent.effectiveDate,
       reference: 'repayment',
       valueChanged: 'outstandingPrincipal',
       changeInValue: Big(paymentAmount).times(-1).toString(),
-      valueAfterTransaction: drawing.outstandingPrincipal,
+      valueAfterTransaction: outstandingPrincipal,
     })
   }
 }

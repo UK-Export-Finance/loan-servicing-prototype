@@ -19,7 +19,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import { Repository } from 'typeorm'
 import PendingEventService from 'modules/pendingEvents/pendingEvent.service'
-import FacilityProjection from './projection'
+import FacilityBuilder from './FacilityBuilder'
 
 @Injectable()
 class FacilityEventHandlingService
@@ -38,7 +38,7 @@ class FacilityEventHandlingService
 
   applyEvent = async <T extends FacilityProjectedEvent>(
     event: T,
-    projection: FacilityProjection,
+    projection: FacilityBuilder,
   ): Promise<void> => {
     const handler = this[event.type] as EventHandler<T>
     await handler(event, projection)
@@ -48,7 +48,7 @@ class FacilityEventHandlingService
     sourceEvent,
     projections,
   ) => {
-    projections.transactions.push({
+    projections.addTransactions({
       streamId: projections.facility.streamId,
       sourceEvent,
       datetime: projections.facility.issuedEffectiveDate,
@@ -66,14 +66,10 @@ class FacilityEventHandlingService
     // Create drawing entity
     const { drawing, drawingEvents: drawingProjectedEvents } =
       await this.intialiseDrawing(event)
-    // Setup entity relations
-    drawing.facility = projection.facility
-    projection.facility.drawings.push(drawing)
 
-    // Add drawing events to processing
-    projection.addEvents(drawingProjectedEvents)
+    projection.addDrawing(drawing, drawingProjectedEvents)
 
-    projection.transactions.push({
+    projection.addTransactions({
       streamId: event.streamId,
       sourceEvent: event,
       datetime: projection.facility.issuedEffectiveDate,
@@ -133,13 +129,18 @@ class FacilityEventHandlingService
     projection,
   ) => {
     const { eventData: incrementEvent } = sourceEvent
-    projection.facility.facilityAmount = Big(projection.facility.facilityAmount)
+    const facilityAmount = Big(projection.facility.facilityAmount)
       .add(incrementEvent.adjustment)
       .toFixed(2)
-    projection.facility.undrawnAmount = Big(projection.facility.undrawnAmount)
+    const undrawnAmount = Big(projection.facility.undrawnAmount)
       .add(incrementEvent.adjustment)
       .toFixed(2)
-    projection.transactions.push({
+
+    projection.updateFacilityValues({
+      facilityAmount,
+      undrawnAmount,
+    })
+    projection.addTransactions({
       streamId: projection.facility.streamId,
       sourceEvent,
       datetime: projection.facility.issuedEffectiveDate,
@@ -159,7 +160,7 @@ class FacilityEventHandlingService
       event.eventData,
     )
     projection.addEvents(calculationEvents)
-    projection.facility.facilityFees.push({
+    projection.addFacilityFee({
       id: event.eventData.feeId,
       balance: '0',
       config: event.eventData,
@@ -175,13 +176,12 @@ class FacilityEventHandlingService
       sourceEvent,
     )
     const { feeId } = sourceEvent.eventData
-    projection.facility.facilityFees.find((f) => f.id === feeId)!.balance = Big(
-      projection.facility.facilityFees.find((f) => f.id === feeId)!.balance ??
-        '0',
-    )
+    const feeBalance = Big(projection.getFacilityFee(feeId).balance ?? '0')
       .add(feeAmount)
       .toFixed(2)
-    projection.transactions.push({
+
+    projection.updateFacilityFeeValue(feeId, feeBalance)
+    projection.addTransactions({
       streamId: projection.facility.streamId,
       sourceEvent,
       datetime: sourceEvent.effectiveDate,

@@ -1,10 +1,10 @@
 import {
   CalculateDrawingAccrualEvent,
-  Drawing,
   DrawingAccrual,
   DrawingAccrualStrategyOption,
   FixedDrawingAccrualStrategyOption,
 } from 'loan-servicing-common'
+import { InProgressDrawing } from 'modules/projections/FacilityBuilder'
 
 export type AccrualWithEvents = {
   accrual: DrawingAccrual
@@ -13,7 +13,7 @@ export type AccrualWithEvents = {
 
 export type GetDrawingAccrualEventsStrategy<
   T extends DrawingAccrualStrategyOption,
-> = (facility: Drawing, option: T) => AccrualWithEvents[]
+> = (facility: InProgressDrawing, option: T) => AccrualWithEvents[]
 
 export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
   FixedDrawingAccrualStrategyOption

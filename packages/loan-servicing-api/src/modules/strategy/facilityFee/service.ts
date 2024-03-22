@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import {
   CalculateFacilityFeeEvent,
-  Facility,
   FacilityFeeStrategyOption,
 } from 'loan-servicing-common'
+import { InProgressFacility } from 'modules/projections/FacilityBuilder'
 import {
   GetFacilityFeeEventsStrategy,
   facilityFeeEventStrategies,
@@ -15,7 +15,7 @@ import calculateFacilityFeeStrategies, {
 @Injectable()
 class FacilityFeeService {
   calculateFee<T extends CalculateFacilityFeeEvent>(
-    facility: Facility,
+    facility: InProgressFacility,
     event: T,
   ): string {
     const handler = calculateFacilityFeeStrategies[
@@ -25,7 +25,7 @@ class FacilityFeeService {
   }
 
   generateEventsForSingleFee = <T extends FacilityFeeStrategyOption>(
-    facility: Facility,
+    facility: InProgressFacility,
     option: T,
   ): CalculateFacilityFeeEvent[] => {
     const generateEvents = facilityFeeEventStrategies[

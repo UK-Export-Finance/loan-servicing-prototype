@@ -20,7 +20,7 @@ import DrawingEventHandlingService from 'modules/projections/drawing.service.eve
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import FacilityEventHandlingService from './facility.service.events'
-import FacilityProjection from './projection'
+import FacilityBuilder from './FacilityBuilder'
 
 @Injectable()
 class ProjectionsService {
@@ -52,7 +52,9 @@ class ProjectionsService {
       date,
     )
 
-    projection.facility.streamVersion = facilityStreamVersion
+    const builtFacility = projection.build()
+
+    builtFacility.streamVersion = facilityStreamVersion
 
     const CHUNK_SIZE = 50
     const chunkedTransactions = []
@@ -64,7 +66,7 @@ class ProjectionsService {
         this.transactionRepo.insert(chunk as TransactionEntity[]),
       ),
     )
-    await this.createPendingEvents(projection)
+    await this.createPendingEvents(builtFacility, projection.projectionDate)
     const transactionEntities = transactionSaveResults.reduce(
       (res: TransactionEntity[], curr) =>
         res.concat(curr.generatedMaps as TransactionEntity[]),
@@ -74,8 +76,8 @@ class ProjectionsService {
       ...projection.processedEvents,
       ...projection.unprocessedEvents,
     ]
-    projection.facility.drawings.forEach((d) => {
-      d.facility = projection.facility
+    builtFacility.drawings.forEach((d) => {
+      d.facility = builtFacility
       const streamIds = allEvents
         .filter((e) => e.streamId === d.streamId)
         .map((e) => e.streamVersion)
@@ -83,16 +85,16 @@ class ProjectionsService {
       d.streamVersion = Math.max(...streamIds)
       d.currentDate = date
     })
-    projection.facility.streamVersion = Math.max(
+    builtFacility.streamVersion = Math.max(
       ...(allEvents
-        .filter((e) => e.streamId === projection.facility.streamId)
+        .filter((e) => e.streamId === builtFacility.streamId)
         .map((e) => e.streamVersion)
         .filter((e) => e !== undefined) as number[]),
     )
     // Deleting & rebuilding circular facility-drawing reference as TypeORM can't handle it
-    projection.facility.drawings.forEach((d) => delete (d as any).facility)
-    projection.facility.currentDate = date
-    const facilityEntity = await this.facilityRepo.save(projection.facility)
+    builtFacility.drawings.forEach((d) => delete (d as any).facility)
+    builtFacility.currentDate = date
+    const facilityEntity = await this.facilityRepo.save(builtFacility)
 
     return {
       facility: facilityEntity,
@@ -100,11 +102,11 @@ class ProjectionsService {
     }
   }
 
-  async createPendingEvents(projection: FacilityProjection): Promise<void> {
+  async createPendingEvents(facility: Facility, date: Date): Promise<void> {
     await Promise.all(
-      projection.facility.drawings.map((d) =>
+      facility.drawings.map((d) =>
         this.drawingEventHandler.addPendingRepayments(
-          d.repayments.filter((r) => r.date > projection.projectionDate),
+          d.repayments.filter((r) => r.date > date),
           d,
         ),
       ),
@@ -138,8 +140,8 @@ class ProjectionsService {
     events: ProjectedEvent[],
     facility: Facility,
     until: Date,
-  ): Promise<FacilityProjection> => {
-    const projection = new FacilityProjection(facility, [...events], until)
+  ): Promise<FacilityBuilder> => {
+    const projection = new FacilityBuilder(facility, [...events], until)
     let curr = projection.consumeNextEvent()
     while (curr) {
       // eslint-disable-next-line no-await-in-loop
@@ -152,12 +154,12 @@ class ProjectionsService {
   applyAllEvents = async (
     events: ProjectedEvent[],
     facility: Facility,
-  ): Promise<FacilityProjection> =>
+  ): Promise<FacilityBuilder> =>
     this.applyEventsUntil(events, facility, new Date(4000, 0, 0))
 
   applyEvent = async (
     event: ProjectedEvent,
-    projection: FacilityProjection,
+    projection: FacilityBuilder,
   ): Promise<void> => {
     switch (event.entityType) {
       case 'drawing':
