@@ -11,7 +11,6 @@ import {
   sortEventByEffectiveDate,
 } from 'loan-servicing-common'
 import DrawingEntity from 'models/entities/DrawingEntity'
-import { deepCopy } from './builerUtils'
 import { DrawingBuilder } from './DrawingBuilder'
 
 export type InProgressFacility = DeepReadonly<Omit<Facility, 'drawings'>>
@@ -56,7 +55,7 @@ class FacilityBuilder {
       ...this._facility,
       drawings,
     }
-    const immutableSnapshot = deepCopy({
+    const immutableSnapshot = structuredClone({
       facility,
       transactions: this._transactions,
       processedEvents: this._processedEvents,

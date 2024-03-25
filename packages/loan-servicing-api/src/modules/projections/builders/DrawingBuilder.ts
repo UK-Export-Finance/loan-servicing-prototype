@@ -5,7 +5,6 @@ import {
   Repayment,
   NonNestedValues,
 } from 'loan-servicing-common'
-import { deepCopy } from './builerUtils'
 
 export type InProgressDrawing = DeepReadonly<NonNestedValues<Drawing>>
 export class DrawingBuilder {
@@ -20,7 +19,7 @@ export class DrawingBuilder {
   public readonly drawing: InProgressDrawing = this._drawing
 
   build = (): Omit<Drawing, 'facility'> =>
-    deepCopy({
+    structuredClone({
       ...this._drawing,
       accruals: this.accruals,
       repayments: this.repayments,
