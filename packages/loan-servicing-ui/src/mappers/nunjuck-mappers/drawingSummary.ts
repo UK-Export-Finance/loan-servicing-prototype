@@ -1,6 +1,5 @@
 import { DrawingAccrual, DrawingDto, Repayment } from 'loan-servicing-common'
 import { GovUkSummaryListProps, NunjuckTableRow } from 'types/nunjucks'
-import { buildNunjucksTableRow } from 'utils/nunjucks-parsers'
 
 // eslint-disable-next-line import/prefer-default-export
 export const drawingToDrawingSummary = (
@@ -14,7 +13,8 @@ export const drawingToDrawingSummary = (
       value: {
         html: drawing.accruals
           .map(
-            ({ id, accruedFee: currentValue }) => `Fee ${id.slice(0, 5)}: £${currentValue}`,
+            ({ id, accruedFee: currentValue }) =>
+              `Fee ${id.slice(0, 5)}: £${currentValue}`,
           )
           .join('<br />'),
       },
@@ -88,31 +88,44 @@ export const drawingToRepaymentsSummary = (
   })),
 })
 
-const getAccrualTableRow = (
-  a: DrawingAccrual,
-): {
-  startDate: string
-  endDate: string
-  rate: string
-  currentBalance: string
-  finalBalance: string
-} => ({
-  startDate: new Date(a.config.effectiveDate).toLocaleDateString('en-GB'),
-  endDate: new Date(a.config.expiryDate).toLocaleDateString('en-GB'),
-  rate: a.config.accrualRate,
-  currentBalance: a.accruedFee,
-  finalBalance: a.predictedFinalFee,
-})
+const getAccrualTableRow =
+  (facilityId: string, drawingId: string) =>
+  (
+    a: DrawingAccrual,
+  ): {
+    startDate: string
+    endDate: string
+    rate: string
+    accruedFee: string
+    finalBalance: string
+    unpaidAmount: string
+    payHtml: string
+  } => ({
+    startDate: new Date(a.config.effectiveDate).toLocaleDateString('en-GB'),
+    endDate: new Date(a.config.expiryDate).toLocaleDateString('en-GB'),
+    rate: a.config.accrualRate,
+    accruedFee: a.accruedFee,
+    finalBalance: a.predictedFinalFee,
+    unpaidAmount: a.unpaidAmount,
+    payHtml:
+      a.unpaidAmount === '0'
+        ? 'Settled'
+        : `<a href="/facility/${facilityId}/drawing/${drawingId}/recordAccrualPayment?accrualId=${a.id}">Record Payment</a>`,
+  })
 
-export const accrualsToTable = ({ accruals }: DrawingDto): NunjuckTableRow[] =>
+export const accrualsToTable = ({
+  accruals,
+  facility,
+  streamId: drawingId,
+}: DrawingDto): NunjuckTableRow[] =>
   accruals
-    .map(getAccrualTableRow)
-    .map((r) =>
-      buildNunjucksTableRow(r, [
-        'startDate',
-        'endDate',
-        'rate',
-        'currentBalance',
-        'finalBalance',
-      ]),
-    )
+    .map(getAccrualTableRow(facility.streamId, drawingId))
+    .map((r) => [
+      { text: r.startDate },
+      { text: r.endDate },
+      { text: r.rate },
+      { text: r.accruedFee },
+      { text: r.finalBalance },
+      { text: r.unpaidAmount },
+      { html: r.payHtml },
+    ])

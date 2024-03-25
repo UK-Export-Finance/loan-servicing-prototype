@@ -49,6 +49,7 @@ export type DrawingAccrual = {
   accruedFee: string
   predictedFinalFee: string
   paidAmount: string
+  unpaidAmount: string
   isSettled: boolean
   config: DrawingAccrualStrategyOption
 }

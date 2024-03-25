@@ -1,4 +1,4 @@
-export type NunjuckTableRow = { text: string }[]
+export type NunjuckTableRow = { text?: string; html?: string }[]
 
 export type NunjuckSelectInputOption<T extends string> = {
   text: string

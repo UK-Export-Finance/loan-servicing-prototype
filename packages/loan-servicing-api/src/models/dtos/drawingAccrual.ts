@@ -113,6 +113,9 @@ export class DrawingAccrualDtoClass implements DrawingAccrual {
   paidAmount!: string
 
   @ApiProperty()
+  unpaidAmount!: string
+
+  @ApiProperty()
   isSettled!: boolean
 
   @ApiProperty({

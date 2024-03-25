@@ -37,6 +37,7 @@ export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
         accruedFee: '0',
         predictedFinalFee: '0',
         paidAmount: '0',
+        unpaidAmount: '0',
         isSettled: false,
         config: {
           accrualId: id,

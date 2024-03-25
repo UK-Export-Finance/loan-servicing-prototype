@@ -135,6 +135,7 @@ class DrawingEventHandlingService
       .toFixed(2)
     drawingBuilder.updateAccrualValue(accrualId, {
       accruedFee: newAccrualValue,
+      unpaidAmount: Big(accrual.unpaidAmount).add(accruedAmount).toFixed(2),
     })
     projection.addTransactions({
       streamId: sourceEvent.streamId,
@@ -157,11 +158,15 @@ class DrawingEventHandlingService
       const paymentAmount = sourceEvent.eventData.amount
       const { accrualId } = sourceEvent.eventData
 
-      const repayment = drawingBuilder.getAccrual(accrualId)
+      const accrual = drawingBuilder.getAccrual(accrualId)
 
-      const paidAmount = Big(repayment.paidAmount).add(paymentAmount).toFixed(2)
-      const isSettled = Big(paidAmount).eq(repayment.predictedFinalFee)
-      drawingBuilder.updateAccrualValue(accrualId, { paidAmount, isSettled })
+      const paidAmount = Big(accrual.paidAmount).add(paymentAmount).toFixed(2)
+      const isSettled = Big(paidAmount).eq(accrual.predictedFinalFee)
+      drawingBuilder.updateAccrualValue(accrualId, {
+        paidAmount,
+        isSettled,
+        unpaidAmount: Big(accrual.unpaidAmount).sub(paidAmount).toFixed(2),
+      })
 
       projection.addTransactions({
         streamId: sourceEvent.streamId,

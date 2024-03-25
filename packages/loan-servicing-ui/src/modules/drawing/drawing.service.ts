@@ -10,6 +10,7 @@ import {
   AddFixedDrawingAccrualDto,
   AddMarketDrawingAccrualDto,
   RecordDrawingRepaymentDto,
+  RecordDrawingAccrualPaymentDto,
 } from 'loan-servicing-common'
 
 @Injectable()
@@ -113,6 +114,18 @@ class DrawingService {
   ): Promise<void> {
     await postApiData(
       `facility/${facilityStreamId}/drawing/${drawingStreamId}/repaymentReceived?version=${streamVersion}`,
+      dto,
+    )
+  }
+
+  async recordAccrualPayment(
+    facilityStreamId: string,
+    drawingStreamId: string,
+    streamVersion: string,
+    dto: RecordDrawingAccrualPaymentDto,
+  ): Promise<void> {
+    await postApiData(
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}/accuralPaymentReceived?version=${streamVersion}`,
       dto,
     )
   }

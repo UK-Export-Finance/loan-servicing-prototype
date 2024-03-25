@@ -15,6 +15,7 @@ import {
   AddMarketDrawingAccrualDto,
   AddWithdrawalToDrawingDto,
   ConvertToDtoType,
+  RecordDrawingAccrualPaymentDto,
   RecordDrawingRepaymentDto,
   RevertWithdrawlDto,
 } from 'loan-servicing-common'
@@ -33,6 +34,10 @@ import {
   RecordRepaymentFormDto,
   RecordRepaymentNjkInput,
 } from 'templates/drawing-edit/record-repayment'
+import {
+  RecordAccrualPaymentFormDto,
+  RecordAccrualRepaymentNjkInput,
+} from 'templates/drawing-edit/record-accrual-payment'
 import DrawingService from './drawing.service'
 
 @Controller('facility/:facilityId/drawing')
@@ -229,6 +234,50 @@ class EditDrawingController {
       repaymentId: requestDto.repaymentId,
     }
     await this.drawingService.recordRepayment(
+      facilityId,
+      drawingId,
+      version,
+      updateDto,
+    )
+    response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
+  }
+
+  @Get(':drawingId/recordAccrualPayment')
+  @Render('drawing-edit/record-accrual-payment')
+  async renderRecordAccrualPage(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('accrualId') accrualId: string,
+  ): Promise<RecordAccrualRepaymentNjkInput> {
+    const drawing = await this.drawingService.getDrawing(facilityId, drawingId)
+    if (!drawing) {
+      throw new NotFoundException('Drawing not found')
+    }
+    const accrual = drawing.accruals.find((a) => a.id === accrualId)
+    if (!accrual) {
+      throw new NotFoundException('Accrual not found')
+    }
+    return {
+      drawing,
+      accrual,
+    }
+  }
+
+  @Post(':drawingId/accuralPaymentReceived')
+  async recordAccrualPayment(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('version') version: string,
+    @Body()
+    requestDto: RecordAccrualPaymentFormDto,
+    @Res() response: Response,
+  ): Promise<void> {
+    const updateDto: RecordDrawingAccrualPaymentDto = {
+      date: new Date(requestDto.date),
+      amount: requestDto.amount,
+      accrualId: requestDto.accrualId,
+    }
+    await this.drawingService.recordAccrualPayment(
       facilityId,
       drawingId,
       version,
