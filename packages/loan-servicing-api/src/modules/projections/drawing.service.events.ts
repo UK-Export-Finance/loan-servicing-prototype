@@ -10,6 +10,7 @@ import {
   RecordDrawingRepaymentEvent,
   Repayment,
   Drawing,
+  ForecastRepaymentEvent,
 } from 'loan-servicing-common'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
@@ -214,15 +215,22 @@ class DrawingEventHandlingService
       drawingBuilder.drawing,
       event.eventData,
     )
-    // await this.addPendingRepayments(repayments, drawing)
     drawingBuilder.setRepayments(repayments)
-    // drawingBuilder.drawingConfig.repaymentsStrategy = event.eventData
+
+    const forecastEvents = repayments.map<ForecastRepaymentEvent>((r) => ({
+      streamId: event.streamId,
+      effectiveDate: r.date,
+      entityType: 'drawing',
+      shouldProcessIfFuture: false,
+      eventData: { repaymentId: r.id, amount: r.expectedAmount },
+      type: 'ForecastDrawingRepayment',
+    }))
+    projection.addEvents(forecastEvents)
   }
 
-  RecordDrawingRepayment: EventHandler<RecordDrawingRepaymentEvent> = async (
-    sourceEvent,
-    projection,
-  ) => {
+  ProcessDrawingRepayment: EventHandler<
+    RecordDrawingRepaymentEvent | ForecastRepaymentEvent
+  > = async (sourceEvent, projection) => {
     const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
     const paymentAmount = sourceEvent.eventData.amount
     const { repaymentId } = sourceEvent.eventData
@@ -249,6 +257,18 @@ class DrawingEventHandlingService
       changeInValue: Big(paymentAmount).times(-1).toString(),
       valueAfterTransaction: outstandingPrincipal,
     })
+  }
+
+  RecordDrawingRepayment: EventHandler<RecordDrawingRepaymentEvent> =
+    this.ProcessDrawingRepayment
+
+  ForecastDrawingRepayment: EventHandler<ForecastRepaymentEvent> = async (
+    event,
+    projection,
+  ) => {
+    if (event.effectiveDate > projection.projectionDate) {
+      await this.ProcessDrawingRepayment(event, projection)
+    }
   }
 }
 

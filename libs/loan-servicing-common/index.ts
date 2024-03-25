@@ -16,6 +16,7 @@ export * from './src/interfaces/events/drawingEvents'
 
 export * from './src/interfaces/projectedEvents/drawing'
 export * from './src/interfaces/projectedEvents/drawing/accruals'
+export * from './src/interfaces/projectedEvents/drawing/repayments'
 export * from './src/interfaces/projectedEvents/facility'
 export * from './src/interfaces/projectedEvents/facility/fees'
 export * from './src/interfaces/projectedEvents'
