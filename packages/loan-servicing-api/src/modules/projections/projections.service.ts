@@ -42,7 +42,7 @@ class ProjectionsService {
   ) {}
 
   @Transactional()
-  async buildProjectionsForFacilityOnDate(facilityId: string): Promise<{
+  async buildProjectionsForFacility(facilityId: string): Promise<{
     facility: FacilityEntity
     transactions: Transaction[]
   }> {
@@ -149,7 +149,7 @@ class ProjectionsService {
     transactions: Transaction[]
   }> {
     const { facility, transactions } =
-      await this.buildProjectionsForFacilityOnDate(facilityId)
+      await this.buildProjectionsForFacility(facilityId)
     const drawing = facility.drawings.find((d) => d.streamId === drawingId)
     if (!drawing) {
       throw new Error(`Facility did not contain expected drawing`)

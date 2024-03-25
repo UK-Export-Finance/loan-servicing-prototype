@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import {
+  FacilityResponseDto,
   LoanServicingEvent,
   SummarisedTransaction,
   Transaction,
@@ -27,6 +28,7 @@ import {
   AddAccruingFacilityFeeDtoClass,
   AddFixedFacilityFeeDtoClass,
 } from 'models/dtos/facilityConfiguration'
+import ProjectionsService from 'modules/projections/projections.service'
 import FacilityTransactionService from './facility.service.transactions'
 
 @ApiTags('Facility')
@@ -35,6 +37,7 @@ class FacilityController {
   constructor(
     private facilityService: FacilityService,
     private transactionService: FacilityTransactionService,
+    private projectionService: ProjectionsService,
   ) {}
 
   @Get(':facilityId')
@@ -49,6 +52,16 @@ class FacilityController {
     return plainToInstance(FacilityResponseDtoClass, facility, {
       enableCircularCheck: true,
     })
+  }
+
+  @Post(':facilityId/rebuild')
+  @ApiOkResponse({ type: FacilityResponseDtoClass })
+  async rebuildFacilityProjection(
+    @Param('facilityId') facilityStreamId: string,
+  ): Promise<FacilityResponseDto> {
+    const { facility } =
+      await this.projectionService.buildProjectionsForFacility(facilityStreamId)
+    return facility
   }
 
   @Get(':facilityId/events')
