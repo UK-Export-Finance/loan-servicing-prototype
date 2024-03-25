@@ -19,6 +19,8 @@ import {
   AddDrawingAccrualEvent,
   DrawingAccrualStrategyName,
   RecordDrawingRepaymentEvent,
+  RecordDrawingAccrualPaymentDto,
+  RecordDrawingAccrualPaymentEvent,
 } from 'loan-servicing-common'
 import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
@@ -255,6 +257,36 @@ class DrawingService {
         typeVersion: 1,
         eventData: {
           repaymentId: repaymentDto.repaymentId,
+          amount: repaymentDto.amount,
+        },
+      },
+      streamVersion,
+    )
+    const { drawing } =
+      await this.projectionsService.buildProjectionsForDrawingOnDate(
+        facilityId,
+        drawingId,
+      )
+    return drawing
+  }
+
+  @Transactional()
+  async receiveAccrualPayment(
+    facilityId: string,
+    drawingId: string,
+    streamVersion: number,
+    repaymentDto: RecordDrawingAccrualPaymentDto,
+  ): Promise<Drawing> {
+    await this.eventService.addEvent<RecordDrawingAccrualPaymentEvent>(
+      {
+        streamId: drawingId,
+        effectiveDate: repaymentDto.date,
+        entityType: 'drawing',
+        shouldProcessIfFuture: false,
+        type: 'RecordDrawingAccrualPayment',
+        typeVersion: 1,
+        eventData: {
+          accrualId: repaymentDto.accrualId,
           amount: repaymentDto.amount,
         },
       },

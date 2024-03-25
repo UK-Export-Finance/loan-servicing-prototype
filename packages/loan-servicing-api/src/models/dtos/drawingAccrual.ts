@@ -7,8 +7,9 @@ import {
   DrawingAccrualStrategyName,
   FixedDrawingAccrualStrategyOption,
   MarketDrawingAccrualStrategyOption,
+  RecordDrawingAccrualPaymentDto,
 } from 'loan-servicing-common'
-import { IsArray, IsDate, ValidateNested } from 'class-validator'
+import { IsArray, IsDate, IsNotEmpty, ValidateNested } from 'class-validator'
 import StrategyOptionDtoClass from './strategy-option'
 
 const interestStrategyNames: DrawingAccrualStrategyName[] = [
@@ -103,10 +104,16 @@ export class DrawingAccrualDtoClass implements DrawingAccrual {
   id!: string
 
   @ApiProperty()
-  currentValue!: string
+  accruedFee!: string
 
   @ApiProperty()
-  finalValue!: string
+  predictedFinalFee!: string
+
+  @ApiProperty()
+  paidAmount!: string
+
+  @ApiProperty()
+  isSettled!: boolean
 
   @ApiProperty({
     oneOf: refs(
@@ -135,4 +142,21 @@ export class DrawingAccrualDtoClass implements DrawingAccrual {
   config!:
     | MarketDrawingAccrualStrategyOptionDtoClass
     | FixedDrawingAccrualStrategyOptionDtoClass
+}
+
+export class RecordDrawingAccrualPaymentDtoClass
+  implements RecordDrawingAccrualPaymentDto
+{
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  date!: Date
+
+  @ApiProperty()
+  @IsNotEmpty()
+  amount!: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  accrualId!: string
 }

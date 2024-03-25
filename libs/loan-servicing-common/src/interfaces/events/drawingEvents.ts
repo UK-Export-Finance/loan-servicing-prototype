@@ -49,6 +49,12 @@ export type AddDrawingAccrualEvent = DrawingEventBase<
   DrawingAccrualStrategyOption
 >
 
+export type RecordDrawingAccrualPaymentEvent = DrawingEventBase<
+  'RecordDrawingAccrualPayment',
+  1,
+  { accrualId: string; amount: string }
+>
+
 export type DrawingEvent =
   | WithdrawFromDrawingEvent
   | RevertWithdrawalEvent
@@ -56,3 +62,4 @@ export type DrawingEvent =
   | SetDrawingRepaymentsEvent
   | AddDrawingAccrualEvent
   | RecordDrawingRepaymentEvent
+  | RecordDrawingAccrualPaymentEvent

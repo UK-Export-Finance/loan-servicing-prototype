@@ -65,9 +65,12 @@ export class DrawingBuilder {
     return this
   }
 
-  updateAccrualValue = (id: string, value: string): this => {
+  updateAccrualValue = (
+    id: string,
+    update: Partial<NonNestedValues<DrawingAccrual>>,
+  ): this => {
     const accrual = this.accruals.find((a) => a.id === id)!
-    accrual.currentValue = value
+    Object.assign(accrual, update)
     return this
   }
 

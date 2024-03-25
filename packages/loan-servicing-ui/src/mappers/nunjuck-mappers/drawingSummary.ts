@@ -14,7 +14,7 @@ export const drawingToDrawingSummary = (
       value: {
         html: drawing.accruals
           .map(
-            ({ id, currentValue }) => `Fee ${id.slice(0, 5)}: £${currentValue}`,
+            ({ id, accruedFee: currentValue }) => `Fee ${id.slice(0, 5)}: £${currentValue}`,
           )
           .join('<br />'),
       },
@@ -100,8 +100,8 @@ const getAccrualTableRow = (
   startDate: new Date(a.config.effectiveDate).toLocaleDateString('en-GB'),
   endDate: new Date(a.config.expiryDate).toLocaleDateString('en-GB'),
   rate: a.config.accrualRate,
-  currentBalance: a.currentValue,
-  finalBalance: a.finalValue,
+  currentBalance: a.accruedFee,
+  finalBalance: a.predictedFinalFee,
 })
 
 export const accrualsToTable = ({ accruals }: DrawingDto): NunjuckTableRow[] =>

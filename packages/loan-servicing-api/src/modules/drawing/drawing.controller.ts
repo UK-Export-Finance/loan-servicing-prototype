@@ -36,6 +36,7 @@ import {
 import {
   AddFixedDrawingAccrualDtoClass,
   AddMarketDrawingAccrualDtoClass,
+  RecordDrawingAccrualPaymentDtoClass,
 } from 'models/dtos/drawingAccrual'
 import { RecordDrawingRepaymentDtoClass } from 'models/dtos/drawingRepayment'
 import DrawingService from './drawing.service'
@@ -251,6 +252,25 @@ class DrawingController {
     @Body() recordRepaymentDto: RecordDrawingRepaymentDtoClass,
   ): Promise<DrawingDtoClass> {
     const updatedDrawing = await this.drawingService.setRepaymentAsReceived(
+      facilityId,
+      drawingId,
+      Number(version),
+      recordRepaymentDto,
+    )
+    return plainToInstance(DrawingDtoClass, updatedDrawing, {
+      enableCircularCheck: true,
+    })
+  }
+
+  @Post(':drawingId/accuralPaymentReceived')
+  @ApiOkResponse({ type: DrawingDtoClass })
+  async processAccrualPayment(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('version') version: number,
+    @Body() recordRepaymentDto: RecordDrawingAccrualPaymentDtoClass,
+  ): Promise<DrawingDtoClass> {
+    const updatedDrawing = await this.drawingService.receiveAccrualPayment(
       facilityId,
       drawingId,
       Number(version),

@@ -11,6 +11,7 @@ import {
   Repayment,
   Drawing,
   ForecastRepaymentEvent,
+  RecordDrawingAccrualPaymentEvent,
 } from 'loan-servicing-common'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
@@ -129,10 +130,12 @@ class DrawingEventHandlingService
     )
     const { accrualId } = sourceEvent.eventData
     const accrual = drawingBuilder.getAccrual(accrualId)
-    const newAccrualValue = Big(accrual.currentValue ?? '0')
+    const newAccrualValue = Big(accrual.accruedFee ?? '0')
       .add(accruedAmount)
       .toFixed(2)
-    drawingBuilder.updateAccrualValue(accrualId, newAccrualValue)
+    drawingBuilder.updateAccrualValue(accrualId, {
+      accruedFee: newAccrualValue,
+    })
     projection.addTransactions({
       streamId: sourceEvent.streamId,
       sourceEvent,
@@ -140,13 +143,36 @@ class DrawingEventHandlingService
       reference: 'Drawing Accrual',
       valueChanged: `accrualBalance:${accrual.id}`,
       changeInValue: accruedAmount,
-      valueAfterTransaction: accrual.currentValue,
+      valueAfterTransaction: accrual.accruedFee,
     })
   }
 
   CalculateFixedDrawingAccrual = this.CalculateDrawingAccrual
 
   CalculateMarketDrawingAccrual = this.CalculateDrawingAccrual
+
+  RecordDrawingAccrualPayment: EventHandler<RecordDrawingAccrualPaymentEvent> =
+    async (sourceEvent, projection) => {
+      const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
+      const paymentAmount = sourceEvent.eventData.amount
+      const { accrualId } = sourceEvent.eventData
+
+      const repayment = drawingBuilder.getAccrual(accrualId)
+
+      const paidAmount = Big(repayment.paidAmount).add(paymentAmount).toFixed(2)
+      const isSettled = Big(paidAmount).eq(repayment.predictedFinalFee)
+      drawingBuilder.updateAccrualValue(accrualId, { paidAmount, isSettled })
+
+      projection.addTransactions({
+        streamId: sourceEvent.streamId,
+        sourceEvent,
+        datetime: sourceEvent.effectiveDate,
+        reference: 'accrual fee payment',
+        valueChanged: 'accrualFeeBalance',
+        changeInValue: Big(paymentAmount).times(-1).toString(),
+        valueAfterTransaction: '0',
+      })
+    }
 
   RevertWithdrawal: EventHandler<RevertWithdrawalEvent> = async () => {
     // const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)

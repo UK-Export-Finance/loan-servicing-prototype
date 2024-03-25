@@ -123,9 +123,9 @@ class ProjectionsService {
   ): Promise<void> {
     currentFacility.drawings.forEach((d) => {
       d.accruals.forEach((a) => {
-        a.finalValue = projectionAtExpiry
+        a.predictedFinalFee = projectionAtExpiry
           .getDrawingBuilder(d.streamId)
-          .getAccrual(a.id).currentValue
+          .getAccrual(a.id).accruedFee
       })
     })
     await Promise.all([

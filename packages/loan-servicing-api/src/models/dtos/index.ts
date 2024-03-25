@@ -21,6 +21,7 @@ import {
 import {
   FixedDrawingAccrualStrategyOptionDtoClass,
   MarketDrawingAccrualStrategyOptionDtoClass,
+  RecordDrawingAccrualPaymentDtoClass,
 } from './drawingAccrual'
 import { RecordDrawingRepaymentDtoClass } from './drawingRepayment'
 
@@ -41,6 +42,7 @@ const eventTypeToEventClassDefinition: {
   AddDrawingToFacility: () => NewDrawingRequestDtoClass,
   RevertWithdrawal: () => RevertWithdrawalDtoClass,
   RecordDrawingRepayment: () => RecordDrawingRepaymentDtoClass,
+  RecordDrawingAccrualPayment: () => RecordDrawingAccrualPaymentDtoClass,
   AddFacilityFee: (eventData) => {
     switch (eventData.name) {
       case 'AccruingFacilityFee':

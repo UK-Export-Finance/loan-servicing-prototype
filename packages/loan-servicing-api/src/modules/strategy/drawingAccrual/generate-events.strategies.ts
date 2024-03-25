@@ -34,8 +34,10 @@ export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
     const accrualWithEvents: AccrualWithEvents = {
       accrual: {
         id,
-        currentValue: '0',
-        finalValue: '0',
+        accruedFee: '0',
+        predictedFinalFee: '0',
+        paidAmount: '0',
+        isSettled: false,
         config: {
           accrualId: id,
           accrualRate: option.accrualRate,

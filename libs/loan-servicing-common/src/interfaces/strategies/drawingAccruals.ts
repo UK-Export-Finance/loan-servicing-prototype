@@ -46,7 +46,15 @@ export type DrawingAccrualStrategyName = DrawingAccrualStrategyOption['name']
 
 export type DrawingAccrual = {
   id: string
-  currentValue: string
-  finalValue: string
+  accruedFee: string
+  predictedFinalFee: string
+  paidAmount: string
+  isSettled: boolean
   config: DrawingAccrualStrategyOption
+}
+
+export type RecordDrawingAccrualPaymentDto = {
+  date: Date
+  amount: string
+  accrualId: string
 }
