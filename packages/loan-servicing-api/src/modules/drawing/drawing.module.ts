@@ -6,6 +6,7 @@ import EventModule from 'modules/event/event.module'
 import StrategyModule from 'modules/strategy/strategy.module'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsModule from 'modules/projections/projections.module'
+import SystemValueModule from 'modules/systemValue/systemValue.module'
 import DrawingController from './drawing.controller'
 import DrawingTransactionService from './drawing.service.transactions'
 import DrawingService from './drawing.service'
@@ -21,6 +22,7 @@ import DrawingService from './drawing.service'
     ]),
     StrategyModule,
     ProjectionsModule,
+    SystemValueModule,
   ],
   providers: [DrawingTransactionService, DrawingService],
   exports: [],

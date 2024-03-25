@@ -6,6 +6,7 @@ import EventModule from 'modules/event/event.module'
 import StrategyModule from 'modules/strategy/strategy.module'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import PendingEventModule from 'modules/pendingEvents/pendingEvent.module'
+import SystemValueModule from 'modules/systemValue/systemValue.module'
 import ProjectionsService from './projections.service'
 import DrawingEventHandlingService from './drawing.service.events'
 import FacilityEventHandlingService from './facility.service.events'
@@ -20,6 +21,7 @@ import FacilityEventHandlingService from './facility.service.events'
       FacilityEntity,
     ]),
     StrategyModule,
+    SystemValueModule,
   ],
   providers: [
     ProjectionsService,

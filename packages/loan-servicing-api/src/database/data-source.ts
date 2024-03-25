@@ -6,6 +6,7 @@ import TransactionEntity from 'models/entities/TransactionEntity'
 import FacilityType from 'models/entities/FacilityTypeEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import PendingEventEntity from 'models/entities/PendingEventEntity'
+import SystemValueEntity from 'models/entities/SystemValueEntity'
 
 const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   type: 'mssql',
@@ -23,6 +24,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
     FacilityType,
     FacilityEntity,
     PendingEventEntity,
+    SystemValueEntity,
   ],
   options: {
     encrypt: true,

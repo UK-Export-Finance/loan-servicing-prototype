@@ -85,7 +85,7 @@ class DrawingController {
         drawingId,
         transactions!,
       ),
-      currentDate: projectionDate ?? new Date().toISOString().split('T')[0],
+      currentDate: new Date(drawing.currentDate).toISOString().split('T')[0],
     }
   }
 

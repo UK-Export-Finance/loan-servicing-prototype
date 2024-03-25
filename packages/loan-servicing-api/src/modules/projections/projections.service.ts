@@ -19,6 +19,7 @@ import EventService from 'modules/event/event.service'
 import DrawingEventHandlingService from 'modules/projections/drawing.service.events'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
+import SystemValueService from 'modules/systemValue/systemValue.service'
 import FacilityEventHandlingService from './facility.service.events'
 import FacilityBuilder, {
   FacilityProjectionSnapshot,
@@ -36,16 +37,16 @@ class ProjectionsService {
     private drawingEventHandler: DrawingEventHandlingService,
     @Inject(FacilityEventHandlingService)
     private facilityEventHandler: FacilityEventHandlingService,
+    @Inject(SystemValueService)
+    private systemValueService: SystemValueService,
   ) {}
 
   @Transactional()
-  async buildProjectionsForFacilityOnDate(
-    facilityId: string,
-    date: Date = new Date(),
-  ): Promise<{
+  async buildProjectionsForFacilityOnDate(facilityId: string): Promise<{
     facility: FacilityEntity
     transactions: Transaction[]
   }> {
+    const date = await this.systemValueService.getSystemDate()
     const { facility, facilityEvents } =
       await this.intialiseFacility(facilityId)
 
@@ -142,14 +143,13 @@ class ProjectionsService {
   async buildProjectionsForDrawingOnDate(
     facilityId: string,
     drawingId: string,
-    date?: Date,
   ): Promise<{
     facility: FacilityEntity
     drawing: DrawingEntity
     transactions: Transaction[]
   }> {
     const { facility, transactions } =
-      await this.buildProjectionsForFacilityOnDate(facilityId, date)
+      await this.buildProjectionsForFacilityOnDate(facilityId)
     const drawing = facility.drawings.find((d) => d.streamId === drawingId)
     if (!drawing) {
       throw new Error(`Facility did not contain expected drawing`)

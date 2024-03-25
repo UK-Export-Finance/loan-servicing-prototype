@@ -161,7 +161,7 @@ class DrawingEventHandlingService
       const accrual = drawingBuilder.getAccrual(accrualId)
 
       const paidAmount = Big(accrual.paidAmount).add(paymentAmount).toFixed(2)
-      const isSettled = Big(paidAmount).eq(accrual.predictedFinalFee)
+      const isSettled = Big(paidAmount).eq(accrual.accruedFee)
       drawingBuilder.updateAccrualValue(accrualId, {
         paidAmount,
         isSettled,

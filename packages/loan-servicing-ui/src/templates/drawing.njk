@@ -16,6 +16,7 @@
 {%- endblock %}
 
 {% block content %}
+  {{ setDateInput(currentDate) }}
 
   {{ govukBackLink({
     text: "Back to Facility",
@@ -71,6 +72,5 @@
   {{ transactionTable(transactionRows) }}
   {{ eventTable(eventRows) }}
 
-  {{ setDateInput(currentDate) }}
 
 {% endblock %}

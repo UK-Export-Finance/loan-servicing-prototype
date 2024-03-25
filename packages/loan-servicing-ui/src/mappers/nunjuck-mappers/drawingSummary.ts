@@ -108,7 +108,7 @@ const getAccrualTableRow =
     finalBalance: a.predictedFinalFee,
     unpaidAmount: a.unpaidAmount,
     payHtml:
-      a.unpaidAmount === '0'
+      a.isSettled
         ? 'Settled'
         : `<a href="/facility/${facilityId}/drawing/${drawingId}/recordAccrualPayment?accrualId=${a.id}">Record Payment</a>`,
   })

@@ -187,9 +187,7 @@ class FacilityEventHandlingService
       reference: 'Facility fees',
       valueChanged: 'totalFeeBalance',
       changeInValue: feeAmount,
-      valueAfterTransaction: projection.facility.facilityFees.find(
-        (f) => f.id === feeId,
-      )!.balance,
+      valueAfterTransaction: projection.getFacilityFee(feeId).balance,
     })
   }
 
