@@ -55,11 +55,11 @@ class DrawingController {
   @ApiOkResponse({ type: DrawingDtoClass })
   async getDrawing(
     @Param('drawingId') drawingStreamId: string,
-    @Query('projectionDate') projectionDate: string,
+    @Query('rebuild') rebuild?: boolean,
   ): Promise<DrawingDtoClass> {
     const drawing = await this.drawingService.getDrawing(
       drawingStreamId,
-      projectionDate !== 'undefined' ? new Date(projectionDate) : undefined,
+      rebuild,
     )
     if (drawing === null) {
       throw new NotFoundException()

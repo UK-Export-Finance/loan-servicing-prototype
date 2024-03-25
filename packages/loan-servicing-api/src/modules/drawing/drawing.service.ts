@@ -40,7 +40,7 @@ class DrawingService {
     private drawingRepo: Repository<DrawingEntity>,
     @Inject(ProjectionsService)
     private projectionsService: ProjectionsService,
-    @Inject(SystemValueService) private systemValueService: SystemValueService
+    @Inject(SystemValueService) private systemValueService: SystemValueService,
   ) {}
 
   @Transactional()
@@ -302,10 +302,7 @@ class DrawingService {
   }
 
   @Transactional({ propagation: Propagation.SUPPORTS })
-  async getDrawing(
-    streamId: string,
-    projectionDate?: Date | undefined,
-  ): Promise<Drawing> {
+  async getDrawing(streamId: string, rebuild?: boolean): Promise<Drawing> {
     const drawing = await this.drawingRepo.findOne({
       where: { streamId },
       relations: { facility: true },
@@ -313,8 +310,7 @@ class DrawingService {
     if (!drawing) {
       throw new NotFoundException(`No facility found for id ${streamId}`)
     }
-    if (projectionDate) {
-      await this.systemValueService.setSystemDate(projectionDate)
+    if (rebuild) {
       await this.projectionsService.buildProjectionsForDrawingOnDate(
         drawing.facility.streamId,
         streamId,

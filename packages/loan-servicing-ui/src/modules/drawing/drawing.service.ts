@@ -54,10 +54,9 @@ class DrawingService {
   async getDrawing(
     facilityStreamId: string,
     drawingStreamId: string,
-    projectionDate?: string,
   ): Promise<DrawingDto | null> {
     const facility = await tryGetApiData<DrawingDto>(
-      `facility/${facilityStreamId}/drawing/${drawingStreamId}?projectionDate=${projectionDate}`,
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}?rebuild=true`,
     )
     return facility
   }

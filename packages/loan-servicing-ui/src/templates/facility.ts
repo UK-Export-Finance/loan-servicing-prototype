@@ -4,6 +4,7 @@ import {
   EventTableProps,
   TransactionTableProps,
 } from './macros/transaction-tables'
+import { SetDateInputProps } from './macros/dev-set-date'
 
 export type FacilityNjkInput = {
   facility: Facility
@@ -11,4 +12,5 @@ export type FacilityNjkInput = {
   facilitySummaryListProps: GovUkSummaryListProps
   drawingSummaries: GovUkSummaryListProps[]
 } & EventTableProps &
-  TransactionTableProps
+  TransactionTableProps &
+  SetDateInputProps

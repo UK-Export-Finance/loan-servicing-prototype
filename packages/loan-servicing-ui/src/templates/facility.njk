@@ -8,6 +8,7 @@
 
 {% from "macros/transaction-tables.njk" import eventTable %}
 {% from "macros/transaction-tables.njk" import transactionTable %}
+{% from "macros/dev-set-date.njk" import setDateInput %}
 
 {% block pageTitle -%}
   Facility
@@ -15,6 +16,8 @@
 {%- endblock %}
 
 {% block content %}
+  {{ setDateInput(currentDate) }}
+
   {{ govukBackLink({
     text: "Back to List",
     href: "/"

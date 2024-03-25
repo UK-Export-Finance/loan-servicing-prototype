@@ -50,12 +50,10 @@ class DrawingController {
     @Param('facilityId') facilityId: string,
     @Param('drawingId') drawingId: string,
     @Query('drawingCreated') drawingCreated?: boolean,
-    @Query('projectionDate') projectionDate?: string,
   ): Promise<DrawingNjkInput> {
     const drawing = await this.drawingService.getDrawing(
       facilityId,
       drawingId,
-      projectionDate,
     )
     if (!drawing) {
       throw new NotFoundException()

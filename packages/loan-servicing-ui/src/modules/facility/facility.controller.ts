@@ -111,6 +111,7 @@ class FacilityController {
       facilityCreated,
       facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
       drawingSummaries: facilityToDrawingSummaries(facility),
+      currentDate: facility.currentDate.toISOString().split('T')[0]
     }
   }
 }
