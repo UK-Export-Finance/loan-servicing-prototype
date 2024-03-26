@@ -2,6 +2,10 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 
 {% macro setDateInput(currentDate) %}
+    <form action="/dev/systemDate/next" method="post">
+        {{ govukButton({  text: "Progress to next day"}) }}
+    </form>
+
     <form action="/dev/systemDate">
         {{ govukInput({
             label: {
