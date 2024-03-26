@@ -76,6 +76,7 @@ services:
       - AzureWebJobsStorage="UseDevelopmentStorage=true"
       - StorageConnectionString
       - AzureWebJobsStorageConnectionString
+      - ApiUrl=http://loan-servicing-api:3001
     depends_on:
       - dev-azurite
     volumes:

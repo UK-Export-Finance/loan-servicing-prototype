@@ -18,14 +18,15 @@ async function triggerActiveFacilityUpdate(
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
   context.log(`Http function processed request for url "${request.url}"`)
+  context.log(`Getting system date from ${process.env.ApiUrl}/system/date`)
   const { data: systemDate } = await axios.get(
-    `${process.env.API_URL}/system/date`,
+    `${process.env.ApiUrl}/system/date`,
   )
   const nextDay = new Date(new Date(systemDate).getTime() + 24 * 60 * 60 * 1000)
   await axios.put(
-    `${process.env.API_URL}/system/date/${nextDay.toISOString()}`,
+    `${process.env.ApiUrl}/system/date/${nextDay.toISOString()}`,
   )
-  const url = `${process.env.API_URL}/facility?isActive=true`
+  const url = `${process.env.ApiUrl}/facility?isActive=true`
 
   const { data: activeFacilities } = await axios.get<Facility[]>(url)
 

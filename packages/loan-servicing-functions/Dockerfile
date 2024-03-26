@@ -6,6 +6,7 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot/packages/loan-servicing-functions 
     FUNCTIONS_WORKER_RUNTIME=node \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true \
     AzureWebJobsStorage=$AzureWebJobsStorage \
+    ApiUrl=$ApiUrl \
     StorageConnectionString=$StorageConnectionString \
     AzureWebJobsStorageConnectionString=$AzureWebJobsStorageConnectionString
 
