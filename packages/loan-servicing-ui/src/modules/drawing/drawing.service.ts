@@ -56,7 +56,7 @@ class DrawingService {
     drawingStreamId: string,
   ): Promise<DrawingDto | null> {
     const facility = await tryGetApiData<DrawingDto>(
-      `facility/${facilityStreamId}/drawing/${drawingStreamId}?rebuild=true`,
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}${process.env.DEV_MODE ? '?rebuild=true' : ''}`,
     )
     return facility
   }

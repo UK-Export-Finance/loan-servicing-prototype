@@ -35,6 +35,7 @@ services:
       - NODE_PATH=src
       - API_URL=http://loan-servicing-api:3001
       - FUNCTIONS_URL=http://loan-servicing-functions
+      # - DEV_MODE=true
   loan-servicing-api:
     depends_on:
       loan-servicing-db:
