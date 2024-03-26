@@ -6,7 +6,7 @@ async function rebuildFacility(
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
   context.log(`Updating facility with ID "${request}"`)
-  const rebuildFacilityUrl = `http://loan-servicing-api:3001/facility/${request}/rebuild`
+  const rebuildFacilityUrl = `${process.env.API_URL}/facility/${request}/rebuild`
 
 
   try {
