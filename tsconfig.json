@@ -21,6 +21,9 @@
     },
     {
       "path": "./packages/loan-servicing-api"
+    },
+    {
+      "path": "./packages/loan-servicing-functions"
     }
   ]
 }
