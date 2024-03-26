@@ -107,10 +107,9 @@ const getAccrualTableRow =
     accruedFee: a.accruedFee,
     finalBalance: a.predictedFinalFee,
     unpaidAmount: a.unpaidAmount,
-    payHtml:
-      a.isSettled
-        ? 'Settled'
-        : `<a href="/facility/${facilityId}/drawing/${drawingId}/recordAccrualPayment?accrualId=${a.id}">Record Payment</a>`,
+    payHtml: a.isSettled
+      ? 'Settled'
+      : `<a href="/facility/${facilityId}/drawing/${drawingId}/recordAccrualPayment?accrualId=${a.id}">Record Payment</a>`,
   })
 
 export const accrualsToTable = ({

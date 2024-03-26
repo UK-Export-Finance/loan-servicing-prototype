@@ -1,12 +1,12 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from 'typeorm'
 
 @Entity()
 class SystemValueEntity {
-    @PrimaryColumn()
-    name!: string
+  @PrimaryColumn()
+  name!: string
 
-    @Column()
-    value!: string
+  @Column()
+  value!: string
 }
 
 export default SystemValueEntity

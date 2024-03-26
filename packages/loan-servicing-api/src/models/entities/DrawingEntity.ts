@@ -1,12 +1,5 @@
-import {
-  ArrayOfClassAsJsonColumn,
-  CurrencyColumn,
-} from 'database/decorators'
-import {
-  Drawing,
-  DrawingAccrual,
-  Repayment,
-} from 'loan-servicing-common'
+import { ArrayOfClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
+import { Drawing, DrawingAccrual, Repayment } from 'loan-servicing-common'
 import { Column, Entity, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
 import { DrawingAccrualDtoClass } from 'models/dtos/drawingAccrual'
 import { DrawingRepaymentDto } from 'models/dtos/drawingRepayment'

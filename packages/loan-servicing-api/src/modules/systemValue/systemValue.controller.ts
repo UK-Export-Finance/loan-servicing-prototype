@@ -9,8 +9,7 @@ class SystemValueController {
 
   @Get('date')
   @ApiFoundResponse({ type: Date })
-  async getSystemDate(
-  ): Promise<Date> {
+  async getSystemDate(): Promise<Date> {
     const result = await this.systemValueService.getSystemDate()
 
     return result
@@ -18,9 +17,7 @@ class SystemValueController {
 
   @Put('date/:dateString')
   @ApiDefaultResponse({ type: Date })
-  async setSystemDate(
-    @Param('dateString') dateStr: string,
-  ): Promise<Date> {
+  async setSystemDate(@Param('dateString') dateStr: string): Promise<Date> {
     const date = new Date(dateStr)
     await this.systemValueService.setSystemDate(date)
     return date

@@ -1,10 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import {
-  LessThanOrEqual,
-  MoreThanOrEqual,
-  Repository,
-} from 'typeorm'
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm'
 import {
   CreateNewFacilityEvent,
   LoanServicingEvent,
@@ -119,9 +115,7 @@ class FacilityService {
     return facility
   }
 
-  async getAllFacilities(
-    isActive?: boolean,
-  ): Promise<Facility[] | null> {
+  async getAllFacilities(isActive?: boolean): Promise<Facility[] | null> {
     const systemDate = await this.systemValueService.getSystemDate()
     return isActive
       ? this.facilityRepo.find({
