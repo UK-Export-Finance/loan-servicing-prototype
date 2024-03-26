@@ -103,3 +103,8 @@ export class AddDrawingToFacilityClass {
   @ApiProperty()
   drawingId!: string
 }
+
+export class FacilityListFilters {
+  @ApiProperty({ required: false })
+  isActive?: boolean
+}

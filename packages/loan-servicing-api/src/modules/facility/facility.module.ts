@@ -7,6 +7,7 @@ import StrategyModule from 'modules/strategy/strategy.module'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsModule from 'modules/projections/projections.module'
 import TransactionEntity from 'models/entities/TransactionEntity'
+import SystemValueModule from 'modules/systemValue/systemValue.module'
 import FacilityTransactionService from './facility.service.transactions'
 
 @Module({
@@ -16,6 +17,7 @@ import FacilityTransactionService from './facility.service.transactions'
     TypeOrmModule.forFeature([FacilityEntity, TransactionEntity]),
     StrategyModule,
     ProjectionsModule,
+    SystemValueModule,
   ],
   providers: [FacilityService, FacilityTransactionService],
   exports: [FacilityService],

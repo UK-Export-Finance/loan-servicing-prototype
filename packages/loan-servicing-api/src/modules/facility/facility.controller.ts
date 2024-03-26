@@ -7,7 +7,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   FacilityResponseDto,
   LoanServicingEvent,
@@ -96,8 +101,11 @@ class FacilityController {
 
   @Get()
   @ApiOkResponse({ type: FacilityResponseDtoClass })
-  async getAllFacility(): Promise<FacilityResponseDtoClass[] | null> {
-    const allEvents = await this.facilityService.getAllFacilities()
+  @ApiQuery({ name: 'isActive', required: false })
+  async getAllFacility(
+    @Query('isActive') isActive: boolean,
+  ): Promise<FacilityResponseDtoClass[] | null> {
+    const allEvents = await this.facilityService.getAllFacilities(isActive)
     if (allEvents === null) {
       throw new NotFoundException()
     }

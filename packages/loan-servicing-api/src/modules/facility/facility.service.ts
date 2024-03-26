@@ -1,6 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import {
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm'
 import {
   CreateNewFacilityEvent,
   LoanServicingEvent,
@@ -16,6 +20,7 @@ import { Propagation, Transactional } from 'typeorm-transactional'
 import EventService from 'modules/event/event.service'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsService from 'modules/projections/projections.service'
+import SystemValueService from 'modules/systemValue/systemValue.service'
 
 @Injectable()
 class FacilityService {
@@ -25,6 +30,8 @@ class FacilityService {
     private facilityRepo: Repository<FacilityEntity>,
     @Inject(ProjectionsService)
     private projectionsService: ProjectionsService,
+    @Inject(SystemValueService)
+    private systemValueService: SystemValueService,
   ) {}
 
   @Transactional()
@@ -112,8 +119,18 @@ class FacilityService {
     return facility
   }
 
-  async getAllFacilities(): Promise<Facility[] | null> {
-    return this.facilityRepo.find()
+  async getAllFacilities(
+    isActive?: boolean,
+  ): Promise<Facility[] | null> {
+    const systemDate = await this.systemValueService.getSystemDate()
+    return isActive
+      ? this.facilityRepo.find({
+          where: {
+            issuedEffectiveDate: LessThanOrEqual(systemDate),
+            expiryDate: MoreThanOrEqual(systemDate),
+          },
+        })
+      : this.facilityRepo.find()
   }
 }
 
