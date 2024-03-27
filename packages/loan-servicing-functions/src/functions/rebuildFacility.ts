@@ -7,7 +7,9 @@ async function rebuildFacility(
 ): Promise<HttpResponseInit> {
   context.log(`Updating facility with ID "${request}"`)
   const rebuildFacilityUrl = `${process.env.ApiUrl}/facility/${request}/rebuild`
-
+  if(request[0] === '2'){
+    throw new Error('simulated error')
+  }
 
   try {
     const { data: updatedFacility } = await axios.post(rebuildFacilityUrl)

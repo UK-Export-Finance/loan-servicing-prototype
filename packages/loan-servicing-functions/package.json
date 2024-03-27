@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
     "start": "func start",
-    "watch:docker": "nodemon --legacy-watch --watch ../../libs --watch src --ext ts,js,json --exec \"rm -rf dist && npm run build && sh /opt/startup/start_nonappservice.sh\"",
+    "watch:docker": "nodemon --legacy-watch --watch ../../libs --watch src --ext ts,js,json --exec \"npm run build && sh /opt/startup/start_nonappservice.sh\"",
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
