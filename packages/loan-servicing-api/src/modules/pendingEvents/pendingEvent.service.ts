@@ -111,7 +111,7 @@ class PendingEventService {
     const drawingUrl = `${process.env.UI_URL}/facility/${drawingForNotification.facility.streamId}/drawing/${event.streamId}`
     return {
       type: 'mrkdwn',
-      text: `${event.type} of ${paymentAmount} is ${isOverdue ? 'OVERDUE' : 'due'} on a <${drawingUrl}|drawing> on ${event.dueDate.toLocaleDateString()}`,
+      text: `${event.type} of £${paymentAmount} is ${isOverdue ? 'OVERDUE' : 'due'} on a <${drawingUrl}|drawing> on ${event.dueDate.toLocaleDateString('en-GB')}`,
     }
   }
 

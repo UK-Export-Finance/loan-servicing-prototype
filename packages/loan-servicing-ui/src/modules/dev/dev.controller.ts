@@ -27,6 +27,18 @@ class DevController {
     const sourcePage = request.headers.referer
     response.redirect(sourcePage || '/')
   }
+
+  @Post('sendNotifications')
+  async sendNotificationsForDay(
+    @Req() request: Request,
+    @Res() response: Response,
+  ): Promise<void> {
+    await axios.post(
+      `${process.env.FUNCTIONS_URL}/api/sendNotifications`,
+    )
+    const sourcePage = request.headers.referer
+    response.redirect(sourcePage || '/')
+  }
 }
 
 export default DevController
