@@ -8,4 +8,9 @@ export type PendingEvent<T extends UntypedEvent> = Omit<
   notificationDate: Date
 }
 
+export type NotificationText = {
+  type: string
+  text: string
+}
+
 export type UntypedPendingEvent = PendingEvent<UntypedEvent>

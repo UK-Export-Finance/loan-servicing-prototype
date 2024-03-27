@@ -59,6 +59,7 @@ services:
       - SQL_DB_PASSWORD=AbC!2345
       - SQL_DB_USER=sa
       - SQL_DB_NAME=LoanServicing
+      - UI_URL=http://localhost:3000 # This is used to build links so uses the external docker port URL
   dev-azurite:
     image: 'mcr.microsoft.com/azure-storage/azurite:latest'
     attach: false

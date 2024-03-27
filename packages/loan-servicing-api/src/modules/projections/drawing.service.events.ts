@@ -12,6 +12,7 @@ import {
   Drawing,
   ForecastRepaymentEvent,
   RecordDrawingAccrualPaymentEvent,
+  DrawingAccrual,
 } from 'loan-servicing-common'
 import Big from 'big.js'
 import StrategyService from 'modules/strategy/strategy.service'
@@ -221,7 +222,7 @@ class DrawingEventHandlingService
     repayments: Repayment[],
     drawing: Drawing,
   ): Promise<void> {
-    const repaymentEvents = repayments.map<
+    const repaymentEvents = repayments.flatMap<
       NewPendingEvent<RecordDrawingRepaymentEvent>
     >((r) => ({
       effectiveDate: new Date(),
@@ -233,6 +234,28 @@ class DrawingEventHandlingService
       shouldProcessIfFuture: false,
       streamId: drawing.streamId,
       eventData: { repaymentId: r.id, amount: r.expectedAmount },
+    }))
+    await this.pendingEventService.addPendingEvents(repaymentEvents)
+  }
+
+  async addPendingAccrualPayments(
+    accruals: DrawingAccrual[],
+    drawing: Drawing,
+  ): Promise<void> {
+    const repaymentEvents = accruals.map<
+      NewPendingEvent<RecordDrawingAccrualPaymentEvent>
+    >((r) => ({
+      effectiveDate: new Date(),
+      dueDate: r.config.expiryDate,
+      notificationDate: new Date(
+        r.config.expiryDate.getTime() - 1000 * 60 * 60 * 24 * 7,
+      ),
+      entityType: 'drawing',
+      type: 'RecordDrawingAccrualPayment',
+      typeVersion: 1,
+      shouldProcessIfFuture: false,
+      streamId: drawing.streamId,
+      eventData: { accrualId: r.id, amount: r.predictedFinalFee },
     }))
     await this.pendingEventService.addPendingEvents(repaymentEvents)
   }

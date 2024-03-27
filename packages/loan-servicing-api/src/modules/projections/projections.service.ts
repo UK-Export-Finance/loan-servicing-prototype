@@ -132,7 +132,13 @@ class ProjectionsService {
     await Promise.all([
       ...currentFacility.drawings.map((d) =>
         this.drawingEventHandler.addPendingRepayments(
-          d.repayments.filter((r) => r.date > date),
+          d.repayments.filter((r) => r.date >= date),
+          d,
+        ),
+      ),
+      ...currentFacility.drawings.map((d) =>
+        this.drawingEventHandler.addPendingAccrualPayments(
+          d.accruals.filter((r) => r.config.expiryDate >= date),
           d,
         ),
       ),
