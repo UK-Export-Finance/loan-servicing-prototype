@@ -79,7 +79,9 @@ services:
       - StorageConnectionString
       - AzureWebJobsStorageConnectionString
       - SLACK_WEBHOOK_URL
+      - SIMULATE_ERRORS=true
       - ApiUrl=http://loan-servicing-api:3001
+      - UI_URL # This is used to build links so uses the external docker port URL
     depends_on:
       - dev-azurite
     volumes:
