@@ -49,8 +49,12 @@ class FacilityController {
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async getFacility(
     @Param('facilityId') facilityStreamId: string,
+    @Query('rebuild') rebuild?: boolean,
   ): Promise<FacilityResponseDtoClass> {
-    const facility = await this.facilityService.getFacility(facilityStreamId)
+    const facility = await this.facilityService.getFacility(
+      facilityStreamId,
+      rebuild,
+    )
     if (facility === null) {
       throw new NotFoundException()
     }
