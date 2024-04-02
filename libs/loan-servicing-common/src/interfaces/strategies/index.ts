@@ -12,3 +12,12 @@ export type FacilityType = {
   facilityFeeStrategies: FacilityFeeStrategyName[]
   drawingAccrualStrategies: DrawingAccrualStrategyName[]
 }
+
+export type FacilityTypeSettings = {
+  [k in keyof Omit<
+    FacilityType,
+    'name'
+  >]: FacilityType[k] extends readonly (infer ElementType)[]
+    ? ElementType
+    : never
+}

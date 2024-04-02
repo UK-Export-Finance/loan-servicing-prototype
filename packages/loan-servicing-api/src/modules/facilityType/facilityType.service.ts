@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { FacilityType } from 'loan-servicing-common'
+import { FacilityType, FacilityTypeSettings } from 'loan-servicing-common'
 import FacilityTypeEntity from 'models/entities/FacilityTypeEntity'
 import { Repository } from 'typeorm'
 
@@ -37,6 +37,23 @@ class FacilityTypeService {
 
   async getAllFacilityTypes(): Promise<FacilityType[]> {
     return this.facilityTypeRepo.find()
+  }
+
+  async verifyConfigMatchesType(
+    config: Partial<FacilityTypeSettings>,
+    facilityTypeName: string,
+  ): Promise<boolean> {
+    const facilityType =
+      await this.getPropertiesOfFacilityType(facilityTypeName)
+    return Object.entries(config).reduce(
+      (allValid: boolean, [propName, propValue]) => {
+        const test = facilityType[
+          propName as keyof FacilityTypeSettings
+        ] as string[]
+        return allValid && test.includes(propValue)
+      },
+      true,
+    )
   }
 
   async saveFacilityType(

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -34,6 +35,7 @@ import {
   AddFixedFacilityFeeDtoClass,
 } from 'models/dtos/facilityConfiguration'
 import ProjectionsService from 'modules/projections/projections.service'
+import FacilityTypeService from 'modules/facilityType/facilityType.service'
 import FacilityTransactionService from './facility.service.transactions'
 
 @ApiTags('Facility')
@@ -43,6 +45,7 @@ class FacilityController {
     private facilityService: FacilityService,
     private transactionService: FacilityTransactionService,
     private projectionService: ProjectionsService,
+    private facilityTypeService: FacilityTypeService,
   ) {}
 
   @Get(':facilityId')
@@ -153,6 +156,14 @@ class FacilityController {
     @Query('version') version: string,
     @Body() feeConfig: AddFixedFacilityFeeDtoClass,
   ): Promise<FacilityResponseDtoClass> {
+    const facility = await this.facilityService.getFacility(facilityId)
+    const isPermitted = await this.facilityTypeService.verifyConfigMatchesType(
+      { facilityFeeStrategies: 'FixedFacilityFee' },
+      facility.facilityType,
+    )
+    if(!isPermitted){
+      throw new BadRequestException(`Fixed fees are not permitted on facilities of type "${facility.facilityType}"`)
+    }
     const updatedFacility = await this.facilityService.addFacilityFee(
       facilityId,
       Number(version),
