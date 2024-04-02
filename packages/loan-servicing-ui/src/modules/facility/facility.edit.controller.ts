@@ -19,6 +19,7 @@ import {
 } from 'loan-servicing-common'
 import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
 import FacilityService from 'modules/facility/facility.service'
+import FacilityTypeService from 'modules/facilityType/facilityType.service'
 import { accruingFacilityFeeTypes } from 'strings/strategyNames'
 import {
   AddAccruingFacilityFeeFormDto,
@@ -33,7 +34,10 @@ import { getDateFromDateInput } from 'utils/form-helpers'
 
 @Controller('facility')
 class EditFacilityController {
-  constructor(private facilityService: FacilityService) {}
+  constructor(
+    private facilityService: FacilityService,
+    private facilityTypeService: FacilityTypeService,
+  ) {}
 
   @Get(':id/adjustPrincipal')
   @Render('facility-edit/amend-principal')
@@ -81,8 +85,16 @@ class EditFacilityController {
       throw new NotFoundException()
     }
 
+    const facilityType = await this.facilityTypeService.getFacilityType(
+      facility?.facilityType,
+    )
+    if (!facilityType) {
+      throw new NotFoundException()
+    }
+
     return {
       facility,
+      facilityType,
       accruesOnOptions: buildSelectOptionsFromStrings<
         AccruingFacilityFeeStrategyOption['accruesOn']
       >(accruingFacilityFeeTypes),

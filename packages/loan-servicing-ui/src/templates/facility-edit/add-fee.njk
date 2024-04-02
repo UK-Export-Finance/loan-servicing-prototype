@@ -12,10 +12,10 @@
 {% block content %}
   <h1 class="govuk-heading-l">Facility - Add Fee
     {{ facility.streamId }}</h1>
-
-  <h2 class="govuk-heading-m">Add Fixed Fee</h2>
-  <form action="/facility/{{facility.streamId}}/fixedFacilityFee?version={{facility.streamVersion}}" method="post">
-    {{ govukInput({
+  {% if 'AccruingFacilityFee' in facilityType.facilityFeeStrategies %}
+    <h2 class="govuk-heading-m">Add Fixed Fee</h2>
+    <form action="/facility/{{facility.streamId}}/fixedFacilityFee?version={{facility.streamVersion}}" method="post">
+      {{ govukInput({
         label: {
           text: "Fee amount"
         },
@@ -23,7 +23,7 @@
         id: "feeAmount",
         name: "feeAmount"
       }) }}
-    {{ govukDateInput({
+      {{ govukDateInput({
         id: "effectiveDate",
         namePrefix: "effectiveDate",
         fieldset: {
@@ -32,12 +32,13 @@
           }
         }
       }) }}
-    {{ govukButton({  text: "Add Fixed Fee"}) }}
-  </form>
-
-  <h2 class="govuk-heading-m">Add Accruing Fee</h2>
-  <form action="/facility/{{facility.streamId}}/accruingFacilityFee?version={{facility.streamVersion}}" method="post">
-    {{ govukSelect({
+      {{ govukButton({  text: "Add Fixed Fee"}) }}
+    </form>
+  {% endif %}
+  {% if 'FixedFacilityFee' in facilityType.facilityFeeStrategies %}
+    <h2 class="govuk-heading-m">Add Accruing Fee</h2>
+    <form action="/facility/{{facility.streamId}}/accruingFacilityFee?version={{facility.streamVersion}}" method="post">
+      {{ govukSelect({
       id: "accruesOn",
       name: "accruesOn",
       label: {
@@ -45,7 +46,7 @@
       },
       items: accruesOnOptions
     }) }}
-    {{ govukInput({
+      {{ govukInput({
         label: {
           text: "Accrual Rate"
         },
@@ -53,7 +54,7 @@
         id: "accrualRate",
         name: "accrualRate"
       }) }}
-    {{ govukDateInput({
+      {{ govukDateInput({
       id: "effectiveDate",
       namePrefix: "effectiveDate",
       fieldset: {
@@ -62,7 +63,7 @@
         }
       }
     }) }}
-    {{ govukDateInput({
+      {{ govukDateInput({
       id: "expiryDate",
       namePrefix: "expiryDate",
       fieldset: {
@@ -71,7 +72,8 @@
         }
       }
     }) }}
-    {{ govukButton({  text: "Add Accruing Fee"}) }}
-  </form>
+      {{ govukButton({  text: "Add Accruing Fee"}) }}
+    </form>
+  {% endif %}
 
 {% endblock %}
