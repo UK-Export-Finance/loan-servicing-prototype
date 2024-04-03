@@ -12,6 +12,22 @@
 {% block content %}
   <h1 class="govuk-heading-l">Facility - Add Fee
     {{ facility.streamId }}</h1>
+  {% if overrideFacilityType %}
+    {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+    {% set html %}
+    <p class="govuk-body">
+      You are overriding the facility type of this facility!
+      <br/>
+      <a class="govuk-notification-banner__link" href="?">Re-enable Facility Type</a>.
+    </p>
+    {% endset %}
+
+    {{ govukNotificationBanner({
+      html: html,
+      titleText: "Warning"
+    }) }}
+  {% endif %}
   {% if 'AccruingFacilityFee' in facilityType.facilityFeeStrategies or overrideFacilityType %}
     <h2 class="govuk-heading-m">Add Fixed Fee</h2>
     <form action="/facility/{{facility.streamId}}/fixedFacilityFee?version={{facility.streamVersion}}" method="post">
@@ -76,6 +92,9 @@
     }) }}
       {{ govukButton({  text: "Add Accruing Fee"}) }}
     </form>
+  {% endif %}
+  {% if not overrideFacilityType %}
+    {{ govukButton({  text: "Override Facility Type", classes: "govuk-button--warning", href: "?manualOverride=true"}) }}
   {% endif %}
 
 {% endblock %}
