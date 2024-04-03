@@ -107,7 +107,6 @@ class FacilityController {
   }
 
   @Get()
-  @ApiOkResponse({ type: FacilityResponseDtoClass })
   @ApiQuery({ name: 'isActive', required: false })
   async getAllFacility(
     @Query('isActive') isActive: boolean,
@@ -151,18 +150,25 @@ class FacilityController {
 
   @Post(':facilityId/addFacilityFee/fixed')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
+  @ApiQuery({ name: 'overrideFacilityType', required: false })
   async addFixedFacilityFee(
     @Param('facilityId') facilityId: string,
     @Query('version') version: string,
     @Body() feeConfig: AddFixedFacilityFeeDtoClass,
+    @Query('overrideFacilityType') overrideFacilityType?: boolean,
   ): Promise<FacilityResponseDtoClass> {
-    const facility = await this.facilityService.getFacility(facilityId)
-    const isPermitted = await this.facilityTypeService.verifyConfigMatchesType(
-      { facilityFeeStrategies: 'FixedFacilityFee' },
-      facility.facilityType,
-    )
-    if(!isPermitted){
-      throw new BadRequestException(`Fixed fees are not permitted on facilities of type "${facility.facilityType}"`)
+    if (!overrideFacilityType) {
+      const facility = await this.facilityService.getFacility(facilityId)
+      const isPermitted =
+        await this.facilityTypeService.verifyConfigMatchesType(
+          { facilityFeeStrategies: 'FixedFacilityFee' },
+          facility.facilityType,
+        )
+      if (!isPermitted) {
+        throw new BadRequestException(
+          `Fixed fees are not permitted on facilities of type "${facility.facilityType}"`,
+        )
+      }
     }
     const updatedFacility = await this.facilityService.addFacilityFee(
       facilityId,

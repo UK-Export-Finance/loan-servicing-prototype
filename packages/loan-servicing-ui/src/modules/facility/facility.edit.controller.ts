@@ -79,6 +79,7 @@ class EditFacilityController {
   @Render('facility-edit/add-fee')
   async renderAddFacilityFeePage(
     @Param('id') id: string,
+    @Query('manualOverride') manualOverride?: boolean
   ): Promise<AddFacilityFeeNjkInput> {
     const facility = await this.facilityService.getFacility(id)
     if (!facility) {
@@ -95,6 +96,7 @@ class EditFacilityController {
     return {
       facility,
       facilityType,
+      overrideFacilityType: !!manualOverride,
       accruesOnOptions: buildSelectOptionsFromStrings<
         AccruingFacilityFeeStrategyOption['accruesOn']
       >(accruingFacilityFeeTypes),

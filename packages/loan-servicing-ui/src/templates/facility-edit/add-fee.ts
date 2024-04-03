@@ -9,6 +9,7 @@ import { MandatoryDateInputFormData } from 'utils/form-helpers'
 export type AddFacilityFeeNjkInput = {
   facility: Facility
   facilityType: FacilityType 
+  overrideFacilityType: boolean
   accruesOnOptions: NunjuckSelectInputOption<
     AccruingFacilityFeeStrategyOption['accruesOn']
   >[]
