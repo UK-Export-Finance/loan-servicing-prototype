@@ -12,9 +12,10 @@
 {% block content %}
   <h1 class="govuk-heading-l">Facility - Add Fee
     {{ facility.streamId }}</h1>
-  {% if 'AccruingFacilityFee' in facilityType.facilityFeeStrategies %}
+  {% if 'AccruingFacilityFee' in facilityType.facilityFeeStrategies or overrideFacilityType %}
     <h2 class="govuk-heading-m">Add Fixed Fee</h2>
     <form action="/facility/{{facility.streamId}}/fixedFacilityFee?version={{facility.streamVersion}}" method="post">
+      <input name="overrideFacilityType" type="hidden" value="{{overrideFacilityType}}"/>
       {{ govukInput({
         label: {
           text: "Fee amount"
@@ -35,9 +36,10 @@
       {{ govukButton({  text: "Add Fixed Fee"}) }}
     </form>
   {% endif %}
-  {% if 'FixedFacilityFee' in facilityType.facilityFeeStrategies %}
+  {% if 'FixedFacilityFee' in facilityType.facilityFeeStrategies or overrideFacilityType %}
     <h2 class="govuk-heading-m">Add Accruing Fee</h2>
     <form action="/facility/{{facility.streamId}}/accruingFacilityFee?version={{facility.streamVersion}}" method="post">
+      <input name="overrideFacilityType" type="hidden" value="{{overrideFacilityType}}"/>
       {{ govukSelect({
       id: "accruesOn",
       name: "accruesOn",

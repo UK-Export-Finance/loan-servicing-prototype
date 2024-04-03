@@ -17,10 +17,12 @@ export type AddFacilityFeeNjkInput = {
 
 export type AddFixedFacilityFeeFormDto = {
   feeAmount: string
+  overrideFacilityType: boolean
 } & MandatoryDateInputFormData<'effectiveDate'>
 
 export type AddAccruingFacilityFeeFormDto = {
   accruesOn: AccruingFacilityFeeStrategyOption['accruesOn']
   accrualRate: string
+  overrideFacilityType: boolean
 } & MandatoryDateInputFormData<'effectiveDate'> &
   MandatoryDateInputFormData<'expiryDate'>

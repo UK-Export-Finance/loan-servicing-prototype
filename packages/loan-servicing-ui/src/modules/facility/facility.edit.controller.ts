@@ -79,7 +79,7 @@ class EditFacilityController {
   @Render('facility-edit/add-fee')
   async renderAddFacilityFeePage(
     @Param('id') id: string,
-    @Query('manualOverride') manualOverride?: boolean
+    @Query('manualOverride') manualOverride?: boolean,
   ): Promise<AddFacilityFeeNjkInput> {
     const facility = await this.facilityService.getFacility(id)
     if (!facility) {
@@ -116,7 +116,12 @@ class EditFacilityController {
       effectiveDate: getDateFromDateInput(requestDto, 'effectiveDate'),
       feeAmount: requestDto.feeAmount,
     }
-    await this.facilityService.addFixedFacilityFee(id, version, adjustmentDto)
+    await this.facilityService.addFixedFacilityFee(
+      id,
+      version,
+      adjustmentDto,
+      !!requestDto.overrideFacilityType,
+    )
     response.redirect(`/facility/${id}`)
   }
 

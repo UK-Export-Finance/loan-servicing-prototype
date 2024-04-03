@@ -60,9 +60,10 @@ class FacilityService {
     streamId: string,
     streamVersion: string,
     dto: AddFixedFacilityFeeDto,
+    overrideFacilityType: boolean,
   ): Promise<void> {
     await postApiData(
-      `facility/${streamId}/addFacilityFee/fixed?version=${streamVersion}`,
+      `facility/${streamId}/addFacilityFee/fixed?version=${streamVersion}&overrideFacilityType=${overrideFacilityType}`,
       dto,
     )
   }
