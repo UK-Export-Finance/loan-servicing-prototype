@@ -51,7 +51,7 @@ class EventService {
       .createQueryBuilder('e')
       .where({ streamId: event.streamId })
       // Prevents another event being written to this stream until transaction is complete
-      // .setLock('pessimistic_write')
+      .setLock('pessimistic_write')
       .select('MAX(e.streamVersion)', 'value')
       .getRawOne<{ value: number }>()
 

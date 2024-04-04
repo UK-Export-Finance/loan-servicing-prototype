@@ -59,6 +59,7 @@ class DrawingService {
           type: 'AddDrawingToFacility',
           typeVersion: 1,
           eventData: { ...drawingRequest, streamId: crypto.randomUUID() },
+          isApproved: true,
         },
         facilityVersion,
       )
@@ -72,6 +73,7 @@ class DrawingService {
       shouldProcessIfFuture: false,
       typeVersion: 1,
       eventData: { ...drawingRequest },
+      isApproved: true,
     })
     let streamVersion = 1
     if (drawingRequest.drawingConfig.repaymentsStrategy) {
@@ -96,6 +98,7 @@ class DrawingService {
           date: drawingRequest.issuedEffectiveDate,
           amount: drawingRequest.outstandingPrincipal,
         },
+        isApproved: true,
       },
       streamVersion,
     )
@@ -125,6 +128,7 @@ class DrawingService {
         shouldProcessIfFuture: false,
         typeVersion: 1,
         eventData: update,
+        isApproved: true,
       },
       streamVersion,
     )
@@ -153,6 +157,7 @@ class DrawingService {
         shouldProcessIfFuture: false,
         typeVersion: 1,
         eventData,
+        isApproved: true,
       },
       streamVersion,
     )
@@ -190,6 +195,7 @@ class DrawingService {
         type: 'SetDrawingRepayments',
         typeVersion: 1,
         eventData,
+        isApproved: true,
       },
       streamVersion,
     )
@@ -223,6 +229,7 @@ class DrawingService {
           ...feeConfig,
           accrualId: crypto.randomUUID(),
         },
+        isApproved: true,
       },
       streamVersion,
     )
@@ -253,6 +260,7 @@ class DrawingService {
           repaymentId: repaymentDto.repaymentId,
           amount: repaymentDto.amount,
         },
+        isApproved: false,
       },
       streamVersion,
     )
@@ -283,6 +291,7 @@ class DrawingService {
           accrualId: repaymentDto.accrualId,
           amount: repaymentDto.amount,
         },
+        isApproved: false,
       },
       streamVersion,
     )

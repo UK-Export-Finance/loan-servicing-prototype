@@ -2,7 +2,7 @@ import { UntypedEvent } from './events/eventBase'
 
 export type PendingEvent<T extends UntypedEvent> = Omit<
   T,
-  'streamVersion' | 'isSoftDeleted'
+  'streamVersion' | 'isSoftDeleted' | 'isApproved'
 > & {
   dueDate: Date
   notificationDate: Date

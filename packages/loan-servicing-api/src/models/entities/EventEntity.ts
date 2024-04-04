@@ -39,6 +39,9 @@ class EventEntity<T extends LoanServicingEvent> implements UntypedEventClass {
 
   @Column()
   shouldProcessIfFuture!: boolean
+
+  @Column()
+  isApproved!: boolean
 }
 
 export default EventEntity

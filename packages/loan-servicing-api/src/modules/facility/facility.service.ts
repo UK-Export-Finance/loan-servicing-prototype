@@ -43,6 +43,7 @@ class FacilityService {
         type: 'CreateNewFacility',
         typeVersion: 1,
         eventData: facilityRequest,
+        isApproved: true,
       },
     )
     const { facility } =
@@ -68,6 +69,7 @@ class FacilityService {
         type: 'AdjustFacilityAmount',
         typeVersion: 1,
         eventData: { adjustment },
+        isApproved: true,
       },
       streamVersion,
     )
@@ -91,6 +93,7 @@ class FacilityService {
         shouldProcessIfFuture: true,
         typeVersion: 1,
         eventData: { ...feeConfig, feeId: crypto.randomUUID() },
+        isApproved: true,
       },
       streamVersion,
     )
