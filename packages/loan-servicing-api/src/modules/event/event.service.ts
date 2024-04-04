@@ -126,6 +126,16 @@ class EventService {
     return event.eventData.facilityType
   }
 
+  async approveEvent<T extends LoanServicingEvent>(
+    id: number,
+  ): Promise<EventEntity<T>> {
+    const repo = this.dataSource.getRepository(EventEntity<T>)
+    const event = await repo.findOneByOrFail({ id })
+    event.isApproved = true
+    await repo.save(event)
+    return event
+  }
+
   parseEvent<T extends LoanServicingEvent>(rawEvent: EventEntity<T>): T {
     const getClassConstructor = eventTypeToEventClassDefinition[
       rawEvent.type

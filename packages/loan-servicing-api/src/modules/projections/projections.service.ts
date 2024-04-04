@@ -234,7 +234,7 @@ class ProjectionsService {
 
     return {
       facility,
-      facilityEvents,
+      facilityEvents: facilityEvents.filter((e) => e.isApproved),
       facilityStreamVersion:
         facilityEvents[facilityEvents.length - 1].streamVersion,
     }
