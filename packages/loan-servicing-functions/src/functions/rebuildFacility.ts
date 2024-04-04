@@ -8,7 +8,7 @@ async function rebuildFacility(
   context.log(`Updating facility with ID "${request}"`)
   const rebuildFacilityUrl = `${process.env.ApiUrl}/facility/${request}/rebuild`
 
-  if(request[0] === '2' && process.env.SIMULATE_ERRORS === 'true'){
+  if (request[0] === '2' && process.env.SIMULATE_ERRORS === 'true') {
     throw new Error('simulated error')
   }
 

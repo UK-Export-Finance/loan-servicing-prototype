@@ -33,9 +33,7 @@ class DevController {
     @Req() request: Request,
     @Res() response: Response,
   ): Promise<void> {
-    await axios.post(
-      `${process.env.FUNCTIONS_URL}/api/sendNotifications`,
-    )
+    await axios.post(`${process.env.FUNCTIONS_URL}/api/sendNotifications`)
     const sourcePage = request.headers.referer
     response.redirect(sourcePage || '/')
   }

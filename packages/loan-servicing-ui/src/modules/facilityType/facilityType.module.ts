@@ -5,7 +5,7 @@ import FacilityTypeService from './facilityType.service'
 @Module({
   controllers: [FacilityTypeController],
   providers: [FacilityTypeService],
-  exports: [FacilityTypeService]
+  exports: [FacilityTypeService],
 })
 class FacilityTypeModule {}
 
