@@ -9,7 +9,7 @@ import ProjectionsModule from 'modules/projections/projections.module'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import SystemValueModule from 'modules/systemValue/systemValue.module'
 import FacilityTypeModule from 'modules/facilityType/facilityType.module'
-import FacilityTransactionService from './facility.service.transactions'
+import FacilityTransactionService from './facility.transactions.service'
 
 @Module({
   controllers: [FacilityController],

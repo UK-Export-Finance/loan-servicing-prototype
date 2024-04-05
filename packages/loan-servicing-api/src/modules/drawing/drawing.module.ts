@@ -8,7 +8,7 @@ import FacilityEntity from 'models/entities/FacilityEntity'
 import ProjectionsModule from 'modules/projections/projections.module'
 import SystemValueModule from 'modules/systemValue/systemValue.module'
 import DrawingController from './drawing.controller'
-import DrawingTransactionService from './drawing.service.transactions'
+import DrawingTransactionService from './drawing.transactions.service'
 import DrawingService from './drawing.service'
 
 @Module({

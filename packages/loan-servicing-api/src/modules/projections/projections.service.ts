@@ -16,11 +16,11 @@ import {
 import TransactionEntity from 'models/entities/TransactionEntity'
 import DrawingEntity from 'models/entities/DrawingEntity'
 import EventService from 'modules/event/event.service'
-import DrawingEventHandlingService from 'modules/projections/drawing.service.events'
+import DrawingEventHandlingService from 'modules/projections/drawing.events.service'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import SystemValueService from 'modules/systemValue/systemValue.service'
-import FacilityEventHandlingService from './facility.service.events'
+import FacilityEventHandlingService from './facility.events.service'
 import FacilityBuilder, {
   FacilityProjectionSnapshot,
 } from './builders/FacilityBuilder'

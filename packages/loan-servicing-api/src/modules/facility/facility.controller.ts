@@ -36,7 +36,7 @@ import {
 } from 'models/dtos/facilityConfiguration'
 import ProjectionsService from 'modules/projections/projections.service'
 import FacilityTypeService from 'modules/facilityType/facilityType.service'
-import FacilityTransactionService from './facility.service.transactions'
+import FacilityTransactionService from './facility.transactions.service'
 
 @ApiTags('Facility')
 @Controller('/facility')

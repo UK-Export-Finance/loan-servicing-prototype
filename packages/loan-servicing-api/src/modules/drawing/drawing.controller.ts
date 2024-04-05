@@ -41,7 +41,7 @@ import {
 import { RecordDrawingRepaymentDtoClass } from 'models/dtos/drawingRepayment'
 import EventService from 'modules/event/event.service'
 import DrawingService from './drawing.service'
-import DrawingTransactionService from './drawing.service.transactions'
+import DrawingTransactionService from './drawing.transactions.service'
 
 @ApiTags('Drawing')
 @Controller('/facility/:facilityId/drawing')

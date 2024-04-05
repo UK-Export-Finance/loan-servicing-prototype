@@ -8,8 +8,8 @@ import FacilityEntity from 'models/entities/FacilityEntity'
 import PendingEventModule from 'modules/pendingEvents/pendingEvent.module'
 import SystemValueModule from 'modules/systemValue/systemValue.module'
 import ProjectionsService from './projections.service'
-import DrawingEventHandlingService from './drawing.service.events'
-import FacilityEventHandlingService from './facility.service.events'
+import DrawingEventHandlingService from './drawing.events.service'
+import FacilityEventHandlingService from './facility.events.service'
 
 @Module({
   imports: [
