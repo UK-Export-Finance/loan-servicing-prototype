@@ -61,6 +61,16 @@ class DrawingService {
     return facility
   }
 
+  async getDrawingApprovalEvents(
+    facilityStreamId: string,
+    drawingStreamId: string,
+  ): Promise<LoanServicingEvent[] | null> {
+    const events = await tryGetApiData<LoanServicingEvent[]>(
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}/events/unapproved`,
+    )
+    return events
+  }
+
   async getDrawingEventTableRows(
     facilityStreamId: string,
     drawingStreamId: string,
@@ -126,6 +136,17 @@ class DrawingService {
     await postApiData(
       `facility/${facilityStreamId}/drawing/${drawingStreamId}/accuralPaymentReceived?version=${streamVersion}`,
       dto,
+    )
+  }
+
+  async approveEvent(
+    facilityStreamId: string,
+    drawingStreamId: string,
+    eventId: number
+  ): Promise<void> {
+    await postApiData(
+      `facility/${facilityStreamId}/drawing/${drawingStreamId}/approveEvent?id=${eventId}`,
+        {}
     )
   }
 }

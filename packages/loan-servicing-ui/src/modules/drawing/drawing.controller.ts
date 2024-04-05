@@ -34,7 +34,9 @@ import {
   filterSelectOptions,
   repaymentsSelectOptions,
 } from 'controls/strategyControlsOptions'
-import mapEventsToTable from 'mappers/nunjuck-mappers/eventTable'
+import mapEventsToTable, {
+  mapApprovalEventsToTable,
+} from 'mappers/nunjuck-mappers/eventTable'
 import mapTransactionsToTable from 'mappers/nunjuck-mappers/transactionTable'
 import mapTransactionsToWithdrawalsSummary from 'mappers/nunjuck-mappers/transactionsToWithdrawals'
 import { drawingAccrualStrategyNames } from 'strings/strategyNames'
@@ -64,6 +66,15 @@ class DrawingController {
       drawingId,
     )
 
+    const approvalEvents = await this.drawingService.getDrawingApprovalEvents(
+      facilityId,
+      drawingId,
+    )
+
+    if (!approvalEvents) {
+      throw new NotFoundException()
+    }
+
     return {
       drawing,
       eventRows: mapEventsToTable(events!),
@@ -74,6 +85,11 @@ class DrawingController {
       repaymentsSummaryListProps: drawingToRepaymentsSummary(
         facilityId,
         drawing,
+      ),
+      approvalEvents: mapApprovalEventsToTable(
+        facilityId,
+        drawingId,
+        approvalEvents,
       ),
       withdrawalsSummaryProps: mapTransactionsToWithdrawalsSummary(
         facilityId,

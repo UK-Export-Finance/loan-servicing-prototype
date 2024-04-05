@@ -115,4 +115,22 @@ const mapEventsToTable = (events: LoanServicingEvent[]): NunjuckTableRow[] =>
       ]),
     ) || null
 
+export const mapApprovalEventsToTable = (
+  facilityId: string,
+  drawingId: string,
+  events: LoanServicingEvent[],
+): NunjuckTableRow[] =>
+  events
+    .map((e) => ({
+      ...getEventTableRow(e),
+      approveButton: `<a href="/facility/${facilityId}/drawing/${drawingId}/approveEvent?id=${e.id}">Approve</a>`,
+    }))
+    .map((r) => [
+      { text: r.eventDate },
+      { text: r.event },
+      { text: r.description },
+      { text: r.effectiveDate },
+      { html: r.approveButton },
+    ])
+
 export default mapEventsToTable

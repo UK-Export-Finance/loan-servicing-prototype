@@ -6,6 +6,7 @@ export type EventBase<
   Data extends object,
   Entity extends EntityWithEvents,
 > = {
+  id: number
   streamId: string
   streamVersion: number
   eventDate: Date

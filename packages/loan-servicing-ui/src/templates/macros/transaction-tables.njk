@@ -48,3 +48,29 @@
     }) }}
 
 {% endmacro %}
+{% macro approvalEventTable(eventRows) %}
+
+    {{ govukTable({
+        caption: "Pending Approvals",
+        captionClasses: "govuk-table__caption--m",
+        head: [
+        {
+            text: "Event Date"
+        },
+        {
+            text: "Action"
+        },
+        {
+            text: "Changes"
+        },
+        {
+            text: "Effective Date"
+        },
+        {
+            text: ""
+        }
+        ],
+        rows: eventRows
+    }) }}
+
+{% endmacro %}

@@ -13,6 +13,7 @@ export type DrawingNjkInput = {
   withdrawalsSummaryProps: GovUkSummaryListProps
   repaymentsSummaryListProps: GovUkSummaryListProps
   accrualRows: NunjuckTableRow[]
+  approvalEvents: NunjuckTableRow[]
 } & EventTableProps &
   TransactionTableProps &
   SetDateInputProps

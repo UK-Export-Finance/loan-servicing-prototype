@@ -9,6 +9,7 @@
 
 {% from "macros/transaction-tables.njk" import transactionTable %}
 {% from "macros/transaction-tables.njk" import eventTable %}
+{% from "macros/transaction-tables.njk" import approvalEventTable %}
 {% from "macros/dev-set-date.njk" import setDateInput %}
 
 {% block pageTitle -%}
@@ -38,6 +39,8 @@
     {{ drawing.streamId }}</h1>
 
   {{ govukSummaryList(drawingSummaryListProps) }}
+
+  {{ approvalEventTable(approvalEvents) }}
 
   {{ govukSummaryList(withdrawalsSummaryProps) }}
 
@@ -71,6 +74,5 @@
 
   {{ transactionTable(transactionRows) }}
   {{ eventTable(eventRows) }}
-
 
 {% endblock %}

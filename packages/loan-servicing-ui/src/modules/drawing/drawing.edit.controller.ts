@@ -285,6 +285,21 @@ class EditDrawingController {
     )
     response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
   }
+
+  @Get(':drawingId/approveEvent')
+  async approveDrawingEvent(
+    @Param('facilityId') facilityId: string,
+    @Param('drawingId') drawingId: string,
+    @Query('id') id: number,
+    @Res() response: Response,
+  ): Promise<void> {
+    await this.drawingService.approveEvent(
+      facilityId,
+      drawingId,
+      id
+    )
+    response.redirect(`/facility/${facilityId}/drawing/${drawingId}`)
+  }
 }
 
 export default EditDrawingController

@@ -307,34 +307,10 @@ class DrawingController {
     })
   }
 
-  @Post(':drawingId/accrualPaymentReceived/approveEvent')
+  @Post(':drawingId/approveEvent')
   @ApiOkResponse({ type: RecordDrawingAccrualPaymentDtoClass })
-  async approveAccrualPayment(
-    @Query('id') eventId: number,
-  ): Promise<RecordDrawingAccrualPaymentDtoClass> {
-    const updatedDrawing = await this.eventService.approveEvent(eventId)
-    return plainToInstance(
-      RecordDrawingAccrualPaymentDtoClass,
-      updatedDrawing,
-      {
-        enableCircularCheck: true,
-      },
-    )
-  }
-
-  @Post(':drawingId/accrualPaymentReceived/approveEvent')
-  @ApiOkResponse({ type: RecordDrawingAccrualPaymentDtoClass })
-  async getDrawingjF(
-    @Query('id') eventId: number,
-  ): Promise<RecordDrawingAccrualPaymentDtoClass> {
-    const updatedDrawing = await this.eventService.approveEvent(eventId)
-    return plainToInstance(
-      RecordDrawingAccrualPaymentDtoClass,
-      updatedDrawing,
-      {
-        enableCircularCheck: true,
-      },
-    )
+  async approveDrawingEvent(@Query('id') eventId: number): Promise<void> {
+    await this.eventService.approveEvent(eventId)
   }
 }
 
