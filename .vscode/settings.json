@@ -6,5 +6,6 @@
   "debug.internalConsoleOptions": "neverOpen",
   "azureFunctions.projectLanguageModel": 4,
   "azureFunctions.preDeployTask": "npm prune (functions)",
-  "azurite.location": ".azurite"
+  "azurite.location": ".azurite",
+  "material-icon-theme.activeIconPack": "nest"
 }
