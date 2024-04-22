@@ -8,6 +8,7 @@ export type ProjectEvent<T extends UntypedEvent> = Pick<
   | 'streamId'
   | 'entityType'
   | 'shouldProcessIfFuture'
+  | 'isApproved'
 >
 
 export type ProjectedEventBase<

@@ -1,5 +1,5 @@
 import { ClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
-import { DrawingProjectedEvent, Transaction } from 'loan-servicing-common'
+import { DrawingProjectedEvent, Transaction, TransactionStatus } from 'loan-servicing-common'
 import DrawingProjectionEventDtoClass from 'models/dtos/DrawingProjectedEventDto'
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 
@@ -29,6 +29,9 @@ class TransactionEntity implements Transaction {
 
   @CurrencyColumn()
   valueAfterTransaction!: string
+
+  @Column()
+  status!: TransactionStatus
 }
 
 export default TransactionEntity

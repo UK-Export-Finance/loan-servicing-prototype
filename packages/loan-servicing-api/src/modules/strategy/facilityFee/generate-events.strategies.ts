@@ -26,6 +26,7 @@ export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
       entityType: 'facility',
       type: 'CalculateAccruingFacilityFee',
       eventData: option,
+      isApproved: false,
     })
     // Naive date management - not suitable for production
     dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)
@@ -43,6 +44,7 @@ export const getFixedFacilityFeeEvents: GetFacilityFeeEventsStrategy<
     entityType: 'facility',
     type: 'CalculateFixedFacilityFee',
     eventData: option,
+      isApproved: false,
   },
 ]
 

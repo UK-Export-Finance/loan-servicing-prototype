@@ -48,6 +48,7 @@ class DrawingTransactionService {
         valueChanged: 'interestAccrued',
         changeInValue: Big(a.interest).toFixed(2),
         valueAfterTransaction: 'TBC',
+        status: 'commited',
       }))
     const monthlyAccrualAmounts = (await this.transactionRepo.query(
       ` SELECT
@@ -70,6 +71,7 @@ class DrawingTransactionService {
         valueChanged: 'accrualTotal',
         changeInValue: Big(a.accrued).toFixed(2),
         valueAfterTransaction: 'TBC',
+        status: 'commited',
       }))
     const nonSummarisedTransactions = await this.transactionRepo
       .createQueryBuilder('t')

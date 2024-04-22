@@ -58,6 +58,7 @@ export const getFixedDrawingAccrualEvents: GetDrawingAccrualEventsStrategy<
         entityType: 'drawing',
         type: 'CalculateFixedDrawingAccrual',
         eventData: { ...option, accrualId: id },
+      isApproved: false,
       })
       // Naive date management - not suitable for production
       dateToProcess = new Date(dateToProcess.getTime() + 24 * 60 * 60000)

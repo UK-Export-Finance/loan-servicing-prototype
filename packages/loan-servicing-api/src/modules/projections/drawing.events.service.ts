@@ -52,6 +52,7 @@ class DrawingEventHandlingService
       valueChanged: 'N/A',
       changeInValue: '0',
       valueAfterTransaction: '0',
+      status: 'commited',
     })
   }
 
@@ -94,6 +95,7 @@ class DrawingEventHandlingService
         valueChanged: 'outstandingPrincipal',
         changeInValue: withdrawnAmount,
         valueAfterTransaction: drawing.outstandingPrincipal,
+        status: 'commited',
       },
       {
         streamId: projection.facility.streamId,
@@ -103,6 +105,7 @@ class DrawingEventHandlingService
         valueChanged: 'drawnAmount',
         changeInValue: withdrawnAmount,
         valueAfterTransaction: projection.facility.drawnAmount,
+        status: 'commited',
       },
     ])
   }
@@ -146,6 +149,7 @@ class DrawingEventHandlingService
       valueChanged: `accrualBalance:${accrual.id}`,
       changeInValue: accruedAmount,
       valueAfterTransaction: accrual.accruedFee,
+      status: 'commited',
     })
   }
 
@@ -177,6 +181,7 @@ class DrawingEventHandlingService
         valueChanged: 'accrualFeeBalance',
         changeInValue: Big(paymentAmount).times(-1).toString(),
         valueAfterTransaction: '0',
+        status: 'commited',
       })
     }
 
@@ -278,6 +283,7 @@ class DrawingEventHandlingService
       shouldProcessIfFuture: false,
       eventData: { repaymentId: r.id, amount: r.expectedAmount },
       type: 'ForecastDrawingRepayment',
+      isApproved: false,
     }))
     projection.addEvents(forecastEvents)
   }
@@ -310,6 +316,7 @@ class DrawingEventHandlingService
       valueChanged: 'outstandingPrincipal',
       changeInValue: Big(paymentAmount).times(-1).toString(),
       valueAfterTransaction: outstandingPrincipal,
+      status: sourceEvent.isApproved ? 'commited' : 'pendingApproval',
     })
   }
 

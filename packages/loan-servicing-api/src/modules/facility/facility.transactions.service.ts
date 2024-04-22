@@ -47,6 +47,7 @@ class FacilityTransactionService {
         valueChanged: 'feeBalance',
         changeInValue: Big(a.facilityFeeChange).toFixed(2),
         valueAfterTransaction: 'TBC',
+        status: 'commited',
       }),
     )
     const nonFeeTransactions = await this.transactionRepo

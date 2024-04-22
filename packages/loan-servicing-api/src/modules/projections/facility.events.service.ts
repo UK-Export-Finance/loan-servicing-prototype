@@ -55,6 +55,7 @@ class FacilityEventHandlingService
       valueChanged: 'N/A',
       changeInValue: '0',
       valueAfterTransaction: '0',
+      status: 'commited',
     })
   }
 
@@ -76,6 +77,7 @@ class FacilityEventHandlingService
       valueChanged: 'N/A',
       changeInValue: '0',
       valueAfterTransaction: '0',
+      status: 'commited',
     })
   }
 
@@ -147,6 +149,7 @@ class FacilityEventHandlingService
       valueChanged: 'Facility Amount',
       changeInValue: incrementEvent.adjustment,
       valueAfterTransaction: projection.facility.facilityAmount,
+      status: 'commited',
     })
   }
 
@@ -188,6 +191,7 @@ class FacilityEventHandlingService
       valueChanged: 'totalFeeBalance',
       changeInValue: feeAmount,
       valueAfterTransaction: projection.getFacilityFee(feeId).balance,
+      status: 'commited',
     })
   }
 
