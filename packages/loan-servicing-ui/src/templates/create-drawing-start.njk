@@ -4,27 +4,29 @@
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 
-{% block pageTitle -%}
-  Create New Facility
-{%- endblock %}
+{% block pageTitle -%}Create New Facility{%- endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-l">New {{ facilityType }} Facility - Set Properties</h1>
+  <h1 class="govuk-heading-l">
+    New {{ facilityType }} Facility - Set Properties
+  </h1>
 
-  <p class="govuk-body govuk-!-margin-bottom-6">Select the relevant properties of the facility</p>
+  <p class="govuk-body govuk-!-margin-bottom-6">
+    Select the relevant properties of the facility
+  </p>
 
-  <form action="/facility/{{facilityId}}/drawing" >
+  <form action="/facility/{{ facilityId }}/drawing">
     {{ govukSelect({
-      id: "repaymentStrategy",
-      name: "repaymentStrategy",
-      label: {
+        id: "repaymentStrategy",
+        name: "repaymentStrategy",
+        label: {
         text: "Repayment Schedule Type"
-      },
-      value: facilityType.calculateInterestStrategy,
-      items: repaymentStrategyNames
-    }) }}
+        },
+        value: facilityType.calculateInterestStrategy,
+        items: repaymentStrategyNames
+        }) }}
 
-    {{ govukButton({  text: "Next"}) }}
+    {{ govukButton({"text": "Next"}) }}
   </form>
 
-{% endblock %}
+{% endblock content %}

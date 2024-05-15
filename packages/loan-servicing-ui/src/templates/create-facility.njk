@@ -4,58 +4,58 @@
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 
-{% block pageTitle -%}
-  Create New Facility
-{%- endblock %}
+{% block pageTitle -%}Create New Facility{%- endblock %}
 
-{% block content %}
-  <h1 class="govuk-heading-l">Create New Facility</h1>
+  {% block content %}
+    <h1 class="govuk-heading-l">Create New Facility</h1>
 
-  <p class="govuk-body govuk-!-margin-bottom-6">Add a new facility to the loan servicing system</p>
+    <p class="govuk-body govuk-!-margin-bottom-6">
+      Add a new facility to the loan servicing system
+    </p>
 
-  <form action="/facility" method="post">
+    <form action="/facility" method="post">
 
-    <input name="facilityType" type="hidden" value="{{facilityType}}">
+      <input name="facilityType" type="hidden" value="{{ facilityType }}">
 
-    {{ govukInput({
-      label: {
-        text: "Obligor ID"
-      },
-      classes: "govuk-input--width-20",
-      id: "obligor",
-      name: "obligor"
-    }) }}
+      {{ govukInput({
+        "label": {
+          "text": "Obligor ID"
+        },
+        "classes": "govuk-input--width-20",
+        "id": "obligor",
+        "name": "obligor"
+      }) }}
 
-    {{ govukInput({
-      label: {
-        text: "Maximum Principal Withdrawal"
-      },
-      classes: "govuk-input--width-20",
-      id: "maxPrincipal",
-      name: "maxPrincipal"
-    }) }}
+      {{ govukInput({
+        "label": {
+          "text": "Maximum Principal Withdrawal"
+        },
+        "classes": "govuk-input--width-20",
+        "id": "maxPrincipal",
+        "name": "maxPrincipal"
+      }) }}
 
-    {{ govukDateInput({
-        id: "issuedEffectiveDate",
-        namePrefix: "issuedEffectiveDate",
-        fieldset: {
-          legend: {
-            text: "Effective date of facility"
+      {{ govukDateInput({
+        "id": "issuedEffectiveDate",
+        "namePrefix": "issuedEffectiveDate",
+        "fieldset": {
+          "legend": {
+            "text": "Effective date of facility"
           }
         }
       }) }}
 
-    {{ govukDateInput({
-        id: "expiryDate",
-        namePrefix: "expiryDate",
-        fieldset: {
-          legend: {
-            text: "Expiry date of facility"
+      {{ govukDateInput({
+        "id": "expiryDate",
+        "namePrefix": "expiryDate",
+        "fieldset": {
+          "legend": {
+            "text": "Expiry date of facility"
           }
         }
       }) }}
 
-    {{ govukButton({  text: "Create Facility"}) }}
-  </form>
+      {{ govukButton({"text": "Create Facility"}) }}
+    </form>
 
-{% endblock %}
+  {% endblock content %}
