@@ -1,9 +1,7 @@
-import { Module } from "@nestjs/common";
-import ServerController from "./server.controller";
+import { Module } from '@nestjs/common'
+import ServerController from './server.controller'
 
-@Module({controllers:[ServerController
-    
-]})
+@Module({ controllers: [ServerController] })
 class ServerModule {}
 
 export default ServerModule
