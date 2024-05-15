@@ -1,1 +1,19 @@
-{"program":{"fileNames":[],"fileInfos":[],"root":[],"options":{"declaration":true,"esModuleInterop":true,"module":1,"rootDir":"./src","skipLibCheck":true,"strict":true,"target":9},"referencedMap":[],"exportedModulesMap":[]},"version":"5.3.3"}
+{
+  "program": {
+    "fileNames": [],
+    "fileInfos": [],
+    "root": [],
+    "options": {
+      "declaration": true,
+      "esModuleInterop": true,
+      "module": 1,
+      "rootDir": "./src",
+      "skipLibCheck": true,
+      "strict": true,
+      "target": 9
+    },
+    "referencedMap": [],
+    "exportedModulesMap": []
+  },
+  "version": "5.3.3"
+}

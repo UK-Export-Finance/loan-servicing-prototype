@@ -1,3 +1,4 @@
+// Example function, do not use as is
 import {
   app,
   HttpRequest,

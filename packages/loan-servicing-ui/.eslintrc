@@ -1,17 +1,9 @@
 //.eslintrc
 {
-  // "parserOptions": {
-  //   "ecmaVersion": 2022,
-  //   "sourceType": "module",
-  //   "project": [
-  //     "./tsconfig.json"
-  //   ]
-  // },
   "rules": {
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       { "allowSameFolder": true, "rootDir": "packages/loan-servicing-ui/src" }
-    ],
-    "@typescript-eslint/explicit-function-return-type": "error"
+    ]
   }
 }

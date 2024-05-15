@@ -1,4 +1,4 @@
-# Loan Servicing Prototype
+# Loan Servicing Application (Name TBC)
 
 ## Initial Setup
 
