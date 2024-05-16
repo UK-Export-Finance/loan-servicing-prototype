@@ -6,7 +6,9 @@
     <head>
         <meta charset="utf-8">
         <title {%- if pageTitleLang %}lang="{{ pageTitleLang }}"{% endif %}>
-            {% block pageTitle %}- UK Export Finance{% endblock pageTitle %}
+            {% block pageTitle %}
+                - UK Export Finance
+            {% endblock pageTitle %}
         </title>
         <meta name="viewport"
               content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -20,7 +22,8 @@
             <link rel="apple-touch-icon" href="{{ assetPath | default(" /assets", true) }}/images/govuk-icon-180.png">
             <link rel="manifest" href="{{ assetPath | default(" /assets", true) }}/manifest.json">
         {% endblock headIcons %}
-        {% block head %}{% endblock head %}
+        {% block head %}
+        {% endblock head %}
         {% block css %}
             <link rel="stylesheet" href="/assets/css/govuk-frontend.min.css">
         {% endblock css %}
@@ -39,7 +42,8 @@
         {% if env === "development" %}
             <script src="http://localhost:35729/livereload.js?snipver=1"></script>
         {% endif %}
-        {% block bodyStart %}{% endblock bodyStart %}
+        {% block bodyStart %}
+        {% endblock bodyStart %}
         {% block skipLink %}
             {{ govukSkipLink({"href": "#main-content", "text": "Skip to main content"}) }}
         {% endblock skipLink %}
@@ -48,16 +52,21 @@
         {% endblock header %}
         {% block main %}
             <div class="govuk-width-container {%- if containerClasses %}{{ containerClasses }}{% endif %}">
-                {% block beforeContent %}{% endblock beforeContent %}
+                {% block beforeContent %}
+                {% endblock beforeContent %}
                 <main class="govuk-main-wrapper {%- if mainClasses %}{{ mainClasses }}{% endif %}"
                       id="main-content"
                       role="main"
                       {%- if mainLang %}lang="{{ mainLang }}"{% endif %}>
-                    {% block content %}{% endblock content %}
+                    {% block content %}
+                    {% endblock content %}
                 </main>
             </div>
         {% endblock main %}
-        {% block footer %}{{ govukFooter({}) }}{% endblock footer %}
-        {% block bodyEnd %}{% endblock bodyEnd %}
+        {% block footer %}
+            {{ govukFooter({}) }}
+        {% endblock footer %}
+        {% block bodyEnd %}
+        {% endblock bodyEnd %}
     </body>
 </html>

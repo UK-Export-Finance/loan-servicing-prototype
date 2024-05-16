@@ -1,4 +1,5 @@
 //.eslintrc
+// We use the .cjs format here to use '__dirname' for tsconfigRootDir
 module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'no-relative-import-paths'],
