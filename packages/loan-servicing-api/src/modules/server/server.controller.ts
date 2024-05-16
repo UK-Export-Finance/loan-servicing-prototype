@@ -6,7 +6,9 @@ import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 class ServerController {
   @Get('health')
   @ApiOkResponse()
-  getFacility(): void {}
+  getFacility(): string {
+    return 'LS Healthy'
+  }
 }
 
 export default ServerController
