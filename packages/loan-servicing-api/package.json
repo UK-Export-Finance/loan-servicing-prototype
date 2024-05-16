@@ -6,7 +6,8 @@
     "start": "node --conditions=compiled dist/app.js",
     "dev": "nodemon --legacy-watch --ext ts --watch ../../libs --watch src --exec \"node -r ts-node/register --inspect=0.0.0.0:5858 src/app.ts\"",
     "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
-    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check"
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check",
+    "test":"jest"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.2",
@@ -29,8 +30,11 @@
   "devDependencies": {
     "@types/big.js": "^6.2.2",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.11.16",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.3",
+    "testcontainers": "^10.9.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
