@@ -13,6 +13,6 @@ describe('Server controller', () => {
   })
 
   it('Health check endpoint returns expected response', () => {
-    expect(serverController.getFacility()).toEqual('LS Healthy')
+    expect(serverController.getHealth()).toEqual('LS Healthy')
   })
 })
