@@ -1,5 +1,8 @@
 import ServerController from 'modules/server/server.controller'
 import { Test } from '@nestjs/testing'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import SystemValueEntity from 'models/SystemValueEntity'
+import SystemValueService from './systemValue.service'
 
 describe('Server controller', () => {
   let serverController: ServerController
@@ -7,6 +10,8 @@ describe('Server controller', () => {
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [ServerController],
+      providers: [SystemValueService],
+      imports: [TypeOrmModule.forFeature([SystemValueEntity])],
     }).compile()
 
     serverController = moduleRef.get(ServerController)
@@ -15,4 +20,5 @@ describe('Server controller', () => {
   it('Health check endpoint returns expected response', () => {
     expect(serverController.getHealth()).toEqual('LS Healthy')
   })
+
 })
