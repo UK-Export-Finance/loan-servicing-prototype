@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common'
 import SystemValueEntity from 'models/SystemValueEntity'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import ServerController from './server.controller'
+import SystemController from './system.controller'
 import SystemValueService from './systemValue.service'
 
 @Module({
-  controllers: [ServerController],
+  controllers: [SystemController],
   providers: [SystemValueService],
   imports: [TypeOrmModule.forFeature([SystemValueEntity])],
 })
-class ServerModule {}
+class SystemModule {}
 
-export default ServerModule
+export default SystemModule

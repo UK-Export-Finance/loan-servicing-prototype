@@ -3,20 +3,23 @@ import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { databaseEntities } from 'database/db-config'
-import ServerModule from 'modules/server/server.module'
+import SystemModule from 'modules/system/system.module'
+import TestAgent from 'supertest/lib/agent'
 import { DataSource } from 'typeorm'
 import { DataSourceOptions } from 'typeorm/browser'
+import supertestRequest from 'supertest'
 
 declare global {
   // eslint-disable-next-line no-var, vars-on-top
   var integrationTestApp: INestApplication
+  // eslint-disable-next-line no-var, vars-on-top
+  var request: TestAgent
 }
 
 const createRandomString = (length: number) => {
   const chars = 'abcdefghijklmnopqrstuvwxyz'
   let result = ''
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i += 1) {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
   return result
@@ -53,7 +56,7 @@ const setupIntegrationTestInstance = async () => {
 
   const moduleRef = await Test.createTestingModule({
     imports: [
-      ServerModule,
+      SystemModule,
       TypeOrmModule.forRootAsync({
         useFactory: () => ({
           ...sqlConfig,
@@ -67,6 +70,7 @@ const setupIntegrationTestInstance = async () => {
   const app = moduleRef.createNestApplication()
   await app.init()
   global.integrationTestApp = app
+  global.request = supertestRequest(app.getHttpServer())
 }
 
 module.exports = setupIntegrationTestInstance

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import SQL_DB_CONFIG from 'database/db-config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import ServerModule from './server/server.module'
+import SystemModule from './system/system.module'
 
 @Module({
   imports: [
-    ServerModule,
+    SystemModule,
     TypeOrmModule.forRootAsync({
       useFactory: () => SQL_DB_CONFIG,
     }),

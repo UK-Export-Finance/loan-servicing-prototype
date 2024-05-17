@@ -2,9 +2,9 @@ import { Controller, Get } from '@nestjs/common'
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 import SystemValueService from './systemValue.service'
 
-@ApiTags('Server')
-@Controller('/server')
-class ServerController {
+@ApiTags('System')
+@Controller('system')
+class SystemController {
   constructor(private systemValueService: SystemValueService){}
 
   @Get('health')
@@ -20,4 +20,4 @@ class ServerController {
   }
 }
 
-export default ServerController
+export default SystemController

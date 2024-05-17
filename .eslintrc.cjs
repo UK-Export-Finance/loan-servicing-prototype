@@ -25,6 +25,10 @@ module.exports = {
     ],
     'no-case-declarations': 'off',
     '@typescript-eslint/no-floating-promises': 'error',
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['**/*.test.ts', '**/test/**'] },
+    ],
   },
   settings: {
     'import/resolver': {

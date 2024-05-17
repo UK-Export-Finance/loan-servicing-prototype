@@ -1,26 +1,26 @@
-import ServerController from 'modules/server/server.controller'
+import SystemController from 'modules/system/system.controller'
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import SystemValueEntity from 'models/SystemValueEntity'
 import { Repository } from 'typeorm'
-import { provideBlankMockRepositoryFor } from 'utils/unit-test/repository-mocks'
+import { provideBlankMockRepositoryFor } from '../../../test/integration/utils/repository-mocks'
 import SystemValueService from './systemValue.service'
 
 describe('Server controller', () => {
-  let serverController: ServerController
+  let serverController: SystemController
   let serverService: SystemValueService
   let systemValueRepo: Repository<SystemValueEntity>
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [ServerController],
+      controllers: [SystemController],
       providers: [
         SystemValueService,
         provideBlankMockRepositoryFor(SystemValueEntity),
       ],
     }).compile()
 
-    serverController = moduleRef.get(ServerController)
+    serverController = moduleRef.get(SystemController)
     serverService = moduleRef.get(SystemValueService)
     systemValueRepo = moduleRef.get(getRepositoryToken(SystemValueEntity))
   })
