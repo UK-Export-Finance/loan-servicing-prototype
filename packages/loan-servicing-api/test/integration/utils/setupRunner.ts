@@ -1,30 +1,38 @@
 /* eslint-disable import/no-import-module-exports */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { TypeOrmModuleOptions, TypeOrmModule } from '@nestjs/typeorm'
-import { MSSQLServerContainer, StartedMSSQLServerContainer } from '@testcontainers/mssqlserver'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { databaseEntities } from 'database/db-config'
 import ServerModule from 'modules/server/server.module'
+import { DataSource } from 'typeorm'
+import { DataSourceOptions } from 'typeorm/browser'
 
 declare global {
   // eslint-disable-next-line no-var, vars-on-top
   var integrationTestApp: INestApplication
-  // eslint-disable-next-line vars-on-top, no-var
-  var integrationTestDbContainer: StartedMSSQLServerContainer
+}
+
+const createRandomString = (length: number) => {
+  const chars = 'abcdefghijklmnopqrstuvwxyz'
+  let result = ''
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return result
 }
 
 const setupIntegrationTestInstance = async () => {
-  const container = await new MSSQLServerContainer().acceptLicense().start()
+  const schemaName = createRandomString(8)
 
-  const sqlConfig: TypeOrmModuleOptions = {
+  const sqlConfig: DataSourceOptions = {
     type: 'mssql',
-    username: container.getUsername(),
-    password: container.getPassword(),
-    database: container.getDatabase(),
-    host: container.getHost(),
-    port: container.getPort(),
+    username: global.sqlContainerUsername,
+    password: global.sqlContainerPassword,
+    database: global.sqlContainerDatabase,
+    host: global.sqlContainerHost,
+    port: global.sqlContainerPort,
     entities: databaseEntities,
-    synchronize: true,
     pool: {
       max: 1,
       min: 0,
@@ -35,11 +43,23 @@ const setupIntegrationTestInstance = async () => {
     },
   }
 
+  const dataSource = new DataSource(sqlConfig)
+
+  await dataSource.initialize()
+
+  await dataSource.manager.query(`CREATE SCHEMA ${schemaName};`)
+
+  await dataSource.destroy()
+
   const moduleRef = await Test.createTestingModule({
     imports: [
       ServerModule,
       TypeOrmModule.forRootAsync({
-        useFactory: () => sqlConfig,
+        useFactory: () => ({
+          ...sqlConfig,
+          schema: schemaName,
+          synchronize: true,
+        }),
       }),
     ],
   }).compile()
@@ -47,7 +67,6 @@ const setupIntegrationTestInstance = async () => {
   const app = moduleRef.createNestApplication()
   await app.init()
   global.integrationTestApp = app
-  global.integrationTestDbContainer = container
 }
 
 module.exports = setupIntegrationTestInstance
