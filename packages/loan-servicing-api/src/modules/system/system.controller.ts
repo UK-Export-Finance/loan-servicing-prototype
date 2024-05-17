@@ -5,7 +5,7 @@ import SystemValueService from './systemValue.service'
 @ApiTags('System')
 @Controller('system')
 class SystemController {
-  constructor(private systemValueService: SystemValueService){}
+  constructor(private systemValueService: SystemValueService) {}
 
   @Get('health')
   @ApiOkResponse()
@@ -15,8 +15,9 @@ class SystemController {
 
   @Get('date')
   @ApiOkResponse()
-  async getSystemDate(): Promise<Date> {
-    return this.systemValueService.getSystemDate()
+  async getSystemDate(): Promise<string> {
+    const systemDate = await this.systemValueService.getSystemDate()
+    return systemDate.toISOString()
   }
 }
 

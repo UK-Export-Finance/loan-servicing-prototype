@@ -1,3 +1,5 @@
+/* eslint-disable no-var */
+/* eslint-disable vars-on-top */
 /* eslint-disable import/no-import-module-exports */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
@@ -10,10 +12,9 @@ import { DataSourceOptions } from 'typeorm/browser'
 import supertestRequest from 'supertest'
 
 declare global {
-  // eslint-disable-next-line no-var, vars-on-top
   var integrationTestApp: INestApplication
-  // eslint-disable-next-line no-var, vars-on-top
   var request: TestAgent
+  var testDb: DataSource
 }
 
 const createRandomString = (length: number) => {
@@ -68,8 +69,10 @@ const setupIntegrationTestInstance = async () => {
   }).compile()
 
   const app = moduleRef.createNestApplication()
-  await app.init()
+  const testDbSource = new DataSource({...sqlConfig, schema: schemaName})
+  await Promise.all([app.init(), testDbSource.initialize()])
   global.integrationTestApp = app
+  global.testDb = testDbSource
   global.request = supertestRequest(app.getHttpServer())
 }
 
