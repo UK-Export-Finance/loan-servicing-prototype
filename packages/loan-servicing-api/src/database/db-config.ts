@@ -14,8 +14,7 @@ const SQL_DB_CONFIG: TypeOrmModuleOptions = {
   synchronize: process.env.NODE_ENV === 'development',
   entities: databaseEntities,
   options: {
-    encrypt: true,
-    trustServerCertificate: true,
+    trustServerCertificate: process.env.NODE_ENV === 'development',
   },
 }
 

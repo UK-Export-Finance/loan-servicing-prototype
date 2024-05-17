@@ -4,7 +4,6 @@ const baseConfig = require('../../jest.config.cjs')
 module.exports = {
   ...baseConfig,
   rootDir: "../../",
-  
   setupFiles: ['./test/integration/utils/setupRunner.ts'],
   setupFilesAfterEnv: ['./test/integration/utils/setupEnv.ts'],
 };
