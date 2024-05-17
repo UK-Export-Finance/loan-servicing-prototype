@@ -7,8 +7,11 @@
     "dev": "nodemon --legacy-watch --ext ts --watch ../../libs --watch src --exec \"node -r ts-node/register --inspect=0.0.0.0:5858 src/app.ts\"",
     "lint-fix": "eslint . --ext ts --fix & npx prettier . --write",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0 & npx prettier . --check",
-    "test:unit": "jest src --config jest.config.cjs",
-    "test:int": "jest test/integration --config test/integration/jest.config.cjs"
+    "test": "npm run test:unit & npm run test:int",
+    "test:unit": "jest src --config jest.base.config.cjs",
+    "test:unit:watch": "jest src --config jest.config.cjs --watch",
+    "test:int": "jest test/integration --config test/integration/jest.int.config.cjs",
+    "test:int:watch": "jest test/integration --config test/integration/jest.int.config.cjs --watch"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.2",
