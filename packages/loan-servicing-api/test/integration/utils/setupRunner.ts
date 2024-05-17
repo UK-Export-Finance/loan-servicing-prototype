@@ -1,5 +1,4 @@
 /* eslint-disable import/no-import-module-exports */
-/* eslint-disable import/no-extraneous-dependencies */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TypeOrmModuleOptions, TypeOrmModule } from '@nestjs/typeorm'
@@ -45,7 +44,6 @@ const setupIntegrationTestInstance = async () => {
     ],
   }).compile()
 
-  // eslint-disable-next-line no-param-reassign
   const app = moduleRef.createNestApplication()
   await app.init()
   global.integrationTestApp = app
