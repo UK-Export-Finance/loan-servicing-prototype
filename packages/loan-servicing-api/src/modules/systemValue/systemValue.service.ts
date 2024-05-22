@@ -15,7 +15,7 @@ class SystemValueService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const systemDate = this.systemValueRepo.findOneBy({ name: SYSTEM_DATE })
+    const systemDate = await this.systemValueRepo.findOneBy({ name: SYSTEM_DATE })
     if (!systemDate) {
       await this.systemValueRepo.save({
         name: SYSTEM_DATE,
