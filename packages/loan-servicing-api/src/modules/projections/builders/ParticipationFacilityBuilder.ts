@@ -25,10 +25,10 @@ class ParticipationFacilityBuilder extends FacilityBuilder {
       processedEvents: this._processedEvents,
       unprocessedEvents: this._unprocessedEvents,
     })
-    // immutableSnapshot.participation.drawings.forEach((d) => {
-    //   // eslint-disable-next-line no-param-reassign
-    //   d.facility = immutableSnapshot.participation
-    // })
+    immutableSnapshot.participation.drawings.forEach((d) => {
+      // eslint-disable-next-line no-param-reassign
+      d.facility = immutableSnapshot.participation
+    })
     return immutableSnapshot
   }
 }

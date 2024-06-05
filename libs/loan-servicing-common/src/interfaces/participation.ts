@@ -11,7 +11,7 @@ export type Participation = Omit<
 > & {
   parentFacility: Facility
   participantShare: string
-  participation: []
+  participations: []
   participationsConfig: []
 }
 

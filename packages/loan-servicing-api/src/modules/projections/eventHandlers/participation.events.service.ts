@@ -14,6 +14,7 @@ import StrategyService from 'modules/strategy/strategy.service'
 import { Repository } from 'typeorm'
 import { IEventHandlerService, EventHandler } from 'types/eventHandler'
 import FacilityBuilder from 'modules/projections/builders/FacilityBuilder'
+import RootFacilityBuilder from 'modules/projections/builders/RootFacilityBuilder'
 
 @Injectable()
 class ParticipationEventHandlingService
@@ -56,6 +57,9 @@ class ParticipationEventHandlingService
   AddParticipationToFacility: EventHandler<
     ProjectEvent<AddParticipationToFacilityEvent>
   > = async (sourceEvent, projections) => {
+    ;(projections as RootFacilityBuilder).addParticipation(
+      sourceEvent.eventData,
+    )
     projections.addTransactions({
       streamId: projections.facility.streamId,
       sourceEvent,

@@ -2,6 +2,7 @@ import {
   Drawing,
   Facility,
   Participation,
+  ParticipationProperties,
   ProjectedEvent,
 } from 'loan-servicing-common'
 import { BadRequestException } from '@nestjs/common'
@@ -43,9 +44,12 @@ class RootFacilityBuilder extends FacilityBuilder {
       drawings,
       participations: participationSnapshots.map((p) => ({
         ...p.participation,
-        parentFacility: facility,
-      })),
+      })) as Participation[],
     }
+    facility.participations.forEach((p) => {
+      // eslint-disable-next-line no-param-reassign
+      p.parentFacility = facility
+    })
 
     const immutableSnapshot = structuredClone<FacilityProjectionSnapshot>({
       rootFacility: facility,
@@ -71,9 +75,7 @@ class RootFacilityBuilder extends FacilityBuilder {
     return immutableSnapshot
   }
 
-  addParticipation(
-    participationProperties: Omit<Participation, 'drawings'>,
-  ): this {
+  addParticipation(participationProperties: ParticipationProperties): this {
     if (this.facility.hierarchyType !== 'root') {
       throw new BadRequestException(
         'Participations can only be added to root level facilities',
@@ -83,9 +85,10 @@ class RootFacilityBuilder extends FacilityBuilder {
       new ParticipationFacilityBuilder(
         {
           ...this.facility,
+          streamId: participationProperties.participationFacilityId,
           facilityFees: [],
           participantShare: participationProperties.participantShare,
-          participation: [],
+          participations: [],
           participationsConfig: [],
         },
         this._unprocessedEvents.filter(
