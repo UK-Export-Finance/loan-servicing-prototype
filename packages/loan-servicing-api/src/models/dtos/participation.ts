@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
-import { ParticipationProperties } from 'loan-servicing-common'
+import { NewParticipationRequestDto } from 'loan-servicing-common'
 import {
   FacilityResponseDtoClass,
   NewFacilityRequestDtoClass,
 } from './facility'
 
 // eslint-disable-next-line import/prefer-default-export
-export class NewParticipationRequestDto
+export class NewParticipationRequestDtoClass
   extends NewFacilityRequestDtoClass
-  implements ParticipationProperties
+  implements NewParticipationRequestDto
 {
   @ApiProperty()
   @Type(() => FacilityResponseDtoClass)

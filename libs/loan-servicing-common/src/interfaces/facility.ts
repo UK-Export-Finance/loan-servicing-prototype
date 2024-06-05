@@ -8,7 +8,6 @@ export type Facility = {
   streamId: string
   obligor: string
   hierarchyType: FacilityHierarchy
-  parentFacility?: Facility
   participations: Facility[]
   participationsConfig: ParticipationProperties[]
   currentDate: Date
@@ -29,7 +28,6 @@ export type FacilityResponseDto = Omit<
 > & {
   drawings: Omit<Drawing, 'facility'>[]
   participations: Omit<FacilityResponseDto, 'participations'>[]
-  parentFacility?: FacilityResponseDto
 }
 
 export type AdjustFacilityAmountDto = {
@@ -48,5 +46,4 @@ export type NewFacilityRequestDto = Omit<
   | 'currentDate'
   | 'participations'
   | 'participationsConfig'
-  | 'parentFacility'
 >

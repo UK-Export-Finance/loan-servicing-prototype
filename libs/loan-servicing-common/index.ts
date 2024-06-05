@@ -2,6 +2,7 @@ export * from './src/interfaces/drawing'
 export * from './src/interfaces/facility'
 export * from './src/interfaces/transaction'
 export * from './src/interfaces/pendingEvent'
+export * from './src/interfaces/participation'
 
 export * from './src/interfaces/strategies'
 export * from './src/interfaces/strategies/interest'

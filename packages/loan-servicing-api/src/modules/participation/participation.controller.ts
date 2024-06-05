@@ -3,7 +3,7 @@ import { ApiTags, ApiParam, ApiOkResponse } from '@nestjs/swagger'
 import EventService from 'modules/event/event.service'
 import { FacilityResponseDtoClass } from 'models/dtos/facility'
 import { plainToInstance } from 'class-transformer'
-import { NewParticipationRequestDto } from 'models/dtos/participation'
+import { NewParticipationRequestDto } from 'loan-servicing-common'
 import ParticipationService from './participation.service'
 
 @ApiTags('Participation')

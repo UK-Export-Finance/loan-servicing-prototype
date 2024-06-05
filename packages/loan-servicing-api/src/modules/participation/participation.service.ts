@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Facility, CreateNewParticipationEvent } from 'loan-servicing-common'
-import { NewParticipationRequestDto } from 'models/dtos/participation'
+import { Facility, CreateNewParticipationEvent, NewParticipationRequestDto } from 'loan-servicing-common'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
 import ProjectionsService from 'modules/projections/projections.service'
