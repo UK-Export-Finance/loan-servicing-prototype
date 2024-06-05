@@ -10,6 +10,7 @@ import {
   AdjustFacilityAmountDto,
   Drawing,
   FacilityFee,
+  FacilityHierarchy,
   FacilityResponseDto,
   NewFacilityRequestDto,
 } from 'loan-servicing-common'
@@ -29,6 +30,21 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   @ApiProperty()
   @IsNotEmpty()
   facilityType!: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  hierarchyType!: FacilityHierarchy
+
+  @ApiProperty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => FacilityResponseDtoClass)
+  participations!: FacilityResponseDtoClass[]
+
+  @ApiProperty()
+  @Type(() => FacilityResponseDtoClass)
+  @IsNotEmpty()
+  parentFacility!: FacilityResponseDtoClass
 
   @ApiProperty({ type: () => [FacilityFeeDtoClass] })
   @IsArray()

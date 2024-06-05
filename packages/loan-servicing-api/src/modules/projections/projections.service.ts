@@ -252,6 +252,8 @@ class ProjectionsService {
       streamId: creationEvent.streamId,
       streamVersion: 1,
       drawnAmount: '0',
+      hierarchyType: 'root',
+      participations: [],
       currentDate: creationEvent.effectiveDate,
       undrawnAmount: creationEvent.eventData.facilityAmount,
       facilityFees: [],

@@ -2,9 +2,14 @@ import { ReplaceProperty } from '../utils/type-utils'
 import type { Drawing } from './drawing'
 import { FacilityFee } from './strategies/facilityFee'
 
+export type FacilityHierarchy = 'root' | 'participation'
+
 export type Facility = {
   streamId: string
   obligor: string
+  hierarchyType: FacilityHierarchy
+  parentFacility?: Facility
+  participations: Facility[]
   currentDate: Date
   streamVersion: number
   facilityType: string
@@ -37,4 +42,6 @@ export type NewFacilityRequestDto = Omit<
   | 'undrawnAmount'
   | 'facilityFees'
   | 'currentDate'
+  | 'hierarchyType'
+  | 'participations'
 >
