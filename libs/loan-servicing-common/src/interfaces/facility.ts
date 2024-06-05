@@ -1,4 +1,5 @@
 import type { Drawing } from './drawing'
+import type { Participation } from './participation'
 import { FacilityFee } from './strategies/facilityFee'
 import { ParticipationProperties } from './strategies/participation'
 
@@ -8,7 +9,7 @@ export type Facility = {
   streamId: string
   obligor: string
   hierarchyType: FacilityHierarchy
-  participations: Facility[]
+  participations: Participation[]
   participationsConfig: ParticipationProperties[]
   currentDate: Date
   streamVersion: number

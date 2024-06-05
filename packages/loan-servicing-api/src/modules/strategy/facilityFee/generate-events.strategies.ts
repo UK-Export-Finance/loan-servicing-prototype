@@ -6,10 +6,10 @@ import {
   FacilityFeeStrategyOption,
   FixedFacilityFeeStrategyOption,
 } from 'loan-servicing-common'
-import { InProgressFacility } from 'modules/projections/builders/FacilityBuilder'
+import { ReadonlyInProgressFacility } from 'modules/projections/builders/FacilityBuilder'
 
 export type GetFacilityFeeEventsStrategy<T extends FacilityFeeStrategyOption> =
-  (facility: InProgressFacility, option: T) => CalculateFacilityFeeEvent[]
+  (facility: ReadonlyInProgressFacility, option: T) => CalculateFacilityFeeEvent[]
 
 export const getAccruingFacilityFeeEvents: GetFacilityFeeEventsStrategy<
   AccruingFacilityFeeStrategyOption

@@ -3,7 +3,7 @@ import {
   CalculateFacilityFeeEvent,
   FacilityFeeStrategyOption,
 } from 'loan-servicing-common'
-import { InProgressFacility } from 'modules/projections/builders/FacilityBuilder'
+import { ReadonlyInProgressFacility } from 'modules/projections/builders/FacilityBuilder'
 import {
   GetFacilityFeeEventsStrategy,
   facilityFeeEventStrategies,
@@ -15,7 +15,7 @@ import calculateFacilityFeeStrategies, {
 @Injectable()
 class FacilityFeeService {
   calculateFee<T extends CalculateFacilityFeeEvent>(
-    facility: InProgressFacility,
+    facility: ReadonlyInProgressFacility,
     event: T,
   ): string {
     const handler = calculateFacilityFeeStrategies[
@@ -25,7 +25,7 @@ class FacilityFeeService {
   }
 
   generateEventsForSingleFee = <T extends FacilityFeeStrategyOption>(
-    facility: InProgressFacility,
+    facility: ReadonlyInProgressFacility,
     option: T,
   ): CalculateFacilityFeeEvent[] => {
     const generateEvents = facilityFeeEventStrategies[

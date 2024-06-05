@@ -4,10 +4,10 @@ import {
   CalculateFixedFacilityFeeEvent,
 } from 'loan-servicing-common'
 import { calculateAccrual } from 'maths/accrualCalculations'
-import { InProgressFacility } from 'modules/projections/builders/FacilityBuilder'
+import { ReadonlyInProgressFacility } from 'modules/projections/builders/FacilityBuilder'
 
 export type CalculateFacilityFeeStrategy<T extends CalculateFacilityFeeEvent> =
-  (facility: InProgressFacility, event: T) => string
+  (facility: ReadonlyInProgressFacility, event: T) => string
 
 export const calculateAccruingFacilityFee: CalculateFacilityFeeStrategy<
   CalculateAccruingFacilityFeeEvent

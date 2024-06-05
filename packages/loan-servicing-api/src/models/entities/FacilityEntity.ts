@@ -7,6 +7,7 @@ import {
   Facility,
   FacilityFee,
   FacilityHierarchy,
+  Participation,
   ParticipationProperties,
 } from 'loan-servicing-common'
 import {
@@ -40,7 +41,7 @@ class FacilityEntity implements Facility {
   parentFacility?: Relation<Facility>
 
   @OneToMany(() => FacilityEntity, (e) => e.parentFacility)
-  participations!: Relation<Facility>[]
+  participations!: Relation<Participation>[]
 
   @ArrayOfClassAsJsonColumn(ParticpationPropertiesDtoClass)
   participationsConfig!: ParticipationProperties[]

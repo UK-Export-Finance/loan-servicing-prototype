@@ -24,6 +24,7 @@ import FacilityEventHandlingService from './facility.events.service'
 import FacilityBuilder, {
   FacilityProjectionSnapshot,
 } from './builders/FacilityBuilder'
+import RootFacilityBuilder from './builders/RootFacilityBuilder'
 
 @Injectable()
 class ProjectionsService {
@@ -52,7 +53,7 @@ class ProjectionsService {
 
     const {
       facilityAtProjectionDate: {
-        facility: currentFacility,
+        rootFacility: currentFacility,
         transactions,
         processedEvents,
         unprocessedEvents,
@@ -175,7 +176,7 @@ class ProjectionsService {
     facilityAtProjectionDate: FacilityProjectionSnapshot
     projectionAtExpiry: FacilityBuilder
   }> => {
-    const projection = new FacilityBuilder(facility, [...events], until)
+    const projection = new RootFacilityBuilder(facility, [...events], until)
     let curr = projection.consumeNextCompletedEvent()
     while (curr) {
       // eslint-disable-next-line no-await-in-loop

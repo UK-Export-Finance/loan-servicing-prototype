@@ -1,11 +1,11 @@
 import { NotFoundException } from '@nestjs/common'
 import {
   DeepReadonly,
-  Drawing,
   DrawingEvent,
   Facility,
   FacilityFee,
   NonNestedValues,
+  Participation,
   ProjectedEvent,
   Transaction,
   sortEventByEffectiveDate,
@@ -13,31 +13,61 @@ import {
 import DrawingEntity from 'models/entities/DrawingEntity'
 import { DrawingBuilder } from './DrawingBuilder'
 
-export type InProgressFacility = DeepReadonly<Omit<Facility, 'drawings'>>
+export type InProgressRootFacility = Omit<
+  Facility,
+  'drawings' | 'participations'
+>
 
-export type FacilityProjectionSnapshot = {
-  facility: Facility
+export type InProgressParticipation = Omit<
+  Participation,
+  'drawings' | 'parentFacility'
+>
+export type InProgressFacility =
+  | InProgressRootFacility
+  | InProgressParticipation
+
+export type ReadonlyInProgressFacility = DeepReadonly<
+  | Omit<Facility, 'drawings' | 'participations'>
+  | Omit<Participation, 'drawings' | 'parentFacility'>
+>
+
+export type ParticipationProjectionSnapshot = {
+  participation: Omit<Participation, 'parentFacility'>
   transactions: Transaction[]
   processedEvents: ProjectedEvent[]
   unprocessedEvents: ProjectedEvent[]
 }
 
-class FacilityBuilder {
-  private _transactions: Transaction[] = []
+export type FacilityProjectionSnapshot = {
+  rootFacility: Facility
+  participationSnapshots: {
+    participation: Participation
+    transactions: Transaction[]
+    processedEvents: ProjectedEvent[]
+    unprocessedEvents: ProjectedEvent[]
+  }[]
+  transactions: Transaction[]
+  processedEvents: ProjectedEvent[]
+  unprocessedEvents: ProjectedEvent[]
+}
 
-  private drawingBuilders: DrawingBuilder[] = []
+abstract class FacilityBuilder {
+  protected _transactions: Transaction[] = []
 
-  private _processedEvents: ProjectedEvent[] = []
+  protected drawingBuilders: DrawingBuilder[] = []
 
-  private facilityFees: FacilityFee[] = []
+  protected _processedEvents: ProjectedEvent[] = []
+
+  protected facilityFees: FacilityFee[] = []
 
   constructor(
-    private readonly _facility: Omit<Facility, 'drawings'>,
-    private _unprocessedEvents: ProjectedEvent[],
-    private _projectionDate: Date,
+    protected readonly _facility: InProgressFacility,
+    protected _unprocessedEvents: ProjectedEvent[],
+    protected _projectionDate: Date,
   ) {}
 
-  public readonly facility: InProgressFacility = this._facility
+  public readonly facility: DeepReadonly<ReadonlyInProgressFacility> =
+    this._facility
 
   public readonly transactions: DeepReadonly<Transaction[]> = this._transactions
 
@@ -49,24 +79,7 @@ class FacilityBuilder {
 
   public readonly projectionDate = this._projectionDate
 
-  takeSnapshot = (): FacilityProjectionSnapshot => {
-    const drawings = this.drawingBuilders.map((b) => b.build()) as Drawing[]
-    const facility: Facility = {
-      ...this._facility,
-      drawings,
-    }
-    const immutableSnapshot = structuredClone({
-      facility,
-      transactions: this._transactions,
-      processedEvents: this._processedEvents,
-      unprocessedEvents: this._unprocessedEvents,
-    })
-    immutableSnapshot.facility.drawings.forEach((d) => {
-      // eslint-disable-next-line no-param-reassign
-      d.facility = immutableSnapshot.facility
-    })
-    return immutableSnapshot
-  }
+  // public abstract takeSnapshot: () => FacilityProjectionSnapshot
 
   addDrawing(drawing: DrawingEntity, drawingEvents: DrawingEvent[]): this {
     this.drawingBuilders.push(new DrawingBuilder(drawing))
