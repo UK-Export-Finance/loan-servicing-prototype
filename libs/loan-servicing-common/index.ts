@@ -17,10 +17,12 @@ export * from './src/interfaces/events/drawingEvents'
 export * from './src/interfaces/events/participationEvents'
 
 export * from './src/interfaces/projectedEvents/drawing'
+export * from './src/interfaces/projectedEvents/participation'
 export * from './src/interfaces/projectedEvents/drawing/accruals'
 export * from './src/interfaces/projectedEvents/drawing/repayments'
 export * from './src/interfaces/projectedEvents/facility'
 export * from './src/interfaces/projectedEvents/facility/fees'
+export * from './src/interfaces/projectedEvents/projectedEventBase'
 export * from './src/interfaces/projectedEvents'
 
 export * from './src/utils/type-utils'

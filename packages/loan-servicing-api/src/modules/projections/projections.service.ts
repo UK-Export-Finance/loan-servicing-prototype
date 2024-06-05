@@ -244,7 +244,7 @@ class ProjectionsService {
     const creationEvent =
       facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
 
-    if (creationEvent.type !== 'CreateNewFacility') {
+    if (creationEvent.type in ['CreateNewFacility', 'CreateNewParticipation']) {
       throw new Error('First created event is not facility creation')
     }
 
@@ -252,8 +252,8 @@ class ProjectionsService {
       streamId: creationEvent.streamId,
       streamVersion: 1,
       drawnAmount: '0',
-      hierarchyType: 'root',
       participations: [],
+      participationsConfig: [],
       currentDate: creationEvent.effectiveDate,
       undrawnAmount: creationEvent.eventData.facilityAmount,
       facilityFees: [],

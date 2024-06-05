@@ -114,6 +114,7 @@ export class NewFacilityRequestDtoClass
     'currentDate',
     'parentFacility',
     'participations',
+    'participationsConfig'
   ])
   implements NewFacilityRequestDto {}
 

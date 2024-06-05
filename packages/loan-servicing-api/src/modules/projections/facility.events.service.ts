@@ -8,6 +8,9 @@ import {
   Drawing,
   AddFacilityFeeEvent,
   DrawingEvent,
+  ProjectedParticipationEvent,
+  CreateNewParticipationEvent,
+  ProjectEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -22,7 +25,8 @@ import FacilityBuilder from './builders/FacilityBuilder'
 
 @Injectable()
 class FacilityEventHandlingService
-  implements IEventHandlerService<FacilityProjectedEvent>
+  implements
+    IEventHandlerService<FacilityProjectedEvent | ProjectedParticipationEvent>
 {
   constructor(
     @Inject(EventService) private eventService: EventService,
@@ -35,7 +39,9 @@ class FacilityEventHandlingService
     private drawingRepo: Repository<DrawingEntity>,
   ) {}
 
-  applyEvent = async <T extends FacilityProjectedEvent>(
+  applyEvent = async <
+    T extends FacilityProjectedEvent | ProjectedParticipationEvent,
+  >(
     event: T,
     projection: FacilityBuilder,
   ): Promise<void> => {
@@ -43,10 +49,14 @@ class FacilityEventHandlingService
     await handler(event, projection)
   }
 
-  CreateNewFacility: EventHandler<CreateNewFacilityEvent> = async (
-    sourceEvent,
-    projections,
-  ) => {
+  CreateNewParticipation: EventHandler<
+    ProjectEvent<CreateNewParticipationEvent>
+  > = async (sourceEvent, projections) =>
+    this.CreateNewFacility(sourceEvent, projections)
+
+  CreateNewFacility: EventHandler<
+    CreateNewFacilityEvent | ProjectEvent<CreateNewParticipationEvent>
+  > = async (sourceEvent, projections) => {
     projections.addTransactions({
       streamId: projections.facility.streamId,
       sourceEvent,

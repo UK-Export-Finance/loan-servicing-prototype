@@ -1,4 +1,4 @@
-export type ParticpationProperties = {
-  facilityId: string
+export type ParticipationProperties = {
+  parentFacilityId: string
   participantShare: string
 }

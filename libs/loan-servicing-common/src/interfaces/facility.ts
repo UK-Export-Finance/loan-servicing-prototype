@@ -1,6 +1,6 @@
 import type { Drawing } from './drawing'
 import { FacilityFee } from './strategies/facilityFee'
-import { ParticpationProperties } from './strategies/participation'
+import { ParticipationProperties } from './strategies/participation'
 
 export type FacilityHierarchy = 'root' | 'participation'
 
@@ -10,7 +10,7 @@ export type Facility = {
   hierarchyType: FacilityHierarchy
   parentFacility?: Facility
   participations: Facility[]
-  participationsConfig: ParticpationProperties[]
+  participationsConfig: ParticipationProperties[]
   currentDate: Date
   streamVersion: number
   facilityType: string
@@ -46,6 +46,7 @@ export type NewFacilityRequestDto = Omit<
   | 'undrawnAmount'
   | 'facilityFees'
   | 'currentDate'
-  | 'hierarchyType'
   | 'participations'
+  | 'participationsConfig'
+  | 'parentFacility'
 >

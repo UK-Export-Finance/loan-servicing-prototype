@@ -1,11 +1,9 @@
 import { Body, Controller, Param, Post } from '@nestjs/common'
 import { ApiTags, ApiParam, ApiOkResponse } from '@nestjs/swagger'
 import EventService from 'modules/event/event.service'
-import {
-  FacilityResponseDtoClass,
-  NewFacilityRequestDtoClass,
-} from 'models/dtos/facility'
+import { FacilityResponseDtoClass } from 'models/dtos/facility'
 import { plainToInstance } from 'class-transformer'
+import { NewParticipationRequestDto } from 'models/dtos/participation'
 import ParticipationService from './participation.service'
 
 @ApiTags('Participation')
@@ -20,7 +18,7 @@ class ParticipationController {
   @Post('')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async addParticipation(
-    @Body() body: NewFacilityRequestDtoClass,
+    @Body() body: NewParticipationRequestDto,
     @Param('facilityId') facilityId: string,
   ): Promise<FacilityResponseDtoClass> {
     const facilityWithNewParticipation =

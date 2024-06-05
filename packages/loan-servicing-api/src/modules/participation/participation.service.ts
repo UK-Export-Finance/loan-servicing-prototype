@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import {
-  NewFacilityRequestDto,
-  Facility,
-  CreateNewParticipationEvent,
-} from 'loan-servicing-common'
+import { Facility, CreateNewParticipationEvent } from 'loan-servicing-common'
+import { NewParticipationRequestDto } from 'models/dtos/participation'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
 import ProjectionsService from 'modules/projections/projections.service'
@@ -26,7 +23,7 @@ class ParticipationService {
 
   @Transactional()
   async createNewParticipation(
-    participationRequest: NewFacilityRequestDto,
+    participationRequest: NewParticipationRequestDto,
     parentFacilityId: string,
   ): Promise<Facility> {
     const savedEvent =
@@ -37,7 +34,10 @@ class ParticipationService {
         shouldProcessIfFuture: false,
         type: 'CreateNewParticipation',
         typeVersion: 1,
-        eventData: { ...participationRequest, parentFacilityId },
+        eventData: {
+          ...participationRequest,
+          parentFacilityId,
+        },
         isApproved: true,
       })
     const { facility } =

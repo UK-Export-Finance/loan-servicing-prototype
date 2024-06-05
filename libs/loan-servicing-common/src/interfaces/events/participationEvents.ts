@@ -1,4 +1,5 @@
 import { NewFacilityRequestDto } from '../facility'
+import { ParticipationProperties } from '../strategies/participation'
 import { EventBase } from './eventBase'
 
 type ParticipationEventBase<
@@ -10,9 +11,7 @@ type ParticipationEventBase<
 export type CreateNewParticipationEvent = ParticipationEventBase<
   'CreateNewParticipation',
   1,
-  NewFacilityRequestDto & {
-    parentFacilityId: string
-  }
+  ParticipationProperties & NewFacilityRequestDto
 >
 
 export type ParticipationEvent = CreateNewParticipationEvent

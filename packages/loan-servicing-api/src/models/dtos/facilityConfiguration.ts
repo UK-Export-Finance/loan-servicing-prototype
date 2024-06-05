@@ -7,15 +7,15 @@ import {
   FacilityFee,
   FacilityFeeStrategyName,
   FixedFacilityFeeStrategyOption,
-  ParticpationProperties,
+  ParticipationProperties,
 } from 'loan-servicing-common'
 import { IsArray, IsDate, ValidateNested } from 'class-validator'
 import StrategyOptionDtoClass from './strategy-option'
 
 const interestStrategyNames: FacilityFeeStrategyName[] = ['AccruingFacilityFee']
 
-export class ParticpationPropertiesDtoClass implements ParticpationProperties {
-  facilityId!: string
+export class ParticpationPropertiesDtoClass implements ParticipationProperties {
+  parentFacilityId!: string
 
   participantShare!: string
 }

@@ -7,7 +7,7 @@ import {
   Facility,
   FacilityFee,
   FacilityHierarchy,
-  ParticpationProperties,
+  ParticipationProperties,
 } from 'loan-servicing-common'
 import {
   Column,
@@ -43,7 +43,7 @@ class FacilityEntity implements Facility {
   participations!: Relation<Facility>[]
 
   @ArrayOfClassAsJsonColumn(ParticpationPropertiesDtoClass)
-  participationsConfig!: ParticpationProperties[]
+  participationsConfig!: ParticipationProperties[]
 
   @OneToMany('DrawingEntity', 'facility', { cascade: true, eager: true })
   drawings!: Relation<Drawing>[]
