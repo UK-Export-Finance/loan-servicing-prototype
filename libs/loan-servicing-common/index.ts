@@ -8,11 +8,13 @@ export * from './src/interfaces/strategies/interest'
 export * from './src/interfaces/strategies/repayment'
 export * from './src/interfaces/strategies/facilityFee'
 export * from './src/interfaces/strategies/drawingAccruals'
+export * from './src/interfaces/strategies/participation'
 
 export * from './src/interfaces/events'
 export * from './src/interfaces/events/eventBase'
 export * from './src/interfaces/events/facilityEvents'
 export * from './src/interfaces/events/drawingEvents'
+export * from './src/interfaces/events/participationEvents'
 
 export * from './src/interfaces/projectedEvents/drawing'
 export * from './src/interfaces/projectedEvents/drawing/accruals'

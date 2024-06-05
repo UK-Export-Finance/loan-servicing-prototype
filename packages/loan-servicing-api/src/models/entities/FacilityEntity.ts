@@ -1,5 +1,14 @@
-import { ArrayOfClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
-import { Facility, FacilityFee, FacilityHierarchy } from 'loan-servicing-common'
+import {
+  ArrayOfClassAsJsonColumn,
+  CurrencyColumn,
+} from 'database/decorators'
+import {
+  Drawing,
+  Facility,
+  FacilityFee,
+  FacilityHierarchy,
+  ParticpationProperties,
+} from 'loan-servicing-common'
 import {
   Column,
   Entity,
@@ -8,8 +17,10 @@ import {
   PrimaryColumn,
   Relation,
 } from 'typeorm'
-import { FacilityFeeDtoClass } from 'models/dtos/facilityConfiguration'
-import type DrawingEntity from './DrawingEntity'
+import {
+  FacilityFeeDtoClass,
+  ParticpationPropertiesDtoClass,
+} from 'models/dtos/facilityConfiguration'
 
 @Entity()
 class FacilityEntity implements Facility {
@@ -26,13 +37,16 @@ class FacilityEntity implements Facility {
   hierarchyType!: FacilityHierarchy
 
   @ManyToOne(() => FacilityEntity, (e) => e.participations)
-  parentFacility?: Relation<FacilityEntity>
+  parentFacility?: Relation<Facility>
 
   @OneToMany(() => FacilityEntity, (e) => e.parentFacility)
-  participations!: Relation<FacilityEntity>[]
+  participations!: Relation<Facility>[]
+
+  @ArrayOfClassAsJsonColumn(ParticpationPropertiesDtoClass)
+  participationsConfig!: ParticpationProperties[]
 
   @OneToMany('DrawingEntity', 'facility', { cascade: true, eager: true })
-  drawings!: Relation<DrawingEntity>[]
+  drawings!: Relation<Drawing>[]
 
   @Column()
   obligor!: string

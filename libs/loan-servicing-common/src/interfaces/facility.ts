@@ -1,6 +1,6 @@
-import { ReplaceProperty } from '../utils/type-utils'
 import type { Drawing } from './drawing'
 import { FacilityFee } from './strategies/facilityFee'
+import { ParticpationProperties } from './strategies/participation'
 
 export type FacilityHierarchy = 'root' | 'participation'
 
@@ -10,6 +10,7 @@ export type Facility = {
   hierarchyType: FacilityHierarchy
   parentFacility?: Facility
   participations: Facility[]
+  participationsConfig: ParticpationProperties[]
   currentDate: Date
   streamVersion: number
   facilityType: string
@@ -22,11 +23,14 @@ export type Facility = {
   expiryDate: Date
 }
 
-export type FacilityResponseDto = ReplaceProperty<
+export type FacilityResponseDto = Omit<
   Facility,
-  'drawings',
-  Omit<Drawing, 'facility'>[]
->
+  'drawings' | 'participations' | 'parentFacility'
+> & {
+  drawings: Omit<Drawing, 'facility'>[]
+  participations: Omit<FacilityResponseDto, 'participations'>[]
+  parentFacility?: FacilityResponseDto
+}
 
 export type AdjustFacilityAmountDto = {
   effectiveDate: string
