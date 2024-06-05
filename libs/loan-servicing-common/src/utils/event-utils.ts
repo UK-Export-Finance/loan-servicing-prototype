@@ -10,3 +10,6 @@ export const sortByDateOnKey =
 
 export const sortEventByEffectiveDate =
   sortByDateOnKey<HasEffectiveDate>('effectiveDate')
+
+export const sortEventByCreationDate =
+  sortByDateOnKey<Pick<LoanServicingEvent, 'eventDate'>>('eventDate')

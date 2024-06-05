@@ -22,6 +22,17 @@ class RootFacilityBuilder extends FacilityBuilder {
     super(_facility, _unprocessedEvents, _projectionDate)
   }
 
+  public consumeInitialisationEvents(): ProjectedEvent[] {
+    const participationCreationEvents = this._unprocessedEvents.filter(
+      (e) => e.type === 'CreateNewParticipation',
+    )
+    this._unprocessedEvents = this._unprocessedEvents.filter(
+      (e) => e.type !== 'CreateNewParticipation',
+    )
+    this._processedEvents.push(...participationCreationEvents)
+    return participationCreationEvents
+  }
+
   takeSnapshot = (): FacilityProjectionSnapshot => {
     const drawings = this.drawingBuilders.map((b) => b.build()) as Drawing[]
     const participationSnapshots = this.participationBuilders.map((b) =>

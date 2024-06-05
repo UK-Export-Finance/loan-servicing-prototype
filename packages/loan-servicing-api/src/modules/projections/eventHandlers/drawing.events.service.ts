@@ -20,7 +20,7 @@ import { EventHandler, IEventHandlerService } from 'types/eventHandler'
 import PendingEventService, {
   NewPendingEvent,
 } from 'modules/pendingEvents/pendingEvent.service'
-import FacilityBuilder from './builders/FacilityBuilder'
+import FacilityBuilder from 'modules/projections/builders/FacilityBuilder'
 
 @Injectable()
 class DrawingEventHandlingService

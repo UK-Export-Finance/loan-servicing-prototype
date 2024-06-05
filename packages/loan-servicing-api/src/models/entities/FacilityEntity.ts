@@ -20,8 +20,8 @@ import {
 } from 'typeorm'
 import {
   FacilityFeeDtoClass,
-  ParticpationPropertiesDtoClass,
 } from 'models/dtos/facilityConfiguration'
+import { ParticipationPropertiesDtoClass } from 'models/dtos/participation'
 
 @Entity()
 class FacilityEntity implements Facility {
@@ -43,7 +43,7 @@ class FacilityEntity implements Facility {
   @OneToMany(() => FacilityEntity, (e) => e.parentFacility)
   participations!: Relation<Participation>[]
 
-  @ArrayOfClassAsJsonColumn(ParticpationPropertiesDtoClass)
+  @ArrayOfClassAsJsonColumn(ParticipationPropertiesDtoClass)
   participationsConfig!: ParticipationProperties[]
 
   @OneToMany('DrawingEntity', 'facility', { cascade: true, eager: true })

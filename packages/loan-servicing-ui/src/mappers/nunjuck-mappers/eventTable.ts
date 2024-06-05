@@ -88,6 +88,20 @@ const getEventTableRow = (event: LoanServicingEvent): EventTableRow => {
         effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
         description: `${event.eventData.amount} received against accrual ${event.eventData.accrualId}`,
       }
+    case 'CreateNewParticipation':
+      return {
+        event: 'Participation created',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: 'Participation created with intial values',
+      }
+    case 'AddParticipationToFacility':
+      return {
+        event: 'Participation created',
+        eventDate: eventDateObj.toLocaleString('en-GB'),
+        effectiveDate: effectiveDateObj.toLocaleString('en-GB'),
+        description: 'Participation created with intial values',
+      }
     default:
       throw new NotImplementedException('Event to event table')
   }

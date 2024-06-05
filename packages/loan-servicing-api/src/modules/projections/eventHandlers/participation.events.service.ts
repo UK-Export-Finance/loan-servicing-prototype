@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
+  AddParticipationToFacilityEvent,
   CreateNewParticipationEvent,
   ProjectEvent,
   ProjectedParticipationEvent,
@@ -12,7 +13,7 @@ import PendingEventService from 'modules/pendingEvents/pendingEvent.service'
 import StrategyService from 'modules/strategy/strategy.service'
 import { Repository } from 'typeorm'
 import { IEventHandlerService, EventHandler } from 'types/eventHandler'
-import FacilityBuilder from './builders/FacilityBuilder'
+import FacilityBuilder from 'modules/projections/builders/FacilityBuilder'
 
 @Injectable()
 class ParticipationEventHandlingService
@@ -44,7 +45,22 @@ class ParticipationEventHandlingService
       streamId: projections.facility.streamId,
       sourceEvent,
       datetime: projections.facility.issuedEffectiveDate,
-      reference: 'Facility Created',
+      reference: 'Participation Created',
+      valueChanged: 'N/A',
+      changeInValue: '0',
+      valueAfterTransaction: '0',
+      status: 'commited',
+    })
+  }
+
+  AddParticipationToFacility: EventHandler<
+    ProjectEvent<AddParticipationToFacilityEvent>
+  > = async (sourceEvent, projections) => {
+    projections.addTransactions({
+      streamId: projections.facility.streamId,
+      sourceEvent,
+      datetime: projections.facility.issuedEffectiveDate,
+      reference: 'Participation Created',
       valueChanged: 'N/A',
       changeInValue: '0',
       valueAfterTransaction: '0',

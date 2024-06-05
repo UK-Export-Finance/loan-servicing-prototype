@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Facility, CreateNewParticipationEvent, NewParticipationRequestDto } from 'loan-servicing-common'
+import {
+  Facility,
+  CreateNewParticipationEvent,
+  NewParticipationRequestDto,
+  AddParticipationToFacilityEvent,
+} from 'loan-servicing-common'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import EventService from 'modules/event/event.service'
 import ProjectionsService from 'modules/projections/projections.service'
@@ -24,12 +29,14 @@ class ParticipationService {
   async createNewParticipation(
     participationRequest: NewParticipationRequestDto,
     parentFacilityId: string,
+    parentFacilityVersion: number,
   ): Promise<Facility> {
-    const savedEvent =
+    const newParticipationId = crypto.randomUUID()
+    const savedRootEvent =
       await this.eventService.addEvent<CreateNewParticipationEvent>({
-        streamId: crypto.randomUUID(),
+        streamId: newParticipationId,
         effectiveDate: participationRequest.issuedEffectiveDate,
-        entityType: 'facility',
+        entityType: 'participation',
         shouldProcessIfFuture: false,
         type: 'CreateNewParticipation',
         typeVersion: 1,
@@ -39,9 +46,28 @@ class ParticipationService {
         },
         isApproved: true,
       })
+
+    await this.eventService.addEvent<AddParticipationToFacilityEvent>(
+      {
+        streamId: parentFacilityId,
+        effectiveDate: participationRequest.issuedEffectiveDate,
+        entityType: 'participation',
+        shouldProcessIfFuture: false,
+        type: 'AddParticipationToFacility',
+        typeVersion: 1,
+        eventData: {
+          participantShare: participationRequest.participantShare,
+          parentFacilityId,
+          participationFacilityId: newParticipationId,
+        },
+        isApproved: true,
+      },
+      parentFacilityVersion,
+    )
+
     const { facility } =
       await this.projectionsService.buildProjectionsForFacility(
-        savedEvent.streamId,
+        savedRootEvent.streamId,
       )
 
     return facility

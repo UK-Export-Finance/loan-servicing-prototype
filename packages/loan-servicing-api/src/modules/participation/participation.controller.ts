@@ -1,9 +1,9 @@
-import { Body, Controller, Param, Post } from '@nestjs/common'
+import { Body, Controller, Param, Post, Query } from '@nestjs/common'
 import { ApiTags, ApiParam, ApiOkResponse } from '@nestjs/swagger'
 import EventService from 'modules/event/event.service'
 import { FacilityResponseDtoClass } from 'models/dtos/facility'
 import { plainToInstance } from 'class-transformer'
-import { NewParticipationRequestDto } from 'loan-servicing-common'
+import { NewParticipationRequestDtoClass } from 'models/dtos/participation'
 import ParticipationService from './participation.service'
 
 @ApiTags('Participation')
@@ -18,11 +18,16 @@ class ParticipationController {
   @Post('')
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async addParticipation(
-    @Body() body: NewParticipationRequestDto,
+    @Body() body: NewParticipationRequestDtoClass,
     @Param('facilityId') facilityId: string,
+    @Query('facilityVersion') facilityVersion: number,
   ): Promise<FacilityResponseDtoClass> {
     const facilityWithNewParticipation =
-      await this.participationService.createNewParticipation(body, facilityId)
+      await this.participationService.createNewParticipation(
+        body,
+        facilityId,
+        facilityVersion,
+      )
 
     return plainToInstance(
       FacilityResponseDtoClass,

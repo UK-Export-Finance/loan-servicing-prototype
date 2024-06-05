@@ -24,7 +24,10 @@ import {
   RecordDrawingAccrualPaymentDtoClass,
 } from './drawingAccrual'
 import { RecordDrawingRepaymentDtoClass } from './drawingRepayment'
-import { NewParticipationRequestDtoClass } from './participation'
+import {
+  NewParticipationRequestDtoClass,
+  ParticipationPropertiesDtoClass,
+} from './participation'
 
 export type GetClassConstructorForEventData<
   T extends LoanServicingEvent['eventData'],
@@ -45,6 +48,7 @@ const eventTypeToEventClassDefinition: {
   RecordDrawingRepayment: () => RecordDrawingRepaymentDtoClass,
   RecordDrawingAccrualPayment: () => RecordDrawingAccrualPaymentDtoClass,
   CreateNewParticipation: () => NewParticipationRequestDtoClass,
+  AddParticipationToFacility: () => ParticipationPropertiesDtoClass,
   AddFacilityFee: (eventData) => {
     switch (eventData.name) {
       case 'AccruingFacilityFee':

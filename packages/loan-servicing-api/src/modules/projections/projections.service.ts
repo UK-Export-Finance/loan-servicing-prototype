@@ -12,19 +12,21 @@ import {
   CreateNewFacilityEvent,
   Facility,
   FacilityProjectedEvent,
+  ProjectedParticipationEvent,
 } from 'loan-servicing-common'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import DrawingEntity from 'models/entities/DrawingEntity'
 import EventService from 'modules/event/event.service'
-import DrawingEventHandlingService from 'modules/projections/drawing.events.service'
+import DrawingEventHandlingService from 'modules/projections/eventHandlers/drawing.events.service'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import SystemValueService from 'modules/systemValue/systemValue.service'
-import FacilityEventHandlingService from './facility.events.service'
+import FacilityEventHandlingService from './eventHandlers/facility.events.service'
 import FacilityBuilder, {
   FacilityProjectionSnapshot,
 } from './builders/FacilityBuilder'
 import RootFacilityBuilder from './builders/RootFacilityBuilder'
+import ParticipationEventHandlingService from './eventHandlers/participation.events.service'
 
 @Injectable()
 class ProjectionsService {
@@ -38,6 +40,8 @@ class ProjectionsService {
     private drawingEventHandler: DrawingEventHandlingService,
     @Inject(FacilityEventHandlingService)
     private facilityEventHandler: FacilityEventHandlingService,
+    @Inject(ParticipationEventHandlingService)
+    private participationEventHandler: ParticipationEventHandlingService,
     @Inject(SystemValueService)
     private systemValueService: SystemValueService,
   ) {}
@@ -177,6 +181,10 @@ class ProjectionsService {
     projectionAtExpiry: FacilityBuilder
   }> => {
     const projection = new RootFacilityBuilder(facility, [...events], until)
+
+    const initialisationEvents = projection.consumeInitialisationEvents()
+    initialisationEvents.forEach((e) => this.applyEvent(e, projection))
+
     let curr = projection.consumeNextCompletedEvent()
     while (curr) {
       // eslint-disable-next-line no-await-in-loop
@@ -211,6 +219,12 @@ class ProjectionsService {
       case 'facility':
         await this.facilityEventHandler.applyEvent(
           event as FacilityProjectedEvent,
+          projection,
+        )
+        return
+      case 'participation':
+        await this.participationEventHandler.applyEvent(
+          event as ProjectedParticipationEvent,
           projection,
         )
         return

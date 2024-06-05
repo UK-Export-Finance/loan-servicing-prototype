@@ -16,10 +16,8 @@ import {
 } from 'loan-servicing-common'
 import { Transform, Type } from 'class-transformer'
 import { DrawingDtoClass } from './drawing'
-import {
-  FacilityFeeDtoClass,
-  ParticpationPropertiesDtoClass,
-} from './facilityConfiguration'
+import { FacilityFeeDtoClass } from './facilityConfiguration'
+import type { ParticipationPropertiesDtoClass } from './participation'
 
 export class FacilityResponseDtoClass implements FacilityResponseDto {
   private readonly _type = 'FacilityDto'
@@ -48,7 +46,7 @@ export class FacilityResponseDtoClass implements FacilityResponseDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => FacilityResponseDtoClass)
-  participationsConfig!: ParticpationPropertiesDtoClass[]
+  participationsConfig!: ParticipationPropertiesDtoClass[]
 
   @ApiProperty()
   @Type(() => FacilityResponseDtoClass)
@@ -114,7 +112,7 @@ export class NewFacilityRequestDtoClass
     'currentDate',
     'parentFacility',
     'participations',
-    'participationsConfig'
+    'participationsConfig',
   ])
   implements NewFacilityRequestDto {}
 

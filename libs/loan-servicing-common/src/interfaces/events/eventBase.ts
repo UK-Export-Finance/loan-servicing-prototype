@@ -1,4 +1,4 @@
-export type EntityWithEvents = 'facility' | 'drawing'
+export type EntityWithEvents = 'facility' | 'drawing' | 'participation'
 
 export type EventBase<
   Type extends string,
