@@ -1,6 +1,6 @@
 import { DrawingEvent } from './drawingEvents'
 import { FacilityEvent } from './facilityEvents'
-import { ParticipationEvent } from './participationEvents'
+import type { ParticipationEvent } from './participationEvents'
 
 export type LoanServicingEvent =
   | FacilityEvent

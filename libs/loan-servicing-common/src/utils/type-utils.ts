@@ -45,6 +45,14 @@ export type NonNestedValues<T extends object> = {
     : never]: T[key]
 }
 
+export type NumberValues<T extends object> = {
+  [key in keyof T as T[key] extends string | number ? key : never]: T[key]
+}
+
+export type StringValues<T extends object> = {
+  [key in keyof T as T[key] extends string ? key : never]: T[key]
+}
+
 // Use this type to force Intellisense to show the computed type
 // instead of type aliases.
 // eslint-disable-next-line @typescript-eslint/naming-convention

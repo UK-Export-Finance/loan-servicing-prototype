@@ -4,8 +4,11 @@ import {
   Facility,
   Participation,
   ProjectedEvent,
+  participationEventIdMappingndex,
+  participationEventValueModificationIndex,
 } from 'loan-servicing-common'
 import { BadRequestException } from '@nestjs/common'
+import Big from 'big.js'
 import FacilityBuilder, {
   FacilityProjectionSnapshot,
   InProgressFacility,
@@ -99,11 +102,73 @@ class RootFacilityBuilder extends FacilityBuilder {
     this.participationBuilders.forEach((p) =>
       p.addEvents(
         events.map((e) => ({
-          ...e,
+          ...this.mapEventToParticipationEvent(e, p.facility),
           streamId: `${e.streamId}-participation-${p.facility.streamId}`,
         })),
       ),
     )
+  }
+
+  private mapEventToParticipationEvent = <T extends ProjectedEvent>(
+    event: T,
+    participation: DeepReadonly<InProgressParticipation>,
+  ): T => {
+    const e1 = this.adjustProRatedParticipationValues(
+      event,
+      participation.participantShare,
+    )
+    const e2 = this.mapEventId(e1, participation.streamId)
+    return e2
+  }
+
+  private mapEventId = <T extends ProjectedEvent>(
+    event: T,
+    participationId: string,
+  ): T => {
+    const valuesToModify = (participationEventIdMappingndex[event.type] ??
+      []) as (keyof T['eventData'])[]
+
+    const modifiedValues = Object.fromEntries(
+      valuesToModify.map((v) => [
+        v,
+        `${(event.eventData as T['eventData'])[v]}-participation-${participationId}`,
+      ]),
+    )
+
+    return {
+      ...event,
+      eventData: {
+        ...event.eventData,
+        ...modifiedValues,
+      },
+    }
+  }
+
+  private adjustProRatedParticipationValues = <T extends ProjectedEvent>(
+    event: T,
+    participationShare: string,
+  ): T => {
+    const valuesToModify = (participationEventValueModificationIndex[
+      event.type
+    ] ?? []) as (keyof T['eventData'])[]
+
+    const modifiedValues = Object.fromEntries(
+      valuesToModify.map((v) => [
+        v,
+        Big((event.eventData as T['eventData'])[v] as string | number)
+          .times(participationShare)
+          .div(100)
+          .toFixed(2),
+      ]),
+    )
+
+    return {
+      ...event,
+      eventData: {
+        ...event.eventData,
+        ...modifiedValues,
+      },
+    }
   }
 }
 

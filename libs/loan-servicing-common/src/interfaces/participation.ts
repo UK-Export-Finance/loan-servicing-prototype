@@ -1,9 +1,12 @@
+import { NumberValues, StringValues } from '../utils/type-utils'
 import { Drawing } from './drawing'
+import { LoanServicingEvent } from './events'
 import {
   Facility,
   FacilityResponseDto,
   NewFacilityRequestDto,
 } from './facility'
+import { ProjectedEvent } from './projectedEvents'
 
 export type Participation = Omit<
   Facility,
@@ -30,4 +33,20 @@ export type NewParticipationRequestDto = NewFacilityRequestDto & {
 
 export type NewParticipationOnFacility = NewParticipationRequestDto & {
   participantStreamId: string
+}
+
+export const participationEventIdMappingndex: Partial<{
+  [key in ProjectedEvent['type']]: (keyof StringValues<
+    Extract<LoanServicingEvent, { type: key }>['eventData']
+  >)[]
+}> = {
+  AddDrawingToFacility: ['streamId'],
+}
+
+export const participationEventValueModificationIndex: Partial<{
+  [key in ProjectedEvent['type']]: (keyof NumberValues<
+    Extract<LoanServicingEvent, { type: key }>['eventData']
+  >)[]
+}> = {
+  WithdrawFromDrawing: ['amount'],
 }

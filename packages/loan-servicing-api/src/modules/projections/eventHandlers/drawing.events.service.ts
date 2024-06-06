@@ -61,6 +61,7 @@ class DrawingEventHandlingService
     sourceEvent,
     projection,
   ) => {
+    projection.passEventsToParticipations([sourceEvent])
     const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
     const { drawing } = drawingBuilder
     const { amount: withdrawnAmount } = sourceEvent.eventData
