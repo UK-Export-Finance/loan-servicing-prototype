@@ -12,6 +12,7 @@ import {
 } from 'loan-servicing-common'
 import DrawingEntity from 'models/entities/DrawingEntity'
 import { DrawingBuilder } from './DrawingBuilder'
+import type ParticipationFacilityBuilder from './ParticipationFacilityBuilder'
 
 export type InProgressRootFacility = Omit<
   Facility,
@@ -79,7 +80,13 @@ abstract class FacilityBuilder {
 
   public readonly projectionDate = this._projectionDate
 
-  // public abstract takeSnapshot: () => FacilityProjectionSnapshot
+  public abstract participationBuilders: ParticipationFacilityBuilder[] | null
+  
+  public abstract passEventsToParticipations: (events: ProjectedEvent[]) => void
+
+  public abstract takeSnapshot: () =>
+    | FacilityProjectionSnapshot
+    | ParticipationProjectionSnapshot
 
   addDrawing(drawing: DrawingEntity, drawingEvents: DrawingEvent[]): this {
     this.drawingBuilders.push(new DrawingBuilder(drawing))
@@ -162,7 +169,7 @@ abstract class FacilityBuilder {
   getDrawingBuilder = (id: string): DrawingBuilder => {
     const drawing = this.drawingBuilders.find((d) => d.id === id)
     if (!drawing) {
-      throw new Error('drawing not found in projection')
+      throw new NotFoundException('drawing not found in projection')
     }
     return drawing
   }

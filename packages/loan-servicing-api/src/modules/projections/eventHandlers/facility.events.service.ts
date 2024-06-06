@@ -69,6 +69,7 @@ class FacilityEventHandlingService
       await this.intialiseDrawing(event)
 
     projection.addDrawing(drawing, drawingProjectedEvents)
+    projection.passEventsToParticipations([event])
 
     projection.addTransactions({
       streamId: event.streamId,

@@ -13,7 +13,7 @@ import FacilityBuilder, {
 import ParticipationFacilityBuilder from './ParticipationFacilityBuilder'
 
 class RootFacilityBuilder extends FacilityBuilder {
-  private participationBuilders: ParticipationFacilityBuilder[] = []
+  public participationBuilders: ParticipationFacilityBuilder[] = []
 
   constructor(
     protected readonly _facility: InProgressRootFacility,
@@ -25,10 +25,10 @@ class RootFacilityBuilder extends FacilityBuilder {
 
   public consumeInitialisationEvents(): ProjectedEvent[] {
     const participationCreationEvents = this._unprocessedEvents.filter(
-      (e) => e.type === 'CreateNewParticipation',
+      (e) => e.type === 'CreateNewParticipation' || e.type === 'AddParticipationToFacility',
     )
     this._unprocessedEvents = this._unprocessedEvents.filter(
-      (e) => e.type !== 'CreateNewParticipation',
+      (e) => e.type !== 'CreateNewParticipation' && e.type !== 'AddParticipationToFacility',
     )
     this._processedEvents.push(...participationCreationEvents)
     return participationCreationEvents
@@ -85,6 +85,7 @@ class RootFacilityBuilder extends FacilityBuilder {
       new ParticipationFacilityBuilder(
         {
           ...this.facility,
+          hierarchyType: 'participation',
           streamId: participationProperties.participationFacilityId,
           facilityFees: [],
           participantShare: participationProperties.participantShare,
@@ -98,6 +99,12 @@ class RootFacilityBuilder extends FacilityBuilder {
       ),
     )
     return this
+  }
+
+  public passEventsToParticipations = (events: ProjectedEvent[]): void => {
+    this.participationBuilders.forEach((p) =>
+      p.addEvents(events.map((e) => ({ ...e }))),
+    )
   }
 }
 

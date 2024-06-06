@@ -33,7 +33,7 @@ class FacilityService {
 
   async getFacility(streamId: string): Promise<Facility | null> {
     const facility = await tryGetApiData<Facility>(
-      `facility/${streamId}${process.env.DEV_MODE ? '?rebuild=true' : ''}`,
+      `facility/${streamId}${process.env.DEV_MODE ? '' : ''}`,
     )
     return facility
   }

@@ -32,6 +32,7 @@ class ParticipationService {
     parentFacilityVersion: number,
   ): Promise<Facility> {
     const newParticipationId = crypto.randomUUID()
+    // THIS NEEDS TO BE LINKED UP TO THE ROOT BUILDER INSTANTIATION
     const savedRootEvent =
       await this.eventService.addEvent<CreateNewParticipationEvent>({
         streamId: newParticipationId,

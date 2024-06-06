@@ -13,6 +13,8 @@ class ParticipationFacilityBuilder extends FacilityBuilder {
     super(_facility, _unprocessedEvents, _projectionDate)
   }
 
+  public participationBuilders = null
+
   public takeSnapshot = (): ParticipationProjectionSnapshot => {
     const drawings = this.drawingBuilders.map((b) => b.build()) as Drawing[]
 
@@ -31,6 +33,8 @@ class ParticipationFacilityBuilder extends FacilityBuilder {
     })
     return immutableSnapshot
   }
+
+  public passEventsToParticipations = (): void => {}
 }
 
 export default ParticipationFacilityBuilder

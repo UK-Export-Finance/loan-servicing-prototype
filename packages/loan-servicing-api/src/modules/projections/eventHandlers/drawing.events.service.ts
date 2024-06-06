@@ -44,6 +44,7 @@ class DrawingEventHandlingService
     sourceEvent,
     projection,
   ) => {
+    projection.passEventsToParticipations([sourceEvent])
     projection.addTransactions({
       streamId: sourceEvent.streamId,
       sourceEvent,
