@@ -102,6 +102,9 @@ class ProjectionsService {
     currentFacility.drawings.forEach((d) => delete (d as any).facility)
     currentFacility.currentDate = date
     const facilityEntity = await this.facilityRepo.save(currentFacility)
+    await Promise.all(
+      currentFacility.participations.map((p) => this.facilityRepo.save(p)),
+    )
 
     return {
       facility: facilityEntity,
@@ -190,29 +193,45 @@ class ProjectionsService {
       | ParticipationProjectionSnapshot
     projectionAtExpiry: FacilityBuilder
   }> => {
-    let curr = projection.consumeNextCompletedEvent()
-    while (curr) {
-      // eslint-disable-next-line no-await-in-loop
-      await this.applyEvent(curr, projection)
-      curr = projection.consumeNextCompletedEvent()
+    await this.applyCompletedEvents(projection)
+    if (projection.participationBuilders) {
+      await Promise.all(
+        projection.participationBuilders.map((p) =>
+          this.applyCompletedEvents(p),
+        ),
+      )
     }
     const facilityAtProjectionDate = projection.takeSnapshot()
-    let futureEvent = projection.consumeNextEvent()
-    while (futureEvent) {
-      // eslint-disable-next-line no-await-in-loop
-      await this.applyEvent(futureEvent, projection)
-      futureEvent = projection.consumeNextEvent()
-    }
-
+    await this.applyFutureEvents(projection)
     if (projection.participationBuilders) {
-      projection.participationBuilders.forEach((p) =>
-        this.applyProjectionEvents(p),
+      await Promise.all(
+        projection.participationBuilders.map((p) => this.applyFutureEvents(p)),
       )
     }
 
     return {
       facilityAtProjectionDate,
       projectionAtExpiry: projection,
+    }
+  }
+
+  private async applyCompletedEvents(
+    projection: FacilityBuilder,
+  ): Promise<void> {
+    let curr = projection.consumeNextCompletedEvent()
+    while (curr) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.applyEvent(curr, projection)
+      curr = projection.consumeNextCompletedEvent()
+    }
+  }
+
+  private async applyFutureEvents(projection: FacilityBuilder): Promise<void> {
+    let futureEvent = projection.consumeNextEvent()
+    while (futureEvent) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.applyEvent(futureEvent, projection)
+      futureEvent = projection.consumeNextEvent()
     }
   }
 
