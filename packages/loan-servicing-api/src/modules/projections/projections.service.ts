@@ -70,26 +70,17 @@ class ProjectionsService {
 
     const {
       rootFacility: currentFacility,
+      participationSnapshots,
       transactions,
       processedEvents,
       unprocessedEvents,
     } = facilityAtProjectionDate as FacilityProjectionSnapshot
 
-    const CHUNK_SIZE = 50
-    const chunkedTransactions = []
-    for (let i = 0; i < transactions.length; i += CHUNK_SIZE) {
-      chunkedTransactions.push(transactions.slice(i, i + CHUNK_SIZE))
-    }
-    const transactionSaveResults = await Promise.all(
-      chunkedTransactions.map((chunk) =>
-        this.transactionRepo.insert(chunk as TransactionEntity[]),
-      ),
-    )
     await this.createPendingEvents(currentFacility, projectionAtExpiry, date)
-    const transactionEntities = transactionSaveResults.reduce(
-      (res: TransactionEntity[], curr) =>
-        res.concat(curr.generatedMaps as TransactionEntity[]),
-      [] as TransactionEntity[],
+
+    const transactionEntities = await this.saveTransactions(transactions)
+    await Promise.all(
+      participationSnapshots.map((p) => this.saveTransactions(p.transactions)),
     )
 
     this.applyStreamVersions(
@@ -110,6 +101,26 @@ class ProjectionsService {
       facility: facilityEntity,
       transactions: transactionEntities,
     }
+  }
+
+  private async saveTransactions(
+    transactions: Transaction[],
+  ): Promise<TransactionEntity[]> {
+    const CHUNK_SIZE = 50
+    const chunkedTransactions = []
+    for (let i = 0; i < transactions.length; i += CHUNK_SIZE) {
+      chunkedTransactions.push(transactions.slice(i, i + CHUNK_SIZE))
+    }
+    const transactionSaveResults = await Promise.all(
+      chunkedTransactions.map((chunk) =>
+        this.transactionRepo.insert(chunk as TransactionEntity[]),
+      ),
+    )
+    return transactionSaveResults.reduce(
+      (res: TransactionEntity[], curr) =>
+        res.concat(curr.generatedMaps as TransactionEntity[]),
+      [] as TransactionEntity[],
+    )
   }
 
   private applyStreamVersions(

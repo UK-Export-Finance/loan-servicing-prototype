@@ -63,7 +63,7 @@ class ParticipationEventHandlingService
     ;(projections as RootFacilityBuilder).addParticipation({
       ...sourceEvent.eventData,
       hierarchyType: 'participation',
-      streamId: `${sourceEvent.streamId}-participation-${participantStreamId}`,
+      streamId: participantStreamId,
       drawnAmount: '0',
       undrawnAmount: sourceEvent.eventData.facilityAmount,
       currentDate: projections.projectionDate,
