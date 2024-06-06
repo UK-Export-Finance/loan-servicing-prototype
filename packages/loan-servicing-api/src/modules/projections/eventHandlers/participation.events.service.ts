@@ -42,6 +42,7 @@ class ParticipationEventHandlingService
   CreateNewParticipation: EventHandler<
     ProjectEvent<CreateNewParticipationEvent>
   > = async (sourceEvent, projections) => {
+    projections.passEventsToParticipations([sourceEvent])
     projections.addTransactions({
       streamId: projections.facility.streamId,
       sourceEvent,
@@ -57,9 +58,22 @@ class ParticipationEventHandlingService
   AddParticipationToFacility: EventHandler<
     ProjectEvent<AddParticipationToFacilityEvent>
   > = async (sourceEvent, projections) => {
-    ;(projections as RootFacilityBuilder).addParticipation(
-      sourceEvent.eventData,
-    )
+    const { participantStreamId, parentFacilityId, participantShare } =
+      sourceEvent.eventData
+    ;(projections as RootFacilityBuilder).addParticipation({
+      ...sourceEvent.eventData,
+      hierarchyType: 'participation',
+      streamId: `${sourceEvent.streamId}-participation-${participantStreamId}`,
+      drawnAmount: '0',
+      undrawnAmount: sourceEvent.eventData.facilityAmount,
+      currentDate: projections.projectionDate,
+      streamVersion: 1,
+      facilityFees: [],
+      parentFacilityId,
+      participantShare,
+      participations: [],
+      participationsConfig: [],
+    })
     projections.addTransactions({
       streamId: projections.facility.streamId,
       sourceEvent,

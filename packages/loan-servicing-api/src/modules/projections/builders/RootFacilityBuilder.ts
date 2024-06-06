@@ -1,13 +1,15 @@
 import {
+  DeepReadonly,
   Drawing,
   Facility,
   Participation,
-  ParticipationProperties,
   ProjectedEvent,
 } from 'loan-servicing-common'
 import { BadRequestException } from '@nestjs/common'
 import FacilityBuilder, {
   FacilityProjectionSnapshot,
+  InProgressFacility,
+  InProgressParticipation,
   InProgressRootFacility,
 } from './FacilityBuilder'
 import ParticipationFacilityBuilder from './ParticipationFacilityBuilder'
@@ -23,12 +25,18 @@ class RootFacilityBuilder extends FacilityBuilder {
     super(_facility, _unprocessedEvents, _projectionDate)
   }
 
+  public readonly facility: DeepReadonly<InProgressFacility> = this._facility
+
   public consumeInitialisationEvents(): ProjectedEvent[] {
     const participationCreationEvents = this._unprocessedEvents.filter(
-      (e) => e.type === 'CreateNewParticipation' || e.type === 'AddParticipationToFacility',
+      (e) =>
+        e.type === 'CreateNewParticipation' ||
+        e.type === 'AddParticipationToFacility',
     )
     this._unprocessedEvents = this._unprocessedEvents.filter(
-      (e) => e.type !== 'CreateNewParticipation' && e.type !== 'AddParticipationToFacility',
+      (e) =>
+        e.type !== 'CreateNewParticipation' &&
+        e.type !== 'AddParticipationToFacility',
     )
     this._processedEvents.push(...participationCreationEvents)
     return participationCreationEvents
@@ -75,35 +83,26 @@ class RootFacilityBuilder extends FacilityBuilder {
     return immutableSnapshot
   }
 
-  addParticipation(participationProperties: ParticipationProperties): this {
+  addParticipation(participation: InProgressParticipation): this {
     if (this.facility.hierarchyType !== 'root') {
       throw new BadRequestException(
         'Participations can only be added to root level facilities',
       )
     }
     this.participationBuilders.push(
-      new ParticipationFacilityBuilder(
-        {
-          ...this.facility,
-          hierarchyType: 'participation',
-          streamId: participationProperties.participationFacilityId,
-          facilityFees: [],
-          participantShare: participationProperties.participantShare,
-          participations: [],
-          participationsConfig: [],
-        },
-        this._unprocessedEvents.filter(
-          (e) => e.type !== 'CreateNewParticipation',
-        ),
-        this.projectionDate,
-      ),
+      new ParticipationFacilityBuilder(participation, this.projectionDate),
     )
     return this
   }
 
   public passEventsToParticipations = (events: ProjectedEvent[]): void => {
     this.participationBuilders.forEach((p) =>
-      p.addEvents(events.map((e) => ({ ...e }))),
+      p.addEvents(
+        events.map((e) => ({
+          ...e,
+          streamId: `${e.streamId}-participation-${p.facility.streamId}`,
+        })),
+      ),
     )
   }
 }

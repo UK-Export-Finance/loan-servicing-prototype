@@ -32,21 +32,19 @@ class ParticipationService {
     parentFacilityVersion: number,
   ): Promise<Facility> {
     const newParticipationId = crypto.randomUUID()
-    // THIS NEEDS TO BE LINKED UP TO THE ROOT BUILDER INSTANTIATION
-    const savedRootEvent =
-      await this.eventService.addEvent<CreateNewParticipationEvent>({
-        streamId: newParticipationId,
-        effectiveDate: participationRequest.issuedEffectiveDate,
-        entityType: 'participation',
-        shouldProcessIfFuture: false,
-        type: 'CreateNewParticipation',
-        typeVersion: 1,
-        eventData: {
-          ...participationRequest,
-          parentFacilityId,
-        },
-        isApproved: true,
-      })
+    await this.eventService.addEvent<CreateNewParticipationEvent>({
+      streamId: newParticipationId,
+      effectiveDate: participationRequest.issuedEffectiveDate,
+      entityType: 'participation',
+      shouldProcessIfFuture: false,
+      type: 'CreateNewParticipation',
+      typeVersion: 1,
+      eventData: {
+        ...participationRequest,
+        parentFacilityId,
+      },
+      isApproved: true,
+    })
 
     await this.eventService.addEvent<AddParticipationToFacilityEvent>(
       {
@@ -57,9 +55,9 @@ class ParticipationService {
         type: 'AddParticipationToFacility',
         typeVersion: 1,
         eventData: {
-          participantShare: participationRequest.participantShare,
+          ...participationRequest,
           parentFacilityId,
-          participationFacilityId: newParticipationId,
+          participantStreamId: newParticipationId,
         },
         isApproved: true,
       },
@@ -68,7 +66,7 @@ class ParticipationService {
 
     const { facility } =
       await this.projectionsService.buildProjectionsForFacility(
-        savedRootEvent.streamId,
+        parentFacilityId,
       )
 
     return facility

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import {
+  NewParticipationOnFacility,
   NewParticipationRequestDto,
   ParticipationProperties,
 } from 'loan-servicing-common'
@@ -21,6 +22,13 @@ export class NewParticipationRequestDtoClass
 
   @ApiProperty()
   participantShare!: string
+}
+
+export class NewParticipationOnFacilityClass
+  extends NewParticipationRequestDtoClass
+  implements NewParticipationOnFacility
+{
+  participantStreamId!: string
 }
 
 export class ParticipationPropertiesDtoClass

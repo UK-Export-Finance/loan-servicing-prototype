@@ -1,4 +1,4 @@
-import { Drawing, ProjectedEvent } from 'loan-servicing-common'
+import { DeepReadonly, Drawing } from 'loan-servicing-common'
 import FacilityBuilder, {
   InProgressParticipation,
   ParticipationProjectionSnapshot,
@@ -7,11 +7,13 @@ import FacilityBuilder, {
 class ParticipationFacilityBuilder extends FacilityBuilder {
   constructor(
     protected readonly _facility: InProgressParticipation,
-    _unprocessedEvents: ProjectedEvent[],
     _projectionDate: Date,
   ) {
-    super(_facility, _unprocessedEvents, _projectionDate)
+    super(_facility, [], _projectionDate)
   }
+
+  public readonly facility: DeepReadonly<InProgressParticipation> =
+    this._facility
 
   public participationBuilders = null
 

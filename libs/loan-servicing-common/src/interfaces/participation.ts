@@ -27,3 +27,7 @@ export type NewParticipationRequestDto = NewFacilityRequestDto & {
   parentFacilityId: string
   participantShare: string
 }
+
+export type NewParticipationOnFacility = NewParticipationRequestDto & {
+  participantStreamId: string
+}

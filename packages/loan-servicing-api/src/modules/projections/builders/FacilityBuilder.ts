@@ -22,7 +22,8 @@ export type InProgressRootFacility = Omit<
 export type InProgressParticipation = Omit<
   Participation,
   'drawings' | 'parentFacility'
->
+> & { parentFacilityId: string }
+
 export type InProgressFacility =
   | InProgressRootFacility
   | InProgressParticipation
@@ -67,8 +68,7 @@ abstract class FacilityBuilder {
     protected _projectionDate: Date,
   ) {}
 
-  public readonly facility: DeepReadonly<ReadonlyInProgressFacility> =
-    this._facility
+  public abstract readonly facility: ReadonlyInProgressFacility
 
   public readonly transactions: DeepReadonly<Transaction[]> = this._transactions
 
@@ -81,7 +81,7 @@ abstract class FacilityBuilder {
   public readonly projectionDate = this._projectionDate
 
   public abstract participationBuilders: ParticipationFacilityBuilder[] | null
-  
+
   public abstract passEventsToParticipations: (events: ProjectedEvent[]) => void
 
   public abstract takeSnapshot: () =>
