@@ -15,6 +15,7 @@ import { Repository } from 'typeorm'
 import { IEventHandlerService, EventHandler } from 'types/eventHandler'
 import FacilityBuilder from 'modules/projections/builders/FacilityBuilder'
 import RootFacilityBuilder from 'modules/projections/builders/RootFacilityBuilder'
+import Big from 'big.js'
 
 @Injectable()
 class ParticipationEventHandlingService
@@ -60,12 +61,19 @@ class ParticipationEventHandlingService
   > = async (sourceEvent, projections) => {
     const { participantStreamId, parentFacilityId, participantShare } =
       sourceEvent.eventData
+
+    const participationAmount = Big(projections.facility.facilityAmount)
+      .times(participantShare)
+      .div(100)
+      .toFixed()
+
     ;(projections as RootFacilityBuilder).addParticipation({
       ...sourceEvent.eventData,
       hierarchyType: 'participation',
       streamId: participantStreamId,
       drawnAmount: '0',
-      undrawnAmount: sourceEvent.eventData.facilityAmount,
+      facilityAmount: participationAmount,
+      undrawnAmount: participationAmount,
       currentDate: projections.projectionDate,
       streamVersion: 1,
       facilityFees: [],

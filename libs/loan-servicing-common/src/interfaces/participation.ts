@@ -49,4 +49,5 @@ export const participationEventValueModificationIndex: Partial<{
   >)[]
 }> = {
   WithdrawFromDrawing: ['amount'],
+  CreateNewParticipation: ['facilityAmount'],
 }
