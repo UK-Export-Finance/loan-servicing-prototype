@@ -24,7 +24,6 @@ import {
   CreateFacilityNjkInput,
   NewFacilityRequestFormDto,
 } from 'templates/create-facility'
-import { FacilityNjkInput } from 'templates/facility'
 import { FacilityListNjkInput } from 'templates/facility-list'
 import {
   facilityToDrawingSummaries,
@@ -91,11 +90,11 @@ class FacilityController {
   }
 
   @Get('facility/:id')
-  @Render('facility')
   async renderFacilityPage(
     @Param('id') id: string,
+    @Res() res: Response,
     @Query('facilityCreated') facilityCreated?: boolean,
-  ): Promise<FacilityNjkInput> {
+  ): Promise<void> {
     const facility = await this.facilityService.getFacility(id)
     if (!facility) {
       throw new NotFoundException()
@@ -104,15 +103,18 @@ class FacilityController {
     const transactions =
       await this.facilityService.getFacilityTransactionRows(id)
 
-    return {
-      facility,
-      eventRows: mapEventsToTable(events!),
-      transactionRows: mapTransactionsToTable(transactions!),
-      facilityCreated,
-      facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
-      drawingSummaries: facilityToDrawingSummaries(facility),
-      currentDate: new Date(facility.currentDate).toISOString().split('T')[0],
-    }
+    return res.render(
+      facility.hierarchyType === 'root' ? 'facility' : 'participation',
+      {
+        facility,
+        eventRows: mapEventsToTable(events!),
+        transactionRows: mapTransactionsToTable(transactions!),
+        facilityCreated,
+        facilitySummaryListProps: facilityToFacilitySummaryProps(facility),
+        drawingSummaries: facilityToDrawingSummaries(facility),
+        currentDate: new Date(facility.currentDate).toISOString().split('T')[0],
+      },
+    )
   }
 }
 
