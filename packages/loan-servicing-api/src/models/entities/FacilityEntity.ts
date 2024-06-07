@@ -1,7 +1,4 @@
-import {
-  ArrayOfClassAsJsonColumn,
-  CurrencyColumn,
-} from 'database/decorators'
+import { ArrayOfClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
 import {
   Drawing,
   Facility,
@@ -18,9 +15,7 @@ import {
   PrimaryColumn,
   Relation,
 } from 'typeorm'
-import {
-  FacilityFeeDtoClass,
-} from 'models/dtos/facilityConfiguration'
+import { FacilityFeeDtoClass } from 'models/dtos/facilityConfiguration'
 import { ParticipationPropertiesDtoClass } from 'models/dtos/participation'
 
 @Entity()
@@ -39,6 +34,9 @@ class FacilityEntity implements Facility {
 
   @ManyToOne(() => FacilityEntity, (e) => e.participations)
   parentFacility?: Relation<Facility>
+
+  @Column({ nullable: true })
+  participantShare?: string
 
   @OneToMany(() => FacilityEntity, (e) => e.parentFacility)
   participations!: Relation<Participation>[]

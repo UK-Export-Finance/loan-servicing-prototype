@@ -11,35 +11,42 @@
 {% from "macros/dev-set-date.njk" import setDateInput %}
 
 {% block pageTitle -%}
-  Facility
+  {% if facility.hierarchyType === 'root' %}
+    Facility
+  {% else %}
+    Participation
+  {% endif %}
   {{ facility.streamId }}
 {%- endblock %}
 
 {% block content %}
   {{ setDateInput(currentDate) }}
 
-  {{ govukBackLink({
-    text: "Back to List",
-    href: "/"
-  }) }}
+  {{ govukBackLink({"text": "Back to List", "href": "/"}) }}
   {% if facilityCreated %}
     {% set html %}
-    <p class="govuk-notification-banner__heading">
-      Facility created successfully
-    </p>
+      <p class="govuk-notification-banner__heading">Facility created successfully</p>
     {% endset %}
 
     {{ govukNotificationBanner({
-      html: html,
-      type: 'success'
-    }) }}
+        html: html,
+        type: 'success'
+        }) }}
   {% endif %}
-  <h1 class="govuk-heading-l">Facility
-    {{ facility.streamId }}</h1>
+  <h1 class="govuk-heading-l">
+    {% if facility.hierarchyType === 'root' %}
+      Facility
+    {% else %}
+      Participation
+    {% endif %}
+    {{ facility.streamId }}
+  </h1>
 
   {{ govukSummaryList(facilitySummaryListProps) }}
 
-  {{ govukButton({ text: "Create New Drawing", href: "/facility/" + facility.streamId + "/drawing/new/start?facilityType=" + facility.facilityType }) }}
+  {% if facility.hierarchyType === 'root' %}
+    {{ govukButton({ text: "Create New Drawing", href: "/facility/" + facility.streamId + "/drawing/new/start?facilityType=" + facility.facilityType }) }}
+  {% endif %}
 
   {% for summary in drawingSummaries %}
     {{ govukSummaryList(summary) }}
@@ -49,4 +56,4 @@
 
   {{ transactionTable(transactionRows) }}
 
-{% endblock %}
+{% endblock content %}

@@ -80,7 +80,13 @@ class ProjectionsService {
 
     const transactionEntities = await this.saveTransactions(transactions)
     await Promise.all(
-      participationSnapshots.map((p) => this.saveTransactions(p.transactions)),
+      participationSnapshots.map(async (p) => {
+        await this.transactionRepo.delete({
+          streamId: p.participation.streamId,
+        })
+
+        await this.saveTransactions(p.transactions)
+      }),
     )
 
     this.applyStreamVersions(
@@ -94,7 +100,9 @@ class ProjectionsService {
     currentFacility.currentDate = date
     const facilityEntity = await this.facilityRepo.save(currentFacility)
     await Promise.all(
-      currentFacility.participations.map((p) => this.facilityRepo.save(p)),
+      currentFacility.participations.map(async (p): Promise<void> => {
+        await this.facilityRepo.save(p)
+      }),
     )
 
     return {

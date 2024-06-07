@@ -271,6 +271,7 @@ class DrawingEventHandlingService
     event,
     projection,
   ) => {
+    projection.passEventsToParticipations([event])
     const drawingBuilder = projection.getDrawingBuilder(event.streamId)
     const repayments = this.strategyService.getRepayments(
       drawingBuilder.drawing,
