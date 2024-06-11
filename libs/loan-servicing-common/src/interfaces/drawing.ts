@@ -3,12 +3,13 @@ import { ConvertToDtoType } from '../utils/type-utils'
 import { DrawingConfiguration } from './strategies'
 import { DrawingAccrual } from './strategies/drawingAccruals'
 import { Repayment } from './strategies/repayment'
+import type { Participation } from './participation'
 
 export type Drawing = {
   streamId: string
   streamVersion: number
   currentDate: Date
-  facility: Facility
+  facility: Facility | Participation
   outstandingPrincipal: string
   drawnAmount: string
   accruals: DrawingAccrual[]

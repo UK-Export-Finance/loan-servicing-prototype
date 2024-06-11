@@ -9,6 +9,7 @@ const mapCreateFacilityFormToRequest = (
   facilityAmount: request.maxPrincipal,
   expiryDate: getDateFromDateInput(request, 'expiryDate'),
   issuedEffectiveDate: getDateFromDateInput(request, 'issuedEffectiveDate'),
+  hierarchyType: 'root'
 })
 
 export default mapCreateFacilityFormToRequest

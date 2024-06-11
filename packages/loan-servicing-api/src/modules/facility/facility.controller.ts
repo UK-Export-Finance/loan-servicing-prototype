@@ -52,7 +52,7 @@ class FacilityController {
   @ApiOkResponse({ type: FacilityResponseDtoClass })
   async getFacility(
     @Param('facilityId') facilityStreamId: string,
-    @Query('rebuild') rebuild?: boolean,
+    @Query('rebuild') rebuild: boolean,
   ): Promise<FacilityResponseDtoClass> {
     const facility = await this.facilityService.getFacility(
       facilityStreamId,

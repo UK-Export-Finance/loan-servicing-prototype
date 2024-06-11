@@ -12,18 +12,22 @@ import {
   CreateNewFacilityEvent,
   Facility,
   FacilityProjectedEvent,
+  ProjectedParticipationEvent,
 } from 'loan-servicing-common'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import DrawingEntity from 'models/entities/DrawingEntity'
 import EventService from 'modules/event/event.service'
-import DrawingEventHandlingService from 'modules/projections/drawing.events.service'
+import DrawingEventHandlingService from 'modules/projections/eventHandlers/drawing.events.service'
 import EventEntity from 'models/entities/EventEntity'
 import FacilityEntity from 'models/entities/FacilityEntity'
 import SystemValueService from 'modules/systemValue/systemValue.service'
-import FacilityEventHandlingService from './facility.events.service'
+import FacilityEventHandlingService from './eventHandlers/facility.events.service'
 import FacilityBuilder, {
   FacilityProjectionSnapshot,
+  ParticipationProjectionSnapshot,
 } from './builders/FacilityBuilder'
+import RootFacilityBuilder from './builders/RootFacilityBuilder'
+import ParticipationEventHandlingService from './eventHandlers/participation.events.service'
 
 @Injectable()
 class ProjectionsService {
@@ -37,6 +41,8 @@ class ProjectionsService {
     private drawingEventHandler: DrawingEventHandlingService,
     @Inject(FacilityEventHandlingService)
     private facilityEventHandler: FacilityEventHandlingService,
+    @Inject(ParticipationEventHandlingService)
+    private participationEventHandler: ParticipationEventHandlingService,
     @Inject(SystemValueService)
     private systemValueService: SystemValueService,
   ) {}
@@ -50,31 +56,37 @@ class ProjectionsService {
     const { facility, facilityEvents } =
       await this.intialiseFacility(facilityId)
 
-    const {
-      facilityAtProjectionDate: {
-        facility: currentFacility,
-        transactions,
-        processedEvents,
-        unprocessedEvents,
-      },
-      projectionAtExpiry,
-    } = await this.applyEventsUntil(facilityEvents, facility, date)
-
-    const CHUNK_SIZE = 50
-    const chunkedTransactions = []
-    for (let i = 0; i < transactions.length; i += CHUNK_SIZE) {
-      chunkedTransactions.push(transactions.slice(i, i + CHUNK_SIZE))
-    }
-    const transactionSaveResults = await Promise.all(
-      chunkedTransactions.map((chunk) =>
-        this.transactionRepo.insert(chunk as TransactionEntity[]),
-      ),
+    const rootProjection = new RootFacilityBuilder(
+      facility,
+      [...facilityEvents],
+      date,
     )
+
+    const initialisationEvents = rootProjection.consumeInitialisationEvents()
+    initialisationEvents.forEach((e) => this.applyEvent(e, rootProjection))
+
+    const { facilityAtProjectionDate, projectionAtExpiry } =
+      await this.applyProjectionEvents(rootProjection)
+
+    const {
+      rootFacility: currentFacility,
+      participationSnapshots,
+      transactions,
+      processedEvents,
+      unprocessedEvents,
+    } = facilityAtProjectionDate as FacilityProjectionSnapshot
+
     await this.createPendingEvents(currentFacility, projectionAtExpiry, date)
-    const transactionEntities = transactionSaveResults.reduce(
-      (res: TransactionEntity[], curr) =>
-        res.concat(curr.generatedMaps as TransactionEntity[]),
-      [] as TransactionEntity[],
+
+    const transactionEntities = await this.saveTransactions(transactions)
+    await Promise.all(
+      participationSnapshots.map(async (p) => {
+        await this.transactionRepo.delete({
+          streamId: p.participation.streamId,
+        })
+
+        await this.saveTransactions(p.transactions)
+      }),
     )
 
     this.applyStreamVersions(
@@ -87,11 +99,36 @@ class ProjectionsService {
     currentFacility.drawings.forEach((d) => delete (d as any).facility)
     currentFacility.currentDate = date
     const facilityEntity = await this.facilityRepo.save(currentFacility)
+    await Promise.all(
+      currentFacility.participations.map(async (p): Promise<void> => {
+        await this.facilityRepo.save(p)
+      }),
+    )
 
     return {
       facility: facilityEntity,
       transactions: transactionEntities,
     }
+  }
+
+  private async saveTransactions(
+    transactions: Transaction[],
+  ): Promise<TransactionEntity[]> {
+    const CHUNK_SIZE = 50
+    const chunkedTransactions = []
+    for (let i = 0; i < transactions.length; i += CHUNK_SIZE) {
+      chunkedTransactions.push(transactions.slice(i, i + CHUNK_SIZE))
+    }
+    const transactionSaveResults = await Promise.all(
+      chunkedTransactions.map((chunk) =>
+        this.transactionRepo.insert(chunk as TransactionEntity[]),
+      ),
+    )
+    return transactionSaveResults.reduce(
+      (res: TransactionEntity[], curr) =>
+        res.concat(curr.generatedMaps as TransactionEntity[]),
+      [] as TransactionEntity[],
+    )
   }
 
   private applyStreamVersions(
@@ -167,32 +204,53 @@ class ProjectionsService {
     }
   }
 
-  applyEventsUntil = async (
-    events: ProjectedEvent[],
-    facility: Facility,
-    until: Date,
+  applyProjectionEvents = async (
+    projection: FacilityBuilder,
   ): Promise<{
-    facilityAtProjectionDate: FacilityProjectionSnapshot
+    facilityAtProjectionDate:
+      | FacilityProjectionSnapshot
+      | ParticipationProjectionSnapshot
     projectionAtExpiry: FacilityBuilder
   }> => {
-    const projection = new FacilityBuilder(facility, [...events], until)
+    await this.applyCompletedEvents(projection)
+    if (projection.participationBuilders) {
+      await Promise.all(
+        projection.participationBuilders.map((p) =>
+          this.applyCompletedEvents(p),
+        ),
+      )
+    }
+    const facilityAtProjectionDate = projection.takeSnapshot()
+    await this.applyFutureEvents(projection)
+    if (projection.participationBuilders) {
+      await Promise.all(
+        projection.participationBuilders.map((p) => this.applyFutureEvents(p)),
+      )
+    }
+
+    return {
+      facilityAtProjectionDate,
+      projectionAtExpiry: projection,
+    }
+  }
+
+  private async applyCompletedEvents(
+    projection: FacilityBuilder,
+  ): Promise<void> {
     let curr = projection.consumeNextCompletedEvent()
     while (curr) {
       // eslint-disable-next-line no-await-in-loop
       await this.applyEvent(curr, projection)
       curr = projection.consumeNextCompletedEvent()
     }
-    const facilityAtProjectionDate = projection.takeSnapshot()
+  }
+
+  private async applyFutureEvents(projection: FacilityBuilder): Promise<void> {
     let futureEvent = projection.consumeNextEvent()
     while (futureEvent) {
       // eslint-disable-next-line no-await-in-loop
       await this.applyEvent(futureEvent, projection)
       futureEvent = projection.consumeNextEvent()
-    }
-
-    return {
-      facilityAtProjectionDate,
-      projectionAtExpiry: projection,
     }
   }
 
@@ -210,6 +268,12 @@ class ProjectionsService {
       case 'facility':
         await this.facilityEventHandler.applyEvent(
           event as FacilityProjectedEvent,
+          projection,
+        )
+        return
+      case 'participation':
+        await this.participationEventHandler.applyEvent(
+          event as ProjectedParticipationEvent,
           projection,
         )
         return
@@ -244,7 +308,7 @@ class ProjectionsService {
     const creationEvent =
       facilityEvents[0] as EventEntity<CreateNewFacilityEvent>
 
-    if (creationEvent.type !== 'CreateNewFacility') {
+    if (creationEvent.type in ['CreateNewFacility', 'CreateNewParticipation']) {
       throw new Error('First created event is not facility creation')
     }
 
@@ -252,6 +316,8 @@ class ProjectionsService {
       streamId: creationEvent.streamId,
       streamVersion: 1,
       drawnAmount: '0',
+      participations: [],
+      participationsConfig: [],
       currentDate: creationEvent.effectiveDate,
       undrawnAmount: creationEvent.eventData.facilityAmount,
       facilityFees: [],

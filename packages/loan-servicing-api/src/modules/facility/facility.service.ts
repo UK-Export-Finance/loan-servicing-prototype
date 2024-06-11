@@ -111,10 +111,10 @@ class FacilityService {
 
   @Transactional({ propagation: Propagation.SUPPORTS })
   async getFacility(streamId: string, rebuild?: boolean): Promise<Facility> {
-    if (rebuild) {
+    const facility = await this.facilityRepo.findOne({ where: { streamId } })
+    if (rebuild || facility?.hierarchyType === 'root') {
       await this.projectionsService.buildProjectionsForFacility(streamId)
     }
-    const facility = await this.facilityRepo.findOne({ where: { streamId } })
     if (!facility) {
       throw new NotFoundException(`No facility found for id ${streamId}`)
     }

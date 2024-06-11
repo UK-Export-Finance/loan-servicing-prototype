@@ -4,106 +4,111 @@
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 
-{% block pageTitle -%}
-  Create New Drawing
-{%- endblock %}
+{% block pageTitle -%}Create New Drawing{%- endblock %}
 
 {% block content %}
   <h1 class="govuk-heading-l">Create New Drawing</h1>
 
-  <p class="govuk-body govuk-!-margin-bottom-6">Add a new drawing to facility {{facility.obligorId}}</p>
+  <p class="govuk-body govuk-!-margin-bottom-6">
+    Add a new drawing to facility {{ facility.obligorId }}
+  </p>
 
-  <form action="/facility/{{facility.streamId}}/drawing?facilityVersion={{facility.streamVersion}}" method="post">
-    <input name="facilityId" type="hidden" value="{{facility.streamId}}" />
+  <form action="/facility/{{ facility.streamId }}/drawing?facilityVersion={{ facility.streamVersion }}"
+        method="post">
+    <input name="facilityId" type="hidden" value="{{ facility.streamId }}" />
 
     {{ govukInput({
-      label: {
-        text: "Drawn amount"
+      "label": {
+        "text": "Drawn amount"
       },
-      classes: "govuk-input--width-20",
-      id: "initialDrawnAmount",
-      name: "initialDrawnAmount"
+      "classes": "govuk-input--width-20",
+      "id": "initialDrawnAmount",
+      "name": "initialDrawnAmount"
     }) }}
 
     {{ govukDateInput({
-        id: "issuedEffectiveDate",
-        namePrefix: "issuedEffectiveDate",
-        fieldset: {
-          legend: {
-            text: "Effective date of facility"
-          }
+      "id": "issuedEffectiveDate",
+      "namePrefix": "issuedEffectiveDate",
+      "fieldset": {
+        "legend": {
+          "text": "Effective date of facility"
         }
-      }) }}
+      }
+    }) }}
 
     {{ govukDateInput({
-        id: "expiryDate",
-        namePrefix: "expiryDate",
-        fieldset: {
-          legend: {
-            text: "Expiry date of facility"
-          }
+      "id": "expiryDate",
+      "namePrefix": "expiryDate",
+      "fieldset": {
+        "legend": {
+          "text": "Expiry date of facility"
         }
-      }) }}
+      }
+    }) }}
 
-    <h3 class="govuk-heading-s">Repayment Schedule -
-      {{ repaymentStrategy | enumToNameString }}</h3>
+    <h3 class="govuk-heading-s">
+      Repayment Schedule -
+      {{ repaymentStrategy | enumToNameString }}
+    </h3>
 
-    <input name="repaymentStrategy" type="hidden" value="{{repaymentStrategy}}">
+    <input name="repaymentStrategy"
+           type="hidden"
+           value="{{ repaymentStrategy }}">
 
     {% if repaymentStrategy === 'Regular' %}
       {{ govukDateInput({
-        id: "repaymentStartDate",
-        namePrefix: "repaymentStartDate",
-        fieldset: {
-          legend: {
-            text: "Date of first repayment"
+        "id": "repaymentStartDate",
+        "namePrefix": "repaymentStartDate",
+        "fieldset": {
+          "legend": {
+            "text": "Date of first repayment"
           }
         }
       }) }}
 
       {{ govukInput({
-        label: {
-          text: "Months between repayments"
+        "label": {
+          "text": "Months between repayments"
         },
-        classes: "govuk-input--width-20",
-        id: "repaymentInterval",
-        name: "repaymentInterval",
-        type: "number"
+        "classes": "govuk-input--width-20",
+        "id": "repaymentInterval",
+        "name": "repaymentInterval",
+        "type": "number"
       }) }}
 
     {% endif %}
 
     {% if repaymentStrategy === 'Manual' %}
-    {% for repaymentNumber in [1,2,3,4,5] %}
-      <p class="govuk-body">Repayment {{repaymentNumber}}:</p>
-      <div class="govuk-grid-row" style="display: flex; align-items: flex-end;">
-        <div class="govuk-grid-column-one-third">
-          {{ govukDateInput({
-          id: "repaymentDate" + repaymentNumber,
-          namePrefix: "repaymentDate" + repaymentNumber,
-          fieldset: {
-            legend: {
-              text: "Date of repayment"
-            }
-          }
-        }) }}
+      {% for repaymentNumber in [1,2,3,4,5] %}
+        <p class="govuk-body">Repayment {{ repaymentNumber }}:</p>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-third">
+            {{ govukDateInput({
+                        id: "repaymentDate" + repaymentNumber,
+                        namePrefix: "repaymentDate" + repaymentNumber,
+                        fieldset: {
+                        legend: {
+                        text: "Date of repayment"
+                        }
+                        }
+                        }) }}
+          </div>
+          <div class="govuk-grid-column-one-half">
+            {{ govukInput({
+                        label: {
+                        text: "Repayment Amount"
+                        },
+                        classes: "govuk-input--width-20",
+                        id: "repaymentAmount" + repaymentNumber,
+                        name: "repaymentAmount" + repaymentNumber,
+                        type: "number"
+                        }) }}
+          </div>
         </div>
-        <div class="govuk-grid-column-one-half">
-          {{ govukInput({
-            label: {
-              text: "Repayment Amount"
-            },
-            classes: "govuk-input--width-20",
-            id: "repaymentAmount" + repaymentNumber,
-            name: "repaymentAmount" + repaymentNumber,
-            type: "number"
-          }) }}
-        </div>
-      </div>
-    {% endfor %}
+      {% endfor %}
     {% endif %}
 
-    {{ govukButton({  text: "Create Drawing"}) }}
+    {{ govukButton({"text": "Create Drawing"}) }}
   </form>
 
 {% endblock %}

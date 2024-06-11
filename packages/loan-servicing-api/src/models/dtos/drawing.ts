@@ -6,6 +6,7 @@ import {
   DrawingAccrual,
   Facility,
   NewDrawingRequestDto,
+  Participation,
   Repayment,
   RevertWithdrawlDto,
 } from 'loan-servicing-common'
@@ -25,7 +26,7 @@ export class DrawingDtoClass implements Drawing {
 
   @ApiProperty()
   @Transform(({ value }) => ({ ...value, drawings: undefined }))
-  facility!: Facility
+  facility!: Facility | Participation
 
   @ApiProperty()
   @IsArray()

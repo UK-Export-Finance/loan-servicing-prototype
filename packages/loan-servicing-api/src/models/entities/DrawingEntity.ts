@@ -1,9 +1,15 @@
 import { ArrayOfClassAsJsonColumn, CurrencyColumn } from 'database/decorators'
-import { Drawing, DrawingAccrual, Repayment } from 'loan-servicing-common'
-import { Column, Entity, ManyToOne, PrimaryColumn, Relation } from 'typeorm'
+import {
+  Drawing,
+  DrawingAccrual,
+  Facility,
+  Participation,
+  Repayment,
+} from 'loan-servicing-common'
+import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm'
 import { DrawingAccrualDtoClass } from 'models/dtos/drawingAccrual'
 import { DrawingRepaymentDto } from 'models/dtos/drawingRepayment'
-import type FacilityEntity from './FacilityEntity'
+import FacilityEntity from './FacilityEntity'
 
 @Entity()
 class DrawingEntity implements Drawing {
@@ -13,8 +19,8 @@ class DrawingEntity implements Drawing {
   @Column()
   streamVersion!: number
 
-  @ManyToOne('FacilityEntity', 'drawings')
-  facility!: Relation<FacilityEntity>
+  @ManyToOne(() => FacilityEntity, (e) => e.drawings)
+  facility!: Facility | Participation
 
   @ArrayOfClassAsJsonColumn(DrawingAccrualDtoClass)
   accruals!: DrawingAccrual[]

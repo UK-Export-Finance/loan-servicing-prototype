@@ -20,7 +20,7 @@ import { EventHandler, IEventHandlerService } from 'types/eventHandler'
 import PendingEventService, {
   NewPendingEvent,
 } from 'modules/pendingEvents/pendingEvent.service'
-import FacilityBuilder from './builders/FacilityBuilder'
+import FacilityBuilder from 'modules/projections/builders/FacilityBuilder'
 
 @Injectable()
 class DrawingEventHandlingService
@@ -44,6 +44,7 @@ class DrawingEventHandlingService
     sourceEvent,
     projection,
   ) => {
+    projection.passEventsToParticipations([sourceEvent])
     projection.addTransactions({
       streamId: sourceEvent.streamId,
       sourceEvent,
@@ -60,6 +61,7 @@ class DrawingEventHandlingService
     sourceEvent,
     projection,
   ) => {
+    projection.passEventsToParticipations([sourceEvent])
     const drawingBuilder = projection.getDrawingBuilder(sourceEvent.streamId)
     const { drawing } = drawingBuilder
     const { amount: withdrawnAmount } = sourceEvent.eventData
@@ -269,6 +271,7 @@ class DrawingEventHandlingService
     event,
     projection,
   ) => {
+    projection.passEventsToParticipations([event])
     const drawingBuilder = projection.getDrawingBuilder(event.streamId)
     const repayments = this.strategyService.getRepayments(
       drawingBuilder.drawing,

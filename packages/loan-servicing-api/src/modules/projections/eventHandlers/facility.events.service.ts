@@ -8,6 +8,8 @@ import {
   Drawing,
   AddFacilityFeeEvent,
   DrawingEvent,
+  CreateNewParticipationEvent,
+  ProjectEvent,
 } from 'loan-servicing-common'
 import EventService from 'modules/event/event.service'
 import Big from 'big.js'
@@ -18,7 +20,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import TransactionEntity from 'models/entities/TransactionEntity'
 import { Repository } from 'typeorm'
 import PendingEventService from 'modules/pendingEvents/pendingEvent.service'
-import FacilityBuilder from './builders/FacilityBuilder'
+import FacilityBuilder from 'modules/projections/builders/FacilityBuilder'
 
 @Injectable()
 class FacilityEventHandlingService
@@ -43,10 +45,9 @@ class FacilityEventHandlingService
     await handler(event, projection)
   }
 
-  CreateNewFacility: EventHandler<CreateNewFacilityEvent> = async (
-    sourceEvent,
-    projections,
-  ) => {
+  CreateNewFacility: EventHandler<
+    CreateNewFacilityEvent | ProjectEvent<CreateNewParticipationEvent>
+  > = async (sourceEvent, projections) => {
     projections.addTransactions({
       streamId: projections.facility.streamId,
       sourceEvent,
@@ -68,6 +69,7 @@ class FacilityEventHandlingService
       await this.intialiseDrawing(event)
 
     projection.addDrawing(drawing, drawingProjectedEvents)
+    projection.passEventsToParticipations([event])
 
     projection.addTransactions({
       streamId: event.streamId,

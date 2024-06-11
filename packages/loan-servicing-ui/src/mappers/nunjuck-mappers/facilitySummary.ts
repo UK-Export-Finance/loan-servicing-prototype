@@ -1,4 +1,4 @@
-import { Facility } from 'loan-servicing-common'
+import { Facility, Participation } from 'loan-servicing-common'
 import { GovUkSummaryListProps } from 'types/nunjucks'
 
 // eslint-disable-next-line import/prefer-default-export
@@ -14,6 +14,18 @@ export const facilityToFacilitySummaryProps = (
         text: facility.facilityType,
       },
     },
+    ...(facility.hierarchyType === 'root'
+      ? []
+      : [
+          {
+            key: {
+              text: 'Participation Share',
+            },
+            value: {
+              text: `${(facility as Participation).participantShare}%`,
+            },
+          },
+        ]),
     {
       key: {
         text: 'Obligor ID',

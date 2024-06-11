@@ -1,4 +1,4 @@
-FROM node:20.5.1-alpine3.17
+FROM node:20-bookworm-slim
 
 RUN mkdir -p /opt/app
 WORKDIR /opt/app
